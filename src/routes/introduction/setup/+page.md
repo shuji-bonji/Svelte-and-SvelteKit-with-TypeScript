@@ -8,7 +8,7 @@ description: Svelte 5とSvelteKitの開発環境セットアップ
 ### 前提条件
 
 - **Node.js** 18.19以上（推奨: 20.x LTS または 22.x LTS）
-- **npm** 9以上 または **pnpm** 8以上（推奨）
+- **npm** 9以上（Node.jsに同梱）
 - **VS Code**（推奨エディタ）
 
 ### Node.jsのインストール
@@ -37,68 +37,105 @@ nvm use --lts
 
 ## プロジェクトの作成
 
-### SvelteKitプロジェクトの初期化
+### 最新のCLIツールを使用
+
+2024年以降、SvelteKitプロジェクトの作成には新しい`sv`コマンドを使用します。
 
 ```bash
-# npm を使う場合
+# 新しい方法（推奨）
+npx sv create my-app
+
+# 従来の方法（後方互換性のため残されている）
 npm create svelte@latest my-app
-
-# pnpm を使う場合（推奨）
-pnpm create svelte@latest my-app
-
-# yarn を使う場合
-yarn create svelte my-app
-
-# bunを使う場合
-bun create svelte@latest my-app
 ```
 
-:::note
-`@latest`を付けることで常に最新版のSvelteKitがインストールされます
+:::important
+`npx sv create`は最新のSvelteKit CLIツールで、より洗練されたセットアップ体験を提供します。
 :::
 
 ### 対話形式での設定
 
 ```bash
-┌  Welcome to SvelteKit!
+┌  Welcome to the Svelte CLI! (v0.5.0)
 │
-◇  Which Svelte app template?
-│  ○ SvelteKit demo app
-│  ● Skeleton project  # これを選択（基本構造のみ）
-│  ○ Library project
+◇  Which template would you like?
+│  ○ SvelteKit demo
+│  ● SvelteKit minimal  # 初心者向け（推奨）
+│  ○ Svelte library
 │
 ◇  Add type checking with TypeScript?
-│  ○ Yes, using JavaScript with JSDoc comments
-│  ● Yes, using TypeScript syntax  # これを選択
+│  ○ Yes, using JavaScript with JSDoc
+│  ● Yes, using TypeScript syntax  # 強く推奨
+│  ○ No
 │
-◇  Select additional options (use arrow keys/space bar)
-│  ◼ Add ESLint for code linting        # 推奨
-│  ◼ Add Prettier for code formatting    # 推奨
-│  ◼ Add Playwright for browser testing  # E2Eテストが必要な場合
-│  ◼ Add Vitest for unit testing        # ユニットテストが必要な場合
-│  ◼ Add Tailwind CSS                   # CSSフレームワークが必要な場合
+◇  What would you like to add to your project? (use arrow keys / space bar)
+│  ◼ prettier        # コードフォーマッター（推奨）
+│  ◼ eslint          # リンター（推奨）
+│  ◼ vitest          # ユニットテスト
+│  ◼ playwright      # E2Eテスト
+│  ◼ tailwindcss     # CSSフレームワーク
+│  ◼ drizzle         # ORMツール
+│  ◼ lucia          # 認証ライブラリ
+│  ◼ mdsvex          # Markdown対応
+│  ◼ paraglide       # 国際化（i18n）
+│  ◼ storybook       # コンポーネント開発
+│
+◇  Which package manager do you want to install dependencies with?
+│  ● npm    # 標準的で安定
+│  ○ pnpm   # より高速（上級者向け）
+│  ○ yarn
+│  ○ bun
+│  ○ deno
 └
 ```
-:::important
-Svelte 5は2024年10月にリリースされ、デフォルトでインストールされます。`Try the Svelte 5 preview`オプションは不要になりました。
-:::
+
+### 主要なテンプレートの選択
+
+| テンプレート | 説明 | 推奨対象 |
+|------------|------|---------|
+| **SvelteKit minimal** | 基本構造のみ、学習に最適 | 初心者、新規プロジェクト |
+| **SvelteKit demo** | サンプルコード付き | 機能確認、参考実装 |
+| **Svelte library** | ライブラリ開発用 | コンポーネントライブラリ作成 |
+
+### 追加ツールの選択ガイド
+
+#### 必須推奨（初心者向け）
+- **prettier** - コードを自動整形
+- **eslint** - コードの問題を検出
+- **TypeScript** - 型安全性の確保
+
+#### プロジェクトに応じて追加
+- **vitest** - 単体テストを書く場合
+- **playwright** - E2Eテストが必要な場合
+- **tailwindcss** - ユーティリティCSSを使いたい場合
+- **drizzle** - データベースを使う場合
+- **lucia** - 認証機能が必要な場合
 
 
 ### 依存関係のインストール
 
+CLIツールが自動的に依存関係をインストールします。
+
+#### 手動でインストールする場合
+
 ```bash
 cd my-app
-pnpm install  # または npm install
+npm install
 ```
 
 ### パッケージマネージャの選択
 
 | マネージャ | 特徴 | 推奨度 |
 |-----------|------|--------|
-| **pnpm** | 高速、効率的なディスク使用量 | ⭐⭐⭐⭐⭐ |
-| **npm** | Node.js標準、互換性が高い | ⭐⭐⭐⭐ |
+| **npm** | Node.js標準、互換性が高い、学習リソースが豊富 | ⭐⭐⭐⭐⭐ |
+| **pnpm** | 高速、効率的なディスク使用量、モノレポ対応 | ⭐⭐⭐⭐ |
 | **yarn** | npmの代替、ワークスペース機能 | ⭐⭐⭐ |
-| **bun** | 超高速、実験的 | ⭐⭐ |
+| **bun** | 超高速、実験的、ランタイム込み | ⭐⭐ |
+| **deno** | セキュア、TypeScript標準対応 | ⭐⭐ |
+
+:::tip
+初心者の方はnpmを使用することをお勧めします。トラブルシューティングの情報が最も多く、確実に動作します。
+:::
 
 ## VS Code の設定
 
@@ -116,7 +153,7 @@ pnpm install  # または npm install
 
 ### VS Code設定
 
-`.vscode/settings.json` ファイルを作成して、以下の設定を追加：
+`.vscode/settings.json` ファイルを作成して、以下の設定を追加
 
 - **editor.defaultFormatter**: "esbenp.prettier-vscode"
 - **[svelte] editor.defaultFormatter**: "svelte.svelte-vscode"
@@ -128,37 +165,29 @@ pnpm install  # または npm install
 
 ## プロジェクト構造
 
+SvelteKitプロジェクトの標準的なフォルダ構成を示します。
+
 ```
 my-app/
 ├── src/
-│   ├── routes/          # ページとレイアウト
-│   │   ├── +layout.svelte
-│   │   ├── +page.svelte
-│   │   └── api/         # APIエンドポイント
-│   │       └── +server.ts
-│   ├── lib/             # 共有コンポーネント
-│   │   ├── components/  # UIコンポーネント
-│   │   ├── stores/      # グローバルストア
-│   │   ├── utils/       # ユーティリティ関数
-│   │   └── types/       # 共通型定義
-│   ├── params/          # ルートパラメータ検証
-│   ├── hooks.client.ts  # クライアントフック
-│   ├── hooks.server.ts  # サーバーフック
-│   ├── app.html         # HTMLテンプレート
-│   └── app.d.ts         # グローバル型定義
-├── static/              # 静的ファイル（favicon等）
-├── tests/               # テストファイル
-├── .svelte-kit/         # ビルド生成ファイル（gitignore）
-├── node_modules/        # 依存パッケージ（gitignore）
-├── svelte.config.js     # Svelte設定
-├── vite.config.ts       # Vite設定
-├── tsconfig.json        # TypeScript設定
-├── .env                 # 環境変数
-├── .env.example         # 環境変数の例
-├── .gitignore          # Git除外設定
-├── .prettierrc         # Prettier設定
-├── .eslintrc.cjs       # ESLint設定
-└── package.json        # プロジェクト設定
+│   ├── routes/             # ページとルーティング
+│   │   ├── +layout.svelte  # 共通レイアウト
+│   │   └── +page.svelte    # ホームページ
+│   ├── lib/                # 共有コンポーネント・ユーティリティ
+│   │   ├── index.ts        # エクスポート定義
+│   │   └── assets          # アセット（画像、フォントなど）
+│   │       └── favicon.svg # ファビコン
+│   ├── app.html            # HTMLテンプレート
+│   ├── app.css             # グローバルCSS
+│   └── app.d.ts            # TypeScript型定義
+├── static/                 # 静的ファイル
+├── tests/                  # テストファイル
+├── eslint.config.js        # ESLint設定
+├── package.json            # プロジェクト設定
+├── svelte.config.js        # Svelte設定
+├── vite.config.js          # Vite設定
+├── tsconfig.json           # TypeScript設定
+└── README.md               # プロジェクト説明
 ```
 
 ### 重要なファイルの説明
@@ -177,50 +206,90 @@ my-app/
 
 ```bash
 # 開発サーバー起動
-pnpm dev
+npm run dev
 
-# ホットリロード付きで起動
-pnpm dev --host
+# ホットリロード付きで起動（ネットワーク内の他デバイスからアクセス可能）
+npm run dev -- --host
 
 # 特定のポートで起動
-pnpm dev --port 3000
+npm run dev -- --port 3000
 ```
 
 デフォルトでは `http://localhost:5173` でアクセス可能です。
+
+:::note
+`--`（ダブルダッシュ）はnpmスクリプトにオプションを渡すために必要です。
+:::
 
 ## ビルドとプレビュー
 
 ```bash
 # プロダクションビルド
-pnpm build
+npm run build
 
 # ビルド結果のプレビュー
-pnpm preview
+npm run preview
+
+# ビルドして即プレビュー
+npm run build && npm run preview
 ```
 
 ## Svelte 5 の確認
 
-`package.json` で最新バージョンが使用されていることを確認。
+`package.json` で最新バージョンが使用されていることを確認
 
-```
-"devDependencies": {
-  "svelte": "^5.0.0",               // Svelte 5.x
-  "@sveltejs/kit": "^2.0.0",        // SvelteKit 2.x
-  "@sveltejs/adapter-auto": "^3.0.0",
-  "@sveltejs/vite-plugin-svelte": "^4.0.0",
-  "typescript": "^5.0.0",
-  "vite": "^5.0.0"
+```js
+{
+  "devDependencies": {
+    "svelte": "^5.1.0",               // Svelte 5.1以上
+    "@sveltejs/kit": "^2.5.0",        // SvelteKit 2.5以上
+    "@sveltejs/adapter-auto": "^3.2.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0"
+  }
 }
 ```
+
+:::note
+2024年12月時点での推奨バージョンです。常に最新の安定版を使用することをお勧めします。
+:::
 
 ### 最新版へのアップデート
 
 ```bash
-# すべての依存関係を最新版に更新
-pnpm update --latest
+# 現在のバージョンを確認
+npm list svelte @sveltejs/kit
 
-# または特定のパッケージのみ
-pnpm add -D svelte@latest @sveltejs/kit@latest
+# 最新版の確認
+npm outdated
+
+# 特定のパッケージを最新版に更新
+npm install -D svelte@latest @sveltejs/kit@latest
+
+# すべての依存関係を更新（npm-check-updatesを使用）
+npx npm-check-updates -u
+npm install
+```
+
+### Svelte 5の新機能確認
+
+プロジェクト作成後、`src/routes/+page.svelte`を開いて、Svelte 5のRunesが使えることを確認。
+
+```svelte
+<script lang="ts">
+  // Svelte 5のRunes
+  let count = $state(0);
+  let doubled = $derived(count * 2);
+  
+  function increment() {
+    count++;
+  }
+</script>
+
+<button onclick={increment}>
+  Count: {count}, Doubled: {doubled}
+</button>
 ```
 
 ## トラブルシューティング
@@ -239,21 +308,21 @@ pnpm add -D svelte@latest @sveltejs/kit@latest
 2. **依存関係の問題**
    ```bash
    # キャッシュクリア
-   pnpm store prune
+   npm cache clean --force
    
    # node_modules 削除して再インストール
-   rm -rf node_modules pnpm-lock.yaml
-   pnpm install
+   rm -rf node_modules package-lock.json
+   npm install
    ```
 
 3. **TypeScript エラー**
    ```bash
    # TypeScript バージョン確認
-   pnpm tsc --version
+   npx tsc --version
    
    # .svelte-kit フォルダを再生成
    rm -rf .svelte-kit
-   pnpm dev
+   npm run dev
    ```
 
 ## 次のステップ

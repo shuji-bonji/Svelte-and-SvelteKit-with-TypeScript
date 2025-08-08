@@ -11,7 +11,7 @@ description: Svelte 5の高度な機能とパターン
 
 ### 1. [リアクティブストア](/advanced/reactive-stores/)
 
-`.svelte.js`/`.svelte.ts`ファイルを使用した再利用可能なリアクティブロジック：
+`.svelte.js`/`.svelte.ts`ファイルを使用した再利用可能なリアクティブロジック
 
 ```typescript
 // counter.svelte.ts

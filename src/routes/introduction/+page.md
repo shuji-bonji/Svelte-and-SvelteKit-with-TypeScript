@@ -146,7 +146,7 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
 このドキュメントでは、以下の順序で学習を進めることをお勧めします。
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🎯 入門編</h3>
     <ol class="space-y-2">
       <li><a href="{base}/introduction/">Svelte 5の概要</a></li>
@@ -155,7 +155,7 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
       <li><a href="{base}/introduction/typescript-setup/">TypeScript設定</a></li>
     </ol>
   </div>
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">📚 基礎編</h3>
     <ol class="space-y-2">
       <li><a href="{base}/basics/">基礎概要</a></li>
@@ -170,7 +170,7 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🚀 実践編</h3>
     <ol class="space-y-2">
       <li><a href="{base}/advanced/">実践概要</a></li>
@@ -181,7 +181,7 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
       <li><a href="{base}/advanced/typescript-patterns/">TypeScriptパターン</a></li>
     </ol>
   </div>
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
     <ol class="space-y-2">
       <li><a href="{base}/sveltekit/">SvelteKit概要</a></li>
@@ -196,7 +196,7 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">💡 実装例</h3>
     <ol class="space-y-2">
       <li><a href="{base}/examples/">実装例一覧</a></li>

@@ -10,7 +10,14 @@ const config = {
 	kit: {
 		adapter: adapter({
 			pages: 'dist',
+			assets: 'dist',
+			fallback: undefined,
+			precompress: false,
+			strict: true
 		}),
+		paths: {
+			base: '/Svelte-and-SvelteKit-with-TypeScript'
+		}
 	},
 }
 

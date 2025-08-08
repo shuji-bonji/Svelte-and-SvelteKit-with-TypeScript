@@ -7,17 +7,109 @@ const config = defineConfig({
 		sveltepress({
 			theme: defaultTheme({
 				navbar: [
-					// Add your navbar configs here
+					{
+						title: 'ホーム',
+						to: '/'
+					},
+					{
+						title: '入門',
+						to: '/introduction/'
+					},
+					{
+						title: '基礎',
+						to: '/basics/'
+					},
+					{
+						title: '実践',
+						to: '/advanced/'
+					},
+					{
+						title: 'SvelteKit',
+						to: '/sveltekit/'
+					},
+					{
+						title: '実装例',
+						to: '/examples/'
+					}
 				],
 				sidebar: {
-					// Add your sidebar configs here
+					'/introduction/': [
+						{
+							title: 'はじめに',
+							collapsible: true,
+							items: [
+								{ title: 'Svelte 5の概要', to: '/introduction/' },
+								{ title: 'なぜSvelteか', to: '/introduction/why-svelte/' },
+								{ title: '環境構築', to: '/introduction/setup/' },
+								{ title: 'TypeScript設定', to: '/introduction/typescript-setup/' }
+							]
+						}
+					],
+					'/basics/': [
+						{
+							title: '基礎編',
+							collapsible: true,
+							items: [
+								{ title: '基礎概要', to: '/basics/' },
+								{ title: 'Runesシステム入門', to: '/basics/runes-introduction/' },
+								{ title: '$stateルーン', to: '/basics/state/' },
+								{ title: '$derivedルーン', to: '/basics/derived/' },
+								{ title: '$effectルーン', to: '/basics/effect/' },
+								{ title: '$propsルーン', to: '/basics/props/' },
+								{ title: '$bindableルーン', to: '/basics/bindable/' }
+							]
+						}
+					],
+					'/advanced/': [
+						{
+							title: '実践編',
+							collapsible: true,
+							items: [
+								{ title: '実践概要', to: '/advanced/' },
+								{ title: 'リアクティブストア', to: '/advanced/reactive-stores/' },
+								{ title: 'クラスとリアクティビティ', to: '/advanced/class-reactivity/' },
+								{ title: 'Snippets機能', to: '/advanced/snippets/' },
+								{ title: 'コンポーネントパターン', to: '/advanced/component-patterns/' },
+								{ title: 'TypeScriptパターン', to: '/advanced/typescript-patterns/' }
+							]
+						}
+					],
+					'/sveltekit/': [
+						{
+							title: 'SvelteKit',
+							collapsible: true,
+							items: [
+								{ title: 'SvelteKit概要', to: '/sveltekit/' },
+								{ title: 'ルーティング', to: '/sveltekit/routing/' },
+								{ title: 'Load関数', to: '/sveltekit/load-functions/' },
+								{ title: 'サーバーサイド処理', to: '/sveltekit/server-side/' },
+								{ title: 'フォーム処理', to: '/sveltekit/forms/' },
+								{ title: 'APIルート', to: '/sveltekit/api-routes/' },
+								{ title: 'デプロイメント', to: '/sveltekit/deployment/' }
+							]
+						}
+					],
+					'/examples/': [
+						{
+							title: '実装例',
+							collapsible: true,
+							items: [
+								{ title: '実装例一覧', to: '/examples/' },
+								{ title: 'TODOアプリ', to: '/examples/todo-app/' },
+								{ title: '認証システム', to: '/examples/auth-system/' },
+								{ title: 'データフェッチング', to: '/examples/data-fetching/' },
+								{ title: 'WebSocket実装', to: '/examples/websocket/' }
+							]
+						}
+					]
 				},
-				github: 'https://github.com/Blackman99/sveltepress',
+				github: 'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript',
 				logo: '/sveltepress.svg',
+				editLink: 'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/edit/main/src/routes/'
 			}),
 			siteConfig: {
-				title: 'Sveltepress',
-				description: 'A content centered site build tool',
+				title: 'TypeScriptで学ぶ Svelte 5/SvelteKit',
+				description: '日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド'
 			},
 		}),
 	],

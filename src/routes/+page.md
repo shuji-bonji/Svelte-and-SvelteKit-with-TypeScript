@@ -1,17 +1,20 @@
 ---
-title: Welcome to Sveltepress
+title: TypeScriptで学ぶ Svelte 5/SvelteKit
 heroImage: /sveltepress@3x.png
-tagline: A simple, easy to use content centered site build tool with the full power of Sveltekit.
+tagline: 日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド
 actions:
-  - label: View on github
+  - label: 学習を始める
     type: primary
-    to: https://github.com/Blackman99/sveltepress
+    to: /introduction/
+  - label: GitHub
+    type: secondary
+    to: https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript
     external: true
 features:
-  - title: Markdown centered
-    description: To help you can start writing with minimal configuration
-  - title: Build with Sveltekit
-    description: Preserve the full power of Sveltekit. So that you can do more than SSG
-  - title: Svelte in Markdown
-    description: Feel free to use svelte in markdown. Explore infinite possibilities.
+  - title: Svelte 5 Runes
+    description: 最新のRunesシステム（$state, $derived, $effect）を完全解説
+  - title: TypeScript完全対応
+    description: すべてのコード例でTypeScriptを使用し、型安全な開発を実現
+  - title: 実践的な内容
+    description: ビジネスレベルのアプリケーション開発に必要な知識を網羅
 ---

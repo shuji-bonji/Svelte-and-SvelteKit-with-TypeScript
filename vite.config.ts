@@ -33,7 +33,7 @@ const config = defineConfig({
 					}
 				],
 				sidebar: {
-					'/introduction/': [
+					'/': [
 						{
 							title: 'はじめに',
 							collapsible: true,
@@ -42,11 +42,9 @@ const config = defineConfig({
 								{ title: 'なぜSvelteか', to: '/introduction/why-svelte/' },
 								{ title: '環境構築', to: '/introduction/setup/' },
 								{ title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
-								{ title: '機能デモ', to: '/introduction/features-demo/' }
+								// { title: '機能デモ', to: '/introduction/features-demo/' }
 							]
-						}
-					],
-					'/basics/': [
+						},
 						{
 							title: '基礎編',
 							collapsible: true,
@@ -59,9 +57,7 @@ const config = defineConfig({
 								{ title: '$propsルーン', to: '/basics/props/' },
 								{ title: '$bindableルーン', to: '/basics/bindable/' }
 							]
-						}
-					],
-					'/advanced/': [
+						},
 						{
 							title: '実践編',
 							collapsible: true,
@@ -73,9 +69,7 @@ const config = defineConfig({
 								{ title: 'コンポーネントパターン', to: '/advanced/component-patterns/' },
 								{ title: 'TypeScriptパターン', to: '/advanced/typescript-patterns/' }
 							]
-						}
-					],
-					'/sveltekit/': [
+						},
 						{
 							title: 'SvelteKit',
 							collapsible: true,
@@ -88,9 +82,7 @@ const config = defineConfig({
 								{ title: 'APIルート', to: '/sveltekit/api-routes/' },
 								{ title: 'デプロイメント', to: '/sveltekit/deployment/' }
 							]
-						}
-					],
-					'/examples/': [
+						},
 						{
 							title: '実装例',
 							collapsible: true,

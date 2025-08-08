@@ -1,0 +1,23 @@
+{
+  "name": "svelte-and-sveltekit-with-typescript",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.1",
+    "@sveltejs/kit": "^2.8.1",
+    "@sveltejs/vite-plugin-svelte": "^4.0.1",
+    "@sveltepress/theme-default": "^6.0.4",
+    "@sveltepress/vite": "^1.2.2",
+    "@types/node": "^20.11.20",
+    "svelte": "^5.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
+  }
+}

@@ -3,6 +3,10 @@ title: Svelte 5の概要
 description: Svelte 5とRunesシステムの紹介
 ---
 
+<script>
+  import { base } from '$app/paths';
+</script>
+
 ## Svelte 5とは
 Svelteは、**コンパイル時に最適化を行う**という革新的なアプローチを採用したフロントエンドフレームワークです。
 他のフレームワークとは異なり、**Virtual DOMを使用しません**。代わりに、ビルド時にコンポーネントを高効率なVanilla JavaScriptに変換します。
@@ -145,17 +149,61 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
     <h3 class="font-bold text-lg mb-2">🎯 入門編</h3>
     <ol class="space-y-2">
-      <li><a href="/introduction/why-svelte/">なぜSvelteか</a></li>
-      <li><a href="/introduction/setup/">環境構築</a></li>
-      <li><a href="/introduction/typescript-setup/">TypeScript設定</a></li>
+      <li><a href="{base}/introduction/">Svelte 5の概要</a></li>
+      <li><a href="{base}/introduction/why-svelte/">なぜSvelteか</a></li>
+      <li><a href="{base}/introduction/setup/">環境構築</a></li>
+      <li><a href="{base}/introduction/typescript-setup/">TypeScript設定</a></li>
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
     <h3 class="font-bold text-lg mb-2">📚 基礎編</h3>
     <ol class="space-y-2">
-      <li><a href="/basics/runes-introduction/">Runesシステム入門</a></li>
-      <li><a href="/basics/state/">$state - 状態管理</a></li>
-      <li><a href="/basics/derived/">$derived - 計算値</a></li>
+      <li><a href="{base}/basics/">基礎概要</a></li>
+      <li><a href="{base}/basics/runes-introduction/">Runesシステム入門</a></li>
+      <li><a href="{base}/basics/state/">$stateルーン</a></li>
+      <li><a href="{base}/basics/derived/">$derivedルーン</a></li>
+      <li><a href="{base}/basics/effect/">$effectルーン</a></li>
+      <li><a href="{base}/basics/props/">$propsルーン</a></li>
+      <li><a href="{base}/basics/bindable/">$bindableルーン</a></li>
+    </ol>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+    <h3 class="font-bold text-lg mb-2">🚀 実践編</h3>
+    <ol class="space-y-2">
+      <li><a href="{base}/advanced/">実践概要</a></li>
+      <li><a href="{base}/advanced/reactive-stores/">リアクティブストア</a></li>
+      <li><a href="{base}/advanced/class-reactivity/">クラスとリアクティビティ</a></li>
+      <li><a href="{base}/advanced/snippets/">Snippets機能</a></li>
+      <li><a href="{base}/advanced/component-patterns/">コンポーネントパターン</a></li>
+      <li><a href="{base}/advanced/typescript-patterns/">TypeScriptパターン</a></li>
+    </ol>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+    <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
+    <ol class="space-y-2">
+      <li><a href="{base}/sveltekit/">SvelteKit概要</a></li>
+      <li><a href="{base}/sveltekit/routing/">ルーティング</a></li>
+      <li><a href="{base}/sveltekit/load-functions/">Load関数</a></li>
+      <li><a href="{base}/sveltekit/server-side/">サーバーサイド処理</a></li>
+      <li><a href="{base}/sveltekit/forms/">フォーム処理</a></li>
+      <li><a href="{base}/sveltekit/api-routes/">APIルート</a></li>
+      <li><a href="{base}/sveltekit/deployment/">デプロイメント</a></li>
+    </ol>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+    <h3 class="font-bold text-lg mb-2">💡 実装例</h3>
+    <ol class="space-y-2">
+      <li><a href="{base}/examples/">実装例一覧</a></li>
+      <li><a href="{base}/examples/todo-app/">TODOアプリ</a></li>
+      <li><a href="{base}/examples/auth-system/">認証システム</a></li>
+      <li><a href="{base}/examples/data-fetching/">データフェッチング</a></li>
+      <li><a href="{base}/examples/websocket/">WebSocket実装</a></li>
     </ol>
   </div>
 </div>

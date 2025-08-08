@@ -156,20 +156,27 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <h3 class="font-bold text-lg mb-2">📚 基礎編</h3>
+    <h3 class="font-bold text-lg mb-2">🔧 Svelteの基本</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/basics/">基礎概要</a></li>
-      <li><a href="{base}/basics/runes-introduction/">Runesシステム入門</a></li>
-      <li><a href="{base}/basics/state/">$stateルーン</a></li>
-      <li><a href="{base}/basics/derived/">$derivedルーン</a></li>
-      <li><a href="{base}/basics/effect/">$effectルーン</a></li>
-      <li><a href="{base}/basics/props/">$propsルーン</a></li>
-      <li><a href="{base}/basics/bindable/">$bindableルーン</a></li>
+      <li><a href="{base}/svelte-basics/">Svelteの基本概要</a></li>
+      <li><a href="{base}/svelte-basics/hello-world/">Hello World</a></li>
+      <li><a href="{base}/svelte-basics/component-basics/">コンポーネントの基本</a></li>
+      <li><a href="{base}/svelte-basics/typescript-integration/">TypeScript統合</a></li>
+      <li><a href="{base}/svelte-basics/script-context/">スクリプトコンテキスト</a></li>
     </ol>
   </div>
-</div>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <h3 class="font-bold text-lg mb-2">📚 Runesシステム</h3>
+    <ol class="space-y-2">
+      <li><a href="{base}/runes/">Runesシステム概要</a></li>
+      <li><a href="{base}/runes/runes-introduction/">Runesシステム入門</a></li>
+      <li><a href="{base}/runes/state/">$stateルーン</a></li>
+      <li><a href="{base}/runes/derived/">$derivedルーン</a></li>
+      <li><a href="{base}/runes/effect/">$effectルーン</a></li>
+      <li><a href="{base}/runes/props/">$propsルーン</a></li>
+      <li><a href="{base}/runes/bindable/">$bindableルーン</a></li>
+    </ol>
+  </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🚀 実践編</h3>
     <ol class="space-y-2">
@@ -181,6 +188,11 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
       <li><a href="{base}/advanced/typescript-patterns/">TypeScriptパターン</a></li>
     </ol>
   </div>
+</div>
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
     <ol class="space-y-2">
@@ -193,9 +205,6 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
       <li><a href="{base}/sveltekit/deployment/">デプロイメント</a></li>
     </ol>
   </div>
-</div>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">💡 実装例</h3>
     <ol class="space-y-2">

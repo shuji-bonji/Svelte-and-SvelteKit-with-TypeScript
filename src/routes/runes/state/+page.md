@@ -252,4 +252,4 @@ data.value++; // 正しく更新される
 
 ## 次のステップ
 
-`$state`の基本を理解したら、[$derived - 計算値](/basics/derived/)で派生値の作成方法を学びましょう。
+`$state`の基本を理解したら、[$derived - 計算値](/runes/derived/)で派生値の作成方法を学びましょう。

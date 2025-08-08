@@ -1084,4 +1084,4 @@ TypeScriptを使うことで、Svelte 5アプリケーションの品質と保�
 
 ## 次のステップ
 
-TypeScriptの設定が完了したら、[基礎編](/basics/)でSvelte 5のRunesシステムを学びましょう。TypeScriptの型定義を活用しながら、実践的なコンポーネントを作成していきます。
+TypeScriptの設定が完了したら、[Svelteの基本](/svelte-basics/)でSvelteの基礎を学びましょう。TypeScriptの型定義を活用しながら、実践的なコンポーネントを作成していきます。

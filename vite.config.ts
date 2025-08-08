@@ -16,8 +16,12 @@ const config = defineConfig({
 						to: '/introduction/'
 					},
 					{
-						title: '基礎',
-						to: '/basics/'
+						title: 'Svelteの基本',
+						to: '/svelte-basics/'
+					},
+					{
+						title: 'Runes',
+						to: '/runes/'
 					},
 					{
 						title: '実践',
@@ -46,16 +50,27 @@ const config = defineConfig({
 							]
 						},
 						{
-							title: '基礎編',
+							title: 'Svelteの基本',
 							collapsible: true,
 							items: [
-								{ title: '基礎概要', to: '/basics/' },
-								{ title: 'Runesシステム入門', to: '/basics/runes-introduction/' },
-								{ title: '$stateルーン', to: '/basics/state/' },
-								{ title: '$derivedルーン', to: '/basics/derived/' },
-								{ title: '$effectルーン', to: '/basics/effect/' },
-								{ title: '$propsルーン', to: '/basics/props/' },
-								{ title: '$bindableルーン', to: '/basics/bindable/' }
+								{ title: 'Svelteの基本概要', to: '/svelte-basics/' },
+								{ title: 'Hello World', to: '/svelte-basics/hello-world/' },
+								{ title: 'コンポーネントの基本', to: '/svelte-basics/component-basics/' },
+								{ title: 'TypeScript統合', to: '/svelte-basics/typescript-integration/' },
+								{ title: 'スクリプトコンテキスト', to: '/svelte-basics/script-context/' }
+							]
+						},
+						{
+							title: 'Runesシステム',
+							collapsible: true,
+							items: [
+								{ title: 'Runesシステム概要', to: '/runes/' },
+								{ title: 'Runesシステム入門', to: '/runes/runes-introduction/' },
+								{ title: '$stateルーン', to: '/runes/state/' },
+								{ title: '$derivedルーン', to: '/runes/derived/' },
+								{ title: '$effectルーン', to: '/runes/effect/' },
+								{ title: '$propsルーン', to: '/runes/props/' },
+								{ title: '$bindableルーン', to: '/runes/bindable/' }
 							]
 						},
 						{

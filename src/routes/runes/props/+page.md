@@ -384,4 +384,4 @@ localItems.push(newItem);
 
 ## 次のステップ
 
-プロパティの受け渡しを理解したら、[$bindable - 双方向バインディング](/basics/bindable/)で双方向データバインディングを学びましょう。
+プロパティの受け渡しを理解したら、[$bindable - 双方向バインディング](/runes/bindable/)で双方向データバインディングを学びましょう。

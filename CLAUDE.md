@@ -43,7 +43,7 @@
 
 ## 📚 カリキュラム構成
 
-### 第1部：基礎編
+### 第1部：入門編
 ```
 src/routes/
 ├── +layout.md                    # ルートレイアウト
@@ -53,8 +53,22 @@ src/routes/
 │   ├── why-svelte/+page.md       # なぜSvelteか
 │   ├── setup/+page.md            # 環境構築
 │   └── typescript-setup/+page.md # TypeScript設定
-├── basics/
-│   ├── +page.md                  # 基礎概要
+```
+
+### 第2部：Svelteの基本（新規追加）
+```
+├── svelte-basics/
+│   ├── +page.md                     # Svelteの基本概要
+│   ├── hello-world/+page.md         # Hello World
+│   ├── component-basics/+page.md    # コンポーネントの基本
+│   ├── typescript-integration/+page.md # TypeScript統合
+│   └── script-context/+page.md      # スクリプトコンテキスト
+```
+
+### 第3部：Runesシステム
+```
+├── runes/
+│   ├── +page.md                  # Runesシステム概要
 │   ├── runes-introduction/+page.md # Runesシステム入門
 │   ├── state/+page.md            # $stateルーン
 │   ├── derived/+page.md          # $derivedルーン
@@ -63,7 +77,7 @@ src/routes/
 │   └── bindable/+page.md         # $bindableルーン
 ```
 
-### 第2部：実践編
+### 第4部：実践編
 ```
 ├── advanced/
 │   ├── +page.md                  # 実践概要
@@ -74,7 +88,7 @@ src/routes/
 │   └── typescript-patterns/+page.md # TypeScriptパターン
 ```
 
-### 第3部：SvelteKit編
+### 第5部：SvelteKit編
 ```
 ├── sveltekit/
 │   ├── +page.md                  # SvelteKit概要
@@ -86,7 +100,7 @@ src/routes/
 │   └── deployment/+page.md      # デプロイメント
 ```
 
-### 第4部：実装例
+### 第6部：実装例
 ```
 ├── examples/
 │   ├── +page.md                  # 実装例一覧
@@ -96,27 +110,49 @@ src/routes/
 │   └── websocket/+page.md       # WebSocket実装
 ```
 
-## 🔄 移行計画
+## 🔄 移行計画と変更履歴
 
-### フェーズ1：基盤構築（Week 1）
-1. SveltePressプロジェクトの初期設定
-2. 基本レイアウトとナビゲーション構築
-3. TypeScript設定の最適化
-4. GitHub Actions設定（自動デプロイ）
+### 完了した変更（2024年12月）
 
-### フェーズ2：コンテンツ移行（Week 2-3）
-1. 既存コンテンツの精査と更新
-2. Svelte 5 Runesシステムへの書き換え
-3. TypeScript型定義の追加・改善
-4. コード例の全面的な見直し
+#### ✅ 「Svelteの基本」セクションの追加
+- **理由**: Svelte 5のRunesシステムを学ぶ前に、Svelteの基本概念を理解する必要があるため
+- **追加内容**:
+  - Hello World - 最初のSvelteコンポーネント
+  - コンポーネントの基本 - script、markup、styleの3要素
+  - TypeScript統合 - SvelteでのTypeScript活用
+  - スクリプトコンテキスト - `<script>`と`<script context="module">`の違い
 
-### フェーズ3：新規コンテンツ作成（Week 4-5）
-1. Runesシステムの詳細解説
-2. TypeScriptパターン集の作成
-3. 実装例の充実化
-4. トラブルシューティングガイド
+#### ✅ ナビゲーション構造の改善
+- ナビゲーションバー: 「基礎」を「Runes」に変更、「Svelteの基本」を追加
+- サイドバー: 新セクション「Svelteの基本」を「はじめに」と「Runesシステム」の間に配置
+- 学習パス: Runesシステムの前にSvelteの基本を学ぶ流れに変更
+- ディレクトリ名変更: `basics` → `runes` (より明確な命名)
 
-### フェーズ4：最適化と公開（Week 6）
+#### ✅ コンテンツガイドラインの更新
+- フロントマター後の`# {title}`重複を避けるルールを追加
+- ページ構成のテンプレートを提供
+
+### 今後の計画
+
+#### フェーズ1：基盤構築（完了）
+1. ✅ SveltePressプロジェクトの初期設定
+2. ✅ 基本レイアウトとナビゲーション構築
+3. ✅ TypeScript設定の最適化
+4. ✅ GitHub Actions設定（自動デプロイ）
+
+#### フェーズ2：コンテンツ移行（進行中）
+1. ✅ Svelteの基本セクションの作成
+2. ⏳ Svelte 5 Runesシステムの詳細解説
+3. ⏳ TypeScript型定義の追加・改善
+4. ⏳ コード例の全面的な見直し
+
+#### フェーズ3：新規コンテンツ作成（予定）
+1. TypeScriptパターン集の作成
+2. 実装例の充実化
+3. トラブルシューティングガイド
+4. パフォーマンス最適化ガイド
+
+#### フェーズ4：最適化と公開（予定）
 1. パフォーマンス最適化
 2. SEO対策
 3. アクセシビリティ改善
@@ -182,16 +218,53 @@ Svelte-and-SvelteKit-with-TypeScript/
 ### コンテンツ作成ガイドライン
 
 #### Markdownファイル構造
+
+##### フロントマター（メタデータ）のルール
+```markdown
+---
+title: ページタイトル
+description: ページの説明
+---
+```
+
+**重要**: フロントマター直後の`# {title}`は不要です。ページの本文は直接記述してください。タイトルはSveltePressが自動的にレンダリングします。
+
+##### 正しい例
+```markdown
+---
+title: コンポーネントの基本
+description: Svelteコンポーネントの構造と基本的な機能
+---
+
+Svelteコンポーネントには3つの主要な部分があります。このページでは、それぞれの役割と使い方を詳しく解説します。
+
+## 基本構造
+
+コンポーネントは以下の要素で構成されます...
+```
+
+##### 間違った例（避けるべき）
+```markdown
+---
+title: コンポーネントの基本
+description: Svelteコンポーネントの構造と基本的な機能
+---
+
+# コンポーネントの基本  <!-- ❌ 不要：titleの重複 -->
+
+## 概要
+簡潔な説明
+```
+
+##### ページ構成のテンプレート
 ```markdown
 ---
 title: ページタイトル
 description: ページの説明
 ---
 
-# {title}
-
-## 概要
-簡潔な説明
+<!-- 導入文：ページの目的と概要を説明 -->
+このページでは〜について学びます。
 
 ## 基本的な使い方
 \```typescript
@@ -206,6 +279,9 @@ description: ページの説明
 
 ## まとめ
 重要ポイントの整理
+
+## 次のステップ
+[次のページへのリンク](/path/to/next/)で、さらに詳しく学びます。
 ```
 
 #### コード例の要件

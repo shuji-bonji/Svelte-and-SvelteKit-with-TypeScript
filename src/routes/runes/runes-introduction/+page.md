@@ -267,8 +267,8 @@ $effect(() => {
 
 各Runeの詳細な使い方を学びましょう。
 
-1. [$state - 状態管理](/basics/state/)
-2. [$derived - 計算値](/basics/derived/)
-3. [$effect - 副作用](/basics/effect/)
-4. [$props - プロパティ](/basics/props/)
-5. [$bindable - 双方向バインディング](/basics/bindable/)
+1. [$state - 状態管理](/runes/state/)
+2. [$derived - 計算値](/runes/derived/)
+3. [$effect - 副作用](/runes/effect/)
+4. [$props - プロパティ](/runes/props/)
+5. [$bindable - 双方向バインディング](/runes/bindable/)

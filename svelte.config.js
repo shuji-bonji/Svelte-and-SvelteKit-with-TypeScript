@@ -17,6 +17,17 @@ const config = {
 		}),
 		paths: {
 			base: '/Svelte-and-SvelteKit-with-TypeScript'
+		},
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				// Markdownファイル内のリンクエラーを無視
+				if (path.startsWith('/') && !path.startsWith('/Svelte-and-SvelteKit-with-TypeScript')) {
+					console.warn(`Warning: Link ${path} from ${referrer} needs base path`);
+					return;
+				}
+				// その他のエラーはそのままスロー
+				throw new Error(message);
+			}
 		}
 	},
 }

@@ -265,7 +265,7 @@ $effect(() => {
 
 ## 次のステップ
 
-各Runeの詳細な使い方を学びましょう：
+各Runeの詳細な使い方を学びましょう。
 
 1. [$state - 状態管理](/basics/state/)
 2. [$derived - 計算値](/basics/derived/)

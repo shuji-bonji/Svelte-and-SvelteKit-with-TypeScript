@@ -11,7 +11,7 @@ description: 実践的なアプリケーション開発例
 
 ### 1. [TODOアプリ](/examples/todo-app/)
 
-基本的なCRUD操作とリアクティビティ：
+基本的なCRUD操作とリアクティビティ
 
 - Runesを使った状態管理
 - ローカルストレージとの連携
@@ -29,7 +29,7 @@ let todos = $state<Todo[]>([]);
 
 ### 2. [認証システム](/examples/auth-system/)
 
-セキュアな認証フローの実装：
+セキュアな認証フローの実装
 
 - JWTトークンの管理
 - Protected Routes
@@ -37,7 +37,7 @@ let todos = $state<Todo[]>([]);
 
 ### 3. [データフェッチング](/examples/data-fetching/)
 
-効率的なデータ取得パターン：
+効率的なデータ取得パターン
 
 - Load関数の活用
 - ストリーミングSSR
@@ -45,7 +45,7 @@ let todos = $state<Todo[]>([]);
 
 ### 4. [WebSocket実装](/examples/websocket/)
 
-リアルタイム通信の実装：
+リアルタイム通信の実装
 
 - WebSocket接続管理
 - リアルタイムアップデート

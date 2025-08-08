@@ -28,7 +28,7 @@ export function createCounter(initial = 0) {
 
 ### 2. [クラスとリアクティビティ](/advanced/class-reactivity/)
 
-クラスベースのリアクティブパターン：
+クラスベースのリアクティブパターン
 
 ```typescript
 class TodoItem {
@@ -43,7 +43,7 @@ class TodoItem {
 
 ### 3. [Snippets機能](/advanced/snippets/)
 
-コンポーネント内での再利用可能なマークアップ：
+コンポーネント内での再利用可能なマークアップ
 
 ```svelte
 {#snippet button(text)}

@@ -69,6 +69,50 @@
     }
   }
 
+  :global(.toc) {
+    width: 240px !important;
+  }
+
+  :global(.toc .anchors) {
+    width: 224px !important;
+    max-height: calc(100vh - 120px) !important; /* ヘッダー分を引いた高さ */
+    overflow-y: auto !important; /* スクロール可能にする */
+    overflow-x: hidden !important;
+    padding-bottom: 2rem !important; /* 下部に余白 */
+  }
+  
+  /* スクロールバーのスタイリング */
+  :global(.toc .anchors::-webkit-scrollbar) {
+    width: 6px;
+  }
+  
+  :global(.toc .anchors::-webkit-scrollbar-track) {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+  
+  :global(.toc .anchors::-webkit-scrollbar-thumb) {
+    background: rgba(251, 113, 133, 0.3);
+    border-radius: 3px;
+  }
+  
+  :global(.toc .anchors::-webkit-scrollbar-thumb:hover) {
+    background: rgba(251, 113, 133, 0.5);
+  }
+  
+  /* ダークモードのスクロールバー */
+  :global(.dark .toc .anchors::-webkit-scrollbar-track) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  :global(.dark .toc .anchors::-webkit-scrollbar-thumb) {
+    background: rgba(251, 113, 133, 0.4);
+  }
+  
+  :global(.dark .toc .anchors::-webkit-scrollbar-thumb:hover) {
+    background: rgba(251, 113, 133, 0.6);
+  }
+  
   /* モバイルでハンバーガーメニューボタンをシンプルに */
   @media (max-width: 949px) {
     :global(.nav-trigger) {
@@ -100,10 +144,13 @@
 
     /* On this page (TOC) の幅調整 */
     :global(.toc) {
-      width: 280px !important;
+      width: 240px !important;
       max-width: 85vw !important;
       box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15) !important;
       background: linear-gradient(to bottom, #f8f9fa, #ffffff) !important;
+      z-index: 1000 !important; /* ヘッダーより上に表示 */
+      position: fixed !important;
+      top: 48px !important; /* ヘッダーの高さ分下げる */
     }
 
     :global(.dark .toc) {
@@ -233,6 +280,46 @@
     :global(.svp-live-code--container) {
       margin-left: 0 !important;
       margin-right: 0 !important;
+    }
+  }
+  
+  /* コンテンツエリアの幅を調整 - サイドバーとTOCの間を最大限活用 */
+  @media (min-width: 950px) and (max-width: 1239px) {
+    /* サイドバーのみ表示、TOCなし */
+    :global(.theme-default--page-layout .content) {
+      /* max-width: none !important; */
+      width: calc(100vw - 240px - 240px - 4rem) !important; /* viewport - sidebar(240px) - margins */
+      margin-left: calc(240px + 1rem) !important;
+      margin-right: 2rem !important;
+    }
+  }
+  
+  @media (min-width: 1240px) and (max-width: 1439px) {
+    /* サイドバー拡大、TOCなし */
+    :global(.theme-default--page-layout .content) {
+      /* max-width: none !important; */
+      width: calc(100vw - 280px - 240px - 4rem) !important; /* viewport - sidebar(280px) - margins */
+      margin-left: calc(240px + 3rem) !important;
+      margin-right: 3rem !important;
+    }
+  }
+  
+  @media (min-width: 1440px) {
+    /* サイドバーとTOC両方表示 */
+    :global(.theme-default--page-layout .content) {
+      /* max-width: none !important; */
+      width: calc(100vw - 280px - 240px - 5rem) !important; /* viewport - sidebar - toc - margins */
+      margin-left: calc(240px + 4rem) !important;
+      margin-right: 4rem !important;
+    }
+  }
+  
+  /* 超ワイドスクリーン対応 - 読みやすさのため最大幅を設定 */
+  @media (min-width: 1920px) {
+    :global(.theme-default--page-layout .content) {
+      max-width: 1000px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
     }
   }
 </style>

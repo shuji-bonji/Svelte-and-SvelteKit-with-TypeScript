@@ -5,7 +5,7 @@ description: Svelte 5とSvelteKitでTypeScriptを最大限活用する設定
 
 ## TypeScriptの重要性
 
-Svelte 5でTypeScriptを使用することで、以下のメリットが得られます：
+Svelte 5でTypeScriptを使用することで、以下のメリットが得られます。
 
 - **型安全性** - コンパイル時にエラーを検出
 - **IDE支援** - 自動補完とリファクタリング
@@ -16,7 +16,7 @@ Svelte 5でTypeScriptを使用することで、以下のメリットが得ら�
 
 ### 推奨設定
 
-`tsconfig.json` ファイルの推奨設定：
+`tsconfig.json` ファイルの推奨設定
 
 #### 基本設定
 - **extends**: "./.svelte-kit/tsconfig.json"
@@ -283,7 +283,7 @@ export type DeepPartial<T> = {
 
 ### .vscode/settings.json
 
-VS Codeの推奨設定：
+#### VS Codeの推奨設定
 
 - **typescript.tsdk**: "node_modules/typescript/lib"
 - **typescript.enablePromptUseWorkspaceTsdk**: true

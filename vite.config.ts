@@ -110,7 +110,7 @@ const config = defineConfig({
 			}),
 			siteConfig: {
 				title: 'TypeScriptで学ぶ Svelte 5/SvelteKit',
-				description: '日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド'
+				description: 'TypeScript による Svelte 5/SvelteKit 完全マスター学習ガイド'
 			},
 		}),
 	],

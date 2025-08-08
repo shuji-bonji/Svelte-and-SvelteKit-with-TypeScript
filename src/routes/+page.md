@@ -1,7 +1,7 @@
 ---
 title: TypeScriptで学ぶ Svelte 5/SvelteKit
 heroImage: /sveltepress@3x.png
-tagline: 日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド
+# tagline: 日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド
 actions:
   - label: 学習を始める
     type: primary

@@ -14,13 +14,18 @@ Svelteは実行時のフレームワークコードを持たず、ビルド時�
 let count = $state(0);
 
 // コンパイル後は最適化されたJSに
+let count = 0;
+function updateCount(value) {
+  count = value;
+  element.textContent = count; // 直接DOM更新
+}
 ```
 
 ### 2. 仮想DOMなし
 
 ReactやVueとは異なり、Svelteは仮想DOMを使用せず、DOM操作を直接行います。
 
-**メリット：**
+#### メリット
 - メモリ使用量の削減
 - 差分計算のオーバーヘッドなし
 - より高速な更新
@@ -47,29 +52,69 @@ ReactやVueとは異なり、Svelteは仮想DOMを使用せず、DOM操作を直
 
 ## 他フレームワークとの比較
 
-### React との比較
+<Tabs activeName="React との比較">
+  <TabPanel name="React との比較">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 my-8">
+      <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <h3 class="font-bold text-lg mb-2">Svelteの利点</h3>
+        <ul>
+          <li>ボイラープレートコードが少ない</li>
+          <li>組み込みの状態管理</li>
+          <li>より小さなバンドルサイズ</li>
+        </ul>
+      </div>
+      <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <h3 class="font-bold text-lg mb-2">Reactの利点 </h3>
+        <ul>
+          <li>より大きなエコシステム</li>
+          <li>より多くのサードパーティライブラリ</li>
+          <li>より大きなコミュニティ</li>
+        </ul>
+      </div>
+    </div>
+  </TabPanel>
 
-**Svelteの利点：**
-- ボイラープレートコードが少ない
-- 組み込みの状態管理
-- より小さなバンドルサイズ
+  <TabPanel name="Vue との比較">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 my-8">
+      <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <h3 class="font-bold text-lg mb-2">Svelteの利点</h3>
+        <ul>
+          <li>コンパイル時の最適化</li>
+          <li>より高速な実行</li>
+          <li>TypeScriptとの統合がよりシンプル</li>
+        </ul>
+      </div>
+      <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <h3 class="font-bold text-lg mb-2">Vueの利点 </h3>
+        <ul>
+          <li>より成熟したエコシステム</li>
+          <li>より豊富なドキュメント</li>
+          <li>より大きな採用実績</li>
+        </ul>
+      </div>
+    </div>
+  </TabPanel>
+</Tabs>
 
-**Reactの利点：**
-- より大きなエコシステム
-- より多くのサードパーティライブラリ
-- より大きなコミュニティ
+## 実際に動かしてみよう
 
-### Vue との比較
-
-**Svelteの利点：**
-- コンパイル時の最適化
-- より高速な実行
-- TypeScriptとの統合がよりシンプル
-
-**Vueの利点：**
-- より成熟したエコシステム
-- より豊富なドキュメント
-- より大きな採用実績
+```svelte live ln title=Counter.svelte
+<script>
+let count = $state(0);
+</script>
+<div style="text-align: center; padding: 2rem;">
+  <h2>Count: {count}</h2>
+  <button onclick={() => count++}>
+    Increment
+  </button>
+  <button onclick={() => count--}>
+    Decrement
+  </button>
+  <button onclick={() => count = 0}>
+    Reset
+  </button>
+</div>
+```
 
 ## Svelte 5 の新機能
 
@@ -98,14 +143,66 @@ type Props = {
 let { name, age = 0 }: Props = $props();
 ```
 
+## 実際のユースケース
+
+### Svelteが適している場面
+
+1. **パフォーマンスクリティカルなアプリケーション**
+   - ゲーム、リアルタイムダッシュボード
+   - モバイルWebアプリケーション
+   - 低スペックデバイス向けアプリ
+
+2. **インタラクティブなコンテンツ**
+   - データビジュアライゼーション
+   - アニメーション豊富なUI
+   - フォーム処理が多いアプリ
+
+3. **プログレッシブWebアプリ（PWA）**
+   - オフライン対応
+   - 高速な初期ロード
+   - ネイティブアプリのような体験
+
+### 採用事例
+
+- **The New York Times** - インタラクティブな記事
+- **Apple** - 一部のWebコンテンツ
+- **Spotify** - Web Player の一部機能
+- **1Password** - ブラウザ拡張機能
+
+## パフォーマンス比較
+
+### 初期ロード時間
+```
+Svelte:  ~300ms
+React:   ~600ms
+Vue:     ~500ms
+Angular: ~800ms
+```
+※ 同じ機能を実装した場合の目安
+
+### メモリ使用量
+```
+Svelte:  ~15MB
+React:   ~30MB
+Vue:     ~25MB
+Angular: ~40MB
+```
+※ 中規模アプリケーションでの比較
+
 ## まとめ
 
-Svelteは以下のような場合に最適です：
+Svelteは以下のような場合に最適です。
 
 - **パフォーマンス重視** のアプリケーション
 - **小さなバンドルサイズ** が必要な場合
 - **シンプルな構文** を好む開発者
 - **TypeScript** を活用したい場合
 - **最新の技術** を試したい場合
+
+### Svelteを選ぶべきでない場合
+
+- 大規模なエコシステムが必要な場合 → React
+- 企業での実績を重視する場合 → Vue/Angular
+- 既存のチームスキルを活かしたい場合 → 現在使用中のフレームワーク
 
 次は[環境構築](/introduction/setup/)に進みましょう。

@@ -27,9 +27,19 @@
 - **SveltePress** (サイトビルドツール)
 
 ### 重要：バージョン要件
+- **Svelte 5最新版** (2024年10月リリース版以降)を使用
 - Svelte 5のRunes（$state, $derived, $effect, $props等）を使用
 - Svelte 4以前の文法（let宣言によるリアクティビティ、$:文法）は使用しない
 - TypeScriptの型定義を厳密に行う
+- **常に最新バージョンを前提とした記述を心がける**
+
+### バージョン情報（2024年12月時点）
+- Svelte: 5.x以上
+- SvelteKit: 2.x以上
+- TypeScript: 5.x以上
+- Vite: 5.x以上
+- Node.js: 18.19以上（推奨: 20.x LTS または 22.x LTS）
+- pnpm: 8.x以上（推奨パッケージマネージャ）
 
 ## 📚 カリキュラム構成
 

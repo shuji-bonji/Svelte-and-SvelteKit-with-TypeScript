@@ -3,8 +3,6 @@ title: SvelteKit概要
 description: フルスタックフレームワークSvelteKitの紹介
 ---
 
-# SvelteKit概要
-
 ## SvelteKitとは
 
 SvelteKitは、Svelteをベースにしたフルスタックアプリケーションフレームワークです。

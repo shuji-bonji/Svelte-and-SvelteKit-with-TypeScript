@@ -41,7 +41,8 @@ const config = defineConfig({
 								{ title: 'Svelte 5の概要', to: '/introduction/' },
 								{ title: 'なぜSvelteか', to: '/introduction/why-svelte/' },
 								{ title: '環境構築', to: '/introduction/setup/' },
-								{ title: 'TypeScript設定', to: '/introduction/typescript-setup/' }
+								{ title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
+								{ title: '機能デモ', to: '/introduction/features-demo/' }
 							]
 						}
 					],

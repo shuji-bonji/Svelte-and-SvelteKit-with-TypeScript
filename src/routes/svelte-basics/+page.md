@@ -3,6 +3,11 @@ title: Svelteの基本
 description: Svelteフレームワークの基礎概念とコンポーネント構造
 ---
 
+<script>
+  import { base } from '$app/paths';
+</script>
+
+
 まず、Svelteの基本的な概念とコンポーネントの仕組みを理解することが重要です。このセクションでは、Svelteの核となる機能と、コンポーネントベースの開発アプローチについて学びます。
 
 ## Svelteとは何か
@@ -19,23 +24,74 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
 
 ## このセクションで学ぶこと
 
-### 1. Hello World
-最初のSvelteコンポーネントを作成し、基本的な構造を理解します。
-
-### 2. コンポーネントの基本
-Svelteコンポーネントの3つの主要部分（script、markup、style）について学びます。
-
-### 3. TypeScript統合
-SvelteでTypeScriptを使用する方法と、型安全なコンポーネント開発について学びます。
-
-### 4. スクリプトコンテキスト
-`<script>`タグと`<script context="module">`の違いと使い分けを理解します。
-
-### 5. プロパティとイベント
-親子コンポーネント間のデータの受け渡しとイベント処理について学びます。
-
-### 6. テンプレート構文
-条件分岐、ループ、スロットなどのテンプレート機能を習得します。
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">👋</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/svelte-basics/hello-world/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        Hello World
+      </a>
+    </h3>
+    <p class="text-sm mb-3">最初のSvelteコンポーネントを作成し、基本的な構造を理解します。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>動的な値の表示</li>
+      <li>JavaScript式の埋め込み</li>
+      <li>HTMLの直接出力（`@html`）</li>
+      <li>デバッグ機能（`@debug`）</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">🧩</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/svelte-basics/component-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        コンポーネントの基本
+      </a>
+    </h3>
+    <p class="text-sm mb-3">Svelteコンポーネントの核となる機能をすべて学びます。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li><strong>3つの主要部分</strong>: script、markup、style</li>
+      <li><strong>テンプレート構文</strong>: 条件分岐、ループ、非同期処理</li>
+      <li><strong>イベント処理</strong>: DOMイベント、修飾子</li>
+      <li><strong>プロパティ</strong>: 親子間のデータ受け渡し</li>
+      <li><strong>双方向バインディング</strong>: フォーム連携</li>
+      <li><strong>スタイリング</strong>: スコープ付きCSS</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📘</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/svelte-basics/typescript-integration/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        TypeScript統合
+      </a>
+    </h3>
+    <p class="text-sm mb-3">SvelteでTypeScriptを効果的に使用する方法を学びます。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>Propsの型定義</li>
+      <li>イベントの型定義</li>
+      <li>ジェネリック型の使用</li>
+      <li>型ガードと型の絞り込み</li>
+      <li>ストアとコンテキストAPIの型定義</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📦</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/svelte-basics/script-context/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        スクリプトコンテキスト
+      </a>
+    </h3>
+    <p class="text-sm mb-3">`&lt;script&gt;`と`&lt;script context="module"&gt;`の違いと使い分けを理解します。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>モジュールレベルのコード実行</li>
+      <li>静的な値の共有</li>
+      <li>シングルトンパターンの実装</li>
+      <li>エクスポート可能な関数と値</li>
+    </ul>
+  </div>
+</div>
 
 ## 学習の進め方
 

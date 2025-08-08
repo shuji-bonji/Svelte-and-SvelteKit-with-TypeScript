@@ -149,43 +149,43 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🎯 入門編</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/introduction/">Svelte 5の概要</a></li>
-      <li><a href="{base}/introduction/why-svelte/">なぜSvelteか</a></li>
-      <li><a href="{base}/introduction/setup/">環境構築</a></li>
-      <li><a href="{base}/introduction/typescript-setup/">TypeScript設定</a></li>
+      <li><a href="{base}/introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelte 5の概要</a></li>
+      <li><a href="{base}/introduction/why-svelte/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">なぜSvelteか</a></li>
+      <li><a href="{base}/introduction/setup/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">環境構築</a></li>
+      <li><a href="{base}/introduction/typescript-setup/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TypeScript設定</a></li>
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🔧 Svelteの基本</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/svelte-basics/">Svelteの基本概要</a></li>
-      <li><a href="{base}/svelte-basics/hello-world/">Hello World</a></li>
-      <li><a href="{base}/svelte-basics/component-basics/">コンポーネントの基本</a></li>
-      <li><a href="{base}/svelte-basics/typescript-integration/">TypeScript統合</a></li>
-      <li><a href="{base}/svelte-basics/script-context/">スクリプトコンテキスト</a></li>
+      <li><a href="{base}/svelte-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelteの基本概要</a></li>
+      <li><a href="{base}/svelte-basics/hello-world/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Hello World</a></li>
+      <li><a href="{base}/svelte-basics/component-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">コンポーネントの基本</a></li>
+      <li><a href="{base}/svelte-basics/typescript-integration/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TypeScript統合</a></li>
+      <li><a href="{base}/svelte-basics/script-context/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">スクリプトコンテキスト</a></li>
     </ol>
   </div>
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">📚 Runesシステム</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/runes/">Runesシステム概要</a></li>
-      <li><a href="{base}/runes/runes-introduction/">Runesシステム入門</a></li>
-      <li><a href="{base}/runes/state/">$stateルーン</a></li>
-      <li><a href="{base}/runes/derived/">$derivedルーン</a></li>
-      <li><a href="{base}/runes/effect/">$effectルーン</a></li>
-      <li><a href="{base}/runes/props/">$propsルーン</a></li>
-      <li><a href="{base}/runes/bindable/">$bindableルーン</a></li>
+      <li><a href="{base}/runes/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム概要</a></li>
+      <li><a href="{base}/runes/runes-introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム入門</a></li>
+      <li><a href="{base}/runes/state/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$stateルーン</a></li>
+      <li><a href="{base}/runes/derived/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$derivedルーン</a></li>
+      <li><a href="{base}/runes/effect/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$effectルーン</a></li>
+      <li><a href="{base}/runes/props/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$propsルーン</a></li>
+      <li><a href="{base}/runes/bindable/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$bindableルーン</a></li>
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🚀 実践編</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/advanced/">実践概要</a></li>
-      <li><a href="{base}/advanced/reactive-stores/">リアクティブストア</a></li>
-      <li><a href="{base}/advanced/class-reactivity/">クラスとリアクティビティ</a></li>
-      <li><a href="{base}/advanced/snippets/">Snippets機能</a></li>
-      <li><a href="{base}/advanced/component-patterns/">コンポーネントパターン</a></li>
-      <li><a href="{base}/advanced/typescript-patterns/">TypeScriptパターン</a></li>
+      <li><a href="{base}/advanced/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実践概要</a></li>
+      <li><a href="{base}/advanced/reactive-stores/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">リアクティブストア</a></li>
+      <li><a href="{base}/advanced/class-reactivity/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">クラスとリアクティビティ</a></li>
+      <li><a href="{base}/advanced/snippets/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Snippets機能</a></li>
+      <li><a href="{base}/advanced/component-patterns/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">コンポーネントパターン</a></li>
+      <li><a href="{base}/advanced/typescript-patterns/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TypeScriptパターン</a></li>
     </ol>
   </div>
 </div>
@@ -196,23 +196,23 @@ let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動�
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/sveltekit/">SvelteKit概要</a></li>
-      <li><a href="{base}/sveltekit/routing/">ルーティング</a></li>
-      <li><a href="{base}/sveltekit/load-functions/">Load関数</a></li>
-      <li><a href="{base}/sveltekit/server-side/">サーバーサイド処理</a></li>
-      <li><a href="{base}/sveltekit/forms/">フォーム処理</a></li>
-      <li><a href="{base}/sveltekit/api-routes/">APIルート</a></li>
-      <li><a href="{base}/sveltekit/deployment/">デプロイメント</a></li>
+      <li><a href="{base}/sveltekit/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">SvelteKit概要</a></li>
+      <li><a href="{base}/sveltekit/routing/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">ルーティング</a></li>
+      <li><a href="{base}/sveltekit/load-functions/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Load関数</a></li>
+      <li><a href="{base}/sveltekit/server-side/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">サーバーサイド処理</a></li>
+      <li><a href="{base}/sveltekit/forms/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">フォーム処理</a></li>
+      <li><a href="{base}/sveltekit/api-routes/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">APIルート</a></li>
+      <li><a href="{base}/sveltekit/deployment/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">デプロイメント</a></li>
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">💡 実装例</h3>
     <ol class="space-y-2">
-      <li><a href="{base}/examples/">実装例一覧</a></li>
-      <li><a href="{base}/examples/todo-app/">TODOアプリ</a></li>
-      <li><a href="{base}/examples/auth-system/">認証システム</a></li>
-      <li><a href="{base}/examples/data-fetching/">データフェッチング</a></li>
-      <li><a href="{base}/examples/websocket/">WebSocket実装</a></li>
+      <li><a href="{base}/examples/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実装例一覧</a></li>
+      <li><a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TODOアプリ</a></li>
+      <li><a href="{base}/examples/auth-system/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">認証システム</a></li>
+      <li><a href="{base}/examples/data-fetching/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">データフェッチング</a></li>
+      <li><a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">WebSocket実装</a></li>
     </ol>
   </div>
 </div>

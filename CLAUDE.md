@@ -118,9 +118,10 @@ src/routes/
 - **理由**: Svelte 5のRunesシステムを学ぶ前に、Svelteの基本概念を理解する必要があるため
 - **追加内容**:
   - Hello World - 最初のSvelteコンポーネント
-  - コンポーネントの基本 - script、markup、styleの3要素
+  - コンポーネントの基本 - script、markup、styleの3要素、テンプレート構文、イベント、プロパティを包括的にカバー
   - TypeScript統合 - SvelteでのTypeScript活用
   - スクリプトコンテキスト - `<script>`と`<script context="module">`の違い
+- **設計方針**: 「コンポーネントの基本」ページに、テンプレート構文（条件分岐、ループ）、イベントハンドリング、プロパティ、双方向バインディングなどの基本機能を統合
 
 #### ✅ ナビゲーション構造の改善
 - ナビゲーションバー: 「基礎」を「Runes」に変更、「Svelteの基本」を追加

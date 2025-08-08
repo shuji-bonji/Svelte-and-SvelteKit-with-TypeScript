@@ -3,53 +3,82 @@ title: 実装例一覧
 description: 実践的なアプリケーション開発例
 ---
 
+<script>
+  import { base } from '$app/paths';
+</script>
+
 ## 実際のアプリケーション開発
 
 このセクションでは、実際のアプリケーション開発を通じて、Svelte 5とSvelteKitの実践的な使い方を学びます。
 
 ## プロジェクト一覧
 
-### 1. [TODOアプリ](/examples/todo-app/)
-
-基本的なCRUD操作とリアクティビティ
-
-- Runesを使った状態管理
-- ローカルストレージとの連携
-- TypeScriptでの型定義
-
-```typescript
-type Todo = {
-  id: string;
-  text: string;
-  done: boolean;
-};
-
-let todos = $state<Todo[]>([]);
-```
-
-### 2. [認証システム](/examples/auth-system/)
-
-セキュアな認証フローの実装
-
-- JWTトークンの管理
-- Protected Routes
-- セッション管理
-
-### 3. [データフェッチング](/examples/data-fetching/)
-
-効率的なデータ取得パターン
-
-- Load関数の活用
-- ストリーミングSSR
-- エラーハンドリング
-
-### 4. [WebSocket実装](/examples/websocket/)
-
-リアルタイム通信の実装
-
-- WebSocket接続管理
-- リアルタイムアップデート
-- 再接続ロジック
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📝</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        TODOアプリ
+      </a>
+    </h3>
+    <p class="text-sm mb-3">基本的なCRUD操作とリアクティビティ</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>Runesを使った状態管理</li>
+      <li>ローカルストレージとの連携</li>
+      <li>TypeScriptでの型定義</li>
+    </ul>
+    <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+      <code class="text-xs">
+        type Todo = {'{'} id: string; text: string; done: boolean; {'}'}
+      </code>
+    </div>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">🔐</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/examples/auth-system/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        認証システム
+      </a>
+    </h3>
+    <p class="text-sm mb-3">セキュアな認証フローの実装</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>JWTトークンの管理</li>
+      <li>Protected Routes</li>
+      <li>セッション管理</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📊</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/examples/data-fetching/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        データフェッチング
+      </a>
+    </h3>
+    <p class="text-sm mb-3">効率的なデータ取得パターン</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>Load関数の活用</li>
+      <li>ストリーミングSSR</li>
+      <li>エラーハンドリング</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">🔌</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        WebSocket実装
+      </a>
+    </h3>
+    <p class="text-sm mb-3">リアルタイム通信の実装</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>WebSocket接続管理</li>
+      <li>リアルタイムアップデート</li>
+      <li>再接続ロジック</li>
+    </ul>
+  </div>
+</div>
 
 ## 各実装例で学べること
 
@@ -77,10 +106,10 @@ src/
 
 実装例を最大限活用するために、以下の内容を理解しておくことをお勧めします。
 
-- [基礎編](/runes/) - Runesシステムの基本
-- [実践編](/advanced/) - 高度なパターン
-- [SvelteKit](/sveltekit/) - フレームワークの基本
+- <a href="{base}/runes/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム</a> - Runesシステムの基本
+- <a href="{base}/advanced/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実践編</a> - 高度なパターン
+- <a href="{base}/sveltekit/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">SvelteKit</a> - フレームワークの基本
 
 ## 次のステップ
 
-[TODOアプリ](/examples/todo-app/)から始めて、段階的に複雑なアプリケーションに挑戦しましょう。
+<a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TODOアプリ</a>から始めて、段階的に複雑なアプリケーションに挑戦しましょう。

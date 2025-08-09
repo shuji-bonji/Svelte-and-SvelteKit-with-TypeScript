@@ -78,6 +78,21 @@ description: 実践的なアプリケーション開発例
       <li>再接続ロジック</li>
     </ul>
   </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📈</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/examples/mermaid-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        Mermaidダイアグラム
+      </a>
+    </h3>
+    <p class="text-sm mb-3">ダイアグラムの統合方法</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>フローチャート・シーケンス図</li>
+      <li>クラス図・ガントチャート</li>
+      <li>クライアントサイドレンダリング</li>
+    </ul>
+  </div>
 </div>
 
 ## 各実装例で学べること

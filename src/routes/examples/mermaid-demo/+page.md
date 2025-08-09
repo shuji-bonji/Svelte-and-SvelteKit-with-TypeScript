@@ -1,0 +1,127 @@
+---
+title: Mermaidダイアグラムデモ
+description: SveltePressでMermaidダイアグラムを使用する例
+---
+
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const flowChartCode = `graph TD
+    A[Svelte Component] --> B{State変更}
+    B -->|$state| C[リアクティブ更新]
+    B -->|$derived| D[計算値更新]
+    C --> E[DOM更新]
+    D --> E`;
+    
+  const sequenceCode = `sequenceDiagram
+    participant U as ユーザー
+    participant C as Component
+    participant S as Store
+    participant API as APIサーバー
+    
+    U->>C: ボタンクリック
+    C->>S: 状態更新
+    S->>API: データ取得
+    API-->>S: レスポンス
+    S-->>C: 状態通知
+    C-->>U: UI更新`;
+    
+  const classDiagramCode = `classDiagram
+    class SvelteComponent {
+        +props: Props
+        +state: State
+        +derived: Computed
+        +mount()
+        +destroy()
+        +update()
+    }
+    
+    class Runes {
+        +$state()
+        +$derived()
+        +$effect()
+        +$props()
+    }
+    
+    SvelteComponent --> Runes: uses`;
+    
+  const ganttCode = `gantt
+    title Svelte 5 学習ロードマップ
+    dateFormat YYYY-MM-DD
+    section 基礎
+    環境構築           :done,    des1, 2024-01-01, 2d
+    TypeScript設定     :done,    des2, after des1, 3d
+    基本概念           :active,  des3, after des2, 5d
+    section Runes
+    $state            :         des4, after des3, 3d
+    $derived          :         des5, after des4, 2d
+    $effect           :         des6, after des5, 2d
+    section 実践
+    プロジェクト作成   :         des7, after des6, 7d`;
+    
+  const pieCode = `pie title Svelte 5の学習時間配分
+    "基本概念" : 20
+    "Runesシステム" : 30
+    "TypeScript統合" : 25
+    "実践プロジェクト" : 25`;
+</script>
+
+このページではSveltePressでMermaidダイアグラムを使用する方法を紹介します。
+
+## フローチャート
+
+Svelte 5のリアクティビティフローを表現：
+
+<Mermaid code={flowChartCode} />
+
+## シーケンス図
+
+ユーザーインタラクションの流れ：
+
+<Mermaid code={sequenceCode} />
+
+## クラス図
+
+Svelteコンポーネントの構造：
+
+<Mermaid code={classDiagramCode} />
+
+## ガントチャート
+
+学習ロードマップ：
+
+<Mermaid code={ganttCode} />
+
+## 円グラフ
+
+学習時間の配分：
+
+<Mermaid code={pieCode} />
+
+## 使用方法
+
+Mermaidダイアグラムを使用するには：
+
+1. Mermaidパッケージをインストール: `npm install mermaid`
+2. Mermaidコンポーネントを作成（`$lib/components/Mermaid.svelte`）
+3. Markdownファイルでコンポーネントをインポートして使用
+
+## コード例
+
+```svelte
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const diagramCode = \`graph TD
+    A[開始] --> B[処理]
+    B --> C[終了]\`;
+</script>
+
+<Mermaid code={diagramCode} />
+```
+
+## 注意事項
+
+- Mermaidはクライアントサイドでレンダリングされます
+- 初回レンダリング時に若干の遅延が発生する可能性があります
+- ダークモードにも対応しています

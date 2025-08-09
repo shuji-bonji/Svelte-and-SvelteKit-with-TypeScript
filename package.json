@@ -20,5 +20,8 @@
     "svelte": "^5.0.0",
     "typescript": "^5.3.3",
     "vite": "^5.1.4"
+  },
+  "dependencies": {
+    "mermaid": "^11.9.0"
   }
 }

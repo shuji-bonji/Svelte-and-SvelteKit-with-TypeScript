@@ -13,11 +13,11 @@ const config = defineConfig({
             to: '/',
           },
           {
-            title: '入門',
+            title: 'はじめに',
             to: '/introduction/',
           },
           {
-            title: 'Svelteの基本',
+            title: '基本',
             to: '/svelte-basics/',
           },
           {

@@ -15,7 +15,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <h3 class="font-bold text-lg mb-2">🎯 入門編</h3>
+    <h3 class="font-bold text-lg mb-2">🎯 はじめに</h3>
     <ol class="space-y-2">
       <li><a href="{base}/introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelte 5の概要</a></li>
       <li><a href="{base}/introduction/why-svelte/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">なぜSvelteか</a></li>

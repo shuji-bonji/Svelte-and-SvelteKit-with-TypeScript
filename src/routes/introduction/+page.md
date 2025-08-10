@@ -61,11 +61,14 @@ React、Vue、AngularなどはVirtual DOMを使用して効率的なDOM更新を
 
 Svelteの最大の特徴は、**フレームワークというよりコンパイラ**として機能することです。
 
+#### コーディング時
 ```javascript
 // 開発時のSvelteコード
 let count = $state(0);
 let doubled = $derived(count * 2);
-
+```
+#### ⬇️コンパイル後
+```javascript
 // コンパイル後（簡略化）
 let count = 0;
 let doubled = 0;

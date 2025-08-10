@@ -1,14 +1,11 @@
-# Svelte はコンパイル時に何をやっているのか？
+---
+title: Svelte はコンパイル時に何をやっているのか？
+description: Svelteが行う、コンパイル時最適化 について詳しく解説を行います
+---
 
-以下、Svelteの「コンパイル時最適化」について詳しく解説を行います。
-
-
-## 📊 コンパイル時最適化の全体像
-
-Svelteは**ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換**します。これは、ReactやVueのようにランタイムでフレームワークのコードを実行するのとは根本的に異なります。
-
-```mermaid
-graph LR
+<script lang="ts">
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  const svelteCompiler = `graph LR
     A["Svelteコンポーネント .svelte"] --> B["コンパイラ svelte/compiler"]
     B --> C["最適化されたJS バニラJavaScript"]
     C --> D["ブラウザ実行 フレームワークなし"]
@@ -16,8 +13,17 @@ graph LR
     style A fill:#ff6b6b
     style B fill:#4ecdc4
     style C fill:#45b7d1
-    style D fill:#96ceb4
-```
+    style D fill:#96ceb4`;
+</script>
+
+以下、Svelteの「コンパイル時最適化」について詳しく解説を行います。
+
+## 📊 コンパイル時最適化の全体像
+
+Svelteは**ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換**します。これは、ReactやVueのようにランタイムでフレームワークのコードを実行するのとは根本的に異なります。
+
+<Mermaid code={svelteCompiler} />
+
 
 ## 🔍 具体的に何をどう最適化するのか
 

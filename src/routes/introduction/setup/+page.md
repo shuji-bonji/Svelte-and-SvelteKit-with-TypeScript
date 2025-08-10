@@ -13,27 +13,38 @@ description: Svelte 5とSvelteKitの開発環境セットアップ
 
 ### Node.jsのインストール
 
-#### Windows
-[Node.js公式サイト](https://nodejs.org/)からLTS版をダウンロードしてインストール
+<Tabs activeName="Windows">
+  <TabPanel name="Windows">
 
-#### macOS
-```bash
-# Homebrewを使用
-brew install node
+  [Node.js公式サイト](https://nodejs.org/)からLTS版をダウンロードしてインストール
 
-# またはnvmを使用
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-nvm install --lts
-nvm use --lts
-```
+  </TabPanel>
 
-#### Linux
-```bash
-# nvmを使用（推奨）
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-nvm install --lts
-nvm use --lts
-```
+  <TabPanel name="macOS">
+  
+  ```bash
+  # Homebrewを使用
+  brew install node
+
+  # またはnvmを使用
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  nvm install --lts
+  nvm use --lts
+  ```
+
+  </TabPanel>
+  <TabPanel name="Linux">
+  
+  ```bash
+  # nvmを使用（推奨）
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  nvm install --lts
+  nvm use --lts
+  ```
+  
+  </TabPanel>
+</Tabs>
+
 
 ## プロジェクトの作成
 

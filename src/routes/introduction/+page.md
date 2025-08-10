@@ -1,153 +1,97 @@
 ---
-title: Svelte 5の概要
-description: Svelte 5とRunesシステムの紹介
+title: はじめに
+description: Svelte 5とSvelteKitによる最新のWeb開発
 ---
 
 <script>
   import { base } from '$app/paths';
 </script>
 
+Svelte 5とSvelteKitの世界へようこそ！このセクションでは、最新のWeb開発フレームワークであるSvelteの概要と、なぜ多くの開発者がSvelteを選ぶのかを理解します。
+
 ## Svelte 5とは
-Svelteは、**コンパイル時に最適化を行う**という革新的なアプローチを採用したフロントエンドフレームワークです。
-他のフレームワークとは異なり、**Virtual DOMを使用しません**。代わりに、ビルド時にコンポーネントを高効率なVanilla JavaScriptに変換します。
 
-:::note[Svelteのコンパイル]
-ここで定義されている`Svelteのコンパイル`とは、ブラウザやNode.jsで実行するために、ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換JavaScriptに変換（コンパイル）することです。
-詳しくは、技術詳細の[Svelte はコンパイル時に何をやっているのか？]({base}/deep-dive/compile-time-optimization/)を参照してください。
-:::
+Svelteは「コンパイラ」として動作する革新的なフロントエンドフレームワークです。React やVueのような従来のフレームワークとは異なり、ランタイムライブラリを必要とせず、ビルド時にコンポーネントを効率的なVanilla JavaScriptに変換します。
 
-## 主な特徴
+### 革新的な特徴
 
-| 項番 | 特徴 | 説明 |
-| --- | --- |--- |
-| 1 | **コンパイラベース**  | ビルド時に最適化されたコードを生成 |
-| 2  | **Virtual DOM不使用** | 直接DOMを操作する効率的なコード |
-| 3  | **軽量** | 小さなバンドルサイズ |
-| 4  | **高速** | ランタイムオーバーヘッドが最小限  |
-| 5  | **シンプル** | 学習曲線が緩やか |
+1. **コンパイラベース** - ビルド時に最適化されたコードを生成
+2. **Virtual DOM不使用** - 直接DOMを操作する効率的なコード
+3. **Runesシステム** - 明示的で予測可能なリアクティビティ
+4. **TypeScript完全対応** - 型安全な開発が標準
+5. **軽量・高速** - 最小限のバンドルサイズで最高のパフォーマンス
 
+## このセクションで学ぶこと
 
-## 他のフレームワークとの違い
-
-### Virtual DOMを使わない理由
-
-React、Vue、AngularなどはVirtual DOMを使用して効率的なDOM更新を実現しています。  
-しかし、Svelteは異なるアプローチを取ります。
-
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <div class="text-3xl mb-2">🔄</div>
-    <h3 class="font-bold text-lg mb-2">従来のフレームワーク</h3>
-    <ol>
-      <li>Virtual DOMで変更を検出</li>
-      <li>差分を計算（Diffing）</li>
-      <li>必要な部分のみDOM更新</li>
-    </ol>
-    <p class="text-sm text-gray-5 dark:text-gray-4">実行時にこの処理が行われる</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">🚀</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/introduction/why-svelte/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        なぜSvelteか
+      </a>
+    </h3>
+    <p class="text-sm mb-3">Svelteが他のフレームワークと比較してどのような利点があるかを詳しく解説します。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>コンパイル時最適化の仕組み</li>
+      <li>Virtual DOMを使わない理由</li>
+      <li>パフォーマンスの実測値比較</li>
+      <li>実世界での成功事例</li>
+    </ul>
   </div>
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <div class="text-3xl mb-2">⚡</div>
-    <h3 class="font-bold text-lg mb-2">Svelte</h3>
-    <ol>
-      <li>コンパイル時に変更を特定</li>
-      <li>効率的な更新コードを生成</li>
-      <li>直接DOMを更新</li>
-    </ol>
-    <p class="text-sm text-gray-5 dark:text-gray-4">ビルド時に最適化される</p>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">🛠️</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/introduction/setup/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        環境構築
+      </a>
+    </h3>
+    <p class="text-sm mb-3">Svelte開発環境を最速でセットアップする方法を説明します。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>Node.jsとパッケージマネージャー</li>
+      <li>SvelteKitプロジェクトの作成</li>
+      <li>開発ツールの設定</li>
+      <li>VS Code拡張機能</li>
+    </ul>
+  </div>
+  
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
+    <div class="text-3xl mb-2">📘</div>
+    <h3 class="font-bold text-lg mb-2">
+      <a href="{base}/introduction/typescript-setup/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+        TypeScript設定
+      </a>
+    </h3>
+    <p class="text-sm mb-3">SvelteプロジェクトでTypeScriptを最大限活用するための設定を解説します。</p>
+    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <li>tsconfig.jsonの詳細設定</li>
+      <li>型定義ファイルの構成</li>
+      <li>厳密な型チェック設定</li>
+      <li>エディタ統合の最適化</li>
+    </ul>
   </div>
 </div>
 
-### コンパイラベースのアプローチ
+## 学習の進め方
 
-Svelteの最大の特徴は、**フレームワークというよりコンパイラ**として機能することです。
+このセクションは、Svelteを初めて学ぶ方向けの導入部分です。以下の順序で学習を進めることをお勧めします：
 
-#### コーディング時
-```javascript
-// 開発時のSvelteコード
-let count = $state(0);
-let doubled = $derived(count * 2);
-```
-#### ⬇️コンパイル後
-```javascript
-// コンパイル後（簡略化）
-let count = 0;
-let doubled = 0;
-function updateCount(value) {
-  count = value;
-  doubled = count * 2;
-  element.textContent = count; // 直接DOM更新
-  doubledElement.textContent = doubled; // 関連する要素も更新
-}
-```
+1. **なぜSvelteか** - Svelteの利点と他フレームワークとの違いを理解
+2. **環境構築** - 開発環境を整えて実際に手を動かす準備
+3. **TypeScript設定** - 型安全な開発のための環境を構築
 
+## 前提知識
 
-## Svelte 5の革新
+このガイドを始める前に、以下の知識があることを前提としています：
 
-Svelte 5は、2024年にリリースされた最新バージョンで、開発体験とパフォーマンスを大幅に改善しました。
+- HTML/CSS の基本的な知識
+- JavaScript（ES6+）の基本的な構文
+- コマンドラインの基本的な操作
+- npm/pnpmなどのパッケージマネージャーの基本的な使い方
 
-### バージョン間の進化
-
-| バージョン | リリース | 主な特徴 |
-|-----------|---------|---------|
-| Svelte 3 | 2019年 | リアクティビティの導入 |
-| Svelte 4 | 2023年 | パフォーマンス改善、移行準備 |
-| **Svelte 5** | 2024年 | Runesシステム、完全な型安全性 |
-
-## Svelte 5の新機能
-
-### 1. Runesシステム
-
-Svelte 5の最大の変更点は、新しい**Runesシステム**の導入です。
-
-```typescript
-// 従来のSvelte 4
-let count = 0;
-$: doubled = count * 2;
-
-// Svelte 5 Runes
-let count = $state(0);
-let doubled = $derived(count * 2);
-```
-
-### 2. より明示的なリアクティビティ
-
-Runesにより、リアクティビティがより明示的で予測可能になりました。
-
-- `$state` - リアクティブな状態を定義
-- `$derived` - 計算値を定義
-- `$effect` - 副作用を実行
-- `$props` - コンポーネントのプロパティを定義
-- `$bindable` - 双方向バインディング可能なプロパティ
-
-### 3. TypeScriptとの完全な統合
-
-```typescript
-type Props = {
-  count: number;
-  message?: string;
-  onChange?: (value: number) => void;
-};
-
-let { count, message = 'デフォルト', onChange }: Props = $props();
-
-// 型推論も強化
-let items = $state<string[]>([]); // 明示的な型定義
-let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動推論される
-```
-
-### 4. パフォーマンスの向上
-
-- **20-30%高速化** - Svelte 4と比較
-- **メモリ使用量削減** - より効率的なリアクティビティ
-- **ビルド時間短縮** - 最適化されたコンパイラ
-
-## なぜSvelte 5を選ぶのか
-
-1. **パフォーマンス** - ランタイムなしの高速な実行
-2. **開発体験** - シンプルで直感的な構文
-3. **型安全性** - TypeScriptとの優れた統合
-4. **小さなバンドルサイズ** - 最適化されたコード生成
+TypeScriptの経験があれば理想的ですが、必須ではありません。このガイドを通じてTypeScriptも学べるように構成されています。
 
 ## 次のステップ
 
-[なぜSvelteか](/introduction/why-svelte/)で、Svelteが他のフレームワークと比較してどのような利点があるかを詳しく見ていきましょう。
+準備ができたら、[なぜSvelteか](/introduction/why-svelte/)から始めましょう。Svelteがなぜ注目されているのか、その理由を詳しく見ていきます。

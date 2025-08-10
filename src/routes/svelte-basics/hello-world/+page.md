@@ -18,7 +18,7 @@ Svelteコンポーネントは`.svelte`拡張子を持つファイルです。�
 
 ## 動的な値を表示する
 
-変数の値を表示するには、`{}`（中括弧）を使用します：
+変数の値を表示するには、`{}`（中括弧）を使用します。
 
 ```svelte
 <script>
@@ -32,7 +32,7 @@ Svelteコンポーネントは`.svelte`拡張子を持つファイルです。�
 
 ### TypeScriptバージョン
 
-TypeScriptを使用する場合は、`<script lang="ts">`を指定します：
+TypeScriptを使用する場合は、`<script lang="ts">`を指定します。
 
 ```svelte
 <script lang="ts">
@@ -47,7 +47,7 @@ TypeScriptを使用する場合は、`<script lang="ts">`を指定します：
 
 ## JavaScript式の埋め込み
 
-中括弧内では、任意のJavaScript式を使用できます：
+中括弧内では、任意のJavaScript式を使用できます。
 
 ```svelte
 <script lang="ts">
@@ -64,7 +64,7 @@ TypeScriptを使用する場合は、`<script lang="ts">`を指定します：
 
 ## 属性への値のバインド
 
-HTML属性にも動的な値を設定できます：
+HTML属性にも動的な値を設定できます。
 
 ```svelte
 <script lang="ts">
@@ -77,19 +77,19 @@ HTML属性にも動的な値を設定できます：
 <img {src} {alt} width={width} />
 <button disabled={isDisabled}>Click me</button>
 
-<!-- 省略記法：変数名と属性名が同じ場合 -->
+<!-- 省略記法。変数名と属性名が同じ場合 -->
 <img {src} {alt} />
 ```
 
 ## HTMLの直接出力
 
-通常、Svelteは文字列をエスケープしてXSS攻撃を防ぎます。信頼できるHTMLを直接出力する場合は`@html`を使用します：
+通常、Svelteは文字列をエスケープしてXSS攻撃を防ぎます。信頼できるHTMLを直接出力する場合は`@html`を使用します。
 
 ```svelte
 <script lang="ts">
   let htmlContent: string = '<strong>太字</strong>のテキスト';
   
-  // 危険：ユーザー入力を直接HTMLとして出力しない
+  // 危険。ユーザー入力を直接HTMLとして出力しない
   let userInput: string = ''; // ユーザーからの入力
 </script>
 
@@ -109,7 +109,7 @@ HTML属性にも動的な値を設定できます：
 
 ## コメント
 
-Svelteコンポーネント内では、HTMLコメントとJavaScriptコメントの両方が使用できます：
+Svelteコンポーネント内では、HTMLコメントとJavaScriptコメントの両方が使用できます。
 
 ```svelte
 <script lang="ts">
@@ -122,7 +122,7 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
   */
 </script>
 
-<!-- HTMLコメント：ブラウザのソースに表示される -->
+<!-- HTMLコメント。ブラウザのソースに表示される -->
 <h1>{message}</h1>
 
 {#if false}
@@ -133,7 +133,7 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 ## デバッグ出力
 
-開発中のデバッグには`{@debug}`を使用できます：
+開発中のデバッグには`{@debug}`を使用できます。
 
 ```svelte
 <script lang="ts">
@@ -144,7 +144,7 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
   };
 </script>
 
-<!-- 開発時のみ：変数の値をコンソールに出力 -->
+<!-- 開発時のみ。変数の値をコンソールに出力 -->
 {@debug user}
 
 <p>Name: {user.name}</p>
@@ -155,9 +155,14 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 ## 実践例：インタラクティブなHello World
 
-ボタンクリックで挨拶を変更する簡単な例：
+ボタンクリックで挨拶を変更する簡単な例
 
-```svelte
+:::tip[コード展開]
+`Click fold/expand code`をクリックするとコードが展開表示されます。
+:::
+
+```svelte live ln title=HelloWorld.svelte
+
 <script lang="ts">
   let greetings: string[] = [
     'Hello World!',
@@ -212,9 +217,10 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 </style>
 ```
 
+
 ## まとめ
 
-このページで学んだこと：
+このページで学んだこと
 
 - Svelteコンポーネントの基本構造
 - 変数の表示と式の埋め込み

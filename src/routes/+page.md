@@ -5,10 +5,10 @@ heroImage: /sveltepress@3x.png
 actions:
   - label: 学習を始める
     type: primary
-    to: ./introduction/
+    to: ./introduction
   - label: 学習ガイド
     type: secondary
-    to: ./guide/
+    to: ./guide
 features:
   - title: Svelte 5 Runes
     description: 最新のRunesシステム（$state, $derived, $effect）を完全解説

@@ -3,6 +3,54 @@ title: なぜSvelteか
 description: Svelteを選ぶ理由と他フレームワークとの比較
 ---
 
+<script>
+  import { base } from '$app/paths';
+</script>
+
+## Svelte 5の革新的アプローチ
+
+Svelteは、**コンパイル時に最適化を行う**という革新的なアプローチを採用したフロントエンドフレームワークです。他のフレームワークとは異なり、**Virtual DOMを使用しません**。代わりに、ビルド時にコンポーネントを高効率なVanilla JavaScriptに変換します。
+
+:::note[Svelteのコンパイル]
+ここで定義されている`Svelteのコンパイル`とは、ブラウザやNode.jsで実行するために、ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換することです。
+詳しくは、技術詳細の[Svelte はコンパイル時に何をやっているのか？]({base}/deep-dive/compile-time-optimization/)を参照してください。
+:::
+
+## 主な特徴
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">⚡</div>
+    <h3 class="font-bold text-lg mb-2">コンパイラベース</h3>
+    <p>ビルド時に最適化されたコードを生成し、ランタイムオーバーヘッドを最小限に</p>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">🎯</div>
+    <h3 class="font-bold text-lg mb-2">Virtual DOM不使用</h3>
+    <p>直接DOMを操作する効率的なコードで、差分計算のオーバーヘッドなし</p>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">📦</div>
+    <h3 class="font-bold text-lg mb-2">軽量</h3>
+    <p>小さなバンドルサイズで、ネットワーク転送量を大幅削減</p>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">🚀</div>
+    <h3 class="font-bold text-lg mb-2">高速</h3>
+    <p>ランタイムオーバーヘッドが最小限で、初期表示も操作も高速</p>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">✨</div>
+    <h3 class="font-bold text-lg mb-2">シンプル</h3>
+    <p>学習曲線が緩やかで、直感的なAPI設計</p>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-2">🔧</div>
+    <h3 class="font-bold text-lg mb-2">TypeScript統合</h3>
+    <p>Svelte 5で完全な型安全性を実現</p>
+  </div>
+</div>
+
 ## コンパイル時の最適化
 
 ### 従来のフレームワークの問題点
@@ -206,32 +254,64 @@ let count = $state(0);
 </div>
 ```
 
-## Svelte 5 の新機能
+## Svelte 5の新機能
 
 ### Runesシステム
 
-Svelte 5で導入されたRunesにより、リアクティビティがより明示的で予測可能になりました。
+Svelte 5の最大の変更点は、新しい**Runesシステム**の導入です。これにより、リアクティビティがより明示的で予測可能になりました。
 
 ```typescript
-// 明示的なリアクティビティ
+// 従来のSvelte 4
+let count = 0;
+$: doubled = count * 2;
+
+// Svelte 5 Runes
 let count = $state(0);
 let doubled = $derived(count * 2);
-
-$effect(() => {
-  console.log(`Count changed: ${count}`);
-});
 ```
 
-### より良いTypeScript統合
+### より明示的なリアクティビティ
+
+Runesにより、リアクティビティがより明示的で予測可能になりました。
+
+- `$state` - リアクティブな状態を定義
+- `$derived` - 計算値を定義
+- `$effect` - 副作用を実行
+- `$props` - コンポーネントのプロパティを定義
+- `$bindable` - 双方向バインディング可能なプロパティ
+
+### TypeScriptとの完全な統合
 
 ```typescript
 type Props = {
-  name: string;
-  age?: number;
+  count: number;
+  message?: string;
+  onChange?: (value: number) => void;
 };
 
-let { name, age = 0 }: Props = $props();
+let { 
+  count,
+  message = 'デフォルト',
+  onChange
+}: Props = $props();
+
+// 型推論も強化
+let items = $state<string[]>([]); // 明示的な型定義
+let filtered = $derived(items.filter(item => item.length > 3)); // 型が自動推論される
 ```
+
+### パフォーマンスの向上
+
+- **20-30%高速化** - Svelte 4と比較
+- **メモリ使用量削減** - より効率的なリアクティビティ
+- **ビルド時間短縮** - 最適化されたコンパイラ
+
+## なぜSvelte 5を選ぶのか
+
+1. **パフォーマンス** - ランタイムなしの高速な実行
+2. **開発体験** - シンプルで直感的な構文
+3. **型安全性** - TypeScriptとの優れた統合
+4. **小さなバンドルサイズ** - 最適化されたコード生成
 
 ## 実世界での成功事例
 

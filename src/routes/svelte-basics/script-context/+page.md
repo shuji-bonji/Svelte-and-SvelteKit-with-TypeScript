@@ -3,11 +3,14 @@ title: スクリプトコンテキスト
 description: script要素とscript context="module"の違いと使い分け
 ---
 
-Svelteコンポーネントには2種類のスクリプトブロックがあります：通常の`<script>`と`<script context="module">`です。これらの違いを理解することで、より効率的なコンポーネント設計が可能になります。
+Svelteコンポーネントには2種類のスクリプトブロックがあります。  
+通常の`<script>`と`<script context="module">`です。  
+これらの違いを理解することで、より効率的なコンポーネント設計が可能になります。
 
-## 2つのスクリプトブロックの違い
 
-### 通常のscriptブロック
+## 通常の `<script>`
+
+通常の`<script>`ブロックは、コンポーネントのインスタンスごとに実行されます。各コンポーネントが作成されるたびに、このブロック内のコードが実行され、独立した状態を持ちます。
 
 ```svelte
 <script lang="ts">
@@ -20,9 +23,23 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 </script>
 ```
 
-### script context="module"ブロック
+## `<script module>`
+
+モジュールレベルのスクリプトは、ファイルが最初にインポートされた時に一度だけ実行されます。すべてのコンポーネントインスタンスで共有される値や関数を定義するために使用します。
+
+:::tip[Svelte 5の短縮構文]
+Svelte 5では、`<script context="module">`を`<script module>`と短縮して書くことができます。両方の構文は同じ動作をします。
+:::
 
 ```svelte
+<!-- Svelte 5: 新しい短縮構文（推奨） -->
+<script module lang="ts">
+  // モジュールレベルで一度だけ実行される
+  let totalInstances = 0;
+  console.log('モジュールが読み込まれました');
+</script>
+
+<!-- 従来の構文（後方互換性のため動作する） -->
 <script context="module" lang="ts">
   // モジュールレベルで一度だけ実行される
   // すべてのインスタンスで共有される
@@ -33,70 +50,96 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 </script>
 ```
 
-## script context="module"の特徴
+## 基本比較表
 
-### 1. 静的な値の共有
+| 種類 | 記述方法 | 実行タイミング | スコープ | 主な用途 |
+|---|---|---|---|---|
+| インスタンススクリプト | `<script>` | クライアントで実行 | コンポーネントのインスタンスごと | リアクティブ変数、イベント、状態管理など |
+| モジュールスクリプト（module） | `<script module>` | ビルド時または SSR時 | モジュール単位（1度のみ） | `load()`、`prerender` などSvelteKit固有の設定やサーバー向け処理 |
 
-```svelte
-<!-- Counter.svelte -->
-<script context="module" lang="ts">
-  // すべてのCounterインスタンスで共有される
-  let totalCount = 0;
-  let instances: Set<Counter> = new Set();
-  
-  // 静的なメソッド
-  export function resetAll(): void {
-    totalCount = 0;
-    instances.forEach(instance => {
-      instance.reset();
-    });
-  }
-  
-  // 定数の定義
-  export const MAX_COUNT = 100;
-  export const MIN_COUNT = 0;
-</script>
 
-<script lang="ts">
-  // インスタンスごとの変数
-  let localCount = 0;
+## script module の特徴
+
+### 1. 静的な値の共有（Svelte 5推奨方法）
+
+:::warning[Svelte 5での推奨アプローチ]
+Svelte 5では、コンポーネント間での状態共有には`.svelte.js`/`.svelte.ts`ファイルとRunesを使用することが推奨されています。`script module`での変数共有は、リアクティビティが必要ない静的な値に限定すべきです。
+:::
+
+#### 推奨：.svelte.tsファイルでのRunes使用
+
+```typescript
+// counter.svelte.ts
+let totalCount = $state(0);
+const instances = new Set<any>();
+
+export function useCounter() {
+  let localCount = $state(0);
   
-  // コンポーネントのライフサイクル
-  import { onMount, onDestroy } from 'svelte';
-  
-  onMount(() => {
-    instances.add(this);
-  });
-  
-  onDestroy(() => {
-    instances.delete(this);
-  });
-  
-  function increment(): void {
-    if (localCount < MAX_COUNT) {
+  function increment() {
+    if (localCount < 100) {
       localCount++;
       totalCount++;
     }
   }
   
-  function reset(): void {
+  function reset() {
     localCount = 0;
   }
+  
+  return {
+    get localCount() { return localCount; },
+    get totalCount() { return totalCount; },
+    increment,
+    reset,
+    resetAll() {
+      totalCount = 0;
+      instances.forEach(instance => instance.reset());
+    }
+  };
+}
+```
+
+```svelte
+<!-- Counter.svelte -->
+<script lang="ts">
+  import { useCounter } from './counter.svelte';
+  
+  const counter = useCounter();
 </script>
 
 <div>
-  <p>ローカルカウント: {localCount}</p>
-  <p>総カウント: {totalCount}</p>
-  <button on:click={increment}>+1</button>
-  <button on:click={reset}>リセット</button>
+  <p>ローカルカウント: {counter.localCount}</p>
+  <p>総カウント: {counter.totalCount}</p>
+  <button onclick={counter.increment}>+1</button>
+  <button onclick={counter.reset}>リセット</button>
 </div>
+```
+
+#### script moduleでの静的値（定数のみ推奨）
+
+```svelte
+<!-- Constants.svelte -->
+<script module lang="ts">
+  // 定数の定義（リアクティビティ不要）
+  export const MAX_COUNT = 100;
+  export const MIN_COUNT = 0;
+  export const API_VERSION = 'v1';
+  
+  // 純粋関数（副作用なし）
+  export function formatCurrency(amount: number): string {
+    return `¥${amount.toLocaleString()}`;
+  }
+</script>
 ```
 
 ### 2. エクスポート可能な関数と値
 
+モジュールスクリプトから`export`された関数や値は、他のファイルからインポートして使用できます。これにより、コンポーネントファイルをユーティリティモジュールとしても活用できます。
+
 ```svelte
 <!-- utils.svelte -->
-<script context="module" lang="ts">
+<script module lang="ts">
   // 他のファイルからインポート可能
   export interface Config {
     apiUrl: string;
@@ -117,44 +160,51 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
     return response.json();
   }
   
-  // プリロード関数（SvelteKit）
-  export async function preload({ params }) {
-    // ページコンポーネントの場合、サーバーサイドで実行
-    const data = await fetchData(`/users/${params.id}`);
-    return { props: { user: data } };
+  // SvelteKitのload関数で使用される型
+  export interface User {
+    id: string;
+    name: string;
+    email: string;
   }
 </script>
 
 <script lang="ts">
-  // インスタンススコープ
-  export let user: any;
+  // Svelte 5: $props()を使用し、適切な型定義
+  interface Props {
+    user: User;
+  }
+  
+  let { user }: Props = $props();
 </script>
 ```
 
 ### 3. シングルトンパターンの実装
 
+モジュールスクリプトは一度だけ実行されるため、シングルトンパターンの実装に最適です。イベントバスやグローバルな状態管理などに活用できます。
+
 ```svelte
 <!-- EventBus.svelte -->
-<script context="module" lang="ts">
-  type EventHandler = (...args: any[]) => void;
+<script module lang="ts">
+  // ジェネリック型を使用して型安全性を向上
+  type EventHandler<T = unknown> = (data: T) => void;
   
   class EventBus {
-    private events: Map<string, Set<EventHandler>> = new Map();
+    private events: Map<string, Set<EventHandler<any>>> = new Map();
     
-    on(event: string, handler: EventHandler): void {
+    on<T = unknown>(event: string, handler: EventHandler<T>): void {
       if (!this.events.has(event)) {
         this.events.set(event, new Set());
       }
-      this.events.get(event)!.add(handler);
+      this.events.get(event)!.add(handler as EventHandler<any>);
     }
     
-    off(event: string, handler: EventHandler): void {
-      this.events.get(event)?.delete(handler);
+    off<T = unknown>(event: string, handler: EventHandler<T>): void {
+      this.events.get(event)?.delete(handler as EventHandler<any>);
     }
     
-    emit(event: string, ...args: any[]): void {
+    emit<T = unknown>(event: string, data: T): void {
       this.events.get(event)?.forEach(handler => {
-        handler(...args);
+        handler(data);
       });
     }
   }
@@ -189,9 +239,11 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ### 1. グローバル設定の管理
 
+アプリケーション全体で共有される設定（テーマ、言語設定など）をモジュールスクリプトで管理できます。
+
 ```svelte
 <!-- ThemeProvider.svelte -->
-<script context="module" lang="ts">
+<script module lang="ts">
   export type Theme = 'light' | 'dark' | 'auto';
   
   interface ThemeConfig {
@@ -259,13 +311,15 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ### 2. APIクライアントの共有
 
+APIクライアントのインスタンスを一度だけ作成し、アプリケーション全体で再利用することで、効率的なネットワーク通信を実現できます。
+
 ```svelte
 <!-- ApiClient.svelte -->
-<script context="module" lang="ts">
-  interface RequestConfig {
+<script module lang="ts">
+  interface RequestConfig<T = unknown> {
     method?: string;
     headers?: Record<string, string>;
-    body?: any;
+    body?: T;
   }
   
   class ApiClient {
@@ -283,7 +337,7 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
       this.defaultHeaders['Authorization'] = `Bearer ${token}`;
     }
     
-    async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
+    async request<T, B = unknown>(endpoint: string, config: RequestConfig<B> = {}): Promise<T> {
       const url = `${this.baseUrl}${endpoint}`;
       const response = await fetch(url, {
         method: config.method || 'GET',
@@ -305,15 +359,15 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
       return this.request<T>(endpoint);
     }
     
-    post<T>(endpoint: string, data: any): Promise<T> {
-      return this.request<T>(endpoint, {
+    post<T, B = unknown>(endpoint: string, data: B): Promise<T> {
+      return this.request<T, B>(endpoint, {
         method: 'POST',
         body: data
       });
     }
     
-    put<T>(endpoint: string, data: any): Promise<T> {
-      return this.request<T>(endpoint, {
+    put<T, B = unknown>(endpoint: string, data: B): Promise<T> {
+      return this.request<T, B>(endpoint, {
         method: 'PUT',
         body: data
       });
@@ -333,9 +387,11 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ### 3. キャッシュの実装
 
+データキャッシュをモジュールレベルで管理することで、コンポーネント間でキャッシュを共有し、不要なAPIコールを削減できます。
+
 ```svelte
 <!-- DataCache.svelte -->
-<script context="module" lang="ts">
+<script module lang="ts">
   interface CacheEntry<T> {
     data: T;
     timestamp: number;
@@ -434,8 +490,10 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ### 1. 使い分けの指針
 
+モジュールスクリプトと通常のスクリプトの使い分けは、データのスコープと共有の必要性によって決まります。
+
 ```svelte
-<script context="module" lang="ts">
+<script module lang="ts">
   // ✅ module contextに適している
   // - 定数の定義
   export const API_VERSION = 'v1';
@@ -479,8 +537,10 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ### 2. 注意点
 
+モジュールスクリプトを使用する際は、すべてのインスタンスで共有されることを常に意識する必要があります。
+
 ```svelte
-<script context="module" lang="ts">
+<script module lang="ts">
   // ❌ 避けるべきパターン
   // インスタンス固有のデータを module context に置かない
   let userInput = ''; // これは全インスタンスで共有される！
@@ -508,10 +568,10 @@ Svelteコンポーネントには2種類のスクリプトブロックがあり�
 
 ## まとめ
 
-このページで学んだこと：
+このページで学んだこと
 
-- `<script>`と`<script context="module">`の違い
-- module contextでの静的な値の共有
+- `<script>`と`<script module>`（`<script context="module">`）の違い
+- モジュールスクリプトでの静的な値の共有
 - エクスポート可能な関数と値の定義
 - シングルトンパターンの実装
 - グローバル設定とAPIクライアントの管理

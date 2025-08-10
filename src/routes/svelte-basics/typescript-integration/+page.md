@@ -20,7 +20,7 @@ SvelteはTypeScriptを第一級市民として扱い、優れた型安全性とI
 
 ### 2. プロジェクト全体の設定
 
-`svelte.config.js`でTypeScriptを有効化（通常は自動設定済み）：
+`svelte.config.js`でTypeScriptを有効化（通常は自動設定済み）
 
 ```javascript
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
@@ -159,7 +159,7 @@ export default {
 {/each}
 ```
 
-使用例：
+使用例として、ユーザーリストを表示するコンポーネントで型安全に利用
 
 ```svelte
 <script lang="ts">
@@ -233,19 +233,72 @@ export default {
 {/if}
 ```
 
-## スロットの型定義
+## Snippets（Svelte 5推奨）の型定義
+
+Svelte 5では、従来の`<slot>`の代わりにSnippetsを使用することが推奨されています。Snippetsはより型安全で柔軟性があります。
+
+### 基本的なSnippetの使用
 
 ```svelte
 <!-- Card.svelte -->
 <script lang="ts">
-  export let title: string;
+  import type { Snippet } from 'svelte';
   
-  // スロットプロパティの型
-  interface SlotProps {
-    header: { title: string };
-    default: Record<string, never>; // プロパティなし
-    footer: { timestamp: Date };
+  interface Props {
+    title: string;
+    header?: Snippet<[{ title: string }]>;
+    children: Snippet;  // デフォルトスロットの代わり
+    footer?: Snippet<[{ timestamp: Date }]>;
   }
+  
+  let { title, header, children, footer }: Props = $props();
+</script>
+
+<div class="card">
+  {#if header}
+    {@render header({ title })}
+  {/if}
+  
+  {@render children()}
+  
+  {#if footer}
+    {@render footer({ timestamp: new Date() })}
+  {/if}
+</div>
+```
+
+### Snippetを使用する親コンポーネント
+
+```svelte
+<!-- 親コンポーネント -->
+<script lang="ts">
+  import Card from './Card.svelte';
+</script>
+
+<Card title="サンプルカード">
+  {#snippet header({ title })}
+    <h2>{title}</h2>
+  {/snippet}
+  
+  <!-- childrenはデフォルトコンテンツ -->
+  <p>カードの本文内容</p>
+  
+  {#snippet footer({ timestamp })}
+    <small>更新日時: {timestamp.toLocaleString()}</small>
+  {/snippet}
+</Card>
+```
+
+### 従来のスロット（後方互換性）
+
+:::note[Svelte 5でのスロット]
+Svelte 5でも`<slot>`は引き続きサポートされていますが、新しいプロジェクトではSnippetsの使用が推奨されます。既存のコードベースとの互換性のために残されています。
+:::
+
+```svelte
+<!-- 従来のスロット方式（非推奨だが動作する） -->
+<script lang="ts">
+  export let title: string;
 </script>
 
 <div class="card">
@@ -284,6 +337,8 @@ export default {
   setContext(CONTEXT_KEY, context);
 </script>
 ```
+
+子コンポーネントでコンテキストを取得する場合
 
 ```svelte
 <!-- Child.svelte -->
@@ -495,7 +550,7 @@ export default {
 
 ## まとめ
 
-このページで学んだこと：
+このページで学んだこと
 
 - SvelteコンポーネントでのTypeScript有効化
 - Propsの型定義とインターフェース

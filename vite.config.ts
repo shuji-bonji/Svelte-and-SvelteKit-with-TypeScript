@@ -36,6 +36,10 @@ const config = defineConfig({
             title: '実装例',
             to: '/examples/',
           },
+          {
+            title: 'ガイド',
+            to: '/guide/',
+          },
         ],
         sidebar: {
           '/': [

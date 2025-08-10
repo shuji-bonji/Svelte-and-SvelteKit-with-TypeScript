@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 
 const config = defineConfig({
   plugins: [
+    // @ts-ignore - Viteバージョンの互換性問題を回避
     sveltepress({
       theme: defaultTheme({
         navbar: [

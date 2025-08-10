@@ -2,7 +2,7 @@
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
 
-日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。
+日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。
 
 🌐 **公開サイト**: [https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)
 
@@ -21,8 +21,10 @@
 
 - 🎯 **TypeScript中心** - すべてのコード例でTypeScriptを使用
 - 🚀 **Svelte 5対応** - 最新のRunesシステムを完全網羅
+- 📊 **Mermaidダイアグラム** - 視覚的な図解でわかりやすく解説
 - 📖 **日本語** - 日本語による詳細な解説
 - 💡 **実践的** - 実際のプロジェクトで使えるパターンを紹介
+- 🌙 **ダークモード対応** - テーマ切り替えに完全対応
 
 ## 🗂 コンテンツ構成
 
@@ -68,20 +70,64 @@
 - データフェッチング
 - WebSocket実装
 
+## 📊 Mermaidダイアグラム機能
+
+このドキュメントでは、複雑な概念を視覚的に理解できるよう、Mermaidダイアグラムを豊富に使用しています。
+
+### サポートしているダイアグラムタイプ
+
+- **フローチャート** - プロセスや処理フローの表現
+- **シーケンス図** - コンポーネント間の相互作用
+- **クラス図** - TypeScript型定義や構造の表現
+- **ガントチャート** - 学習ロードマップや進捗管理
+- **円グラフ** - データの割合や構成比
+
+### 特徴
+
+- 🌙 **ダークモード完全対応** - システムテーマに自動追従
+- 🎨 **Svelteブランドカラー** - 統一されたデザイン
+- 📱 **レスポンシブ対応** - モバイルでも見やすい表示
+- 🔄 **リアルタイム切り替え** - テーマ変更時に即座に更新
+
+### 使用方法
+
+```svelte
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const diagramCode = `graph TD
+    A[開始] --> B[処理]
+    B --> C[終了]`;
+</script>
+
+<Mermaid code={diagramCode} />
+```
+
+詳細は[Mermaidデモページ](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/examples/mermaid-demo/)をご確認ください。
+
 ## 🛠 技術スタック
 
-- **Svelte 5** (最新版)
-- **SvelteKit** (最新版)
-- **TypeScript** 5.x以上
-- **Vite** 5.x以上
-- **SveltePress** (ドキュメントサイト構築)
+### コア技術
+- **Svelte 5** (5.0.0+) - 最新のRunesシステム対応
+- **SvelteKit** (2.8.1+) - フルスタックフレームワーク
+- **TypeScript** (5.3.3+) - 型安全な開発環境
+- **Vite** (5.1.4+) - 高速ビルドツール
+
+### ドキュメント・可視化
+- **SveltePress** (6.0.4+) - 静的サイト生成
+- **Mermaid** (11.9.0+) - ダイアグラム描画
+- **Rehype-Mermaid** (3.0.0+) - Markdown統合
+
+### 推奨環境
+- **Node.js** 18.19+ (推奨: 20.x LTS)
+- **pnpm** 9.15.0+ (パッケージマネージャー)
 
 ## 🚀 ローカル開発
 
 ### 前提条件
 
 - Node.js 18.19以上（推奨: 20.x LTS）
-- npm 9以上
+- pnpm 9.15.0以上（推奨パッケージマネージャー）
 
 ### セットアップ
 
@@ -91,35 +137,37 @@ git clone https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript.gi
 cd Svelte-and-SvelteKit-with-TypeScript
 
 # 依存関係のインストール
-npm install
+pnpm install
 
 # 開発サーバーの起動
-npm run dev
+pnpm dev
 ```
 
 開発サーバーは `http://localhost:5173` で起動します。
 
-### ビルド
+### ビルド・デプロイ
 
 ```bash
 # プロダクションビルド
-npm run build
+pnpm build
 
 # ビルド結果のプレビュー
-npm run preview
+pnpm preview
 ```
 
-### その他のコマンド
+プロダクションビルドは自動的にGitHub Pagesにデプロイされます。
+
+### 利用可能なコマンド
 
 ```bash
-# 型チェック
-npm run check
+# 開発サーバー起動
+pnpm dev
 
-# リント
-npm run lint
+# プロダクションビルド
+pnpm build
 
-# フォーマット
-npm run format
+# ビルド結果をローカルでプレビュー
+pnpm preview
 ```
 
 ## 📝 コントリビューション
@@ -147,13 +195,15 @@ npm run format
 
 ## 📄 ライセンス
 
-MIT License - 詳細は[LICENSE](./LICENSE)ファイルを参照してください。
+このプロジェクトは[Creative Commons Attribution 4.0 International License](./LICENSE)の下で公開されています。
+学習目的での自由な利用・改変・配布が可能です。
 
 ## 🙏 謝辞
 
 - [Svelte](https://svelte.dev/) - The Svelte contributors
 - [SvelteKit](https://kit.svelte.dev/) - The SvelteKit team
 - [SveltePress](https://sveltepress.site/) - Documentation framework
+- [Mermaid](https://mermaid.js.org/) - Diagramming and charting tool
 
 ## 📬 連絡先
 
@@ -162,4 +212,6 @@ MIT License - 詳細は[LICENSE](./LICENSE)ファイルを参照してくださ�
 
 ---
 
-**Note**: このドキュメントは継続的に更新されています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
+**Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
+
+**Last Updated**: 2025年1月 - Mermaidダイアグラム機能追加、技術スタック情報更新

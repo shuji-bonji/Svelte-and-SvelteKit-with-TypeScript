@@ -9,9 +9,9 @@ Svelteは**ビルド時にコンポーネントを解析し、必要最小限の
 
 ```mermaid
 graph LR
-    A[Svelteコンポーネント<br>.svelte] --> B[コンパイラ<br>svelte/compiler]
-    B --> C[最適化されたJS<br>バニラJavaScript]
-    C --> D[ブラウザ実行<br>フレームワークなし]
+    A["Svelteコンポーネント .svelte"] --> B["コンパイラ svelte/compiler"]
+    B --> C["最適化されたJS バニラJavaScript"]
+    C --> D["ブラウザ実行 フレームワークなし"]
     
     style A fill:#ff6b6b
     style B fill:#4ecdc4

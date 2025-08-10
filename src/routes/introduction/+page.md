@@ -12,7 +12,7 @@ Svelteは、**コンパイル時に最適化を行う**という革新的なア�
 他のフレームワークとは異なり、**Virtual DOMを使用しません**。代わりに、ビルド時にコンポーネントを高効率なVanilla JavaScriptに変換します。
 
 :::note[Svelteのコンパイル]
-ここで、定芸されている`Svelteのコンパイル`とは、ブラウザやNode.jsで実行するために、ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換JavaScriptに変換（コンパイル）することです。
+ここで定義されている`Svelteのコンパイル`とは、ブラウザやNode.jsで実行するために、ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換JavaScriptに変換（コンパイル）することです。
 詳しくは、技術詳細の[Svelte はコンパイル時に何をやっているのか？]({base}/deep-dive/compile-time-optimization/)を参照してください。
 :::
 

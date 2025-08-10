@@ -1,13 +1,13 @@
 ---
 title: Mermaidダイアグラムデモ
-description: SveltePressでMermaidダイアグラムを使用する例
+description: SveltePressでMermaidダイアグラムを使用する例（ダークモード対応）
 ---
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   
   const flowChartCode = `graph TD
-    A[Svelte Component] --> B{State変更}
+    A[Svelte Component] --> B["State変更"]
     B -->|$state| C[リアクティブ更新]
     B -->|$derived| D[計算値更新]
     C --> E[DOM更新]
@@ -53,9 +53,9 @@ description: SveltePressでMermaidダイアグラムを使用する例
     TypeScript設定     :done,    des2, after des1, 3d
     基本概念           :active,  des3, after des2, 5d
     section Runes
-    $state            :         des4, after des3, 3d
-    $derived          :         des5, after des4, 2d
-    $effect           :         des6, after des5, 2d
+    state            :         des4, after des3, 3d
+    derived          :         des5, after des4, 2d
+    effect           :         des6, after des5, 2d
     section 実践
     プロジェクト作成   :         des7, after des6, 7d`;
     
@@ -66,7 +66,7 @@ description: SveltePressでMermaidダイアグラムを使用する例
     "実践プロジェクト" : 25`;
 </script>
 
-このページではSveltePressでMermaidダイアグラムを使用する方法を紹介します。
+このページではSveltePressでMermaidダイアグラムを使用する方法を紹介します。**ダークモードにも完全対応**しています。
 
 ## フローチャート
 
@@ -98,6 +98,15 @@ Svelteコンポーネントの構造：
 
 <Mermaid code={pieCode} />
 
+## ダークモード対応
+
+このMermaidコンポーネントは以下の機能を持っています：
+
+- 🌙 **自動ダークモード検出** - システムの設定やページのテーマに応じて自動切り替え
+- 🎨 **カスタムテーマ** - ライト/ダークモードそれぞれに最適化された配色
+- 🔄 **リアルタイム切り替え** - テーマ変更時に即座に反映
+- 📱 **レスポンシブ対応** - モバイルでも見やすい表示
+
 ## 使用方法
 
 Mermaidダイアグラムを使用するには：
@@ -124,4 +133,5 @@ Mermaidダイアグラムを使用するには：
 
 - Mermaidはクライアントサイドでレンダリングされます
 - 初回レンダリング時に若干の遅延が発生する可能性があります
-- ダークモードにも対応しています
+- ダークモードの切り替えは自動的に検出されます
+- テーマカラーはSvelteのブランドカラーに合わせて調整されています

@@ -86,6 +86,32 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   </div>
 </div>
 
+
+## 🔬 技術詳細（Deep Dive）
+
+<div class="deep-dive-section p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg mb-8">
+  <h3 class="text-lg font-bold mb-3">内部実装を理解する</h3>
+  <p class="mb-3">Svelte 5の内部動作について、より深く理解したい方向けの技術記事です。</p>
+  <ul class="space-y-2">
+    <li>
+      <a href="{base}/deep-dive/compile-time-optimization/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        📦 コンパイル時最適化
+      </a> - Virtual DOMを使わない理由と仕組み
+    </li>
+    <li>
+      <a href="{base}/deep-dive/leveraging-proxy-objects-in-svelte-5/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🔍 Svelte 5におけるProxyオブジェクトの活用
+      </a> - リアクティビティシステムの中核技術
+    </li>
+    <li>
+      <a href="{base}/deep-dive/state-use-proxy-object/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        ⚡ $stateとProxyオブジェクト
+      </a> - 実践例とパフォーマンス最適化
+    </li>
+  </ul>
+</div>
+
+
 ## 🗺️ 推奨学習ロードマップ
 
 ### 🌱 初心者コース（3-4週間）
@@ -118,6 +144,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   <ul class="phase-list">
     <li><a href="{base}/introduction/why-svelte/">なぜSvelteか</a> - 他フレームワークとの違いを理解</li>
     <li><a href="{base}/deep-dive/compile-time-optimization/">コンパイル時最適化</a>の仕組み</li>
+    <li><a href="{base}/deep-dive/leveraging-proxy-objects-in-svelte-5/">Proxyオブジェクトの活用</a> - Svelte 5の内部実装</li>
   </ul>
   
   <h4 class="text-lg font-bold mb-3 mt-4">Phase 2: Runesマスター（3-4日）</h4>

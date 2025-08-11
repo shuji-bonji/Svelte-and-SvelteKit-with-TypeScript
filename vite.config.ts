@@ -151,6 +151,14 @@ const config = defineConfig({
                   title: 'コンパイル時最適化',
                   to: '/deep-dive/compile-time-optimization',
                 },
+                {
+                  title: 'Svelte 5におけるProxyオブジェクトの活用',
+                  to: '/deep-dive/leveraging-proxy-objects-in-svelte-5',
+                },
+                {
+                  title: '$stateとProxyオブジェクト',
+                  to: '/deep-dive/state-use-proxy-object',
+                },
               ],
             },
           ],

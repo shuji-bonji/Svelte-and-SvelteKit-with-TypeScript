@@ -18,16 +18,14 @@ description: Svelteが行う、コンパイル時最適化 について詳しく
 
 以下、Svelteの「コンパイル時最適化」について詳しく解説を行います。
 
-## 📊 コンパイル時最適化の全体像
+## コンパイル時最適化の全体像
 
 Svelteは**ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換**します。これは、ReactやVueのようにランタイムでフレームワークのコードを実行するのとは根本的に異なります。
 
 <Mermaid code={svelteCompiler} />
 
 
-## 🔍 具体的に何をどう最適化するのか
-
-### 1. **リアクティブな変数の依存関係を静的解析**
+## リアクティブな変数の依存関係を静的解析
 
 ```svelte
 <!-- Svelteコンポーネント -->
@@ -44,7 +42,7 @@ Svelteは**ビルド時にコンポーネントを解析し、必要最小限の
 <p>{message}</p>
 ```
 
-コンパイル後：
+#### コンパイル後
 ```javascript
 // 簡略化したコンパイル結果
 let count = 0;
@@ -64,19 +62,19 @@ function update_count(value) {
 }
 ```
 
-### 2. **Virtual DOM diffingの代わりに「サージカルアップデート」**
+## Virtual DOM diffingの代わりに「サージカルアップデート」
 
-従来のフレームワーク（React/Vue）の処理フロー：
+#### 従来のフレームワーク（React/Vue）の処理フロー
 ```
 状態変更 → 新Virtual DOM生成 → 旧Virtual DOMと比較 → 差分を実DOMに適用
 ```
 
-Svelteの処理フロー：
+#### Svelteの処理フロー
 ```
 状態変更 → 事前に特定された箇所のみ直接更新
 ```
 
-具体例で比較：
+#### 具体例で比較
 
 ```javascript
 // React/Vueの場合（実行時に差分計算）
@@ -100,7 +98,7 @@ function update(count) {
 }
 ```
 
-### 3. **使用していないコードの除去（Tree Shaking）**
+## 使用していないコードの除去（Tree Shaking）
 
 ```svelte
 <!-- Svelteコンポーネント -->
@@ -118,7 +116,7 @@ function update(count) {
 
 Angularの場合、使用していないライフサイクルフックも含めて、フレームワークの基本機能がバンドルに含まれます。
 
-### 4. **条件分岐の最適化**
+## 条件分岐の最適化
 
 ```svelte
 {#if visible}
@@ -126,7 +124,7 @@ Angularの場合、使用していないライフサイクルフックも含め�
 {/if}
 ```
 
-コンパイル後：
+#### コンパイル後
 ```javascript
 // ブロックの作成・破棄を効率的に管理
 let if_block = visible ? create_if_block() : null;
@@ -144,9 +142,9 @@ function update(visible) {
 }
 ```
 
-## 📈 パフォーマンス比較（具体的な数値）
+## パフォーマンス比較（具体的な数値）
 
-プロジェクトナレッジの情報を基に：
+#### プロジェクトナレッジの情報を基に
 
 | 項目 | Angular | React | Vue 3 | Svelte 5 |
 |------|---------|--------|-------|----------|
@@ -155,9 +153,9 @@ function update(visible) {
 | **メモリ使用量（1000要素）** | ~20MB | ~10MB | ~8MB | **~5MB** |
 | **ランタイムオーバーヘッド** | 高 | 中 | 中 | **最小** |
 
-## 🎯 Angularとの決定的な違い
+## Angularとの決定的な違い
 
-Angularエンジニアの視点から見た主な違い：
+#### Angularエンジニアの視点から見た主な違い
 
 | 観点 | Angular | Svelte |
 |------|---------|---------|
@@ -167,9 +165,10 @@ Angularエンジニアの視点から見た主な違い：
 | **RxJS** | 標準搭載（リアクティブプログラミング） | `$state`/`$derived`で代替可能 |
 | **デコレータ** | `@Component`, `@Injectable`など必須 | 不要（プレーンなJavaScript） |
 
-## 💡 実践的な例：TodoListの比較
+## 実践的な例：TodoListの比較
 
-Angularでの実装：
+#### Angularでの実装
+
 ```typescript
 @Component({
   selector: 'app-todo',
@@ -186,7 +185,7 @@ export class TodoComponent {
 }
 ```
 
-Svelteでの実装：
+#### Svelteでの実装
 ```svelte
 <script lang="ts">
   let todos = $state([]);
@@ -202,7 +201,7 @@ Svelteでの実装：
 {/each}
 ```
 
-## 🚀 なぜSvelteは高速なのか？まとめ
+## なぜSvelteは高速なのか？まとめ
 
 1. **実行時の処理を削減**
    - Virtual DOM diffingなし

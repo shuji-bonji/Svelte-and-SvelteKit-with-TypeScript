@@ -274,7 +274,7 @@ let doubled = $derived(count * 2);
 
 Runesにより、リアクティビティがより明示的で予測可能になりました。
 
-- `$state` - リアクティブな状態を定義
+- `$state` - リアクティブな状態を定義（[Proxyベースの実装詳細]({base}/deep-dive/state-use-proxy-object/)）
 - `$derived` - 計算値を定義
 - `$effect` - 副作用を実行
 - `$props` - コンポーネントのプロパティを定義

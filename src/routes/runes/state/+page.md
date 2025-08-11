@@ -5,7 +5,8 @@ description: Svelte 5のリアクティブな状態管理
 
 ## $stateとは
 
-`$state`は、Svelte 5でリアクティブな値を作成するための基本的なルーンです。値が変更されると、それを使用しているコンポーネントが自動的に更新されます。
+`$state`は、Svelte 5でリアクティブな値を作成するための基本的なルーンです。  
+値が変更されると、それを使用しているコンポーネントが自動的に更新されます。
 
 ## 基本的な使い方
 
@@ -249,6 +250,16 @@ value++; // data.valueは更新されない
 // ✅ 参照を保持
 data.value++; // 正しく更新される
 ```
+
+## 技術的な詳細
+
+`$state`がどのように動作するかをより深く理解したい場合は、以下のディープダイブ記事も参照してください。
+
+
+:::note[RuneとProxyオブジェクト]
+- [Svelte 5におけるProxyオブジェクトの活用](/deep-dive/leveraging-proxy-objects-in-svelte-5/) - `$state`の内部でProxyがどのように使われているか
+- [$stateとProxyオブジェクト](/deep-dive/state-use-proxy-object/) - 実践的な例とパフォーマンス最適化
+:::
 
 ## 次のステップ
 

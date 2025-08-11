@@ -349,6 +349,10 @@ let bad = $derived(() => {
 });
 ```
 
+:::info[さらに詳しく]
+`$derived`、`$effect`、`derived.by`の詳細な比較と使い分けについては、[完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)をご覧ください。実践的な例とパフォーマンスの考慮事項も解説しています。
+:::
+
 ## 次のステップ
 
 副作用の処理方法を理解したら、[$props - プロパティ](/runes/props/)でコンポーネント間のデータ受け渡しを学びましょう。

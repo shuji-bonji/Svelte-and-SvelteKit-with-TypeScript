@@ -169,6 +169,11 @@ const config = defineConfig({
                     '$state: リアクティブな状態変数と、バインディングの違い',
                   to: '/deep-dive/reactive-state-variables-vs-bindings',
                 },
+                {
+                  title:
+                    '$state: $derived vs $effect vs derived.by 完全比較ガイド',
+                  to: '/deep-dive/derived-vs-effect-vs-derived-by',
+                },
               ],
             },
           ],

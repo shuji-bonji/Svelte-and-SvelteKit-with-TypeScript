@@ -284,6 +284,12 @@ const CONFIG = {
 };
 ```
 
+## さらに詳しく学ぶ
+
+:::info[ディープダイブ]
+`$derived`、`$effect`、`derived.by`の詳細な違いと使い分けについては、[完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)をご覧ください。
+:::
+
 ## 次のステップ
 
 派生値の作成方法を理解したら、[$effect - 副作用](/runes/effect/)で副作用の処理方法を学びましょう。

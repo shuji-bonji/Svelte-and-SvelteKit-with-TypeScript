@@ -3,10 +3,25 @@ title: $stateルーン
 description: Svelte 5のリアクティブな状態管理
 ---
 
+`$state`は、Svelte 5の新しいリアクティビティシステム「Runes」の中核となる機能です。このページでは、`$state`を使った状態管理の基本から応用まで、TypeScriptと組み合わせた実践的な使い方を解説します。
+
+:::tip[React/Vue経験者向け]
+- `$state`は React の `useState` や Vue の `ref` に相当
+- ただし、セッター関数は不要で、値を直接変更可能
+- オブジェクトのプロパティも自動的にリアクティブになる（深いリアクティビティ）
+:::
+
 ## $stateとは
 
 `$state`は、Svelte 5でリアクティブな値を作成するための基本的なルーンです。  
 値が変更されると、それを使用しているコンポーネントが自動的に更新されます。
+
+### 主な特徴
+
+- **自動的な変更検知**: 値の変更を自動で追跡し、UIを更新
+- **深いリアクティビティ**: オブジェクトや配列の内部プロパティも追跡
+- **TypeScript完全対応**: 型推論と型安全性を提供
+- **シンプルな構文**: 特別なセッター関数不要で直接値を変更可能
 
 ## 基本的な使い方
 
@@ -260,6 +275,7 @@ data.value++; // 正しく更新される
 - [Svelte 5におけるProxyオブジェクトの活用](/deep-dive/leveraging-proxy-objects-in-svelte-5/) - `$state`の内部でProxyがどのように使われているか
 - [$stateとProxyオブジェクト](/deep-dive/state-use-proxy-object/) - 実践的な例とパフォーマンス最適化
 - [$state: リアクティブな状態変数と、バインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - `$state`と`bind:`構文の違いを詳しく解説
+- [$derived vs $effect vs derived.by 完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/) - Runesシステムの主要な3つの機能を徹底比較
 :::
 
 ## 次のステップ

@@ -231,4 +231,4 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年1月 - `$inspect`ルーン追加、ナビゲーションカード改善、ディープダイブコンテンツ拡充
+**Last Updated**: 2025年8月 - `$inspect`ルーン追加、ナビゲーションカード改善、ディープダイブコンテンツ拡充

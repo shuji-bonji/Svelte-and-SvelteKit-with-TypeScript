@@ -165,7 +165,7 @@ let cleanup = $effect.root(() => {
   let currentTime = $state(new Date());
   let mousePosition = $state({ x: 0, y: 0 });
   let keyPressed = $state<string | null>(null);
-  let isOnline = $state(navigator.onLine);
+  let isOnline = $state(typeof window !== 'undefined' ? navigator.onLine : true);
   let pageViews = $state(0);
   let timeSpent = $state(0);
   let isDarkMode = $state(false);

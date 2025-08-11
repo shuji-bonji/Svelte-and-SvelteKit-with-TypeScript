@@ -18,10 +18,13 @@
     type = 'text',
     placeholder = ''
   }: Props = $props();
+  
+  // ユニークなIDを生成
+  const inputId = `input-${Math.random().toString(36).substr(2, 9)}`;
 </script>
 
 <div class="form-field">
-  <label class="form-label">
+  <label class="form-label" for={inputId}>
     {label}
     {#if required}
       <span class="required">*</span>
@@ -29,6 +32,7 @@
   </label>
   
   <input
+    id={inputId}
     {type}
     bind:value
     {placeholder}

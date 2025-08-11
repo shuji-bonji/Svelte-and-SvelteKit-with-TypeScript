@@ -106,6 +106,10 @@ const config = defineConfig({
                   title: 'クラスとリアクティビティ',
                   to: '/advanced/class-reactivity/',
                 },
+                {
+                  title: '組み込みリアクティブクラス',
+                  to: '/advanced/built-in-classes/',
+                },
                 { title: 'Snippets機能', to: '/advanced/snippets/' },
                 {
                   title: 'スクリプトコンテキスト',
@@ -177,6 +181,10 @@ const config = defineConfig({
                   title:
                     '$state: $derived vs $effect vs derived.by 完全比較ガイド',
                   to: '/deep-dive/derived-vs-effect-vs-derived-by',
+                },
+                {
+                  title: 'カスタムエレメントと通常のSvelteコンポーネントの違い',
+                  to: '/deep-dive/custom-elements-vs-svelte-components',
                 },
               ],
             },

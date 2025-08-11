@@ -256,7 +256,7 @@ data.value++; // 正しく更新される
 `$state`がどのように動作するかをより深く理解したい場合は、以下のディープダイブ記事も参照してください。
 
 
-:::note[RuneとProxyオブジェクト]
+:::info[RuneとProxyオブジェクト]
 - [Svelte 5におけるProxyオブジェクトの活用](/deep-dive/leveraging-proxy-objects-in-svelte-5/) - `$state`の内部でProxyがどのように使われているか
 - [$stateとProxyオブジェクト](/deep-dive/state-use-proxy-object/) - 実践的な例とパフォーマンス最適化
 :::

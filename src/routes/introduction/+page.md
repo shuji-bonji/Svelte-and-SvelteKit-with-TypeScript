@@ -23,54 +23,57 @@ Svelteは「コンパイラ」として動作する革新的なフロントエ�
 
 ## このセクションで学ぶこと
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <a href="{base}/introduction/why-svelte/" class="block no-underline">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <a href="{base}/introduction/why-svelte/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🚀</div>
-      <h3 class="font-bold text-lg mb-2">
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         なぜSvelteか
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3">Svelteが他のフレームワークと比較してどのような利点があるかを詳しく解説します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Svelteが他のフレームワークと比較してどのような利点があるかを詳しく解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li>コンパイル時最適化の仕組み</li>
         <li>Virtual DOMを使わない理由</li>
         <li>パフォーマンスの実測値比較</li>
         <li>実世界での成功事例</li>
       </ul>
-    </a>
-  </div>
+    </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <a href="{base}/introduction/setup/" class="block no-underline">
+  <a href="{base}/introduction/setup/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🛠️</div>
-      <h3 class="font-bold text-lg mb-2">
-          環境構築
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        環境構築
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3">Svelte開発環境を最速でセットアップする方法を説明します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Svelte開発環境を最速でセットアップする方法を説明します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li>Node.jsとパッケージマネージャー</li>
         <li>SvelteKitプロジェクトの作成</li>
         <li>開発ツールの設定</li>
         <li>VS Code拡張機能</li>
       </ul>
-    </a>
-  </div>
+    </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <a href="{base}/introduction/why-svelte/" class="block no-underline">
-    <div class="text-3xl mb-2">📘</div>
-      <h3 class="font-bold text-lg mb-2">
-          TypeScript設定
+  <a href="{base}/introduction/typescript-setup/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📘</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        TypeScript設定
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3">SvelteプロジェクトでTypeScriptを最大限活用するための設定を解説します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteプロジェクトでTypeScriptを最大限活用するための設定を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li>tsconfig.jsonの詳細設定</li>
         <li>型定義ファイルの構成</li>
         <li>厳密な型チェック設定</li>
         <li>エディタ統合の最適化</li>
       </ul>
-    </a>
-  </div>
+    </div>
+  </a>
 </div>
 
 ## 学習の進め方

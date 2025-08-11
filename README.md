@@ -1,9 +1,8 @@
 # TypeScriptで学ぶ Svelte 5/SvelteKit 完全ガイド
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
-[Sveltepress]
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.16-red?logo=svelte&
-labelColor=000)](https://svelte.dev/)
+[![SveltePress](https://img.shields.io/badge/SveltePress-v6.0.4-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.16-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
 [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -57,6 +56,7 @@ labelColor=000)](https://svelte.dev/)
 - `$effect` - 副作用の処理
 - `$props` - プロパティ定義
 - `$bindable` - 双方向バインディング
+- `$inspect` - デバッグツール
 
 ### 4️⃣ 実践編
 - リアクティブストア（.svelte.ts）
@@ -78,6 +78,14 @@ labelColor=000)](https://svelte.dev/)
 - 認証システム
 - データフェッチング
 - WebSocket実装
+- Mermaidダイアグラム
+
+### 7️⃣ ディープダイブ（技術詳細）
+Svelte 5の内部実装や高度なトピックを扱います：
+- Proxyオブジェクトの活用
+- リアクティブ状態変数とバインディングの違い
+- `$state.raw` vs `$state`の使い分け
+- パフォーマンス最適化テクニック
 
 ## 📊 Mermaidダイアグラム機能
 
@@ -223,4 +231,4 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年1月 - Mermaidダイアグラム機能追加、技術スタック情報更新
+**Last Updated**: 2025年1月 - `$inspect`ルーン追加、ナビゲーションカード改善、ディープダイブコンテンツ拡充

@@ -13,86 +13,91 @@ description: 実践的なアプリケーション開発例
 
 ## プロジェクト一覧
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <div class="text-3xl mb-2">📝</div>
-    <h3 class="font-bold text-lg mb-2">
-      <a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <a href="{base}/examples/todo-app/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📝</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         TODOアプリ
-      </a>
-    </h3>
-    <p class="text-sm mb-3">基本的なCRUD操作とリアクティビティ</p>
-    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
-      <li>Runesを使った状態管理</li>
-      <li>ローカルストレージとの連携</li>
-      <li>TypeScriptでの型定義</li>
-    </ul>
-    <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
-      <code class="text-xs">
-        type Todo = {'{'} id: string; text: string; done: boolean; {'}'}
-      </code>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">基本的なCRUD操作とリアクティビティ</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>Runesを使った状態管理</li>
+        <li>ローカルストレージとの連携</li>
+        <li>TypeScriptでの型定義</li>
+      </ul>
+      <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+        <code class="text-xs">
+          type Todo = {'{'} id: string; text: string; done: boolean; {'}'}
+        </code>
+      </div>
     </div>
-  </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <div class="text-3xl mb-2">🔐</div>
-    <h3 class="font-bold text-lg mb-2">
-      <a href="{base}/examples/auth-system/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+  <a href="{base}/examples/auth-system/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔐</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         認証システム
-      </a>
-    </h3>
-    <p class="text-sm mb-3">セキュアな認証フローの実装</p>
-    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
-      <li>JWTトークンの管理</li>
-      <li>Protected Routes</li>
-      <li>セッション管理</li>
-    </ul>
-  </div>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">セキュアな認証フローの実装</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>JWTトークンの管理</li>
+        <li>Protected Routes</li>
+        <li>セッション管理</li>
+      </ul>
+    </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <div class="text-3xl mb-2">📊</div>
-    <h3 class="font-bold text-lg mb-2">
-      <a href="{base}/examples/data-fetching/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+  <a href="{base}/examples/data-fetching/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📊</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         データフェッチング
-      </a>
-    </h3>
-    <p class="text-sm mb-3">効率的なデータ取得パターン</p>
-    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
-      <li>Load関数の活用</li>
-      <li>ストリーミングSSR</li>
-      <li>エラーハンドリング</li>
-    </ul>
-  </div>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">効率的なデータ取得パターン</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>Load関数の活用</li>
+        <li>ストリーミングSSR</li>
+        <li>エラーハンドリング</li>
+      </ul>
+    </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <div class="text-3xl mb-2">🔌</div>
-    <h3 class="font-bold text-lg mb-2">
-      <a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+  <a href="{base}/examples/websocket/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔌</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         WebSocket実装
-      </a>
-    </h3>
-    <p class="text-sm mb-3">リアルタイム通信の実装</p>
-    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
-      <li>WebSocket接続管理</li>
-      <li>リアルタイムアップデート</li>
-      <li>再接続ロジック</li>
-    </ul>
-  </div>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リアルタイム通信の実装</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>WebSocket接続管理</li>
+        <li>リアルタイムアップデート</li>
+        <li>再接続ロジック</li>
+      </ul>
+    </div>
+  </a>
   
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all group">
-    <div class="text-3xl mb-2">📈</div>
-    <h3 class="font-bold text-lg mb-2">
-      <a href="{base}/examples/mermaid-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">
+  <a href="{base}/examples/mermaid-demo/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📈</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
         Mermaidダイアグラム
-      </a>
-    </h3>
-    <p class="text-sm mb-3">ダイアグラムの統合方法</p>
-    <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
-      <li>フローチャート・シーケンス図</li>
-      <li>クラス図・ガントチャート</li>
-      <li>クライアントサイドレンダリング</li>
-    </ul>
-  </div>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">ダイアグラムの統合方法</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>フローチャート・シーケンス図</li>
+        <li>クラス図・ガントチャート</li>
+        <li>クライアントサイドレンダリング</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 ## 各実装例で学べること

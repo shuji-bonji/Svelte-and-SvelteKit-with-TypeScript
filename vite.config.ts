@@ -186,6 +186,15 @@ const config = defineConfig({
                   title: 'カスタムエレメントと通常のSvelteコンポーネントの違い',
                   to: '/deep-dive/custom-elements-vs-svelte-components',
                 },
+                {
+                  title:
+                    '@renderディレクティブとSnippetオブジェクト、#snippetディレクティブ',
+                  to: '/deep-dive/render-directive-snippet-object-snippet-directive',
+                },
+                {
+                  title: 'HTML <template> と Svelte #snippet の違い',
+                  to: '/deep-dive/html-templates-and-snippets',
+                },
               ],
             },
           ],

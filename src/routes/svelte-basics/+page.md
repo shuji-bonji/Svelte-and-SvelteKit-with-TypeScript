@@ -78,6 +78,24 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
       </ul>
     </div>
   </a>
+  
+  <a href="{base}/svelte-basics/actions/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">⚡</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        use:アクション
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">DOM要素を直接操作する強力な機能を学びます。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>アクションの実行タイミング</li>
+        <li>ライフサイクルフック</li>
+        <li>外部ライブラリの統合</li>
+        <li>カスタムディレクティブの作成</li>
+        <li>イベントハンドラとの使い分け</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 ## 学習の進め方

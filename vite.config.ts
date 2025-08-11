@@ -70,6 +70,10 @@ const config = defineConfig({
                   title: 'TypeScript統合',
                   to: '/svelte-basics/typescript-integration/',
                 },
+                {
+                  title: 'use:アクション',
+                  to: '/svelte-basics/actions/',
+                },
               ],
             },
             {

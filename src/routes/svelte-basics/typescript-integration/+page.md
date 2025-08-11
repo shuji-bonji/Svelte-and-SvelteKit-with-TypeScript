@@ -996,4 +996,4 @@ interface FormData {
 
 ## 次のステップ
 
-Svelteの基本を習得したら、[Runesシステム](/runes/)でSvelte 5の新しいリアクティビティシステムを学びましょう。
+TypeScriptとの統合を理解したら、[use:アクション](/svelte-basics/actions/)でDOM要素を直接操作する方法を学びましょう。その後、[Runesシステム](/runes/)でSvelte 5の新しいリアクティビティシステムを学びましょう。

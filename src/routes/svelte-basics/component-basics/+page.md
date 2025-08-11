@@ -800,6 +800,10 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
 - スコープ付きスタイルとグローバルスタイル
 - 動的なスタイルとクラスの適用
 
+:::info[関連トピック]
+DOM要素を直接操作する必要がある場合は、[use:アクション](/svelte-basics/actions/)を学ぶことで、より高度な操作が可能になります。
+:::
+
 ## 次のステップ
 
 [TypeScript統合](/svelte-basics/typescript-integration/)では、SvelteでTypeScriptを効果的に使用する方法を詳しく学びます。

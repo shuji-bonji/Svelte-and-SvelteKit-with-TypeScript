@@ -839,7 +839,8 @@ let bad = $derived(() => {
 ```
 
 :::info[さらに詳しく]
-`$derived`、`$effect`、`derived.by`の詳細な比較と使い分けについては、[完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)をご覧ください。実践的な例とパフォーマンスの考慮事項も解説しています。
+- `$derived`、`$effect`、`derived.by`の詳細な比較と使い分けについては、[完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)をご覧ください
+- DOM要素への直接的な操作が必要な場合は、[use:アクション](/svelte-basics/actions/)を使用することも検討してください
 :::
 
 ## 次のステップ

@@ -11,6 +11,29 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 </script>
 
 
+## このガイドで学べること
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+    <h3 class="text-xl font-bold mb-4">🎯 Svelte 5の基礎</h3>
+    <ul class="space-y-2">
+      <li>✅ Runesシステムの完全理解</li>
+      <li>✅ コンポーネント開発の基本</li>
+      <li>✅ TypeScriptとの統合</li>
+      <li>✅ リアクティビティの仕組み</li>
+    </ul>
+  </div>
+  <div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
+    <h3 class="text-xl font-bold mb-4">🚀 SvelteKitの活用</h3>
+    <ul class="space-y-2">
+      <li>✅ ルーティングシステム</li>
+      <li>✅ SSR/SSGの実装</li>
+      <li>✅ APIエンドポイント</li>
+      <li>✅ 本番環境へのデプロイ</li>
+    </ul>
+  </div>
+</div>
+
 ## 📚 レベル別学習パス
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">

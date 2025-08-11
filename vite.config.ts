@@ -90,6 +90,7 @@ const config = defineConfig({
                 { title: '$effectルーン', to: '/runes/effect/' },
                 { title: '$propsルーン', to: '/runes/props/' },
                 { title: '$bindableルーン', to: '/runes/bindable/' },
+                { title: '$inspectルーン（デバッグ）', to: '/runes/inspect/' },
               ],
             },
             {
@@ -158,6 +159,15 @@ const config = defineConfig({
                 {
                   title: '$stateとProxyオブジェクト',
                   to: '/deep-dive/state-use-proxy-object',
+                },
+                {
+                  title: '$state.raw() vs $state() の違いと使い分け',
+                  to: '/deep-dive/state-raw-vs-state',
+                },
+                {
+                  title:
+                    '$state: リアクティブな状態変数と、バインディングの違い',
+                  to: '/deep-dive/reactive-state-variables-vs-bindings',
                 },
               ],
             },

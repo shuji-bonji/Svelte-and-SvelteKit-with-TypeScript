@@ -1,6 +1,15 @@
 # TypeScriptで学ぶ Svelte 5/SvelteKit 完全ガイド
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
+[Sveltepress]
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.16-red?logo=svelte&
+labelColor=000)](https://svelte.dev/)
+[![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
+[![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
+
 
 日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。
 

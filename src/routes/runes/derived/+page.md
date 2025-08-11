@@ -223,6 +223,7 @@ let expensive = $derived(() => {
 
 ### 注意点
 
+
 ```typescript
 // ❌ 副作用を含めない
 let value = $derived(() => {

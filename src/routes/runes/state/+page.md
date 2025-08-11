@@ -259,8 +259,11 @@ data.value++; // 正しく更新される
 :::info[RuneとProxyオブジェクト]
 - [Svelte 5におけるProxyオブジェクトの活用](/deep-dive/leveraging-proxy-objects-in-svelte-5/) - `$state`の内部でProxyがどのように使われているか
 - [$stateとProxyオブジェクト](/deep-dive/state-use-proxy-object/) - 実践的な例とパフォーマンス最適化
+- [$state: リアクティブな状態変数と、バインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - `$state`と`bind:`構文の違いを詳しく解説
 :::
 
 ## 次のステップ
 
 `$state`の基本を理解したら、[$derived - 計算値](/runes/derived/)で派生値の作成方法を学びましょう。
+
+開発時のデバッグには[$inspect - デバッグツール](/runes/inspect/)が便利です。

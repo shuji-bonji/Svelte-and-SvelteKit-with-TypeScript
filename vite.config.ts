@@ -180,9 +180,9 @@ const config = defineConfig({
         },
         github:
           'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript',
-        logo: '/sveltepress.svg',
+        logo: '/svelteAndTypescript.svg',
         editLink:
-          'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/edit/main/src/routes/',
+          'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScriptedit/main/src/routes/',
       }),
       siteConfig: {
         title: 'TypeScriptで学ぶ Svelte 5/SvelteKit',

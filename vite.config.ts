@@ -70,10 +70,6 @@ const config = defineConfig({
                   title: 'TypeScript統合',
                   to: '/svelte-basics/typescript-integration/',
                 },
-                {
-                  title: 'スクリプトコンテキスト',
-                  to: '/svelte-basics/script-context/',
-                },
               ],
             },
             {
@@ -107,6 +103,10 @@ const config = defineConfig({
                   to: '/advanced/class-reactivity/',
                 },
                 { title: 'Snippets機能', to: '/advanced/snippets/' },
+                {
+                  title: 'スクリプトコンテキスト',
+                  to: '/advanced/script-context/',
+                },
                 {
                   title: 'コンポーネントパターン',
                   to: '/advanced/component-patterns/',

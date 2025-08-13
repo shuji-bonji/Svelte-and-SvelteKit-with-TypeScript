@@ -10,7 +10,7 @@
 [![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
 
 
-日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。
+日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。実際に動作するAPI連携例（JSONPlaceholder、GitHub Search API）を含む実践的な内容。
 
 🌐 **公開サイト**: [https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)
 
@@ -28,11 +28,13 @@
 ### 特徴
 
 - 🎯 **TypeScript中心** - すべてのコード例でTypeScriptを使用
-- 🚀 **Svelte 5対応** - 最新のRunesシステムを完全網羅
+- 🚀 **Svelte 5対応** - 最新のRunesシステムを完全網羅（`$derived.by()`など最新構文）
 - 📊 **Mermaidダイアグラム** - 視覚的な図解でわかりやすく解説
 - 📖 **日本語** - 日本語による詳細な解説
 - 💡 **実践的** - 実際のプロジェクトで使えるパターンを紹介
 - 🌙 **ダークモード対応** - テーマ切り替えに完全対応
+- 🔧 **SSR完全対応** - サーバーサイドレンダリングのエラーを回避する実装
+- 🌐 **実API連携** - JSONPlaceholder、GitHub APIを使用した実動作例
 
 ## 🗂 コンテンツ構成
 
@@ -41,31 +43,38 @@
 - なぜSvelteか
 - 環境構築
 - TypeScript設定
+- 学習パス
 
 ### 2️⃣ Svelteの基本
 - Hello World
 - コンポーネントの基本構造
+- テンプレート構文
 - TypeScript統合
-- スクリプトコンテキスト
+- Actions
+- トランジション・アニメーション
 
-### 3️⃣ Runesシステム
-- Runesシステム概要
-- Runesシステム入門
+### 3️⃣ Runes基礎編
 - `$state` - リアクティブな状態管理
-- `$derived` - 計算値
-- `$effect` - 副作用の処理
+- `$derived` / `$derived.by()` - 計算値と明示的な派生値
+- `$effect` / `$effect.pre` - 副作用の処理とDOM更新前実行
+- 他フレームワークとの比較
+
+### 4️⃣ Runes応用編
+- Runesシステム詳細
 - `$props` - プロパティ定義
 - `$bindable` - 双方向バインディング
 - `$inspect` - デバッグツール
 
-### 4️⃣ 実践編
+### 5️⃣ 実践編
 - リアクティブストア（.svelte.ts）
 - クラスとリアクティビティ
+- 組み込みリアクティブクラス
 - Snippets機能
 - コンポーネントパターン
 - TypeScriptパターン
+- スクリプトコンテキスト
 
-### 5️⃣ SvelteKit
+### 6️⃣ SvelteKit
 - ルーティング
 - Load関数
 - サーバーサイド処理
@@ -73,19 +82,23 @@
 - APIルート
 - デプロイメント
 
-### 6️⃣ 実装例
+### 7️⃣ 実装例
 - TODOアプリ
 - 認証システム
 - データフェッチング
 - WebSocket実装
 - Mermaidダイアグラム
+- 機能デモ
 
-### 7️⃣ ディープダイブ（技術詳細）
+### 8️⃣ ディープダイブ（技術詳細）
 Svelte 5の内部実装や高度なトピックを扱います：
 - Proxyオブジェクトの活用
 - リアクティブ状態変数とバインディングの違い
 - `$state.raw` vs `$state`の使い分け
-- パフォーマンス最適化テクニック
+- `$derived` vs `$effect` vs `$derived.by`の違い
+- コンパイル時最適化
+- HTMLテンプレートとSnippets
+- カスタム要素とSvelteコンポーネント
 
 ## 📊 Mermaidダイアグラム機能
 
@@ -205,8 +218,10 @@ pnpm preview
 
 - すべてのコード例でTypeScriptを使用
 - Svelte 5のRunesシステムを使用（古い文法は避ける）
+- 複雑な派生値には`$derived.by()`を使用
 - 型定義を明確に記述
 - 日本語でコメントを記述
+- SSR対応のためOptional chainingを活用
 
 詳細は[CLAUDE.md](./CLAUDE.md)を参照してください。
 
@@ -231,4 +246,4 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年8月 - `$inspect`ルーン追加、ナビゲーションカード改善、ディープダイブコンテンツ拡充
+**Last Updated**: 2024年12月 - SSR対応改善、実API連携例追加、`$derived.by()`構文の正しい使用法を反映、ビルドエラー修正

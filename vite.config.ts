@@ -17,11 +17,15 @@ const config = defineConfig({
             to: '/introduction/',
           },
           {
-            title: '基本',
+            title: 'Runes基礎',
+            to: '/runes-basics/',
+          },
+          {
+            title: 'Svelteの基本',
             to: '/svelte-basics/',
           },
           {
-            title: 'Runes',
+            title: 'Runes詳細',
             to: '/runes/',
           },
           {
@@ -57,6 +61,17 @@ const config = defineConfig({
               ],
             },
             {
+              title: 'Runesシステム（基礎編）',
+              collapsible: true,
+              items: [
+                { title: 'Runesシステム概要', to: '/runes-basics/' },
+                { title: '$state - リアクティブな状態', to: '/runes-basics/state/' },
+                { title: '$derived - 派生値', to: '/runes-basics/derived/' },
+                { title: '$effect - 副作用', to: '/runes-basics/effect/' },
+                { title: '他フレームワークとの比較', to: '/runes-basics/comparison/' },
+              ],
+            },
+            {
               title: 'Svelteの基本',
               collapsible: true,
               items: [
@@ -85,17 +100,17 @@ const config = defineConfig({
               ],
             },
             {
-              title: 'Runesシステム',
+              title: 'Runesシステム（詳細編）',
               collapsible: true,
               items: [
-                { title: 'Runesシステム概要', to: '/runes/' },
+                { title: 'Runesシステム詳細', to: '/runes/' },
                 {
                   title: 'Runesシステム入門',
                   to: '/runes/runes-introduction/',
                 },
-                { title: '$stateルーン', to: '/runes/state/' },
-                { title: '$derivedルーン', to: '/runes/derived/' },
-                { title: '$effectルーン', to: '/runes/effect/' },
+                { title: '$stateルーン（詳細）', to: '/runes/state/' },
+                { title: '$derivedルーン（詳細）', to: '/runes/derived/' },
+                { title: '$effectルーン（詳細）', to: '/runes/effect/' },
                 { title: '$propsルーン', to: '/runes/props/' },
                 { title: '$bindableルーン', to: '/runes/bindable/' },
                 { title: '$inspectルーン（デバッグ）', to: '/runes/inspect/' },

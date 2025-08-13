@@ -46,49 +46,65 @@
 ### 第1部：入門編
 ```
 src/routes/
-├── +layout.md                    # ルートレイアウト
+├── +layout.svelte                # ルートレイアウト
 ├── +page.md                      # ホーム
 ├── introduction/
 │   ├── +page.md                  # Svelte5の概要
 │   ├── why-svelte/+page.md       # なぜSvelteか
 │   ├── setup/+page.md            # 環境構築
-│   └── typescript-setup/+page.md # TypeScript設定
+│   ├── typescript-setup/+page.md # TypeScript設定
+│   └── learning-path/            # 学習パス（新規）
 ```
 
-### 第2部：Svelteの基本（新規追加）
+### 第2部：Svelteの基本
 ```
 ├── svelte-basics/
 │   ├── +page.md                     # Svelteの基本概要
 │   ├── hello-world/+page.md         # Hello World
 │   ├── component-basics/+page.md    # コンポーネントの基本
+│   ├── template-syntax/+page.md     # テンプレート構文
 │   ├── typescript-integration/+page.md # TypeScript統合
-│   └── script-context/+page.md      # スクリプトコンテキスト
+│   ├── actions/+page.md             # Actions
+│   └── transitions/+page.md        # トランジション・アニメーション
 ```
 
-### 第3部：Runesシステム
+### 第3部：Runesシステム（基本編）
+```
+├── runes-basics/                 # Runes基礎編
+│   ├── +page.md                  # Runes基礎概要
+│   ├── state/+page.md            # $stateルーン
+│   ├── derived/+page.md          # $derivedルーン
+│   ├── effect/+page.md           # $effectルーン
+│   └── comparison/+page.md       # 他フレームワークとの比較
+```
+
+### 第4部：Runesシステム（応用編）
 ```
 ├── runes/
 │   ├── +page.md                  # Runesシステム概要
 │   ├── runes-introduction/+page.md # Runesシステム入門
-│   ├── state/+page.md            # $stateルーン
-│   ├── derived/+page.md          # $derivedルーン
-│   ├── effect/+page.md           # $effectルーン
+│   ├── state/+page.md            # $state詳細
+│   ├── derived/+page.md          # $derived詳細
+│   ├── effect/+page.md           # $effect詳細
 │   ├── props/+page.md            # $propsルーン
-│   └── bindable/+page.md         # $bindableルーン
+│   ├── bindable/+page.md         # $bindableルーン
+│   └── inspect/+page.md          # $inspectルーン
 ```
 
-### 第4部：実践編
+### 第5部：実践編
 ```
 ├── advanced/
 │   ├── +page.md                  # 実践概要
 │   ├── reactive-stores/+page.md  # .svelte.js/.svelte.tsファイル
 │   ├── class-reactivity/+page.md # クラスとリアクティビティ
+│   ├── built-in-classes/+page.md # 組み込みリアクティブクラス
 │   ├── snippets/+page.md         # Snippets機能
 │   ├── component-patterns/+page.md # コンポーネントパターン
-│   └── typescript-patterns/+page.md # TypeScriptパターン
+│   ├── typescript-patterns/+page.md # TypeScriptパターン
+│   └── script-context/+page.md   # スクリプトコンテキスト
 ```
 
-### 第5部：SvelteKit編
+### 第6部：SvelteKit編
 ```
 ├── sveltekit/
 │   ├── +page.md                  # SvelteKit概要
@@ -100,14 +116,28 @@ src/routes/
 │   └── deployment/+page.md      # デプロイメント
 ```
 
-### 第6部：実装例
+### 第7部：実装例
 ```
 ├── examples/
 │   ├── +page.md                  # 実装例一覧
 │   ├── todo-app/+page.md         # TODOアプリ
 │   ├── auth-system/+page.md     # 認証システム
 │   ├── data-fetching/+page.md   # データフェッチング
-│   └── websocket/+page.md       # WebSocket実装
+│   ├── websocket/+page.md       # WebSocket実装
+│   ├── mermaid-demo/+page.md    # Mermaidデモ
+│   └── features-demo/+page.md   # 機能デモ
+```
+
+### 第8部：ディープダイブ（技術詳細）
+```
+├── deep-dive/
+│   ├── state-use-proxy-object/+page.md     # Proxyオブジェクト活用
+│   ├── reactive-state-variables-vs-bindings/+page.md # リアクティブ状態とバインディング
+│   ├── state-raw-vs-state/+page.md         # $state.raw vs $state
+│   ├── derived-vs-effect-vs-derived-by/+page.md # 派生値の違い
+│   ├── compile-time-optimization/+page.md  # コンパイル時最適化
+│   ├── html-templates-and-snippets/+page.md # HTMLテンプレートとSnippets
+│   └── custom-elements-vs-svelte-components/+page.md # カスタム要素とSvelteコンポーネント
 ```
 
 ## 🔄 移行計画と変更履歴
@@ -129,6 +159,24 @@ src/routes/
 - 学習パス: Runesシステムの前にSvelteの基本を学ぶ流れに変更
 - ディレクトリ名変更: `basics` → `runes` (より明確な命名)
 
+#### ✅ SSR互換性とビルドエラーの修正
+- **問題**: LiveCodeコンポーネントでSSR時に`toLocaleString()`が未定義値で呼ばれるエラー
+- **解決策**:
+  - Optional chaining (`?.`) と Nullish coalescing (`??`) を活用
+  - `$derived.by()` 構文を使用して適切なリアクティビティを確保
+  - フォームのアクセシビリティ属性（id/for）を追加
+
+#### ✅ 実践的なAPI使用例への更新
+- **変更内容**: モックAPIから実際の公開APIへの移行
+- **使用API**:
+  - **JSONPlaceholder API**: ユーザーデータの取得（`$effect.pre`セクション、非同期処理）
+  - **GitHub Search API**: リポジトリ検索（デバウンス処理セクション）
+- **改善点**:
+  - 実際に動作するコード例の提供
+  - エラーハンドリングとフォールバック処理の実装
+  - AbortControllerを使用したリクエストキャンセル
+  - 800msのデバウンス処理による効率的な検索
+
 #### ✅ コンテンツガイドラインの更新
 - フロントマター後の`# {title}`重複を避けるルールを追加
 - ページ構成のテンプレートを提供
@@ -143,9 +191,9 @@ src/routes/
 
 #### フェーズ2：コンテンツ移行（進行中）
 1. ✅ Svelteの基本セクションの作成
-2. ⏳ Svelte 5 Runesシステムの詳細解説
-3. ⏳ TypeScript型定義の追加・改善
-4. ⏳ コード例の全面的な見直し
+2. ✅ Svelte 5 Runesシステムの詳細解説（基本実装完了）
+3. ✅ 実践的なコード例への更新（公開API使用）
+4. ⏳ TypeScript型定義のさらなる改善
 
 #### フェーズ3：新規コンテンツ作成（予定）
 1. TypeScriptパターン集の作成
@@ -328,6 +376,13 @@ description: ページの説明
 
 ## 🧠 ナレッジベース
 
+### 技術的な実装詳細
+
+#### LiveCodeコンポーネントの最適化
+- **SSR対応**: サーバーサイドレンダリング時のエラーを防ぐため、Optional chainingを徹底
+- **$derived.by()の使用**: 複雑な派生値計算で明示的な関数構文を使用
+- **型安全性**: TypeScriptの厳密な型定義により実行時エラーを削減
+
 ### Svelte 5 Runesチートシート
 
 #### $state
@@ -354,10 +409,12 @@ class Counter {
 let count = $state(0);
 let doubled = $derived(count * 2);
 
-// 複雑な計算
-let filtered = $derived(() => {
+// 複雑な計算には$derived.by()を使用
+let filtered = $derived.by(() => {
   return items.filter(item => item.active);
 });
+
+// 注意: $derived(() => {...})は誤用。$derived.by()を使用すること
 ```
 
 #### $effect
@@ -447,6 +504,7 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 - `$:` によるリアクティブステートメント
 - `export let` によるprops定義
 - ストアの`$`プレフィックス
+- `$derived(() => {...})` の誤用（`$derived.by()` を使用すべき場合）
 
 #### 推奨パターン
 - `$state` による明示的なリアクティビティ
@@ -526,6 +584,10 @@ jobs:
 - [Svelte 5 Docs](https://svelte.dev/docs)
 - [SvelteKit Docs](https://kit.svelte.dev/docs)
 - [SveltePress](https://sveltepress.site)
+
+### 使用している外部API
+- [JSONPlaceholder](https://jsonplaceholder.typicode.com/) - テスト用のRESTful API
+- [GitHub API](https://docs.github.com/en/rest) - リポジトリ検索API（認証不要）
 
 ### ナレッジリポジトリ
 - [Notes on Svelte](https://github.com/shuji-bonji/Notes-on-Svelte)

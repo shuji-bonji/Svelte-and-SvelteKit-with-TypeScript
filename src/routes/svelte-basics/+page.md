@@ -61,6 +61,42 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
     </div>
   </a>
   
+  <a href="{base}/svelte-basics/template-syntax/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔤</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        テンプレート構文
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Svelteの特殊なテンプレートタグと構文を詳しく学びます。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><code>{`{@render}`}</code>: Snippetsのレンダリング</li>
+        <li><code>{`{@html}`}</code>: HTML文字列の挿入</li>
+        <li><code>{`{@const}`}</code>: ローカル定数の定義</li>
+        <li><code>{`{#key}`}</code>: 強制的な再レンダリング</li>
+        <li><code>{`{@debug}`}</code>: デバッグ情報の出力</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/svelte-basics/transitions/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">✨</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        トランジション・アニメーション
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">美しいアニメーションを簡単に実装する方法を学びます。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>transition:</strong> 入場・退場アニメーション</li>
+        <li><strong>in:/out:</strong> 個別のトランジション</li>
+        <li><strong>animate:</strong> FLIPアニメーション</li>
+        <li><strong>style:</strong> 動的なスタイル適用</li>
+        <li>カスタムトランジションの作成</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/svelte-basics/typescript-integration/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📘</div>

@@ -67,6 +67,14 @@ const config = defineConfig({
                   to: '/svelte-basics/component-basics/',
                 },
                 {
+                  title: 'テンプレート構文',
+                  to: '/svelte-basics/template-syntax/',
+                },
+                {
+                  title: 'トランジション・アニメーション',
+                  to: '/svelte-basics/transitions/',
+                },
+                {
                   title: 'TypeScript統合',
                   to: '/svelte-basics/typescript-integration/',
                 },

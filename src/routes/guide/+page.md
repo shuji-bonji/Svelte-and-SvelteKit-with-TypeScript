@@ -47,6 +47,16 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <h3 class="font-bold text-lg mb-2">📦 Runes基礎編</h3>
+    <ol class="space-y-2">
+      <li><a href="{base}/runes-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runes基礎概要</a></li>
+      <li><a href="{base}/runes-basics/state/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$state - 状態管理</a></li>
+      <li><a href="{base}/runes-basics/derived/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$derived - 派生値</a></li>
+      <li><a href="{base}/runes-basics/effect/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$effect - 副作用</a></li>
+      <li><a href="{base}/runes-basics/comparison/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">他フレームワークとの比較</a></li>
+    </ol>
+  </div>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🔧 Svelteの基本</h3>
     <ol class="space-y-2">
       <li><a href="{base}/svelte-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelteの基本概要</a></li>
@@ -58,16 +68,14 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       <li><a href="{base}/svelte-basics/actions/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">use:アクション</a></li>
     </ol>
   </div>
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <h3 class="font-bold text-lg mb-2">📚 Runesシステム</h3>
+  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <h3 class="font-bold text-lg mb-2">📚 Runes応用編</h3>
     <ol class="space-y-2">
       <li><a href="{base}/runes/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム概要</a></li>
       <li><a href="{base}/runes/runes-introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム入門</a></li>
-      <li><a href="{base}/runes/state/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$stateルーン</a></li>
-      <li><a href="{base}/runes/derived/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$derivedルーン</a></li>
-      <li><a href="{base}/runes/effect/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$effectルーン</a></li>
       <li><a href="{base}/runes/props/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$propsルーン</a></li>
       <li><a href="{base}/runes/bindable/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$bindableルーン</a></li>
+      <li><a href="{base}/runes/inspect/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">$inspectルーン</a></li>
     </ol>
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -87,7 +95,6 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
     <ol class="space-y-2">
@@ -109,6 +116,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       <li><a href="{base}/examples/data-fetching/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">データフェッチング</a></li>
       <li><a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">WebSocket実装</a></li>
       <li><a href="{base}/examples/mermaid-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Mermaidダイアグラム</a></li>
+      <li><a href="{base}/examples/features-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">機能デモ</a></li>
     </ol>
   </div>
 </div>
@@ -126,14 +134,29 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       </a> - Virtual DOMを使わない理由と仕組み
     </li>
     <li>
-      <a href="{base}/deep-dive/leveraging-proxy-objects-in-svelte-5/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
-        🔍 Svelte 5におけるProxyオブジェクトの活用
+      <a href="{base}/deep-dive/state-use-proxy-object/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🔍 Proxyオブジェクトの活用
       </a> - リアクティビティシステムの中核技術
     </li>
     <li>
-      <a href="{base}/deep-dive/state-use-proxy-object/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
-        ⚡ $stateとProxyオブジェクト
-      </a> - 実践例とパフォーマンス最適化
+      <a href="{base}/deep-dive/reactive-state-variables-vs-bindings/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        ⚡ リアクティブ状態とバインディング
+      </a> - 違いを理解して正しく使う
+    </li>
+    <li>
+      <a href="{base}/deep-dive/state-raw-vs-state/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🔧 $state.raw vs $state
+      </a> - パフォーマンス最適化のための使い分け
+    </li>
+    <li>
+      <a href="{base}/deep-dive/derived-vs-effect-vs-derived-by/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🔄 $derived vs $effect vs $derived.by
+      </a> - 派生値の違いと適切な使い方
+    </li>
+    <li>
+      <a href="{base}/deep-dive/html-templates-and-snippets/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🎨 HTMLテンプレートとSnippets
+      </a> - 再利用可能なUIパーツの作成
     </li>
   </ul>
 </div>
@@ -148,7 +171,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   <div class="week-content">
     <div class="day">Day 1-2: <a href="{base}/introduction/setup/">環境構築</a> & <a href="{base}/svelte-basics/hello-world/">Hello World</a></div>
     <div class="day">Day 3-4: <a href="{base}/svelte-basics/component-basics/">コンポーネントの基本</a></div>
-    <div class="day">Day 5-7: <a href="{base}/runes/state/">リアクティビティ入門</a></div>
+    <div class="day">Day 5-7: <a href="{base}/runes-basics/state/">リアクティビティ入門</a></div>
   </div>
   
   <h4 class="text-lg font-bold mb-3 mt-4">Week 2-3: 実践開発</h4>
@@ -171,7 +194,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   <ul class="phase-list">
     <li><a href="{base}/introduction/why-svelte/">なぜSvelteか</a> - 他フレームワークとの違いを理解</li>
     <li><a href="{base}/deep-dive/compile-time-optimization/">コンパイル時最適化</a>の仕組み</li>
-    <li><a href="{base}/deep-dive/leveraging-proxy-objects-in-svelte-5/">Proxyオブジェクトの活用</a> - Svelte 5の内部実装</li>
+    <li><a href="{base}/deep-dive/state-use-proxy-object/">Proxyオブジェクトの活用</a> - Svelte 5の内部実装</li>
   </ul>
   
   <h4 class="text-lg font-bold mb-3 mt-4">Phase 2: Runesマスター（3-4日）</h4>
@@ -223,7 +246,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
     </table>
   </div>
   
-  <p class="mt-4">詳細は<a href="{base}/runes/">Runesシステム</a>を参照してください。</p>
+  <p class="mt-4">詳細は<a href="{base}/runes-basics/">Runes基礎編</a>および<a href="{base}/runes/">Runes応用編</a>を参照してください。</p>
 </div>
 
 ## ✅ スキルチェックリスト

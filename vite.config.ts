@@ -17,30 +17,6 @@ const config = defineConfig({
             to: '/introduction/',
           },
           {
-            title: 'Runes基礎',
-            to: '/runes-basics/',
-          },
-          {
-            title: 'Svelteの基本',
-            to: '/svelte-basics/',
-          },
-          {
-            title: 'Runes詳細',
-            to: '/runes/',
-          },
-          {
-            title: '実践',
-            to: '/advanced/',
-          },
-          {
-            title: 'SvelteKit',
-            to: '/sveltekit/',
-          },
-          {
-            title: '実装例',
-            to: '/examples/',
-          },
-          {
             title: 'ガイド',
             to: '/guide/',
           },

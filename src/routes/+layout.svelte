@@ -1,39 +1,126 @@
 <script lang="ts">
   import Search from '$lib/components/Search.svelte';
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
   
   const { children } = $props();
   
-  // ナビゲーションバーに検索ボタンを追加するためのフラグ
-  let showSearch = $derived($page.url.pathname !== '/search');
+  // ページの状態を判定
+  const routeId = $derived($page.route.id);
+  const isHome = $derived(routeId === '/');
+  const showSearch = $derived($page.url.pathname !== '/search');
+  let mounted = $state(false);
+  
+  onMount(() => {
+    mounted = true;
+  });
 </script>
 
-<!-- 検索コンポーネントをヘッダーに追加 -->
-{#if showSearch}
-  <div class="search-container">
+<!-- カスタム検索コンポーネント -->
+{#if mounted && showSearch}
+  <div class="search-teleport" class:is-home={isHome}>
     <Search />
   </div>
 {/if}
 
 <style>
-  /* 検索コンポーネントの配置 */
-  .search-container {
+  /* 検索ボタンを固定位置に配置 */
+  .search-teleport {
     position: fixed;
-    top: 0.5rem;
-    right: 1rem;
-    z-index: 1001;
+    top: 18px;
+    z-index: 890; /* ヘッダーより少し低く */
   }
-
-  @media (max-width: 768px) {
-    .search-container {
-      top: 0.75rem;
-      right: 3.5rem; /* ハンバーガーメニューと重ならないように */
+  
+  /* デスクトップ: 通常ページではサイドバーの右側に配置 */
+  @media (min-width: 950px) {
+    .search-teleport:not(.is-home) {
+      left: 260px; /* サイドバーの幅 + 余白 */
     }
+    
+    /* ホームページでは中央に配置、ただしロゴの右側 */
+    .search-teleport.is-home {
+      left: calc(10vw + 200px); /* ロゴの右側に配置 */
+      transform: none;
+      max-width: 400px;
+    }
+  }
+  
+  @media (min-width: 1240px) {
+    .search-teleport:not(.is-home) {
+      left: 300px; /* 大画面でのサイドバーの幅 + 余白 */
+    }
+    
+    .search-teleport.is-home {
+      left: calc(10vw + 220px); /* 大画面でロゴの右側に配置 */
+    }
+  }
+  
+  /* タブレット・モバイル表示 */
+  @media (max-width: 949px) {
+    .search-teleport {
+      right: 120px; /* GitHubアイコンの左側 */
+      left: auto;
+      top: 12px;
+    }
+    
+    /* ホームページでも同じ位置 */
+    .search-teleport.is-home {
+      transform: none;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .search-teleport {
+      right: 100px; /* ハンバーガーメニューの右側 */
+      top: 14px;
+    }
+  }
+  
+  /* ヘッダーのレイアウト調整 */
+  :global(.header .header-inner) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  
+  /* ホームページでのヘッダー調整 */
+  :global(.home .header .left) {
+    flex: 0 0 auto !important;
+  }
+  
+  /* ナビゲーションリンクを右寄せ */
+  :global(.header .nav-links) {
+    margin-left: auto !important;
+    flex: 0 0 auto !important;
+  }
+  
+  :global(.header .navbar-pc) {
+    gap: 0.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* 検索ボックスのスタイル調整 */
+  :global(.search-teleport .search-button) {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  :global(.dark .search-teleport .search-button) {
+    background: rgba(30, 30, 30, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
   /* サイドバーのパディング調整 */
   :global(.theme-default-sidebar) {
     padding-left: 1rem !important;
+  }
+  
+  /* ホームページでのロゴ調整 */
+  :global(.home .header .logo-container) {
+    position: relative !important;
+    z-index: 891 !important; /* 検索ボタンより上に表示 */
   }
 
   /* モバイルサイドバーのスタイル改善 */

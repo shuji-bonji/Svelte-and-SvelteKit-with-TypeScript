@@ -19,6 +19,8 @@ const config = {
 			base: '/Svelte-and-SvelteKit-with-TypeScript'
 		},
 		prerender: {
+			entries: ['*'],
+			crawl: true,
 			handleHttpError: ({ path, referrer, message }) => {
 				// Markdownファイル内のリンクエラーを無視
 				if (path.startsWith('/') && !path.startsWith('/Svelte-and-SvelteKit-with-TypeScript')) {

@@ -36,8 +36,8 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li>動的な値の表示</li>
         <li>JavaScript式の埋め込み</li>
-        <li>HTMLの直接出力（`@html`）</li>
-        <li>デバッグ機能（`@debug`）</li>
+        <li>HTMLの直接出力（<code>@html</code>）</li>
+        <li>デバッグ機能（<code>@debug</code>）</li>
       </ul>
     </div>
   </a>

@@ -1,8 +1,36 @@
-<script>
-  const { children } = $props()
+<script lang="ts">
+  import Search from '$lib/components/Search.svelte';
+  import { page } from '$app/stores';
+  
+  const { children } = $props();
+  
+  // ナビゲーションバーに検索ボタンを追加するためのフラグ
+  let showSearch = $derived($page.url.pathname !== '/search');
 </script>
 
+<!-- 検索コンポーネントをヘッダーに追加 -->
+{#if showSearch}
+  <div class="search-container">
+    <Search />
+  </div>
+{/if}
+
 <style>
+  /* 検索コンポーネントの配置 */
+  .search-container {
+    position: fixed;
+    top: 0.5rem;
+    right: 1rem;
+    z-index: 1001;
+  }
+
+  @media (max-width: 768px) {
+    .search-container {
+      top: 0.75rem;
+      right: 3.5rem; /* ハンバーガーメニューと重ならないように */
+    }
+  }
+
   /* サイドバーのパディング調整 */
   :global(.theme-default-sidebar) {
     padding-left: 1rem !important;

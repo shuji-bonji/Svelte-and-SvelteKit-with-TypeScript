@@ -338,4 +338,8 @@ npm install
 
 ## 次のステップ
 
-環境構築が完了したら、[TypeScript設定](/introduction/typescript-setup/)に進んで、型安全な開発環境を整えましょう。
+環境構築が完了したら、以下のドキュメントに進んでください：
+
+- [Hello World](/introduction/hello-world/) - 最初のSvelteコンポーネントを作成
+- [なぜTypeScriptが必要か](/introduction/why-typescript/) - TypeScriptの重要性を理解
+- [TypeScript設定](/introduction/typescript-setup/) - TypeScriptの詳細な設定

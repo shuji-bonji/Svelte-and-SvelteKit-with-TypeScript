@@ -133,6 +133,23 @@ Runesは、Svelte 5の中核となる新しいリアクティビティAPIです�
       </ul>
     </div>
   </a>
+  
+  <a href="{base}/runes/comparison/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔄</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        他フレームワークとの比較
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">React、Vue、Angularの経験者向けに、Runesシステムの違いと類似点を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>React Hooksとの比較</li>
+        <li>Vue Composition APIとの比較</li>
+        <li>Angular Signalsとの比較</li>
+        <li>移行のベストプラクティス</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 ## 基本的な使い方

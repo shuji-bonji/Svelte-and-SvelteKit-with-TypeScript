@@ -1,458 +1,272 @@
 <script lang="ts">
-  // === 状態管理 ===
-  let currentTime = $state(new Date());
-  let mousePosition = $state({ x: 0, y: 0 });
-  let keyPressed = $state<string | null>(null);
-  let isOnline = $state(typeof window !== 'undefined' ? navigator.onLine : true);
-  let pageViews = $state(0);
-  let timeSpent = $state(0);
-  let isDarkMode = $state(false);
+  interface Repository {
+    id: number;
+    name: string;
+    full_name: string;
+    description: string;
+    html_url: string;
+    stargazers_count: number;
+    language: string;
+  }
   
-  // LocalStorageから保存された設定を読み込む
-  let savedSettings = $state({
-    username: '',
-    notifications: true,
-    theme: 'light' as 'light' | 'dark'
-  });
+  let searchQuery = $state('');
+  let repositories = $state<Repository[]>([]);
+  let searching = $state(false);
+  let totalCount = $state(0);
+  let errorMessage = $state('');
   
-  // === Effect 1: リアルタイム時計 ===
+  // デバウンス付き検索
   $effect(() => {
-    const interval = setInterval(() => {
-      currentTime = new Date();
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  });
-  
-  // === Effect 2: マウス位置追跡 ===
-  $effect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePosition = { x: e.clientX, y: e.clientY };
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  });
-  
-  // === Effect 3: キーボード監視 ===
-  $effect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      keyPressed = e.key;
-    };
-    
-    const handleKeyUp = () => {
-      keyPressed = null;
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  });
-  
-  // === Effect 4: オンライン状態監視 ===
-  $effect(() => {
-    const handleOnline = () => {
-      isOnline = true;
-    };
-    
-    const handleOffline = () => {
-      isOnline = false;
-    };
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  });
-  
-  // === ページビューカウント（初回のみ） ===
-  // 注: $effectの中で状態を変更すると無限ループになるため、
-  // マウント時に一度だけ実行
-  let hasCountedPageView = false;
-  $effect(() => {
-    if (!hasCountedPageView) {
-      pageViews++;
-      hasCountedPageView = true;
-      console.log(`ページビュー: ${pageViews}`);
+    if (!searchQuery.trim()) {
+      repositories = [];
+      totalCount = 0;
+      errorMessage = '';
+      return;
     }
-  });
-  
-  // === Effect 6: 滞在時間計測 ===
-  $effect(() => {
-    const interval = setInterval(() => {
-      timeSpent++;
-    }, 1000);
     
-    return () => clearInterval(interval);
-  });
-  
-  // === Effect 7: LocalStorage同期（読み込み） ===
-  $effect(() => {
-    const saved = localStorage.getItem('dashboardSettings');
-    if (saved) {
+    searching = true;
+    errorMessage = '';
+    
+    // 800ms のデバウンス
+    const timeoutId = setTimeout(async () => {
       try {
-        const parsed = JSON.parse(saved);
-        savedSettings = parsed;
-        isDarkMode = parsed.theme === 'dark';
+        // GitHub API を使用（認証不要）
+        const response = await fetch(
+          `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery)}&sort=stars&order=desc&per_page=10`
+        );
+        
+        if (!response.ok) {
+          if (response.status === 403) {
+            throw new Error('APIのレート制限に達しました。しばらくお待ちください。');
+          }
+          throw new Error(`検索に失敗しました: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        repositories = data.items || [];
+        totalCount = data.total_count || 0;
       } catch (e) {
-        console.error('設定の読み込みエラー:', e);
+        console.error('検索エラー:', e);
+        errorMessage = e instanceof Error ? e.message : '検索中にエラーが発生しました';
+        repositories = [];
+        totalCount = 0;
+      } finally {
+        searching = false;
       }
-    }
-  });
-  
-  // === Effect 8: LocalStorage同期（保存） ===
-  $effect(() => {
-    const settings = {
-      ...savedSettings,
-      theme: isDarkMode ? 'dark' : 'light'
-    };
-    localStorage.setItem('dashboardSettings', JSON.stringify(settings));
-  });
-  
-  // === Effect 9: ドキュメントタイトル更新 ===
-  $effect(() => {
-    document.title = `Dashboard - ${currentTime.toLocaleTimeString('ja-JP')}`;
-  });
-  
-  // === Effect 10: テーマ切り替え ===
-  $effect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
+    }, 800);
     
+    // クリーンアップ: タイマーをクリア
     return () => {
-      document.body.classList.remove('dark-theme');
+      clearTimeout(timeoutId);
     };
   });
   
-  // 設定変更ハンドラー
-  function updateUsername(e: Event) {
-    const target = e.target as HTMLInputElement;
-    savedSettings.username = target.value;
-  }
-  
-  function toggleNotifications() {
-    savedSettings.notifications = !savedSettings.notifications;
-  }
-  
-  function toggleTheme() {
-    isDarkMode = !isDarkMode;
+  function formatStars(count: number): string {
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}k`;
+    }
+    return count.toString();
   }
 </script>
 
-<div class="dashboard" class:dark={isDarkMode}>
-  <header>
-    <h2>🎯 リアルタイムダッシュボード</h2>
-    <button class="theme-toggle" onclick={toggleTheme}>
-      {isDarkMode ? '☀️' : '🌙'}
-    </button>
-  </header>
+<div class="search-container">
+  <h4>GitHubリポジトリ検索</h4>
   
-  <div class="grid">
-    <!-- 時計 -->
-    <div class="card">
-      <h3>⏰ 現在時刻</h3>
-      <div class="time">
-        {currentTime.toLocaleTimeString('ja-JP')}
-      </div>
-      <div class="date">
-        {currentTime.toLocaleDateString('ja-JP', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}
-      </div>
-    </div>
-    
-    <!-- マウス位置 -->
-    <div class="card">
-      <h3>🖱️ マウス位置</h3>
-      <div class="coords">
-        X: <span class="value">{mousePosition.x}</span>
-        Y: <span class="value">{mousePosition.y}</span>
-      </div>
-      <div class="mouse-indicator" style="
-        left: {mousePosition.x}px;
-        top: {mousePosition.y}px;
-      "></div>
-    </div>
-    
-    <!-- キーボード -->
-    <div class="card">
-      <h3>⌨️ キーボード</h3>
-      {#if keyPressed}
-        <div class="key-display">
-          押されたキー: <span class="key">{keyPressed}</span>
-        </div>
-      {:else}
-        <div class="key-display muted">
-          キーを押してください
-        </div>
-      {/if}
-    </div>
-    
-    <!-- ステータス -->
-    <div class="card">
-      <h3>📊 ステータス</h3>
-      <div class="status-item">
-        接続状態: 
-        <span class="status" class:online={isOnline}>
-          {isOnline ? '🟢 オンライン' : '🔴 オフライン'}
-        </span>
-      </div>
-      <div class="status-item">
-        ページビュー: <span class="value">{pageViews}</span>
-      </div>
-      <div class="status-item">
-        滞在時間: <span class="value">{timeSpent}秒</span>
-      </div>
-    </div>
-    
-    <!-- 設定 -->
-    <div class="card settings">
-      <h3>⚙️ 設定</h3>
-      <div class="setting-item">
-        <label>
-          ユーザー名:
-          <input 
-            type="text" 
-            value={savedSettings.username}
-            oninput={updateUsername}
-            placeholder="名前を入力"
-          />
-        </label>
-      </div>
-      <div class="setting-item">
-        <label>
-          <input 
-            type="checkbox" 
-            checked={savedSettings.notifications}
-            onchange={toggleNotifications}
-          />
-          通知を有効にする
-        </label>
-      </div>
-      {#if savedSettings.username}
-        <div class="welcome">
-          ようこそ、{savedSettings.username}さん！
-        </div>
-      {/if}
-    </div>
-    
-    <!-- Effect情報 -->
-    <div class="card">
-      <h3>🎬 アクティブなEffect</h3>
-      <ul class="effect-list">
-        <li>⏰ 時計更新 (1秒ごと)</li>
-        <li>🖱️ マウス追跡</li>
-        <li>⌨️ キーボード監視</li>
-        <li>🌐 オンライン状態監視</li>
-        <li>💾 LocalStorage同期</li>
-        <li>📄 タイトル更新</li>
-        <li>🎨 テーマ切り替え</li>
-      </ul>
-    </div>
+  <input 
+    bind:value={searchQuery}
+    placeholder="リポジトリを検索（例: svelte, react, vue）"
+    class="search-input"
+  />
+  
+  <div class="status">
+    {#if searching}
+      <span class="searching">🔍 検索中...</span>
+    {:else if searchQuery && !errorMessage}
+      <span class="results-count">
+        {totalCount.toLocaleString()}件の結果
+        {#if totalCount > 10}
+          （上位10件を表示）
+        {/if}
+      </span>
+    {/if}
   </div>
+  
+  {#if errorMessage}
+    <div class="error-message">
+      ⚠️ {errorMessage}
+    </div>
+  {/if}
+  
+  {#if repositories.length > 0}
+    <ul class="repo-list">
+      {#each repositories as repo}
+        <li class="repo-item">
+          <div class="repo-header">
+            <a href={repo.html_url} target="_blank" rel="noopener noreferrer" class="repo-name">
+              {repo.full_name}
+            </a>
+            <span class="stars">
+              ⭐ {formatStars(repo.stargazers_count)}
+            </span>
+          </div>
+          {#if repo.description}
+            <p class="repo-description">{repo.description}</p>
+          {/if}
+          {#if repo.language}
+            <span class="language" style="--lang-color: {getLanguageColor(repo.language)}">
+              {repo.language}
+            </span>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+  {:else if searchQuery && !searching && !errorMessage}
+    <p class="no-results">検索結果がありません</p>
+  {/if}
 </div>
 
+<script context="module" lang="ts">
+  function getLanguageColor(language: string): string {
+    const colors: Record<string, string> = {
+      JavaScript: '#f1e05a',
+      TypeScript: '#3178c6',
+      Python: '#3572A5',
+      Java: '#b07219',
+      'C++': '#f34b7d',
+      'C#': '#178600',
+      PHP: '#4F5D95',
+      Ruby: '#701516',
+      Go: '#00ADD8',
+      Swift: '#FA7343',
+      Kotlin: '#A97BFF',
+      Rust: '#dea584',
+      Vue: '#41b883',
+      HTML: '#e34c26',
+      CSS: '#563d7c',
+      Shell: '#89e051',
+      PowerShell: '#012456'
+    };
+    return colors[language] || '#6e7681';
+  }
+</script>
+
 <style>
-  .dashboard {
-    padding: 2rem;
-    background: #f5f5f5;
-    min-height: 100vh;
-    transition: background 0.3s;
+  .search-container {
+    max-width: 600px;
+    margin: 0 auto;
   }
   
-  .dashboard.dark {
-    background: #1a1a1a;
-    color: #fff;
+  .search-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 2px solid #e1e4e8;
+    border-radius: 6px;
+    transition: border-color 0.2s;
   }
   
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+  .search-input:focus {
+    outline: none;
+    border-color: #0366d6;
   }
   
-  h2 {
-    margin: 0;
-    color: #ff3e00;
-  }
-  
-  .theme-toggle {
-    background: transparent;
-    border: 2px solid #ff3e00;
-    font-size: 1.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    position: relative;
-  }
-  
-  .dark .card {
-    background: #2a2a2a;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  
-  h3 {
-    margin-top: 0;
-    color: #ff3e00;
-    font-size: 1.1rem;
-  }
-  
-  .time {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ff3e00;
-    font-family: monospace;
-  }
-  
-  .date {
-    margin-top: 0.5rem;
-    color: #666;
-  }
-  
-  .dark .date {
-    color: #aaa;
-  }
-  
-  .coords {
-    font-size: 1.2rem;
-    font-family: monospace;
-  }
-  
-  .value {
-    color: #ff3e00;
-    font-weight: bold;
-  }
-  
-  .mouse-indicator {
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background: radial-gradient(circle, #ff3e00, transparent);
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    opacity: 0.5;
-  }
-  
-  .key-display {
-    font-size: 1.2rem;
-    padding: 1rem;
-    background: #f0f0f0;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .dark .key-display {
-    background: #333;
-  }
-  
-  .key {
-    color: #ff3e00;
-    font-weight: bold;
-    font-size: 1.5rem;
-    font-family: monospace;
-  }
-  
-  .muted {
-    color: #999;
-  }
-  
-  .status-item {
+  .status {
     margin: 0.5rem 0;
+    font-size: 0.9rem;
+    min-height: 1.5rem;
   }
   
-  .status.online {
-    color: #4caf50;
+  .searching {
+    color: #0366d6;
   }
   
-  .setting-item {
+  .results-count {
+    color: #586069;
+  }
+  
+  .error-message {
+    padding: 0.75rem;
+    background: #ffeef0;
+    color: #d73a49;
+    border-radius: 6px;
     margin: 1rem 0;
   }
   
-  .setting-item label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  input[type="text"] {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .dark input[type="text"] {
-    background: #333;
-    border-color: #555;
-    color: #fff;
-  }
-  
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .welcome {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: #fff3cd;
-    color: #856404;
-    border-radius: 4px;
-  }
-  
-  .dark .welcome {
-    background: #3a3a2a;
-    color: #ffd700;
-  }
-  
-  .effect-list {
+  .repo-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 1rem 0 0 0;
   }
   
-  .effect-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+  .repo-item {
+    padding: 1rem;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
   }
   
-  .dark .effect-list li {
-    border-bottom-color: #444;
+  .repo-item:hover {
+    border-color: #0366d6;
   }
   
-  .effect-list li:last-child {
-    border-bottom: none;
+  .repo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .repo-name {
+    font-weight: 600;
+    color: #0366d6;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  
+  .repo-name:hover {
+    text-decoration: underline;
+  }
+  
+  .stars {
+    color: #586069;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  
+  .repo-description {
+    margin: 0.5rem 0;
+    color: #586069;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .language {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #f6f8fa;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    color: #24292e;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .language::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--lang-color);
+  }
+  
+  .no-results {
+    text-align: center;
+    color: #586069;
+    padding: 2rem;
   }
 </style>

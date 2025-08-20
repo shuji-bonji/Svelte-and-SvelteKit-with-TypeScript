@@ -1,477 +1,443 @@
 ---
-title: $stateルーン
-description: Svelte 5のリアクティブな状態管理
+title: $state - リアクティブな状態
+description: Svelte 5のRunesシステムにおける状態管理の基礎
 ---
 
-`$state`は、Svelte 5の新しいリアクティビティシステム「Runes」の中核となる機能です。このページでは、`$state`を使った状態管理の基本から応用まで、TypeScriptと組み合わせた実践的な使い方を解説します。
-
-:::tip[React/Vue経験者向け]
-- `$state`は React の `useState` や Vue の `ref` に相当
-- ただし、セッター関数は不要で、値を直接変更可能
-- オブジェクトのプロパティも自動的にリアクティブになる（深いリアクティビティ）
-:::
-
-## $stateとは
-
-`$state`は、Svelte 5でリアクティブな値を作成するための基本的なルーンです。  
-値が変更されると、それを使用しているコンポーネントが自動的に更新されます。
-
-### 主な特徴
-
-- **自動的な変更検知**: 値の変更を自動で追跡し、UIを更新
-- **深いリアクティビティ**: オブジェクトや配列の内部プロパティも追跡
-- **TypeScript完全対応**: 型推論と型安全性を提供
-- **シンプルな構文**: 特別なセッター関数不要で直接値を変更可能
+`$state`ルーンは、Svelte 5でリアクティブな状態を作成するための基本的な方法です。値が変更されると、その値を使用しているUIが自動的に更新されます。
 
 ## 基本的な使い方
 
 ### プリミティブ値
 
-```typescript
-let count = $state(0);
-let message = $state('Hello');
-let isActive = $state(false);
+:::tip[コード表記]
+`Click fold/expand code`をクリックすると実行コードを確認できます。
+:::
 
-function increment() {
-  count++; // 自動的にUIが更新される
-}
+```svelte live
+<script lang="ts">
+  // 数値
+  let count = $state(0); // 初期値 `0`
+  
+  // 文字列
+  let message = $state('Hello'); // 初期値 `Hello`
+  
+  // ブール値
+  let isActive = $state(false); // 初期値 `false`
+  
+  // null/undefined
+  let data = $state<string | null>(null);
+</script>
+
+<button onclick={() => count++}>
+  カウント: {count}
+</button>
+
+<input bind:value={message} />
+<p>{message}</p>
+
+<label>
+  <input type="checkbox" bind:checked={isActive} />
+  アクティブ: {isActive}
+</label>
 ```
 
-### オブジェクト
-
+:::tip[TypeScriptの型推論]
+`$state`は初期値から型を推論しますが、明示的に型を指定することもできます。
 ```typescript
-let user = $state({
-  name: '太郎',
-  age: 25,
-  email: 'taro@example.com'
-});
-
-// プロパティの変更も追跡される
-user.name = '次郎'; // UIが更新される
-user.age++; // UIが更新される
-```
-
-### 配列
-
-```typescript
+let count = $state<number>(0);
 let items = $state<string[]>([]);
-
-// 配列メソッドも追跡される
-items.push('新しいアイテム'); // UIが更新される
-items.pop(); // UIが更新される
-items[0] = '変更'; // UIが更新される
 ```
+:::
+
+## オブジェクトと配列
+
+### オブジェクトの扱い
+
+```svelte live
+<script lang="ts">
+  interface User {
+    name: string;
+    age: number;
+    email: string;
+  }
+  
+  // オブジェクト全体がリアクティブ
+  let user = $state<User>({
+    name: '太郎',
+    age: 25,
+    email: 'taro@example.com'
+  });
+  
+  // プロパティの更新
+  function updateName(newName: string) {
+    user.name = newName; // UIが自動更新される
+  }
+  
+  // オブジェクト全体の置き換え
+  function resetUser() {
+    user = {
+      name: '新しいユーザー',
+      age: 0,
+      email: ''
+    };
+  }
+</script>
+
+<input bind:value={user.name} />
+<input type="number" bind:value={user.age} />
+<input type="email" bind:value={user.email} />
+
+<p>名前: {user.name}</p>
+<p>年齢: {user.age}</p>
+<p>メール: {user.email}</p>
+```
+
+### 配列の扱い
+
+```svelte live
+<script lang="ts">
+  // 配列もリアクティブ
+  let todos = $state<string[]>([
+    'Svelte 5を学ぶ',
+    'Runesを理解する'
+  ]);
+  
+  let newTodo = $state('');
+  
+  // 配列への追加
+  function addTodo() {
+    if (newTodo.trim()) {
+      todos.push(newTodo); // pushでもリアクティブ
+      newTodo = '';
+    }
+  }
+  
+  // 配列からの削除
+  function removeTodo(index: number) {
+    todos.splice(index, 1); // spliceでもリアクティブ
+  }
+  
+  // 配列の更新
+  function updateTodo(index: number, value: string) {
+    todos[index] = value; // インデックスアクセスでもリアクティブ
+  }
+</script>
+
+<input bind:value={newTodo} placeholder="新しいTODO" />
+<button onclick={addTodo}>追加</button>
+
+<ul>
+  {#each todos as todo, index}
+    <li>
+      <input
+        value={todo}
+        oninput={(e) => updateTodo(index, e.currentTarget.value)}
+      />
+      <button onclick={() => removeTodo(index)}>削除</button>
+    </li>
+  {/each}
+</ul>
+<p>{todos}</p>
+```
+
+:::info[配列メソッドのリアクティビティ]
+Svelte 5では、以下の配列メソッドがリアクティブです。
+- `push()`, `pop()`, `shift()`, `unshift()`
+- `splice()`, `sort()`, `reverse()`
+- インデックスによる直接代入 `array[0] = value`
+
+これはVue 3と似た挙動で、React と異なり配列を直接変更できます。
+:::
 
 ## 深いリアクティビティ
 
-`$state`は深いリアクティビティを持ちます。ネストされたオブジェクトのプロパティも自動的に追跡されます。
+`$state`は深いリアクティビティを提供します。ネストされたオブジェクトや配列も自動的にリアクティブになります。
 
-```typescript
-let data = $state({
-  user: {
-    profile: {
-      name: '太郎',
-      settings: {
-        theme: 'dark',
-        notifications: true
-      }
-    }
-  }
-});
-
-// ネストされたプロパティの変更も追跡
-data.user.profile.settings.theme = 'light'; // UIが更新される
-```
-
-## クラスでの使用
-
-```typescript
-class Counter {
-  value = $state(0);
-  
-  increment() {
-    this.value++;
-  }
-  
-  decrement() {
-    this.value--;
-  }
-  
-  reset() {
-    this.value = 0;
-  }
-}
-
-let counter = new Counter();
-```
-
-## $state.raw
-
-`$state.raw`は、深いリアクティビティを持たない状態を作成します。これは、大きなオブジェクトや頻繁に変更されないデータに対してパフォーマンスを最適化したい場合に有用です。
-
-:::info[$state.rawの特徴]
-- **浅いリアクティビティ**: トップレベルの値の変更のみを追跡
-- **プロパティの変更は追跡されない**: オブジェクト内部のプロパティ変更は自動的にUIを更新しない
-- **パフォーマンス最適化**: 深いリアクティビティのオーバーヘッドがない
-- **初期化時のみ使用可能**: 変数宣言時にのみ使用でき、後から再代入で`$state.raw`を使うことはできない
-
-通常の`$state`との違いは、オブジェクトのプロパティ変更が自動追跡されないことです。
-:::
-
-```typescript
-// 初期化時に$state.rawを使用
-let config = $state.raw({
-  apiUrl: 'https://api.example.com',
-  version: '1.0.0'
-});
-
-// プロパティの直接変更はUIを更新しない
-config.apiUrl = 'https://new-api.example.com'; // UIは更新されない
-
-// 新しいオブジェクトで置き換えるとUIが更新される
-config = {
-  apiUrl: 'https://new-api.example.com',
-  version: '1.0.1'
-}; // UIが更新される
-```
-
-### 使用場面
-
-1. **大きなデータセット**: 深いリアクティビティが不要な大規模なオブジェクト
-2. **パフォーマンス最適化**: 頻繁に変更されない設定データ
-3. **外部ライブラリのデータ**: リアクティビティが不要な外部データ
-
-```typescript
-// 大きな設定オブジェクトの例（深いリアクティビティ不要）
-let appConfig = $state.raw({
-  theme: 'dark',
-  language: 'ja',
-  features: {
-    notifications: true,
-    autoSave: false
-  }
-});
-
-// 設定全体を置き換える場合
-function updateConfig(newConfig) {
-  appConfig = newConfig; // 全体を置き換えるとUIが更新される
-}
-
-// 注意: プロパティの直接変更はUIを更新しない
-// appConfig.theme = 'light'; // UIは更新されない
-```
-
-## $state.snapshot
-
-リアクティブな値の現在のスナップショットを取得します。
-
-```typescript
-let todos = $state([
-  { id: 1, text: '買い物', done: false },
-  { id: 2, text: '掃除', done: true }
-]);
-
-// スナップショットを取得（非リアクティブなコピー）
-let snapshot = $state.snapshot(todos);
-
-// LocalStorageに保存
-localStorage.setItem('todos', JSON.stringify(snapshot));
-```
-
-## 実践例：カウンターアプリ
-
-シンプルなカウンターアプリで`$state`の基本動作を確認しましょう。
-
-```svelte live ln title=Counter.svelte
+```svelte
 <script lang="ts">
-  // 基本的な$state
-  let count = $state(0);
-  
-  // オブジェクトの$state
-  let stats = $state({
-    clicks: 0,
-    lastClickTime: null as Date | null
-  });
-  
-  // 設定オブジェクト（通常の$stateで管理し、直接変更を避ける）
-  let config = $state({
-    min: -10,
-    max: 10,
-    step: 1
-  });
-  
-  function increment() {
-    if (count < config.max) {
-      count += config.step;
-      stats.clicks++;
-      stats.lastClickTime = new Date();
-    }
-  }
-  
-  function decrement() {
-    if (count > config.min) {
-      count -= config.step;
-      stats.clicks++;
-      stats.lastClickTime = new Date();
-    }
-  }
-  
-  function reset() {
-    count = 0;
-    stats = {
-      clicks: 0,
-      lastClickTime: null
-    };
-  }
-  
-  function changeStep() {
-    // イミュータブルな更新パターン（新しいオブジェクトで置き換える）
-    config = {
-      ...config,
-      step: config.step === 1 ? 2 : 1
-    };
-  }
-</script>
-
-<div class="counter-app">
-  <h3>カウンター: {count}</h3>
-  
-  <div class="controls">
-    <button onclick={decrement} disabled={count <= config.min}>
-      -
-    </button>
-    <button onclick={reset}>
-      リセット
-    </button>
-    <button onclick={increment} disabled={count >= config.max}>
-      +
-    </button>
-  </div>
-  
-  <div class="stats">
-    <p>クリック回数: {stats.clicks}</p>
-    {#if stats.lastClickTime}
-      <p>最終クリック: {stats.lastClickTime.toLocaleTimeString('ja-JP')}</p>
-    {/if}
-  </div>
-  
-  <div class="config">
-    <p>範囲: {config.min} 〜 {config.max}</p>
-    <p>ステップ: {config.step}</p>
-    <button onclick={changeStep}>
-      ステップ切り替え
-    </button>
-  </div>
-</div>
-
-<style>
-  .counter-app {
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  h3 {
-    text-align: center;
-    color: #ff3e00;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .controls {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
-    background: #ff3e00;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  button:hover:not(:disabled) {
-    background: #ff5a00;
-  }
-  
-  button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .stats, .config {
-    background: white;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-  
-  .stats p, .config p {
-    margin: 0.5rem 0;
-    color: #666;
-  }
-  
-  .config button {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    padding: 0.3rem 0.8rem;
-  }
-</style>
-```
-
-## 実践例：TODOリスト
-
-より実践的な例として、TODOリストアプリを実装してみましょう。
-
-```svelte live ln title=TodoList.svelte
-<script lang="ts">
-  type Todo = {
+  interface TodoItem {
     id: number;
     text: string;
-    done: boolean;
-    createdAt: Date;
-  };
+    completed: boolean;
+    tags: string[];
+  }
   
-  // TODOリストの状態
-  let todos = $state<Todo[]>([]);
-  let newTodoText = $state('');
-  let filter = $state<'all' | 'active' | 'completed'>('all');
+  interface TodoList {
+    title: string;
+    items: TodoItem[];
+    metadata: {
+      createdAt: Date;
+      updatedAt: Date;
+      author: {
+        name: string;
+        email: string;
+      };
+    };
+  }
   
-  // フィルタリングされたTODO（$derivedとの組み合わせ例）
-  let filteredTodos = $derived(
-    filter === 'active' ? todos.filter(t => !t.done) :
-    filter === 'completed' ? todos.filter(t => t.done) :
-    todos
-  );
-  
-  // 統計情報
-  let stats = $derived({
-    total: todos.length,
-    completed: todos.filter(t => t.done).length,
-    active: todos.filter(t => !t.done).length
+  let todoList = $state<TodoList>({
+    title: 'プロジェクトタスク',
+    items: [
+      {
+        id: 1,
+        text: '設計書作成',
+        completed: false,
+        tags: ['重要', '急ぎ']
+      }
+    ],
+    metadata: {
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      author: {
+        name: '山田太郎',
+        email: 'yamada@example.com'
+      }
+    }
   });
   
-  function addTodo() {
-    if (!newTodoText.trim()) return;
+  // 深くネストされたプロパティの更新もリアクティブ
+  function updateAuthorName(name: string) {
+    todoList.metadata.author.name = name; // UIが更新される
+  }
+  
+  function addTag(itemId: number, tag: string) {
+    const item = todoList.items.find(i => i.id === itemId);
+    if (item) {
+      item.tags.push(tag); // 深いレベルの配列操作もリアクティブ
+    }
+  }
+</script>
+```
+
+## クラスとの統合
+
+`$state`はクラスのプロパティとしても使用できます。
+
+```svelte live
+<script lang="ts">
+  class Counter {
+    // クラスプロパティとして$state
+    value = $state(0);
     
-    todos = [...todos, {
-      id: Date.now(),
-      text: newTodoText,
-      done: false,
-      createdAt: new Date()
-    }];
+    increment() {
+      this.value++;
+    }
     
-    newTodoText = '';
+    decrement() {
+      this.value--;
+    }
+    
+    reset() {
+      this.value = 0;
+    }
   }
   
-  function toggleTodo(id: number) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, done: !todo.done } : todo
-    );
+  let counter = new Counter();
+</script>
+
+<div>
+  <p>カウント: {counter.value}</p>
+  <button onclick={() => counter.increment()}>+</button>
+  <button onclick={() => counter.decrement()}>-</button>
+  <button onclick={() => counter.reset()}>リセット</button>
+</div>
+```
+
+## $state.raw - 浅いリアクティビティ
+
+パフォーマンスが重要な場合、`$state.raw`を使用して浅いリアクティビティのみを適用できます。
+
+```svelte
+<script lang="ts">
+  // 浅いリアクティビティ（第一階層のみ）
+  let shallowState = $state.raw({
+    level1: {
+      level2: {
+        value: 'deep value'
+      }
+    }
+  });
+  
+  // これはリアクティブ
+  shallowState.level1 = { level2: { value: 'new' } };
+  
+  // これはリアクティブではない（深いプロパティ）
+  shallowState.level1.level2.value = 'updated'; // UIは更新されない
+</script>
+```
+
+:::warning[`$state.raw`の使用注意]
+`$state.raw`は大きなデータ構造でパフォーマンスを最適化する場合にのみ使用してください。通常は`$state`の深いリアクティビティが便利で十分です。
+:::
+
+## 実践例：フォーム管理
+
+```svelte live ln title=FormExample.svelte
+<script lang="ts">
+  interface FormData {
+    username: string;
+    email: string;
+    age: number;
+    country: string;
+    newsletter: boolean;
+    interests: string[];
   }
   
-  function deleteTodo(id: number) {
-    todos = todos.filter(todo => todo.id !== id);
+  let formData = $state<FormData>({
+    username: '',
+    email: '',
+    age: 0,
+    country: 'japan',
+    newsletter: false,
+    interests: []
+  });
+  
+  let availableInterests = ['プログラミング', 'デザイン', 'マーケティング', 'セールス'];
+  
+  function toggleInterest(interest: string) {
+    const index = formData.interests.indexOf(interest);
+    if (index > -1) {
+      formData.interests.splice(index, 1);
+    } else {
+      formData.interests.push(interest);
+    }
   }
   
-  function clearCompleted() {
-    todos = todos.filter(todo => !todo.done);
+  function submitForm() {
+    console.log('送信データ:', formData);
+    alert('フォームが送信されました！\n' + JSON.stringify(formData, null, 2));
+  }
+  
+  function resetForm() {
+    formData = {
+      username: '',
+      email: '',
+      age: 0,
+      country: 'japan',
+      newsletter: false,
+      interests: []
+    };
   }
 </script>
 
-<div class="todo-app">
-  <h3>TODOリスト</h3>
+<div class="form-container">
+  <h2>ユーザー登録フォーム</h2>
   
-  <div class="input-group">
+  <div class="form-group">
+    <label for="username">ユーザー名:</label>
     <input
+      id="username"
       type="text"
-      bind:value={newTodoText}
-      placeholder="新しいTODOを入力..."
-      onkeydown={(e) => e.key === 'Enter' && addTodo()}
+      bind:value={formData.username}
+      placeholder="山田太郎"
     />
-    <button onclick={addTodo}>追加</button>
   </div>
   
-  <div class="filters">
-    <button
-      class:active={filter === 'all'}
-      onclick={() => filter = 'all'}
-    >
-      全て ({stats.total})
-    </button>
-    <button
-      class:active={filter === 'active'}
-      onclick={() => filter = 'active'}
-    >
-      未完了 ({stats.active})
-    </button>
-    <button
-      class:active={filter === 'completed'}
-      onclick={() => filter = 'completed'}
-    >
-      完了 ({stats.completed})
-    </button>
+  <div class="form-group">
+    <label for="email">メールアドレス:</label>
+    <input
+      id="email"
+      type="email"
+      bind:value={formData.email}
+      placeholder="email@example.com"
+    />
   </div>
   
-  <ul class="todo-list">
-    {#each filteredTodos as todo (todo.id)}
-      <li class="todo-item" class:done={todo.done}>
-        <input
-          type="checkbox"
-          checked={todo.done}
-          onchange={() => toggleTodo(todo.id)}
-        />
-        <span class="todo-text">{todo.text}</span>
-        <button class="delete-btn" onclick={() => deleteTodo(todo.id)}>
-          ×
-        </button>
-      </li>
-    {:else}
-      <li class="empty">TODOがありません</li>
-    {/each}
-  </ul>
+  <div class="form-group">
+    <label for="age">年齢:</label>
+    <input
+      id="age"
+      type="number"
+      bind:value={formData.age}
+      min="0"
+      max="120"
+    />
+  </div>
   
-  {#if stats.completed > 0}
-    <button class="clear-btn" onclick={clearCompleted}>
-      完了済みを削除
-    </button>
-  {/if}
+  <div class="form-group">
+    <label for="country">国:</label>
+    <select id="country" bind:value={formData.country}>
+      <option value="japan">日本</option>
+      <option value="usa">アメリカ</option>
+      <option value="uk">イギリス</option>
+      <option value="other">その他</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label>
+      <input
+        type="checkbox"
+        bind:checked={formData.newsletter}
+      />
+      ニュースレターを受け取る
+    </label>
+  </div>
+  
+  <div class="form-group">
+    <label>興味のある分野:</label>
+    <div class="checkbox-group">
+      {#each availableInterests as interest}
+        <label>
+          <input
+            type="checkbox"
+            checked={formData.interests.includes(interest)}
+            onchange={() => toggleInterest(interest)}
+          />
+          {interest}
+        </label>
+      {/each}
+    </div>
+  </div>
+  
+  <div class="form-actions">
+    <button onclick={submitForm}>送信</button>
+    <button onclick={resetForm}>リセット</button>
+  </div>
+  
+  <div class="preview">
+    <h3>プレビュー:</h3>
+    <pre>{JSON.stringify(formData, null, 2)}</pre>
+  </div>
 </div>
 
 <style>
-  .todo-app {
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 8px;
+  .form-container {
     max-width: 500px;
     margin: 0 auto;
+    padding: 1rem;
   }
   
-  h3 {
-    color: #ff3e00;
+  .form-group {
     margin-bottom: 1rem;
   }
   
-  .input-group {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
   }
   
-  input[type="text"] {
-    flex: 1;
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 1rem;
+  }
+  
+  .checkbox-group label {
+    display: inline-block;
+    margin-right: 1rem;
+    font-weight: normal;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
   
   button {
@@ -487,153 +453,89 @@ localStorage.setItem('todos', JSON.stringify(snapshot));
     background: #ff5a00;
   }
   
-  .filters {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .filters button {
-    background: #e9ecef;
-    color: #333;
-  }
-  
-  .filters button.active {
-    background: #ff3e00;
-    color: white;
-  }
-  
-  .todo-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem 0;
-  }
-  
-  .todo-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    background: white;
-    margin-bottom: 0.5rem;
+  .preview {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f5f5f5;
     border-radius: 4px;
   }
   
-  .todo-item.done .todo-text {
-    text-decoration: line-through;
-    color: #999;
-  }
-  
-  .todo-text {
-    flex: 1;
-    margin: 0 0.5rem;
-  }
-  
-  .delete-btn {
-    background: #dc3545;
-    color: white;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    font-size: 1.5rem;
-    line-height: 1;
-  }
-  
-  .empty {
-    text-align: center;
-    color: #999;
-    padding: 2rem;
-  }
-  
-  .clear-btn {
-    width: 100%;
+  pre {
+    overflow-x: auto;
   }
 </style>
 ```
 
 ## ベストプラクティス
 
-### 1. 型定義を明確に
+### 1. 適切な初期値の設定
 
 ```typescript
-// ❌ 型推論に頼る
-let items = $state([]);
-
-// ✅ 明示的な型定義
-let items = $state<Item[]>([]);
-```
-
-### 2. 初期値の設定
-
-```typescript
-// ❌ undefined から始める
-let user = $state();
-
-// ✅ 適切な初期値を設定
+// ✅ 良い例：明確な初期値
 let user = $state<User | null>(null);
-```
-
-### 3. イミュータブルな更新
-
-配列やオブジェクトを更新する際、新しいオブジェクトを作成することで予期しない副作用を防げます。
-
-```typescript
-// 配列の更新
-let items = $state([1, 2, 3]);
-
-// ミュータブルな更新（動作するが推奨されない）
-items.push(4);
-
-// イミュータブルな更新（推奨）
-items = [...items, 4];
-
-// オブジェクトの更新
-let user = $state({ name: '太郎', age: 25 });
-
-// イミュータブルな更新
-user = { ...user, age: 26 };
-```
-
-## よくある間違い
-
-### 1. 非リアクティブな値の変更
-
-```typescript
-// ❌ $stateを使わない
-let count = 0;
-count++; // UIは更新されない
-
-// ✅ $stateを使う
+let items = $state<Item[]>([]);
 let count = $state(0);
-count++; // UIが更新される
+
+// ❌ 悪い例：undefined の暗黙的な使用
+let user = $state(); // エラー：初期値が必要
 ```
 
-### 2. リアクティビティの喪失
+### 2. 型定義の活用
 
 ```typescript
-let data = $state({ value: 10 });
+// ✅ 良い例：インターフェースの定義
+interface AppState {
+  user: User | null;
+  settings: Settings;
+  notifications: Notification[];
+}
 
-// ❌ リアクティビティが失われる
-let value = data.value;
-value++; // data.valueは更新されない
-
-// ✅ 参照を保持
-data.value++; // 正しく更新される
+let appState = $state<AppState>({
+  user: null,
+  settings: defaultSettings,
+  notifications: []
+});
 ```
 
-## 技術的な詳細
+### 3. イミュータブルな更新 vs ミュータブルな更新
 
-`$state`がどのように動作するかをより深く理解したい場合は、以下のディープダイブ記事も参照してください。
+Svelte 5の`$state`は、ReactやReduxと異なり、直接変更（ミュータブル）と新しいオブジェクト作成（イミュータブル）の両方をサポートします。
 
+```typescript
+// 初期状態の定義
+let items = $state<string[]>(['item1', 'item2']);
+let user = $state({ name: 'Alice', age: 30 });
 
-:::info[RuneとProxyオブジェクト]
-- [Svelte 5におけるProxyオブジェクトの活用](/deep-dive/leveraging-proxy-objects-in-svelte-5/) - `$state`の内部でProxyがどのように使われているか
-- [$stateとProxyオブジェクト](/deep-dive/state-use-proxy-object/) - 実践的な例とパフォーマンス最適化
-- [$state: リアクティブな状態変数と、バインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - `$state`と`bind:`構文の違いを詳しく解説
-- [$derived vs $effect vs derived.by 完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/) - Runesシステムの主要な3つの機能を徹底比較
+// ミュータブルな更新（直接変更）- Svelteでは推奨
+items.push('item3');                  // 配列に直接追加
+user.name = 'Bob';                     // プロパティを直接変更
+items[0] = 'updated';                  // インデックスで直接変更
+
+// イミュータブルな更新（新しいオブジェクト作成）- これも動作
+items = [...items, 'item4'];          // スプレッド構文で新配列
+user = { ...user, name: 'Charlie' };  // スプレッド構文で新オブジェクト
+items = items.filter(item => item !== 'item1'); // フィルターで新配列
+```
+
+:::tip[どちらを使うべき？]
+Svelte 5では、ミュータブルな更新の方が簡潔で直感的です。Reactから移行してきた開発者は、最初はイミュータブルな更新を使いがちですが、Svelteではミュータブルな更新を恐れる必要はありません。パフォーマンス的にも問題ありません。
+:::
+
+## まとめ
+
+`$state`ルーンは、
+
+- **明示的** - どの変数がリアクティブか明確
+- **型安全** - TypeScriptとの優れた統合
+- **深いリアクティビティ** - ネストされた構造も自動追跡
+- **直感的** - JavaScript の通常の操作でリアクティブ
+
+:::info[他のフレームワークとの比較]
+- **React**: `useState`と似ているが、直接変更が可能
+- **Vue 3**: `ref`/`reactive`と似た概念だが、より簡潔
+- **Angular**: Signalsと似ているが、より少ないボイラープレート
 :::
 
 ## 次のステップ
 
-`$state`の基本を理解したら、[$derived - 計算値](/runes/derived/)で派生値の作成方法を学びましょう。
-
-開発時のデバッグには[$inspect - デバッグツール](/runes/inspect/)が便利です。
+[$derived - 派生値](/runes/derived/)では、`$state`から計算される値の作成方法を学びます。

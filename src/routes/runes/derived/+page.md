@@ -1,769 +1,662 @@
 ---
-title: $derivedルーン
-description: 他の値から自動的に計算される派生値
+title: $derived - 派生値
+description: 他の値から自動的に計算される派生値の作成と活用
 ---
 
-`$derived`は、Svelte 5のRunesシステムで提供される派生値（computed value）を作成するための機能です。このページでは、`$derived`の基本的な使い方から応用パターンまで、TypeScriptと組み合わせた実践的な活用方法を解説します。
-
-:::tip[React/Vue経験者向け]
-- `$derived`は React の `useMemo` や Vue の `computed` に相当
-- 依存する値が変更されたときのみ再計算される（メモ化）
-- 副作用を含めることはできない（純粋な計算のみ）
-:::
-
-## $derivedとは
-
-`$derived`は、他のリアクティブな値から自動的に計算される値を作成するルーンです。依存する値が変更されると、自動的に再計算されます。
-
-### 主な特徴
-
-- **自動的な依存追跡**: 使用している`$state`値を自動で追跡
-- **効率的な再計算**: 依存値が変更されたときのみ再計算
-- **純粋な計算**: 副作用を含まない計算に限定
-- **TypeScript型推論**: 計算結果の型を自動推論
-
-:::warning[重要な注意点]
-`$derived`は式を直接受け取ります。関数でラップする必要はありません。
-```typescript
-// ❌ 間違い
-let value = $derived(() => count * 2);
-
-// ✅ 正しい
-let value = $derived(count * 2);
-```
-ただし、複雑な計算には`$derived.by()`を使用します。
-:::
-
-## リアクティブな値が必須
-
-`$derived`は**リアクティブな値**から派生する必要があります。通常の変数からは派生できません。
-
-### リアクティブな値の種類
-
-Svelte 5でリアクティブな値となるのは、
-1. **`$state`で定義された値** - 最も一般的
-2. **`$props`で受け取った値** - コンポーネントのプロパティ
-3. **他の`$derived`で計算された値** - 派生値の連鎖
-4. **`$bindable`なprops** - 双方向バインディング可能なプロパティ
-
-```typescript
-// ✅ $stateから派生
-let count = $state(0);
-let doubled = $derived(count * 2);
-
-// ✅ 他の$derivedから派生
-let quadrupled = $derived(doubled * 2);
-
-// ✅ $propsから派生
-let { price, quantity } = $props();
-let total = $derived(price * quantity);
-
-// ✅ 複数のリアクティブ値から派生
-let firstName = $state('太郎');
-let { lastName } = $props(); // propsから
-let fullName = $derived(`${lastName} ${firstName}`);
-
-// ❌ 通常の変数からは派生できない
-let normalVar = 10; // リアクティブでない
-// let result = $derived(normalVar * 2); // 意味がない・更新されない
-```
-
-:::info[重要なポイント]
-`$derived`は`$state`が必須ではありません。`$props`や他の`$derived`など、任意のリアクティブな値から派生できます。重要なのは「リアクティブな値」であることです。
-:::
+`$derived`ルーンは、他のリアクティブな値から自動的に計算される値を作成します。依存する値が変更されると、派生値も自動的に再計算されます。
 
 ## 基本的な使い方
 
 ### シンプルな計算
 
-```typescript
-let count = $state(10);
-let doubled = $derived(count * 2);
-let quadrupled = $derived(doubled * 2);
-
-// count が変更されると、doubled と quadrupled が自動的に更新される
-count = 20; // doubled = 40, quadrupled = 80
-```
-
-### 複数の値から派生
-
-```typescript
-let firstName = $state('太郎');
-let lastName = $state('山田');
-
-let fullName = $derived(`${lastName} ${firstName}`);
-
-// どちらかが変更されると fullName が更新される
-firstName = '次郎'; // fullName = "山田 次郎"
-```
-
-### propsのみから派生
-
-```typescript
-// Parent.svelte
-<Child width={100} height={50} />
-
-// Child.svelte
+```svelte live
 <script lang="ts">
-  // $stateは一切使わない
-  let { width, height } = $props();
+  let count = $state(0);
   
-  // propsから直接派生
-  let area = $derived(width * height);
-  let perimeter = $derived(2 * (width + height));
-  let diagonal = $derived(Math.sqrt(width ** 2 + height ** 2));
+  // countが変更されると自動的に再計算
+  let doubled = $derived(count * 2);
+  let squared = $derived(count ** 2);
+  let isEven = $derived(count % 2 === 0);
+  
+  function increment() {
+    count++;
+  }
 </script>
 
-<p>面積: {area}</p>
-<p>周囲: {perimeter}</p>
-<p>対角線: {diagonal.toFixed(2)}</p>
+<button onclick={increment}>カウント: {count}</button>
+<p>2倍: {doubled}</p>
+<p>2乗: {squared}</p>
+<p>偶数: {isEven}</p>
 ```
 
-## 関数を使った複雑な計算
+:::tip[Vue やReactとの比較]
+- Vue の `computed` と同じ概念
+- React の `useMemo` に似ているが、依存関係の指定が不要
+- 自動的に依存関係を追跡し、必要な時だけ再計算
+:::
 
-```typescript
-let items = $state([
-  { name: 'りんご', price: 100, quantity: 2 },
-  { name: 'バナナ', price: 50, quantity: 3 },
-  { name: 'みかん', price: 80, quantity: 1 }
-]);
+### 複数の依存関係
 
-// 合計金額の計算
-let total = $derived(() => {
-  return items.reduce((sum, item) => {
-    return sum + (item.price * item.quantity);
-  }, 0);
-});
-
-// 税込価格
-let totalWithTax = $derived(() => {
-  const taxRate = 0.1;
-  return Math.floor(total * (1 + taxRate));
-});
-```
-
-## 条件付き派生
-
-```typescript
-let isLoggedIn = $state(false);
-let username = $state('');
-
-let greeting = $derived(() => {
-  if (!isLoggedIn) {
-    return 'ゲストさん、ようこそ';
-  }
-  return `${username}さん、こんにちは`;
-});
-```
-
-## 配列とオブジェクトの派生
-
-### フィルタリング
-
-```typescript
-type Todo = {
-  id: number;
-  text: string;
-  done: boolean;
-};
-
-let todos = $state<Todo[]>([
-  { id: 1, text: '買い物', done: false },
-  { id: 2, text: '掃除', done: true },
-  { id: 3, text: '勉強', done: false }
-]);
-
-// 未完了のTODOのみ
-let activeTodos = $derived(
-  todos.filter(todo => !todo.done)
-);
-
-// 完了したTODOの数
-let completedCount = $derived(
-  todos.filter(todo => todo.done).length
-);
-
-// 進捗率
-let progress = $derived(() => {
-  if (todos.length === 0) return 0;
-  return Math.round((completedCount / todos.length) * 100);
-});
-```
-
-### マッピング
-
-```typescript
-let products = $state([
-  { name: 'ノートPC', price: 100000 },
-  { name: 'マウス', price: 3000 },
-  { name: 'キーボード', price: 10000 }
-]);
-
-let discountRate = $state(0.1); // 10%割引
-
-// 割引後の価格リスト
-let discountedProducts = $derived(() => 
-  products.map(product => ({
-    ...product,
-    discountedPrice: product.price * (1 - discountRate),
-    savings: product.price * discountRate
-  }))
-);
-```
-
-## $derived.by
-
-より複雑なロジックが必要な場合は`$derived.by`を使用します。
-
-```typescript
-let searchQuery = $state('');
-let sortOrder = $state<'asc' | 'desc'>('asc');
-let items = $state(['apple', 'banana', 'orange', 'grape']);
-
-let filteredAndSorted = $derived.by(() => {
-  // フィルタリング
-  let filtered = items.filter(item => 
-    item.toLowerCase().includes(searchQuery.toLowerCase())
+```svelte live
+<script lang="ts">
+  let firstName = $state('太郎');
+  let lastName = $state('山田');
+  let separator = $state(' ');
+  
+  // 複数の値に依存する派生値
+  let fullName = $derived(
+    lastName + separator + firstName
   );
   
-  // ソート
-  filtered.sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.localeCompare(b);
-    } else {
-      return b.localeCompare(a);
-    }
-  });
+  // さらに派生値から派生
+  let displayName = $derived(
+    `${fullName}様`
+  );
   
-  return filtered;
-});
+  let nameLength = $derived(fullName.length);
+</script>
+
+<input bind:value={firstName} placeholder="名" />
+<input bind:value={lastName} placeholder="姓" />
+<select bind:value={separator}>
+  <option value=" ">スペース</option>
+  <option value="・">中点</option>
+  <option value="">なし</option>
+</select>
+
+<p>フルネーム: {fullName}</p>
+<p>表示名: {displayName}</p>
+<p>文字数: {nameLength}</p>
 ```
 
-## 実践例：ショッピングカート
 
-`$derived`を活用したショッピングカートの実装例です。商品の追加・削除、数量変更、割引適用、税計算などを実装しています。
 
-```svelte live ln title=ShoppingCart.svelte
+## ブロック構文での使用
+
+複雑な計算には、ブロック構文を使用できます。
+
+```svelte live ln
 <script lang="ts">
-  type Product = {
+  interface Product {
     id: number;
     name: string;
     price: number;
-    category: string;
-  };
-
-  type CartItem = {
-    product: Product;
     quantity: number;
-  };
-
-  // 商品リスト
-  const products: Product[] = [
-    { id: 1, name: 'ノートPC', price: 120000, category: 'electronics' },
-    { id: 2, name: 'マウス', price: 3000, category: 'electronics' },
-    { id: 3, name: 'キーボード', price: 10000, category: 'electronics' },
-    { id: 4, name: 'モニター', price: 40000, category: 'electronics' },
-    { id: 5, name: 'USBケーブル', price: 1000, category: 'accessories' },
-    { id: 6, name: 'ノート', price: 500, category: 'stationery' }
-  ];
-
-  // 状態管理
-  let cart = $state<CartItem[]>([]);
-  let taxRate = $state(0.1); // 10%
-  let shippingFee = $state(500);
-  let discountCode = $state('');
-  let discountRate = $state(0);
-
-  // カート内の商品数（$derivedで自動計算）
-  let itemCount = $derived(
-    cart.reduce((sum, item) => sum + item.quantity, 0)
-  );
-
-  // 小計
-  let subtotal = $derived(
-    cart.reduce((sum, item) => 
-      sum + (item.product.price * item.quantity), 0
-    )
-  );
-
-  // 割引額
-  let discountAmount = $derived(
-    Math.floor(subtotal * discountRate)
-  );
-
-  // 割引後の金額
-  let afterDiscount = $derived(
-    subtotal - discountAmount
-  );
-
-  // 税額
-  let tax = $derived(
-    Math.floor(afterDiscount * taxRate)
-  );
-
-  // 送料（5000円以上で無料）
-  let shipping = $derived(
-    afterDiscount >= 5000 ? 0 : shippingFee
-  );
-
-  // 合計
-  let total = $derived(
-    afterDiscount + tax + shipping
-  );
-
-  // 送料無料まであといくら？
-  let freeShippingThreshold = $derived.by(() => {
-    if (afterDiscount >= 5000) return 0;
-    return 5000 - afterDiscount;
-  });
-
-  // カート操作関数
-  function addToCart(product: Product) {
-    const existingItem = cart.find(item => item.product.id === product.id);
+  }
+  
+  let products = $state<Product[]>([
+    { id: 1, name: 'ノートPC', price: 100000, quantity: 2 },
+    { id: 2, name: 'マウス', price: 3000, quantity: 5 },
+    { id: 3, name: 'キーボード', price: 8000, quantity: 3 }
+  ]);
+  
+  let taxRate = $state(0.1);
+  let discountRate = $state(0.05);
+  
+  // ブロック構文で複雑な計算
+  let summary = $derived(() => {
+    const subtotal = products.reduce((sum, product) => {
+      return sum + product.price * product.quantity;
+    }, 0);
     
-    if (existingItem) {
-      cart = cart.map(item =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-    } else {
-      cart = [...cart, { product, quantity: 1 }];
-    }
-  }
-
-  function removeFromCart(productId: number) {
-    cart = cart.filter(item => item.product.id !== productId);
-  }
-
-  function updateQuantity(productId: number, quantity: number) {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-    } else {
-      cart = cart.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity }
-          : item
-      );
-    }
-  }
-
-  function applyDiscount() {
-    // 簡単な割引コードの検証
-    if (discountCode === 'SAVE10') {
-      discountRate = 0.1; // 10%割引
-    } else if (discountCode === 'SAVE20') {
-      discountRate = 0.2; // 20%割引
-    } else {
-      discountRate = 0;
-      alert('無効な割引コードです');
-    }
-  }
-
-  function clearCart() {
-    cart = [];
-    discountCode = '';
-    discountRate = 0;
-  }
+    const discount = subtotal * discountRate;
+    const afterDiscount = subtotal - discount;
+    const tax = afterDiscount * taxRate;
+    const total = afterDiscount + tax;
+    
+    return {
+      subtotal,
+      discount,
+      afterDiscount,
+      tax,
+      total,
+      itemCount: products.reduce((sum, p) => sum + p.quantity, 0)
+    };
+  });
 </script>
 
-<div class="shopping-cart">
-  <div class="products-section">
-    <h3>商品リスト</h3>
-    <div class="products-grid">
-      {#each products as product}
-        <div class="product-card">
-          <h4>{product.name}</h4>
-          <p class="price">¥{product.price.toLocaleString()}</p>
-          <button onclick={() => addToCart(product)}>
-            カートに追加
-          </button>
-        </div>
-      {/each}
+<div class="summary">
+  <p>商品数: {summary().itemCount}点</p>
+  <p>小計: ¥{summary().subtotal?.toLocaleString() ?? 0}</p>
+  <p>割引: -¥{summary().discount?.toLocaleString() ?? 0}</p>
+  <p>割引後: ¥{summary().afterDiscount?.toLocaleString() ?? 0}</p>
+  <p>税額: ¥{summary().tax?.toLocaleString() ?? 0}</p>
+  <p>合計: ¥{summary().total?.toLocaleString() ?? 0}</p>
+</div>
+```
+
+
+
+## 配列とオブジェクトの処理
+
+### フィルタリングとソート
+
+```svelte
+<script lang="ts">
+  interface Task {
+    id: number;
+    title: string;
+    completed: boolean;
+    priority: 'low' | 'medium' | 'high';
+    dueDate: Date;
+  }
+  
+  let tasks = $state<Task[]>([
+    // タスクデータ
+  ]);
+  
+  let showCompleted = $state(false);
+  let sortBy = $state<'priority' | 'dueDate'>('priority');
+  let searchQuery = $state('');
+  
+  // フィルタリングされたタスク
+  let filteredTasks = $derived(() => {
+    let result = tasks;
+    
+    // 完了タスクのフィルタ
+    if (!showCompleted) {
+      result = result.filter(t => !t.completed);
+    }
+    
+    // 検索フィルタ
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(t => 
+        t.title.toLowerCase().includes(query)
+      );
+    }
+    
+    // ソート
+    result = [...result].sort((a, b) => {
+      if (sortBy === 'priority') {
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      } else {
+        return a.dueDate.getTime() - b.dueDate.getTime();
+      }
+    });
+    
+    return result;
+  });
+  
+  // 統計情報
+  let stats = $derived(() => {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    const pending = total - completed;
+    const highPriority = tasks.filter(
+      t => t.priority === 'high' && !t.completed
+    ).length;
+    
+    return { total, completed, pending, highPriority };
+  });
+</script>
+```
+
+
+
+### グルーピング
+
+```svelte
+<script lang="ts">
+  interface Item {
+    category: string;
+    name: string;
+    value: number;
+  }
+  
+  let items = $state<Item[]>([
+    { category: '食品', name: 'りんご', value: 100 },
+    { category: '食品', name: 'バナナ', value: 80 },
+    { category: '家電', name: 'テレビ', value: 50000 },
+    { category: '家電', name: '冷蔵庫', value: 80000 },
+    { category: '衣類', name: 'シャツ', value: 3000 }
+  ]);
+  
+  // カテゴリごとにグループ化
+  let groupedItems = $derived(() => {
+    const groups = new Map<string, Item[]>();
+    
+    for (const item of items) {
+      if (!groups.has(item.category)) {
+        groups.set(item.category, []);
+      }
+      groups.get(item.category)!.push(item);
+    }
+    
+    return groups;
+  });
+  
+  // カテゴリごとの合計
+  let categoryTotals = $derived(() => {
+    const totals = new Map<string, number>();
+    
+    for (const [category, categoryItems] of groupedItems) {
+      const total = categoryItems.reduce(
+        (sum, item) => sum + item.value, 0
+      );
+      totals.set(category, total);
+    }
+    
+    return totals;
+  });
+</script>
+```
+
+
+## $derived.by - 明示的な派生値
+
+関数を使用して派生値を作成する別の方法です。
+
+```svelte
+<script lang="ts">
+  let searchTerm = $state('');
+  let data = $state<string[]>([]);
+  
+  // $derived.byを使用した明示的な派生値
+  let searchResults = $derived.by(() => {
+    if (!searchTerm) return data;
+    
+    const term = searchTerm.toLowerCase();
+    return data.filter(item => 
+      item.toLowerCase().includes(term)
+    );
+  });
+  
+  // 通常の$derivedと同じ（好みの問題）
+  let searchResults2 = $derived(() => {
+    // 同じロジック
+  });
+</script>
+```
+
+
+## 非同期処理との組み合わせ
+
+:::warning[非同期派生値の注意]
+`$derived`は同期的に値を返す必要があります。非同期処理には`$effect`を組み合わせて使用します。
+:::
+
+```svelte
+<script lang="ts">
+  let userId = $state(1);
+  let userData = $state<User | null>(null);
+  let loading = $state(false);
+  let error = $state<Error | null>(null);
+  
+  // URLは同期的に派生
+  let apiUrl = $derived(
+    `/api/users/${userId}`
+  );
+  
+  // 非同期処理は$effectで実行
+  $effect(async () => {
+    loading = true;
+    error = null;
+    
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Failed to fetch');
+      userData = await response.json();
+    } catch (e) {
+      error = e as Error;
+    } finally {
+      loading = false;
+    }
+  });
+</script>
+```
+
+
+## 実践例：シンプルなフィルタリング
+
+```svelte live ln
+<script lang="ts">
+  interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: number;
+    inStock: boolean;
+    rating: number;
+  }
+  
+  let products = $state<Product[]>([
+    { id: 1, name: 'ノートPC Pro', category: 'パソコン', price: 150000, inStock: true, rating: 4.5 },
+    { id: 2, name: 'ワイヤレスマウス', category: '周辺機器', price: 3000, inStock: true, rating: 4.0 },
+    { id: 3, name: '機械式キーボード', category: '周辺機器', price: 12000, inStock: false, rating: 4.8 },
+    { id: 4, name: 'ウェブカメラ HD', category: '周辺機器', price: 8000, inStock: true, rating: 3.5 },
+    { id: 5, name: 'デスクトップPC', category: 'パソコン', price: 200000, inStock: true, rating: 4.7 },
+    { id: 6, name: 'USBハブ', category: '周辺機器', price: 2000, inStock: true, rating: 3.8 }
+  ]);
+  
+  // フィルタ条件
+  let searchQuery = $state('');
+  let selectedCategory = $state('all');
+  let minPrice = $state(0);
+  let maxPrice = $state(300000);
+  let onlyInStock = $state(false);
+  let minRating = $state(0);
+  
+  // カテゴリ一覧を動的に生成
+  let categories = $derived.by(() => {
+    const cats = new Set(products.map(p => p.category));
+    return ['all', ...Array.from(cats)];
+  });
+  
+  // フィルタリングされた商品
+  let filteredProducts = $derived.by(() => {
+    return products.filter(product => {
+      // 検索クエリ
+      if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      
+      // カテゴリ
+      if (selectedCategory !== 'all' && product.category !== selectedCategory) {
+        return false;
+      }
+      
+      // 価格範囲
+      if (product.price < minPrice || product.price > maxPrice) {
+        return false;
+      }
+      
+      // 在庫
+      if (onlyInStock && !product.inStock) {
+        return false;
+      }
+      
+      // 評価
+      if (product.rating < minRating) {
+        return false;
+      }
+      
+      return true;
+    });
+  });
+  
+  // 統計情報
+  let stats = $derived.by(() => {
+    const total = filteredProducts.length;
+    const avgPrice = total > 0
+      ? filteredProducts.reduce((sum, p) => sum + p.price, 0) / total
+      : 0;
+    const avgRating = total > 0
+      ? filteredProducts.reduce((sum, p) => sum + p.rating, 0) / total
+      : 0;
+    const inStockCount = filteredProducts.filter(p => p.inStock).length;
+    
+    return {
+      total,
+      avgPrice: Math.round(avgPrice),
+      avgRating: avgRating.toFixed(1),
+      inStockCount
+    };
+  });
+</script>
+
+<div class="search-filter-demo">
+  <div class="filters">
+    <h3>フィルタ条件</h3>
+    
+    <div class="filter-group">
+      <label for="search">検索:</label>
+      <input
+        id="search"
+        type="text"
+        bind:value={searchQuery}
+        placeholder="商品名で検索..."
+      />
+    </div>
+    
+    <div class="filter-group">
+      <label for="category">カテゴリ:</label>
+      <select id="category" bind:value={selectedCategory}>
+        {#each categories as category}
+          <option value={category}>
+            {category === 'all' ? '全て' : category}
+          </option>
+        {/each}
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="min-price">価格範囲:</label>
+      <div class="range-inputs">
+        <input
+          id="min-price"
+          type="number"
+          bind:value={minPrice}
+          min="0"
+          max={maxPrice}
+        />
+        <span>〜</span>
+        <input
+          id="max-price"
+          type="number"
+          bind:value={maxPrice}
+          min={minPrice}
+        />
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label>
+        <input type="checkbox" bind:checked={onlyInStock} />
+        在庫ありのみ
+      </label>
+    </div>
+    
+    <div class="filter-group">
+      <label for="min-rating">最低評価: {minRating}</label>
+      <input
+        id="min-rating"
+        type="range"
+        bind:value={minRating}
+        min="0"
+        max="5"
+        step="0.5"
+      />
     </div>
   </div>
-
-  <div class="cart-section">
-    <h3>ショッピングカート ({itemCount}点)</h3>
+  
+  <div class="results">
+    <div class="stats">
+      <span>該当商品: {stats.total}件</span>
+      <span>平均価格: ¥{stats.avgPrice.toLocaleString()}</span>
+      <span>平均評価: ★{stats.avgRating}</span>
+      <span>在庫あり: {stats.inStockCount}件</span>
+    </div>
     
-    {#if cart.length === 0}
-      <p class="empty-cart">カートは空です</p>
-    {:else}
-      <div class="cart-items">
-        {#each cart as item}
-          <div class="cart-item">
-            <div class="item-info">
-              <span class="item-name">{item.product.name}</span>
-              <span class="item-price">
-                ¥{item.product.price.toLocaleString()}
-              </span>
-            </div>
-            <div class="quantity-controls">
-              <button onclick={() => updateQuantity(item.product.id, item.quantity - 1)}>
-                -
-              </button>
-              <span class="quantity">{item.quantity}</span>
-              <button onclick={() => updateQuantity(item.product.id, item.quantity + 1)}>
-                +
-              </button>
-              <button class="remove" onclick={() => removeFromCart(item.product.id)}>
-                削除
-              </button>
-            </div>
-            <div class="item-total">
-              ¥{(item.product.price * item.quantity).toLocaleString()}
-            </div>
+    <div class="product-list">
+      {#if filteredProducts.length === 0}
+        <p class="no-results">該当する商品がありません</p>
+      {:else}
+        {#each filteredProducts as product}
+          <div class="product-card">
+            <h4>{product.name}</h4>
+            <p class="category">{product.category}</p>
+            <p class="price">¥{product.price.toLocaleString()}</p>
+            <p class="rating">★ {product.rating}</p>
+            <p class="stock" class:out-of-stock={!product.inStock}>
+              {product.inStock ? '在庫あり' : '在庫なし'}
+            </p>
           </div>
         {/each}
-      </div>
-
-      <div class="discount-section">
-        <input
-          type="text"
-          bind:value={discountCode}
-          placeholder="割引コード（例: SAVE10）"
-        />
-        <button onclick={applyDiscount}>適用</button>
-      </div>
-
-      <div class="summary">
-        <div class="summary-row">
-          <span>小計:</span>
-          <span>¥{subtotal.toLocaleString()}</span>
-        </div>
-        
-        {#if discountAmount > 0}
-          <div class="summary-row discount">
-            <span>割引 ({(discountRate * 100).toFixed(0)}%):</span>
-            <span>-¥{discountAmount.toLocaleString()}</span>
-          </div>
-        {/if}
-        
-        <div class="summary-row">
-          <span>税金 (10%):</span>
-          <span>¥{tax.toLocaleString()}</span>
-        </div>
-        
-        <div class="summary-row">
-          <span>送料:</span>
-          <span>
-            {shipping === 0 ? '無料' : `¥${shipping.toLocaleString()}`}
-          </span>
-        </div>
-        
-        {#if freeShippingThreshold > 0}
-          <div class="free-shipping-info">
-            あと¥{freeShippingThreshold.toLocaleString()}で送料無料！
-          </div>
-        {/if}
-        
-        <div class="summary-row total">
-          <span>合計:</span>
-          <span>¥{total.toLocaleString()}</span>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="clear-btn" onclick={clearCart}>
-          カートをクリア
-        </button>
-        <button class="checkout-btn">
-          購入手続きへ
-        </button>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 </div>
 
 <style>
-  .shopping-cart {
+  .search-filter-demo {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 250px 1fr;
     gap: 2rem;
-    padding: 2rem;
-    background: #f9f9f9;
+    padding: 1rem;
+  }
+  
+  .filters {
+    background: #f5f5f5;
+    padding: 1rem;
     border-radius: 8px;
   }
-
-  .products-section h3,
-  .cart-section h3 {
-    color: #ff3e00;
+  
+  .filter-group {
     margin-bottom: 1rem;
+    width: 100%;
   }
-
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .product-card {
-    background: white;
-    padding: 1rem;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-
-  .product-card h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-  }
-
-  .price {
-    color: #ff3e00;
-    font-weight: bold;
-    margin: 0.5rem 0;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    background: #ff3e00;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  button:hover {
-    background: #ff5a00;
-  }
-
-  .empty-cart {
-    text-align: center;
-    color: #999;
-    padding: 2rem;
-    background: white;
-    border-radius: 4px;
-  }
-
-  .cart-items {
-    background: white;
-    border-radius: 4px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .cart-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
-  }
-
-  .cart-item:last-child {
-    border-bottom: none;
-  }
-
-  .item-info {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .item-name {
-    font-weight: 500;
-  }
-
-  .item-price {
-    color: #666;
-    font-size: 0.9rem;
-  }
-
-  .quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .quantity-controls button {
-    width: 30px;
-    height: 30px;
-    padding: 0;
-  }
-
-  .quantity {
-    min-width: 30px;
-    text-align: center;
+  
+  .filter-group label {
+    display: block;
+    margin-bottom: 0.25rem;
     font-weight: bold;
   }
-
-  .remove {
-    background: #dc3545;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .item-total {
-    text-align: right;
-    font-weight: bold;
-    color: #ff3e00;
-  }
-
-  .discount-section {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .discount-section input {
-    flex: 1;
+  
+  .filter-group input[type="text"],
+  .filter-group input[type="number"],
+  .filter-group select {
+    width: 100%;
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box;
   }
-
-  .summary {
-    background: white;
+  
+  .range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .range-inputs input {
+    width: 80px;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 1rem;
     padding: 1rem;
+    background: #e8f4ff;
     border-radius: 4px;
     margin-bottom: 1rem;
+    font-size: 0.9rem;
   }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+  
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
   }
-
-  .summary-row.discount {
-    color: #28a745;
+  
+  .product-card {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
   }
-
-  .summary-row.total {
-    border-bottom: none;
-    border-top: 2px solid #ff3e00;
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    font-size: 1.2rem;
+  
+  .product-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+  
+  .product-card p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .category {
+    color: #666;
+  }
+  
+  .price {
     font-weight: bold;
     color: #ff3e00;
   }
-
-  .free-shipping-info {
-    background: #fff3cd;
-    color: #856404;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
-    border-radius: 4px;
+  
+  .stock {
+    color: green;
+  }
+  
+  .stock.out-of-stock {
+    color: #999;
+  }
+  
+  .no-results {
+    grid-column: 1 / -1;
     text-align: center;
-    font-size: 0.9rem;
-  }
-
-  .actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .clear-btn {
-    background: #6c757d;
-  }
-
-  .checkout-btn {
-    flex: 1;
-    background: #28a745;
-    font-size: 1.1rem;
-    padding: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    .shopping-cart {
-      grid-template-columns: 1fr;
-    }
-    
-    .products-grid {
-      grid-template-columns: 1fr;
-    }
+    padding: 2rem;
+    color: #666;
   }
 </style>
 ```
 
-## パフォーマンスの考慮
+## パフォーマンス最適化
 
 ### メモ化
 
-`$derived`は自動的にメモ化されます。依存する値が変わらない限り、再計算されません。
+`$derived`は自動的にメモ化されます。同じ依存関係の値では再計算されません。
 
-```typescript
-let count = $state(0);
-
-// この計算は count が変更された時のみ実行される
-let expensive = $derived(() => {
-  console.log('計算中...');
-  return count * 2;
-});
+```svelte
+<script lang="ts">
+  let numbers = $state([1, 2, 3, 4, 5]);
+  let multiplier = $state(2);
+  
+  // この計算は依存関係が変わらない限り実行されない
+  let expensiveCalculation = $derived(() => {
+    console.log('計算実行'); // 依存関係が変わった時のみ出力
+    return numbers.reduce((sum, n) => {
+      // 重い計算をシミュレート
+      for (let i = 0; i < 1000000; i++) {
+        Math.sqrt(i);
+      }
+      return sum + n * multiplier;
+    }, 0);
+  });
+</script>
 ```
 
-### 注意点
+### 細分化
 
+大きな派生値を小さな部分に分割することで、パフォーマンスを向上できます。
 
-```typescript
-// ❌ 副作用を含めない
-let value = $derived(() => {
-  localStorage.setItem('key', 'value'); // 副作用
-  return calculateValue();
-});
-
-// ✅ 純粋な計算のみ
-let value = $derived(calculateValue());
-
-// 副作用は $effect で
-$effect(() => {
-  localStorage.setItem('key', value);
-});
+```svelte
+<script lang="ts">
+  // ❌ 悪い例：すべてを1つの派生値で計算
+  let everything = $derived(() => {
+    const filtered = items.filter(/* ... */);
+    const sorted = filtered.sort(/* ... */);
+    const grouped = groupBy(sorted, /* ... */);
+    const stats = calculateStats(grouped);
+    return { filtered, sorted, grouped, stats };
+  });
+  
+  // ✅ 良い例：段階的に派生値を作成
+  let filtered = $derived(() => items.filter(/* ... */));
+  let sorted = $derived(() => [...filtered].sort(/* ... */));
+  let grouped = $derived(() => groupBy(sorted, /* ... */));
+  let stats = $derived(() => calculateStats(grouped));
+</script>
 ```
 
-## ベストプラクティス
+## まとめ
 
-### 1. シンプルに保つ
+`$derived`ルーンは、
 
-```typescript
-// ❌ 複雑すぎる
-let result = $derived(() => {
-  // 100行のロジック...
-});
+- **自動追跡** - 依存関係を自動的に検出
+- **メモ化** - 不要な再計算を避ける
+- **型安全** - TypeScriptの型推論が機能
+- **宣言的** - 計算ロジックを明確に表現
 
-// ✅ 関数に分割
-function calculateResult(data: Data) {
-  // ロジック
-}
-
-let result = $derived(calculateResult(data));
-```
-
-### 2. 型を明確に
-
-```typescript
-// TypeScriptが型を推論できない場合は明示的に指定
-let result = $derived<string | null>(() => {
-  if (condition) return 'value';
-  return null;
-});
-```
-
-### 3. 不要な再計算を避ける
-
-```typescript
-// ❌ 毎回新しいオブジェクトを作成
-let config = $derived(() => ({
-  theme: 'dark',
-  lang: 'ja'
-}));
-
-// ✅ 値が変わらない場合は定数として定義
-const CONFIG = {
-  theme: 'dark',
-  lang: 'ja'
-};
-```
-
-## さらに詳しく学ぶ
-
-:::info[ディープダイブ]
-`$derived`、`$effect`、`derived.by`の詳細な違いと使い分けについては、[完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)をご覧ください。
+:::info[他のフレームワークとの比較]
+- **Vue**: `computed`とほぼ同じ
+- **React**: `useMemo`と似ているが、依存配列が不要
+- **Angular**: Computed signalsと類似
+- **MobX**: `computed`と同じ概念
 :::
 
 ## 次のステップ
 
-派生値の作成方法を理解したら、[$effect - 副作用](/runes/effect/)で副作用の処理方法を学びましょう。
+[$effect - 副作用](/runes/effect/)では、リアクティブな値の変更に応じて副作用を実行する方法を学びます。

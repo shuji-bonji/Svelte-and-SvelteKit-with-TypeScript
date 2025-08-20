@@ -155,35 +155,80 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 ## 実践例：インタラクティブなHello World
 
-ボタンクリックで挨拶を変更する簡単な例
+### 従来の書き方
 
-:::tip[コード展開]
-`Click fold/expand code`をクリックするとコードが展開表示されます。
+まず、従来のSvelteの書き方を見てみましょう。
+
+```svelte
+<script lang="ts">
+  let count: number = 0;
+  
+  function increment(): void {
+    count = count + 1;
+  }
+</script>
+
+<button on:click={increment}>
+  Count: {count}
+</button>
+```
+
+### Svelte 5の新しい書き方（Runes）
+
+Svelte 5では、`$state`ルーンを使ってより明示的にリアクティビティを表現します。
+
+```svelte live ln title=Counter.svelte
+<script lang="ts">
+  // Svelte 5の新しい書き方
+  let count = $state(0);
+  
+  function increment(): void {
+    count++;  // 直接変更が可能
+  }
+</script>
+
+<div style="text-align: center; padding: 2rem;">
+  <h2>Svelte 5 カウンター</h2>
+  <button onclick={increment} style="padding: 0.5rem 1rem; font-size: 1.2rem;">
+    Count: {count}
+  </button>
+  <p style="margin-top: 1rem;">
+    ボタンをクリックすると、$stateによってUIが自動更新されます
+  </p>
+</div>
+```
+
+:::tip[違いのポイント]
+- **従来**: `let`で宣言した変数が自動的にリアクティブ
+- **Svelte 5**: `$state()`で明示的にリアクティブな状態を宣言
+- **イベント**: `on:click`から`onclick`へ（より標準的なHTML構文に）
 :::
 
-```svelte live ln title=HelloWorld.svelte
+### 多言語挨拶の例
 
+ボタンクリックで挨拶を変更する例も、Svelte 5スタイルで書いてみましょう。
+
+```svelte live ln title=HelloWorld.svelte
 <script lang="ts">
-  let greetings: string[] = [
+  // Svelte 5: $stateを使用
+  let greetings = $state([
     'Hello World!',
     'こんにちは、世界！',
     'Bonjour le monde!',
     '¡Hola Mundo!',
     'Hallo Welt!'
-  ];
+  ]);
   
-  let currentIndex: number = 0;
-  let currentGreeting: string = greetings[currentIndex];
+  let currentIndex = $state(0);
   
   function nextGreeting(): void {
     currentIndex = (currentIndex + 1) % greetings.length;
-    currentGreeting = greetings[currentIndex];
   }
 </script>
 
 <div class="greeting-container">
-  <h1>{currentGreeting}</h1>
-  <button on:click={nextGreeting}>
+  <h1>{greetings[currentIndex]}</h1>
+  <button onclick={nextGreeting}>
     次の言語
   </button>
   <p>言語 {currentIndex + 1} / {greetings.length}</p>
@@ -231,4 +276,4 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 ## 次のステップ
 
-[コンポーネントの基本](/svelte-basics/component-basics/)では、Svelteコンポーネントの3つの主要部分（script、markup、style）について詳しく学びます。
+[なぜTypeScriptが必要か](/introduction/why-typescript/)では、モダンなWeb開発におけるTypeScriptの重要性と、Svelte 5との相性について学びます。その後、[TypeScript設定](/introduction/typescript-setup/)で実際のプロジェクト設定を行います。

@@ -30,21 +30,9 @@ const config = defineConfig({
                 { title: 'Svelte 5の概要', to: '/introduction/' },
                 { title: 'なぜSvelteか', to: '/introduction/why-svelte/' },
                 { title: '環境構築', to: '/introduction/setup/' },
-                {
-                  title: 'TypeScript設定',
-                  to: '/introduction/typescript-setup/',
-                },
-              ],
-            },
-            {
-              title: 'Runesシステム（基礎編）',
-              collapsible: true,
-              items: [
-                { title: 'Runesシステム概要', to: '/runes-basics/' },
-                { title: '$state - リアクティブな状態', to: '/runes-basics/state/' },
-                { title: '$derived - 派生値', to: '/runes-basics/derived/' },
-                { title: '$effect - 副作用', to: '/runes-basics/effect/' },
-                { title: '他フレームワークとの比較', to: '/runes-basics/comparison/' },
+                { title: 'Hello World', to: '/introduction/hello-world/' },
+                { title: 'なぜTypeScriptが必要か', to: '/introduction/why-typescript/' },
+                { title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
               ],
             },
             {
@@ -52,11 +40,7 @@ const config = defineConfig({
               collapsible: true,
               items: [
                 { title: 'Svelteの基本概要', to: '/svelte-basics/' },
-                { title: 'Hello World', to: '/svelte-basics/hello-world/' },
-                {
-                  title: 'コンポーネントの基本',
-                  to: '/svelte-basics/component-basics/',
-                },
+                { title: 'コンポーネントの基本', to: '/svelte-basics/component-basics/' },
                 {
                   title: 'テンプレート構文',
                   to: '/svelte-basics/template-syntax/',
@@ -76,20 +60,18 @@ const config = defineConfig({
               ],
             },
             {
-              title: 'Runesシステム（詳細編）',
+              title: 'Runesシステム',
               collapsible: true,
               items: [
-                { title: 'Runesシステム詳細', to: '/runes/' },
-                {
-                  title: 'Runesシステム入門',
-                  to: '/runes/runes-introduction/',
-                },
-                { title: '$stateルーン（詳細）', to: '/runes/state/' },
-                { title: '$derivedルーン（詳細）', to: '/runes/derived/' },
-                { title: '$effectルーン（詳細）', to: '/runes/effect/' },
-                { title: '$propsルーン', to: '/runes/props/' },
-                { title: '$bindableルーン', to: '/runes/bindable/' },
-                { title: '$inspectルーン（デバッグ）', to: '/runes/inspect/' },
+                { title: 'Runesシステム概要', to: '/runes/' },
+                { title: 'Runesシステム入門', to: '/runes/runes-introduction/' },
+                { title: '$state - リアクティブな状態', to: '/runes/state/' },
+                { title: '$derived - 派生値', to: '/runes/derived/' },
+                { title: '$effect - 副作用', to: '/runes/effect/' },
+                { title: '$props - プロパティ', to: '/runes/props/' },
+                { title: '$bindable - 双方向バインディング', to: '/runes/bindable/' },
+                { title: '$inspect - デバッグ', to: '/runes/inspect/' },
+                { title: '他フレームワークとの比較', to: '/runes/comparison/' },
               ],
             },
             {

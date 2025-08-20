@@ -25,23 +25,6 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/svelte-basics/hello-world/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">👋</div>
-      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
-        Hello World
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">最初のSvelteコンポーネントを作成し、基本的な構造を理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li>動的な値の表示</li>
-        <li>JavaScript式の埋め込み</li>
-        <li>HTMLの直接出力（<code>@html</code>）</li>
-        <li>デバッグ機能（<code>@debug</code>）</li>
-      </ul>
-    </div>
-  </a>
-  
   <a href="{base}/svelte-basics/component-basics/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🧩</div>
@@ -154,4 +137,4 @@ Svelteは「コンパイラ」として動作するフロントエンドフレ�
 
 ## 次のステップ
 
-準備ができたら、[Hello World](/svelte-basics/hello-world/)から始めましょう。Svelteの世界への第一歩を踏み出します。
+準備ができたら、[コンポーネントの基本](/svelte-basics/component-basics/)から始めましょう。Svelteコンポーネントの核となる機能を学びます。

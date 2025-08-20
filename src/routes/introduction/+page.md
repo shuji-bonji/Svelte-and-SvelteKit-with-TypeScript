@@ -58,6 +58,40 @@ Svelteは「コンパイラ」として動作する革新的なフロントエ�
     </div>
   </a>
   
+  <a href="{base}/introduction/hello-world/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">👋</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        Hello World
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">最初のSvelteコンポーネントを作成し、基本的な構文を学びます。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>Svelteコンポーネントの基本</li>
+        <li>変数の表示と式の埋め込み</li>
+        <li>従来の書き方とSvelte 5の比較</li>
+        <li>$stateルーンの初歩</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/introduction/why-typescript/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🎯</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        なぜTypeScriptが必要か
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">モダンなWeb開発におけるTypeScriptの重要性を理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>TypeScriptの利点</li>
+        <li>開発時の安全性向上</li>
+        <li>Svelte 5との相性</li>
+        <li>他フレームワークとの比較</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/introduction/typescript-setup/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📘</div>
@@ -82,7 +116,9 @@ Svelteは「コンパイラ」として動作する革新的なフロントエ�
 
 1. **なぜSvelteか** - Svelteの利点と他フレームワークとの違いを理解
 2. **環境構築** - 開発環境を整えて実際に手を動かす準備
-3. **TypeScript設定** - 型安全な開発のための環境を構築
+3. **Hello World** - 最初のSvelteコンポーネントを作成
+4. **なぜTypeScriptが必要か** - TypeScriptの重要性を理解
+5. **TypeScript設定** - 型安全な開発のための環境を構築
 
 ## 前提知識
 

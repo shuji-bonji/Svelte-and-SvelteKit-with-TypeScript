@@ -40,3 +40,4 @@
     </li>
   {/each}
 </ul>
+<p>{todos}</p>

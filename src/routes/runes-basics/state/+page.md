@@ -16,13 +16,13 @@ description: Svelte 5のRunesシステムにおける状態管理の基礎
 ```svelte live
 <script lang="ts">
   // 数値
-  let count = $state(0);
+  let count = $state(0); // 初期値 `0`
   
   // 文字列
-  let message = $state('Hello');
+  let message = $state('Hello'); // 初期値 `Hello`
   
   // ブール値
-  let isActive = $state(false);
+  let isActive = $state(false); // 初期値 `false`
   
   // null/undefined
   let data = $state<string | null>(null);
@@ -137,6 +137,7 @@ let items = $state<string[]>([]);
     </li>
   {/each}
 </ul>
+<p>{todos}</p>
 ```
 
 :::info[配列メソッドのリアクティビティ]
@@ -498,20 +499,31 @@ let appState = $state<AppState>({
 
 ### 3. イミュータブルな更新 vs ミュータブルな更新
 
-```typescript
-// Svelte 5では両方が可能
-// ミュータブル（直接変更）- Svelteでは問題なし
-items.push(newItem);
-user.name = 'New Name';
+Svelte 5の`$state`は、ReactやReduxと異なり、直接変更（ミュータブル）と新しいオブジェクト作成（イミュータブル）の両方をサポートします。
 
-// イミュータブル（新しいオブジェクト作成）- これも動作
-items = [...items, newItem];
-user = { ...user, name: 'New Name' };
+```typescript
+// 初期状態の定義
+let items = $state<string[]>(['item1', 'item2']);
+let user = $state({ name: 'Alice', age: 30 });
+
+// ミュータブルな更新（直接変更）- Svelteでは推奨
+items.push('item3');                  // 配列に直接追加
+user.name = 'Bob';                     // プロパティを直接変更
+items[0] = 'updated';                  // インデックスで直接変更
+
+// イミュータブルな更新（新しいオブジェクト作成）- これも動作
+items = [...items, 'item4'];          // スプレッド構文で新配列
+user = { ...user, name: 'Charlie' };  // スプレッド構文で新オブジェクト
+items = items.filter(item => item !== 'item1'); // フィルターで新配列
 ```
+
+:::tip[どちらを使うべき？]
+Svelte 5では、ミュータブルな更新の方が簡潔で直感的です。Reactから移行してきた開発者は、最初はイミュータブルな更新を使いがちですが、Svelteではミュータブルな更新を恐れる必要はありません。パフォーマンス的にも問題ありません。
+:::
 
 ## まとめ
 
-`$state`ルーンは：
+`$state`ルーンは、
 
 - **明示的** - どの変数がリアクティブか明確
 - **型安全** - TypeScriptとの優れた統合

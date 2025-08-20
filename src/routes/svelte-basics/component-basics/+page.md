@@ -388,39 +388,65 @@ DOM要素のイベントを処理します。`on:`ディレクティブを使用
 />
 ```
 
-### イベント修飾子（Svelte 4以前）
+### イベント修飾子の変更
 
 :::warning[Svelte 5での変更]
 Svelte 5ではイベント修飾子は廃止されました。代わりに、イベントハンドラ内で直接JavaScriptのメソッドを呼び出します。
 :::
 
+**Svelte 4以前の書き方：**
+
+```svelte
+<!-- preventDefault -->
+<button on:click|preventDefault={handleClick}>クリック</button>
+
+<!-- stopPropagation -->
+<button on:click|stopPropagation={handleClick}>クリック</button>
+
+<!-- once -->
+<button on:click|once={handleClick}>一度だけ</button>
+
+<!-- self -->
+<button on:click|self={handleClick}>要素自身のみ</button>
+
+<!-- 複数の修飾子 -->
+<button on:click|preventDefault|stopPropagation={handleClick}>複数修飾子</button>
+```
+
 **Svelte 5での実装方法：**
 
-```javascript
-// preventDefault
-onclick={(e) => {
+```svelte
+<!-- preventDefault -->
+<button onclick={(e) => {
   e.preventDefault();
   handleClick(e);
-}}
+}}>クリック</button>
 
-// stopPropagation
-onclick={(e) => {
+<!-- stopPropagation -->
+<button onclick={(e) => {
   e.stopPropagation();
   handleClick(e);
-}}
+}}>クリック</button>
 
-// once
-onclick={(e) => {
+<!-- once -->
+<button onclick={(e) => {
   handleClick(e);
   e.currentTarget.onclick = null;
-}}
+}}>一度だけ</button>
 
-// self
-onclick={(e) => {
+<!-- self -->
+<button onclick={(e) => {
   if (e.target === e.currentTarget) {
     handleClick(e);
   }
-}}
+}}>要素自身のみ</button>
+
+<!-- 複数の処理 -->
+<button onclick={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  handleClick(e);
+}}>複数処理</button>
 ```
 
 ## 双方向バインディング

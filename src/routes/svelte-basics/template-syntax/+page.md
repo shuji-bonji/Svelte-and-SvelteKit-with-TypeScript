@@ -299,7 +299,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 
 ## 特殊なバインディング
 
-### bind:innerHTML
+### `bind:innerHTML`
 
 要素のinnerHTMLプロパティにバインドします。`@html`タグと同様にXSSリスクがあります。
 
@@ -322,7 +322,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 </div>
 ```
 
-### bind:textContent
+### `bind:textContent`
 
 要素のtextContentプロパティにバインドします。
 

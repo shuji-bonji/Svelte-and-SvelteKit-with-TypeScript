@@ -46,6 +46,10 @@ const config = defineConfig({
                   to: '/svelte-basics/template-syntax/',
                 },
                 {
+                  title: 'コンポーネントライフサイクル',
+                  to: '/svelte-basics/component-lifecycle/',
+                },
+                {
                   title: 'トランジション・アニメーション',
                   to: '/svelte-basics/transitions/',
                 },

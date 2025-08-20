@@ -11,7 +11,7 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 `transition:`ディレクティブは、要素がDOMに追加・削除される際のアニメーションを定義します。
 
-```svelte
+```svelte live
 <script lang="ts">
   import { fade, slide, scale, fly } from 'svelte/transition';
   
@@ -22,59 +22,156 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
   切り替え
 </button>
 
-{#if visible}
-  <!-- フェードイン・フェードアウト -->
-  <div transition:fade>
-    フェードトランジション
-  </div>
-  
-  <!-- スライドトランジション -->
-  <div transition:slide>
-    スライドトランジション
-  </div>
-  
-  <!-- スケールトランジション -->
-  <div transition:scale>
-    スケールトランジション
-  </div>
-  
-  <!-- フライトランジション -->
-  <div transition:fly={{ x: 200, y: 0 }}>
-    フライトランジション
-  </div>
-{/if}
+<div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+  {#if visible}
+    <!-- フェードイン・フェードアウト -->
+    <div transition:fade class="demo-box">
+      フェードトランジション
+    </div>
+    
+    <!-- スライドトランジション -->
+    <div transition:slide class="demo-box">
+      スライドトランジション
+    </div>
+    
+    <!-- スケールトランジション -->
+    <div transition:scale class="demo-box">
+      スケールトランジション
+    </div>
+    
+    <!-- フライトランジション -->
+    <div transition:fly={{ x: 200, y: 0 }} class="demo-box">
+      フライトランジション（横から）
+    </div>
+  {/if}
+</div>
+
+<style>
+  .demo-box {
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+</style>
 ```
 
 ### in: と out: ディレクティブ
 
 要素の追加時と削除時で異なるトランジションを指定できます。
 
-```svelte
+```svelte live
 <script lang="ts">
   import { fade, fly, slide } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
   
   let showMessage = $state(false);
+  let showPanel = $state(false);
 </script>
 
-{#if showMessage}
-  <!-- 入場時はフライ、退場時はフェード -->
-  <div 
-    in:fly={{ y: -50, duration: 300 }}
-    out:fade={{ duration: 200 }}
-    class="notification"
-  >
-    通知メッセージ
-  </div>
+<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+  <button onclick={() => showMessage = !showMessage}>
+    通知を{showMessage ? '非表示' : '表示'}
+  </button>
+  <button onclick={() => showPanel = !showPanel}>
+    パネルを{showPanel ? '非表示' : '表示'}
+  </button>
+</div>
+
+<div style="position: relative; min-height: 200px;">
+  {#if showMessage}
+    <!-- 入場時は上から、退場時はフェード -->
+    <div 
+      in:fly={{ y: -50, duration: 300, easing: quintOut }}
+      out:fade={{ duration: 200 }}
+      class="notification"
+    >
+      <span>📢 通知メッセージ</span>
+      <button onclick={() => showMessage = false}>×</button>
+    </div>
+  {/if}
   
-  <!-- 入場時は右から、退場時は左へ -->
-  <div
-    in:fly={{ x: 100, duration: 400 }}
-    out:fly={{ x: -100, duration: 400 }}
-    class="panel"
-  >
-    スライドパネル
-  </div>
-{/if}
+  {#if showPanel}
+    <!-- 入場時は右から、退場時は左へ -->
+    <div
+      in:fly={{ x: 100, duration: 400, easing: quintOut }}
+      out:fly={{ x: -100, duration: 400 }}
+      class="panel"
+    >
+      <h3>スライドパネル</h3>
+      <p>右から入って、左へ出ていきます</p>
+      <button onclick={() => showPanel = false}>閉じる</button>
+    </div>
+  {/if}
+</div>
+
+<style>
+  .notification {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .notification button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .panel {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .panel h3 {
+    margin: 0 0 0.5rem;
+    color: #2d3748;
+  }
+  
+  .panel p {
+    margin: 0 0 1rem;
+    color: #4a5568;
+  }
+  
+  .panel button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .panel button:hover {
+    background: #5a67d8;
+  }
+</style>
 ```
 
 :::tip[in/outの使い分け]
@@ -87,7 +184,7 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### fade - フェード
 
-不透明度を変化させるトランジション。
+不透明度を変化させるトランジション
 
 ```svelte
 <script lang="ts">
@@ -109,7 +206,7 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### slide - スライド
 
-要素の高さを変化させてスライドするトランジション。
+要素の高さを変化させてスライドするトランジション
 
 ```svelte
 <script lang="ts">
@@ -139,7 +236,7 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### scale - スケール
 
-要素のサイズを変化させるトランジション。
+要素のサイズを変化させるトランジション
 
 ```svelte
 <script lang="ts">
@@ -170,7 +267,8 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### fly - フライ
 
-要素を指定した位置から/へ移動させるトランジション。
+要素を指定した位置から出現、または指定した位置へ退出させるトランジション
+
 
 ```svelte
 <script lang="ts">
@@ -202,7 +300,7 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### blur - ブラー
 
-ブラー効果を伴うトランジション。
+ブラー効果を伴うトランジション
 
 ```svelte
 <script lang="ts">
@@ -226,9 +324,9 @@ Svelteは、美しく滑らかなアニメーションを簡単に実装でき�
 
 ### draw - SVG描画
 
-SVGパスを描画するトランジション。
+SVGパスを描画するトランジション
 
-```svelte
+```svelte live
 <script lang="ts">
   import { draw } from 'svelte/transition';
   import { quintInOut } from 'svelte/easing';
@@ -262,17 +360,21 @@ SVGパスを描画するトランジション。
 
 `animate:`ディレクティブは、要素の位置が変更されたときにアニメーションを適用します。主に`{#each}`ブロックと一緒に使用します。
 
-```svelte
+```svelte live
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
+  import { fade, scale } from 'svelte/transition';
   
   let items = $state([
-    { id: 1, name: 'アイテム1' },
-    { id: 2, name: 'アイテム2' },
-    { id: 3, name: 'アイテム3' },
-    { id: 4, name: 'アイテム4' }
+    { id: 1, name: 'アイテム1', color: '#FF6B6B' },
+    { id: 2, name: 'アイテム2', color: '#4ECDC4' },
+    { id: 3, name: 'アイテム3', color: '#45B7D1' },
+    { id: 4, name: 'アイテム4', color: '#96CEB4' },
+    { id: 5, name: 'アイテム5', color: '#FFEAA7' },
   ]);
+  
+  let nextId = 6;
   
   function shuffle() {
     items = items.sort(() => Math.random() - 0.5);
@@ -281,30 +383,104 @@ SVGパスを描画するトランジション。
   function remove(id: number) {
     items = items.filter(item => item.id !== id);
   }
+  
+  function add() {
+    const colors = ['#DDA0DD', '#98D8C8', '#F7DC6F', '#85C1E2', '#F8B739'];
+    items = [...items, {
+      id: nextId++,
+      name: `アイテム${nextId}`,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    }];
+  }
 </script>
 
-<button onclick={shuffle}>シャッフル</button>
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+  <button onclick={shuffle}>🔀 シャッフル</button>
+  <button onclick={add}>➕ 追加</button>
+</div>
 
-<ul>
+<div class="items-grid">
   {#each items as item (item.id)}
-    <li animate:flip={{
-      duration: 300,
-      easing: quintOut
-    }}>
-      {item.name}
-      <button onclick={() => remove(item.id)}>削除</button>
-    </li>
+    <div
+      class="item-card"
+      style="background: {item.color};"
+      animate:flip={{
+        duration: 300,
+        easing: quintOut
+      }}
+      in:scale={{ duration: 300, easing: quintOut }}
+      out:fade={{ duration: 200 }}
+    >
+      <span>{item.name}</span>
+      <button 
+        class="remove-btn"
+        onclick={() => remove(item.id)}
+        aria-label="削除"
+      >
+        ×
+      </button>
+    </div>
   {/each}
-</ul>
+</div>
+
+<style>
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 150px;
+  }
+  
+  .item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .remove-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.2s;
+  }
+  
+  .remove-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+</style>
 ```
 
 :::info[flipアニメーション]
 FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更を滑らかにアニメーション化します。
 :::
 
-### ドラッグ&ドロップとアニメーション
+### クロスフェードとリスト間の移動
 
-```svelte
+`crossfade`を使用して、異なるリスト間で要素が移動する際に連続したアニメーションを作成できます。
+
+```svelte live
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { crossfade } from 'svelte/transition';
@@ -343,35 +519,97 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 <div class="board">
   <div class="column">
-    <h2>TODO</h2>
+    <h3>📝 TODO</h3>
     {#each todos as item (item.id)}
       <div
-        class="item"
+        class="task-item"
         in:receive={{ key: item.id }}
         out:send={{ key: item.id }}
         animate:flip={{ duration: 300 }}
         onclick={() => toggle(item.id)}
       >
+        <span class="checkbox">☐</span>
         {item.text}
       </div>
     {/each}
+    {#if todos.length === 0}
+      <p class="empty">タスクなし</p>
+    {/if}
   </div>
   
   <div class="column">
-    <h2>完了</h2>
+    <h3>✅ 完了</h3>
     {#each done as item (item.id)}
       <div
-        class="item done"
+        class="task-item done"
         in:receive={{ key: item.id }}
         out:send={{ key: item.id }}
         animate:flip={{ duration: 300 }}
         onclick={() => toggle(item.id)}
       >
+        <span class="checkbox">☑</span>
         {item.text}
       </div>
     {/each}
+    {#if done.length === 0}
+      <p class="empty">完了タスクなし</p>
+    {/if}
   </div>
 </div>
+
+<style>
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  
+  .column {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 200px;
+  }
+  
+  .column h3 {
+    margin: 0 0 1rem;
+    color: #2d3748;
+  }
+  
+  .task-item {
+    background: white;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .task-item:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .task-item.done {
+    background: #e8f5e9;
+    text-decoration: line-through;
+    opacity: 0.8;
+  }
+  
+  .checkbox {
+    font-size: 1.2rem;
+  }
+  
+  .empty {
+    color: #718096;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
 ```
 
 ## スタイルディレクティブ
@@ -380,12 +618,14 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 `style:`ディレクティブを使用して、動的にスタイルを適用できます。
 
-```svelte
+```svelte live
 <script lang="ts">
   let color = $state('blue');
   let size = $state(16);
   let rotation = $state(0);
   let opacity = $state(1);
+  let isActive = $state(false);
+  let disabled = $state(false);
 </script>
 
 <!-- 基本的な使い方 -->
@@ -411,14 +651,22 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 <button
   style:background-color={isActive ? 'blue' : 'gray'}
   style:cursor={disabled ? 'not-allowed' : 'pointer'}
+  onclick={() => {
+    if (!disabled) isActive = !isActive;
+  }}
 >
-  ボタン
+  {isActive ? 'アクティブ' : '非アクティブ'}
 </button>
+
+<label style="margin-left: 1rem;">
+  <input type="checkbox" bind:checked={disabled} />
+  無効化
+</label>
 ```
 
 ### CSS変数との組み合わせ
 
-```svelte
+```svelte live
 <script lang="ts">
   let hue = $state(0);
   let theme = $state<'light' | 'dark'>('light');
@@ -461,15 +709,16 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 ### 独自のトランジション関数
 
-```svelte
+```svelte live
 <script lang="ts">
   import { cubicOut } from 'svelte/easing';
   import type { TransitionConfig } from 'svelte/transition';
   
-  // カスタムトランジション関数
+  // カスタムトランジション関数: タイプライター効果
   function typewriter(node: HTMLElement, {
-    speed = 1
-  }: { speed?: number } = {}): TransitionConfig {
+    speed = 1,
+    delay = 0
+  }: { speed?: number; delay?: number } = {}): TransitionConfig {
     const valid = (
       node.childNodes.length === 1 &&
       node.childNodes[0].nodeType === Node.TEXT_NODE
@@ -483,6 +732,7 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
     const duration = text.length / (speed * 0.01);
     
     return {
+      delay,
       duration,
       tick: t => {
         const i = Math.trunc(text.length * t);
@@ -491,25 +741,140 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
     };
   }
   
-  let showText = $state(false);
+  // カスタムトランジション関数: 回転＋スケール
+  function spin(node: HTMLElement, {
+    delay = 0,
+    duration = 400,
+    easing = cubicOut,
+    spin = 1
+  } = {}): TransitionConfig {
+    const style = getComputedStyle(node);
+    const originalTransform = style.transform === 'none' ? '' : style.transform;
+    const originalOpacity = +style.opacity;
+    
+    return {
+      delay,
+      duration,
+      easing,
+      css: (t, u) => {
+        const rotation = 360 * spin * u;
+        const scale = t;
+        
+        return `
+          transform: ${originalTransform} rotate(${rotation}deg) scale(${scale});
+          opacity: ${t * originalOpacity};
+        `;
+      }
+    };
+  }
+  
+  let showTypewriter = $state(false);
+  let showSpin = $state(false);
+  let messages = $state<string[]>([]);
+  
+  function addMessage() {
+    messages = [...messages, `メッセージ ${messages.length + 1}`];
+  }
+  
+  function removeMessage(index: number) {
+    messages = messages.filter((_, i) => i !== index);
+  }
 </script>
 
-<button onclick={() => showText = !showText}>
-  タイプライター効果
-</button>
+<div style="display: grid; gap: 2rem;">
+  <!-- タイプライター効果デモ -->
+  <div>
+    <h3>タイプライター効果</h3>
+    <button onclick={() => showTypewriter = !showTypewriter}>
+      {showTypewriter ? 'リセット' : 'タイプ開始'}
+    </button>
+    
+    <div style="margin-top: 1rem; min-height: 60px;">
+      {#if showTypewriter}
+        <p in:typewriter={{ speed: 2 }} style="font-family: monospace; font-size: 1.2rem; color: #2d3748;">
+          このテキストはタイプライターのように一文字ずつ表示されます。
+        </p>
+      {/if}
+    </div>
+  </div>
+  
+  <!-- スピン効果デモ -->
+  <div>
+    <h3>回転トランジション</h3>
+    <button onclick={addMessage}>メッセージを追加</button>
+    
+    <div class="spin-grid">
+      {#each messages as message, index (message)}
+        <div
+          class="spin-card"
+          in:spin={{ duration: 500, spin: 2 }}
+          out:spin={{ duration: 300, spin: -1 }}
+        >
+          <span>{message}</span>
+          <button 
+            class="close-btn"
+            onclick={() => removeMessage(index)}
+          >
+            ×
+          </button>
+        </div>
+      {/each}
+    </div>
+  </div>
+</div>
 
-{#if showText}
-  <p in:typewriter={{ speed: 1 }}>
-    このテキストはタイプライターのように表示されます。
-  </p>
-{/if}
+<style>
+  h3 {
+    margin: 0 0 0.5rem;
+    color: #2d3748;
+  }
+  
+  .spin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    min-height: 80px;
+  }
+  
+  .spin-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+</style>
 ```
 
 ### 高度なカスタムトランジション
 
-```svelte
+
+```svelte live
 <script lang="ts">
   import type { TransitionConfig } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   
   function spin(node: HTMLElement, {
     delay = 0,
@@ -517,8 +882,9 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
     easing = cubicOut,
     spin = 1
   } = {}): TransitionConfig {
-    const originalTransform = getComputedStyle(node).transform;
-    const originalOpacity = +getComputedStyle(node).opacity;
+    const style = getComputedStyle(node);
+    const originalTransform = style.transform === 'none' ? '' : style.transform;
+    const originalOpacity = +style.opacity;
     
     return {
       delay,
@@ -567,7 +933,8 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 ### 遅延トランジション
 
-```svelte
+
+```svelte live
 <script lang="ts">
   import { fade, slide } from 'svelte/transition';
   
@@ -600,7 +967,8 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 ### local修飾子
 
-```svelte
+
+```svelte live
 <script lang="ts">
   import { slide } from 'svelte/transition';
   
@@ -638,7 +1006,7 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 
 Svelteは様々なイージング関数を提供しています。
 
-```svelte
+```svelte live
 <script lang="ts">
   import {
     linear,
@@ -695,7 +1063,7 @@ Svelteは様々なイージング関数を提供しています。
 
 ### 通知システム
 
-```svelte
+```svelte live
 <script lang="ts">
   import { fly, fade } from 'svelte/transition';
   import { flip } from 'svelte/animate';
@@ -705,14 +1073,22 @@ Svelteは様々なイージング関数を提供しています。
     id: number;
     message: string;
     type: 'info' | 'success' | 'warning' | 'error';
+    icon: string;
   };
   
   let notifications = $state<Notification[]>([]);
   let nextId = 1;
   
   function notify(message: string, type: Notification['type'] = 'info') {
+    const icons = {
+      info: 'ℹ️',
+      success: '✅',
+      warning: '⚠️',
+      error: '❌'
+    };
+    
     const id = nextId++;
-    notifications = [...notifications, { id, message, type }];
+    notifications = [...notifications, { id, message, type, icon: icons[type] }];
     
     // 自動削除
     setTimeout(() => {
@@ -725,6 +1101,21 @@ Svelteは様々なイージング関数を提供しています。
   }
 </script>
 
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+  <button onclick={() => notify('情報メッセージです', 'info')}>
+    情報通知
+  </button>
+  <button onclick={() => notify('正常に完了しました！', 'success')}>
+    成功通知
+  </button>
+  <button onclick={() => notify('注意が必要です', 'warning')}>
+    警告通知
+  </button>
+  <button onclick={() => notify('エラーが発生しました', 'error')}>
+    エラー通知
+  </button>
+</div>
+
 <div class="notifications-container">
   {#each notifications as notification (notification.id)}
     <div
@@ -733,8 +1124,11 @@ Svelteは様々なイージング関数を提供しています。
       out:fade={{ duration: 200 }}
       animate:flip={{ duration: 300 }}
     >
-      <span>{notification.message}</span>
-      <button onclick={() => dismiss(notification.id)}>×</button>
+      <span class="notification-content">
+        <span class="notification-icon">{notification.icon}</span>
+        {notification.message}
+      </span>
+      <button class="dismiss-btn" onclick={() => dismiss(notification.id)}>×</button>
     </div>
   {/each}
 </div>
@@ -745,6 +1139,7 @@ Svelteは様々なイージング関数を提供しています。
     top: 20px;
     right: 20px;
     z-index: 1000;
+    max-width: 400px;
   }
   
   .notification {
@@ -753,20 +1148,62 @@ Svelteは様々なイージング関数を提供しています。
     justify-content: space-between;
     padding: 12px 16px;
     margin-bottom: 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
   }
   
-  .notification-info { background: #e3f2fd; }
-  .notification-success { background: #e8f5e9; }
-  .notification-warning { background: #fff3e0; }
-  .notification-error { background: #ffebee; }
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .notification-icon {
+    font-size: 1.2rem;
+  }
+  
+  .notification-info { 
+    background: linear-gradient(135deg, rgba(66, 165, 245, 0.9), rgba(33, 150, 243, 0.9));
+    color: white;
+  }
+  .notification-success { 
+    background: linear-gradient(135deg, rgba(102, 187, 106, 0.9), rgba(76, 175, 80, 0.9));
+    color: white;
+  }
+  .notification-warning { 
+    background: linear-gradient(135deg, rgba(255, 183, 77, 0.9), rgba(255, 152, 0, 0.9));
+    color: white;
+  }
+  .notification-error { 
+    background: linear-gradient(135deg, rgba(239, 83, 80, 0.9), rgba(229, 57, 53, 0.9));
+    color: white;
+  }
+  
+  .dismiss-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  
+  .dismiss-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
 </style>
 ```
 
 ### モーダルウィンドウ
 
-```svelte
+```svelte live
 <script lang="ts">
   import { fade, scale } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
@@ -788,7 +1225,7 @@ Svelteは様々なイージング関数を提供しています。
   }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <button onclick={openModal}>モーダルを開く</button>
 

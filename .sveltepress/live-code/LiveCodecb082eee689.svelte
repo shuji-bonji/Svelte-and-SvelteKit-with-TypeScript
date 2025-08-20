@@ -24,7 +24,7 @@
   bind:this={canvasElement}
   width="300"
   height="300"
-/>
+></canvas>
 
 <input type="color" bind:value={color} />
 <input type="range" bind:value={size} min="5" max="50" />

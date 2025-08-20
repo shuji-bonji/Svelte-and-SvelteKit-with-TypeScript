@@ -119,7 +119,7 @@ description: リアクティブな値の変更に応じて副作用を実行す�
   bind:this={canvasElement}
   width="300"
   height="300"
-/>
+></canvas>
 
 <input type="color" bind:value={color} />
 <input type="range" bind:value={size} min="5" max="50" />
@@ -689,7 +689,7 @@ description: リアクティブな値の変更に応じて副作用を実行す�
   {/if}
 </div>
 
-<script context="module" lang="ts">
+<script module lang="ts">
   function getLanguageColor(language: string): string {
     const colors: Record<string, string> = {
       JavaScript: '#f1e05a',

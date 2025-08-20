@@ -125,7 +125,7 @@
   {/if}
 </div>
 
-<script context="module" lang="ts">
+<script module lang="ts">
   function getLanguageColor(language: string): string {
     const colors: Record<string, string> = {
       JavaScript: '#f1e05a',

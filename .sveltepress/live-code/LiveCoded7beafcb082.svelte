@@ -99,8 +99,8 @@
     </label>
   </div>
   
-  <div class="form-group">
-    <label>興味のある分野:</label>
+  <fieldset class="form-group">
+    <legend>興味のある分野:</legend>
     <div class="checkbox-group">
       {#each availableInterests as interest}
         <label>
@@ -113,7 +113,7 @@
         </label>
       {/each}
     </div>
-  </div>
+  </fieldset>
   
   <div class="form-actions">
     <button onclick={submitForm}>送信</button>
@@ -135,6 +135,17 @@
   
   .form-group {
     margin-bottom: 1rem;
+  }
+  
+  fieldset.form-group {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+  }
+  
+  legend {
+    font-weight: bold;
+    padding: 0 0.5rem;
   }
   
   label {

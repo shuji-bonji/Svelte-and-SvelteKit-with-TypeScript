@@ -39,28 +39,80 @@ Svelteのテンプレートは、HTMLをベースに独自の構文を追加し�
 Snippetsは、コンポーネント内で再利用可能なテンプレートの断片を定義する機能です。React のレンダープロップやVueのスロットに相当します。
 :::
 
-### @html - HTML文字列の挿入
+### @html - HTML文字列の挿入（インタラクティブデモ）
 
 `@html`タグは、文字列をHTMLとして解釈してDOMに挿入します。XSS攻撃のリスクがあるため、信頼できるコンテンツのみに使用してください。
 
-```svelte
+```svelte live
 <script lang="ts">
-  // マークダウンパーサーからのHTML出力例
-  let htmlContent = '<strong>重要:</strong> <em>このテキストはHTMLとして表示されます</em>';
+  let htmlInput = $state('<h3>見出し</h3><p style="color: blue;">青いテキスト</p>');
+  let renderAsHtml = $state(false);
   
-  // サニタイズされたHTML（DOMPurify等を使用）
-  import DOMPurify from 'dompurify';
-  let userContent = DOMPurify.sanitize(userInput);
+  // 危険な例
+  let dangerousExample = '<img src=x onerror="alert(\'XSS攻撃！\')">';
 </script>
 
-<!-- HTMLとして挿入 -->
-<div class="content">
-  {@html htmlContent}
-</div>
-
-<!-- ユーザー入力を表示する場合は必ずサニタイズ -->
-<div class="user-content">
-  {@html userContent}
+<div style="padding: 1rem; border: 1px solid #ddd; border-radius: 8px;">
+  <h4 style="margin-top: 0; color: #ff3e00;">@html デモ - セキュリティを理解する</h4>
+  
+  <div style="margin-bottom: 1rem;">
+    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">HTML入力:</label>
+    <textarea
+      bind:value={htmlInput}
+      style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9;"
+      placeholder="HTMLコードを入力..."
+    />
+  </div>
+  
+  <div style="margin-bottom: 1rem;">
+    <button
+      onclick={() => htmlInput = dangerousExample}
+      style="padding: 0.5rem 1rem; background: #ff6b6b; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 0.5rem;"
+    >
+      ⚠️ 危険な例を試す
+    </button>
+    <button
+      onclick={() => htmlInput = '<h3>安全な見出し</h3><p>通常のテキスト</p>'}
+      style="padding: 0.5rem 1rem; background: #4ecdc4; color: white; border: none; border-radius: 4px; cursor: pointer;"
+    >
+      ✅ 安全な例に戻す
+    </button>
+  </div>
+  
+  <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-weight: bold;">
+    <input type="checkbox" bind:checked={renderAsHtml} />
+    <span style="color: {renderAsHtml ? '#ff6b6b' : '#666'};">
+      {'@html'}を使用 {renderAsHtml ? '（危険！）' : '（オフ）'}
+    </span>
+  </label>
+  
+  <div style="padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px;">
+    <div style="padding: 1rem; background: white; border-radius: 4px; min-height: 60px;">
+      <strong style="display: block; margin-bottom: 0.5rem;">出力結果:</strong>
+      {#if renderAsHtml}
+        {@html htmlInput}
+      {:else}
+        <pre style="margin: 0; white-space: pre-wrap; font-family: monospace; color: #666;">{htmlInput}</pre>
+      {/if}
+    </div>
+  </div>
+  
+  {#if renderAsHtml}
+    <div style="margin-top: 1rem; padding: 1rem; background: #ffebee; border-left: 4px solid #f44336; border-radius: 4px;">
+      <strong style="color: #c62828;">⚠️ セキュリティ警告</strong>
+      <p style="margin: 0.5rem 0 0; color: #c62828;">
+        本番環境では、ユーザー入力を直接@htmlで表示しないでください。
+        必ずDOMPurifyなどのサニタイズライブラリを使用してください。
+      </p>
+    </div>
+  {:else}
+    <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
+      <strong style="color: #2e7d32;">✅ 安全モード</strong>
+      <p style="margin: 0.5rem 0 0; color: #2e7d32;">
+        HTMLはエスケープされて表示されています。これが最も安全な方法です。
+      </p>
+    </div>
+  {/if}
 </div>
 ```
 
@@ -290,7 +342,73 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 
 ## 高度な使用例
 
-### 動的なSnippetレンダリング
+### 動的なSnippetレンダリング（実行可能デモ）
+
+```svelte live
+<script lang="ts">
+  let activeTab = $state('tab1');
+  let count = $state(0);
+</script>
+
+{#snippet tab1Content()}
+  <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+    <h3>📝 タブ1: 基本情報</h3>
+    <p>Snippetを使った動的なコンテンツレンダリングの例です。</p>
+    <button onclick={() => count++} style="padding: 0.5rem; background: #ff3e00; color: white; border: none; border-radius: 4px;">
+      カウント: {count}
+    </button>
+  </div>
+{/snippet}
+
+{#snippet tab2Content()}
+  <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px;">
+    <h3>🎨 タブ2: デザイン設定</h3>
+    <p>異なるSnippetを切り替えて表示できます。</p>
+    <p>現在のカウント値: <strong>{count}</strong></p>
+  </div>
+{/snippet}
+
+{#snippet tab3Content()}
+  {@const doubled = count * 2}
+  <div style="padding: 1rem; background: #fff3e0; border-radius: 4px;">
+    <h3>⚙️ タブ3: 詳細設定</h3>
+    <p>@constを使って計算値を定義: {count} × 2 = <strong>{doubled}</strong></p>
+  </div>
+{/snippet}
+
+<div style="padding: 1rem;">
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+    <button 
+      onclick={() => activeTab = 'tab1'}
+      style="padding: 0.5rem 1rem; background: {activeTab === 'tab1' ? '#ff3e00' : '#ccc'}; color: white; border: none; border-radius: 4px; cursor: pointer;"
+    >
+      タブ1
+    </button>
+    <button 
+      onclick={() => activeTab = 'tab2'}
+      style="padding: 0.5rem 1rem; background: {activeTab === 'tab2' ? '#ff3e00' : '#ccc'}; color: white; border: none; border-radius: 4px; cursor: pointer;"
+    >
+      タブ2
+    </button>
+    <button 
+      onclick={() => activeTab = 'tab3'}
+      style="padding: 0.5rem 1rem; background: {activeTab === 'tab3' ? '#ff3e00' : '#ccc'}; color: white; border: none; border-radius: 4px; cursor: pointer;"
+    >
+      タブ3
+    </button>
+  </div>
+  
+  {#if activeTab === 'tab1'}
+    {@render tab1Content()}
+  {:else if activeTab === 'tab2'}
+    {@render tab2Content()}
+  {:else if activeTab === 'tab3'}
+    {@render tab3Content()}
+  {/if}
+</div>
+```
+
+### 元のコード例
 
 ```svelte
 <script lang="ts">

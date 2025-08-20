@@ -29,7 +29,7 @@ Svelteコンポーネントは、以下のの3つの部分から構成されま�
 <!-- 2. Markup部分：HTML構造 -->
 <div class="counter">
   <h2>カウンター: {count}</h2>
-  <button on:click={increment}>
+  <button onclick={increment}>
     クリック
   </button>
 </div>
@@ -331,6 +331,10 @@ Svelteのスタイルは、デフォルトでコンポーネントにスコー�
 
 ## イベントハンドリング
 
+:::info[Svelte 5の変更点]
+Svelte 5では、イベントハンドラの記法が`on:click`から標準的なHTML属性の`onclick`に変更されました。よりネイティブなHTMLに近い構文になっています。
+:::
+
 ### 基本的なイベント
 
 DOM要素のイベントを処理します。`on:`ディレクティブを使用してイベントハンドラーを登録し、修飾子を使用してイベントの挙動を制御できます。
@@ -349,45 +353,75 @@ DOM要素のイベントを処理します。`on:`ディレクティブを使用
   let value: string = '';
 </script>
 
-<!-- on:イベント名 -->
-<button on:click={handleClick}>
+<!-- Svelte 5: 標準的なHTML属性 -->
+<button onclick={handleClick}>
   クリック
 </button>
 
 <!-- インライン関数 -->
-<button on:click={() => console.log('インライン')}>
+<button onclick={() => console.log('インライン')}>
   インライン関数
 </button>
 
-<!-- イベント修飾子 -->
-<button on:click|preventDefault|stopPropagation={handleClick}>
-  修飾子付き
+<!-- イベントの伝播を止める場合 -->
+<button onclick={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  handleClick(e);
+}}>
+  伝播停止
 </button>
 
-<!-- once: 一度だけ実行 -->
-<button on:click|once={handleClick}>
+<!-- 一度だけ実行する場合 -->
+<button onclick={(e) => {
+  handleClick(e);
+  e.currentTarget.onclick = null;
+}}>
   一度だけ
 </button>
 
 <!-- 入力イベント -->
 <input
   type="text"
-  on:input={handleInput}
+  oninput={handleInput}
   bind:value
 />
 ```
 
-### イベント修飾子
+### イベント修飾子（Svelte 4以前）
 
-| 修飾子 | 説明 |
-|--------|------|
-| `preventDefault` | `event.preventDefault()`を呼ぶ |
-| `stopPropagation` | `event.stopPropagation()`を呼ぶ |
-| `passive` | パッシブリスナーとして登録 |
-| `capture` | キャプチャフェーズで実行 |
-| `once` | 一度だけ実行 |
-| `self` | event.targetが要素自身の場合のみ実行 |
-| `trusted` | 信頼できるイベントのみ実行 |
+:::warning[Svelte 5での変更]
+Svelte 5ではイベント修飾子は廃止されました。代わりに、イベントハンドラ内で直接JavaScriptのメソッドを呼び出します。
+:::
+
+**Svelte 5での実装方法：**
+
+```javascript
+// preventDefault
+onclick={(e) => {
+  e.preventDefault();
+  handleClick(e);
+}}
+
+// stopPropagation
+onclick={(e) => {
+  e.stopPropagation();
+  handleClick(e);
+}}
+
+// once
+onclick={(e) => {
+  handleClick(e);
+  e.currentTarget.onclick = null;
+}}
+
+// self
+onclick={(e) => {
+  if (e.target === e.currentTarget) {
+    handleClick(e);
+  }
+}}
+```
 
 ## 双方向バインディング
 

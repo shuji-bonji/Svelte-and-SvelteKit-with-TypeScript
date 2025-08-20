@@ -323,7 +323,7 @@ Svelteでイベントを扱う際の型安全な実装方法です。
 
 フォーム入力を扱う際の型安全な実装です。
 
-```svelte
+```svelte live
 <script lang="ts">
   // フォームデータの型
   interface FormData {
@@ -366,14 +366,15 @@ Svelteでイベントを扱う際の型安全な実装方法です。
     return Object.keys(newErrors).length === 0;
   }
   
-  function handleSubmit() {
+  function handleSubmit(event: SubmitEvent) {
+    event.preventDefault();
     if (validate()) {
       console.log('Form submitted:', formData);
     }
   }
 </script>
 
-<form onsubmit|preventDefault={handleSubmit}>
+<form onsubmit={handleSubmit}>
   <label>
     ユーザー名:
     <input bind:value={formData.username} />
@@ -411,7 +412,7 @@ Svelteでイベントを扱う際の型安全な実装方法です。
 
 配列を扱う際の型安全なパターンです。
 
-```svelte
+```svelte live
 <script lang="ts">
   interface Todo {
     id: string;

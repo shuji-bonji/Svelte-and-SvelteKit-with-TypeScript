@@ -432,7 +432,7 @@ export function createAppStore() {
 
 ## コンソール出力の見方
 
-`$inspect`の出力は以下のような形式でコンソールに表示されます：
+`$inspect`の出力は以下のような形式でコンソールに表示されます。
 
 ```javascript
 // 基本的な出力

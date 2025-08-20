@@ -38,7 +38,7 @@ Svelte 5 における `$state()` と `$state.raw()` は、どちらもリアク�
 
 ### 基本的な使い方
 
-コンポーネントのスクリプト部分では、次のように記述します：
+コンポーネントのスクリプト部分では、次のように記述します。
 
 ```typescript
 // $stateの初期化
@@ -49,7 +49,7 @@ function increment() {
 }
 ```
 
-テンプレート部分では通常のJavaScript変数として使用できます：
+テンプレート部分では通常のJavaScript変数として使用できます。
 
 ```html
 <p>Count: {counter}</p>
@@ -76,7 +76,7 @@ function increment() {
 }
 ```
 
-テンプレート部分では `$get()` を使用して値を取得します：
+テンプレート部分では `$get()` を使用して値を取得します。
 
 ```html
 <p>Count: {$get(counter)}</p>

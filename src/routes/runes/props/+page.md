@@ -24,7 +24,7 @@ description: コンポーネントのプロパティ定義と型安全な受け�
 - **リアクティブ**: propsの変更は自動的に追跡される
 
 :::warning[重要な変更点]
-Svelte 5では`export let`は非推奨となり、`$props`の使用が推奨されます：
+Svelte 5では`export let`は非推奨となり、`$props`の使用が推奨されます。
 ```typescript
 // ❌ 古い書き方（Svelte 4以前）
 export let name: string;
@@ -202,7 +202,7 @@ let { title, icon, actions, children }: Props = $props();
 
 ### コンポーネントのソースコード
 
-以下は、上記デモで使用している各コンポーネントの実装です：
+以下は、上記デモで使用している各コンポーネントの実装です。
 
 #### PropsDemo（親コンポーネント）
 

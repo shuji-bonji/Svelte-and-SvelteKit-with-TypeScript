@@ -485,7 +485,7 @@ $effect(() => {
 5. [$bindable - 双方向バインディング](../bindable/)
 
 :::info[ディープダイブ]
-Runesシステムの各機能の詳細な比較と使い分けについては、以下のガイドもご参照ください：
+Runesシステムの各機能の詳細な比較と使い分けについては、以下のガイドもご参照ください。
 - [$derived vs $effect vs derived.by 完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)
 - [リアクティブな状態変数とバインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/)
 :::

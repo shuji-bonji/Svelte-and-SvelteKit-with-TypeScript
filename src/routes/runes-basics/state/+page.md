@@ -42,7 +42,7 @@ description: Svelte 5のRunesシステムにおける状態管理の基礎
 ```
 
 :::tip[TypeScriptの型推論]
-`$state`は初期値から型を推論しますが、明示的に型を指定することもできます：
+`$state`は初期値から型を推論しますが、明示的に型を指定することもできます。
 ```typescript
 let count = $state<number>(0);
 let items = $state<string[]>([]);
@@ -141,7 +141,7 @@ let items = $state<string[]>([]);
 ```
 
 :::info[配列メソッドのリアクティビティ]
-Svelte 5では、以下の配列メソッドがリアクティブです：
+Svelte 5では、以下の配列メソッドがリアクティブです。
 - `push()`, `pop()`, `shift()`, `unshift()`
 - `splice()`, `sort()`, `reverse()`
 - インデックスによる直接代入 `array[0] = value`

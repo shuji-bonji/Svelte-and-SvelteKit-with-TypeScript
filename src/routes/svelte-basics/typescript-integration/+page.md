@@ -595,7 +595,7 @@ let { title }: Props = $props();
 
 ## まとめ
 
-このページでは、SvelteコンポーネントでTypeScriptを使用する基本について学びました：
+このページでは、SvelteコンポーネントでTypeScriptを使用する基本について学びました。
 
 - **TypeScriptの有効化** - `lang="ts"`属性の追加
 - **Runesの型定義** - $state、$props、$derivedなどの型安全な使用

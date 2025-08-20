@@ -149,7 +149,7 @@ function myAction(node: HTMLElement, parameter?: any) {
 
 ## アクション vs イベントハンドラ
 
-アクションとイベントハンドラは異なる目的で使用されます：
+アクションとイベントハンドラは異なる目的で使用されます。
 
 ### 主な違い
 
@@ -645,7 +645,9 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 
 ## まとめ
 
-`use:action`は、DOM要素を直接操作する必要がある場合に最適な機能です。主なポイント：
+`use:action`は、DOM要素を直接操作する必要がある場合に最適な機能です。
+
+主なポイント：
 
 - **実行タイミング**: 要素のマウント時に自動実行
 - **用途**: DOM操作、外部ライブラリ統合、カスタム動作の追加

@@ -117,6 +117,21 @@
     padding-left: 1rem !important;
   }
   
+  /* サイドバーのフォントサイズ調整（セクションタイトル以外） */
+  :global(.sidebar-group .link) {
+    font-size: 15px !important;
+  }
+  
+  :global(.sidebar-group .link .text) {
+    font-size: 15px !important;
+  }
+  
+  /* セクションタイトルはそのまま */
+  :global(.sidebar-group .group-title) {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+  }
+  
   /* ホームページでのロゴ調整 */
   :global(.home .header .logo-container) {
     position: relative !important;

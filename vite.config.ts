@@ -50,16 +50,16 @@ const config = defineConfig({
                   to: '/svelte-basics/component-lifecycle/',
                 },
                 {
+                  title: 'use:アクション',
+                  to: '/svelte-basics/actions/',
+                },
+                {
                   title: 'トランジション・アニメーション',
                   to: '/svelte-basics/transitions/',
                 },
                 {
                   title: 'TypeScript統合',
                   to: '/svelte-basics/typescript-integration/',
-                },
-                {
-                  title: 'use:アクション',
-                  to: '/svelte-basics/actions/',
                 },
               ],
             },

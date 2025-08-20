@@ -585,6 +585,14 @@ jobs:
 - [SvelteKit Docs](https://kit.svelte.dev/docs)
 - [SveltePress](https://sveltepress.site)
 
+#### Docs for LLMs
+- https://svelte.jp/docs/llms
+- https://svelte.jp/llms.txt
+- https://svelte.jp/llms-full.txt
+- https://svelte.jp/docs/svelte/llms.txt
+- https://svelte.jp/docs/kit/llms.txt
+- https://svelte.jp/docs/cli/llms.txt
+
 ### 使用している外部API
 - [JSONPlaceholder](https://jsonplaceholder.typicode.com/) - テスト用のRESTful API
 - [GitHub API](https://docs.github.com/en/rest) - リポジトリ検索API（認証不要）

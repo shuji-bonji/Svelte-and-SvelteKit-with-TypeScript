@@ -1,17 +1,17 @@
 ---
 title: TypeScript統合
-description: SvelteコンポーネントでTypeScriptを効果的に使用する
+description: SvelteコンポーネントでTypeScriptを効果的に使用する基本
 ---
 
-SvelteはTypeScriptを第一級市民として扱い、優れた型安全性とIDEサポートを提供します。このページでは、SvelteコンポーネントでTypeScriptを効果的に使用する方法を学びます。
+SvelteはTypeScriptを第一級市民として扱い、優れた型安全性とIDEサポートを提供します。このページでは、SvelteコンポーネントでTypeScriptを使用する基本的な方法を学びます。
 
 ## TypeScriptの有効化
 
-SvelteでTypeScriptを使用するのは非常に簡単です。特別な設定はほとんど必要なく、`lang="ts"`属性を追加するだけで始められます。
+SvelteでTypeScriptを使用するのは非常に簡単です。`lang="ts"`属性を追加するだけで始められます。
 
-### 1. script タグでTypeScriptを使用
+### script タグでTypeScriptを使用
 
-SvelteコンポーネントでTypeScriptを有効にする最も基本的な方法は、`<script>`タグに`lang="ts"`属性を追加することです。
+SvelteコンポーネントでTypeScriptを有効にする最も基本的な方法です。
 
 ```svelte
 <!-- lang="ts"を追加するだけ -->
@@ -20,13 +20,17 @@ SvelteコンポーネントでTypeScriptを有効にする最も基本的な方�
   let count: number = 0;
   let isActive: boolean = true;
 </script>
+
+<h1>{message}</h1>
+<p>Count: {count}</p>
 ```
 
-### 2. プロジェクト全体の設定
+### プロジェクト全体の設定
 
 SvelteKitプロジェクトではTypeScriptがデフォルトでサポートされています。`svelte.config.js`でViteのプリプロセッサーが自動的にTypeScriptを処理します。
 
 ```javascript
+// svelte.config.js
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 export default {
@@ -34,966 +38,577 @@ export default {
 };
 ```
 
-## Props の型定義
+## Svelte 5 Runesの型定義
 
-TypeScriptを使用することで、コンポーネントのPropsに明確な型定義を与えることができます。これにより、コンポーネント間のデータの受け渡しが型安全になり、開発時のミスを防げます。
+Svelte 5のRunesシステムは、TypeScriptと完璧に統合されています。型推論が優秀で、多くの場合明示的な型定義が不要です。
 
-### 基本的なProps
+### $stateの型定義
 
-従来の`export let`構文に型注釈を追加することで、Propsの型を定義できます。
-
-```svelte
-<script lang="ts">
-  // 必須のprop
-  export let name: string;
-  
-  // オプショナルなprop（デフォルト値あり）
-  export let age: number = 0;
-  
-  // オプショナルなprop（undefined可能）
-  export let email: string | undefined = undefined;
-  
-  // 複雑な型
-  export let user: {
-    id: number;
-    name: string;
-    roles: string[];
-  };
-</script>
-```
-
-### インターフェースを使用したProps
-
-複雑なPropsの構造を扱う場合、インターフェースを定義することで、より組織的で再利用可能な型定義を作成できます。
+リアクティブな状態を定義する際の型定義方法です。
 
 ```svelte
 <script lang="ts">
-  interface UserData {
-    id: number;
+  // 型推論（推奨）
+  let count = $state(0);  // number型として自動推論
+  let message = $state('Hello');  // string型として自動推論
+  
+  // 明示的な型指定（複雑な型の場合）
+  interface User {
+    id: string;
     name: string;
     email: string;
-    createdAt: Date;
   }
   
-  interface Props {
-    title: string;
-    user: UserData;
-    onSave?: (user: UserData) => void;
-  }
-  
-  // 個別にエクスポート
-  export let title: Props['title'];
-  export let user: Props['user'];
-  export let onSave: Props['onSave'] = undefined;
+  let user = $state<User | null>(null);
+  let items = $state<string[]>([]);
 </script>
 ```
 
-## イベントの型定義
+### $propsの型定義
 
-Svelteでイベントハンドラを記述する際、TypeScriptの型システムを活用することで、イベントオブジェクトのプロパティに安全にアクセスできます。
+Svelte 5の新しいPropsシステムでの型定義方法です。
+
+```svelte
+<script lang="ts">
+  // Props型を定義
+  interface Props {
+    title: string;
+    count?: number;
+    onClose?: () => void;
+  }
+  
+  // $props()で受け取る
+  let { title, count = 0, onClose }: Props = $props();
+</script>
+
+<article>
+  <h2>{title}</h2>
+  <p>Count: {count}</p>
+  {#if onClose}
+    <button onclick={onClose}>Close</button>
+  {/if}
+</article>
+```
+
+### $derivedの型推論
+
+`$derived`は自動的に型を推論するため、通常は型定義が不要です。
+
+```svelte
+<script lang="ts">
+  let price = $state(100);
+  let quantity = $state(2);
+  
+  // 自動的にnumber型として推論される
+  let total = $derived(price * quantity);
+  
+  // 複雑な計算の場合
+  interface CartItem {
+    id: string;
+    price: number;
+    quantity: number;
+  }
+  
+  let items = $state<CartItem[]>([]);
+  
+  // CartItem[]型として推論される
+  let totalPrice = $derived(
+    items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  );
+</script>
+```
+
+### $effectの型安全性
+
+副作用を扱う`$effect`での型安全な実装方法です。
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let logs = $state<string[]>([]);
+  
+  $effect(() => {
+    // countの型はnumberとして推論される
+    console.log(`Count changed to: ${count}`);
+    
+    // 型安全なDOM操作
+    const element = document.getElementById('my-element');
+    if (element instanceof HTMLDivElement) {
+      element.textContent = `Count: ${count}`;
+    }
+    
+    // クリーンアップ関数も型安全
+    return () => {
+      console.log('Cleanup');
+    };
+  });
+</script>
+```
+
+### $bindableの型定義
+
+双方向バインディングを可能にする`$bindable`の使用方法です。
+
+```svelte
+<script lang="ts">
+  interface Props {
+    value: $bindable<string>;
+    checked?: $bindable<boolean>;
+  }
+  
+  let { 
+    value = $bindable(''),
+    checked = $bindable(false)
+  }: Props = $props();
+</script>
+
+<input bind:value={value} />
+<input type="checkbox" bind:checked={checked} />
+```
+
+## イベントハンドラの型定義
+
+Svelteでイベントを扱う際の型安全な実装方法です。
 
 ### DOM イベント
 
-標準的なDOMイベントには、TypeScriptの組み込み型定義を使用します。`currentTarget`の型アサーションを使うことで、要素固有のプロパティにアクセスできます。
+標準的なDOMイベントの型定義方法です。`currentTarget`を使用することで、要素固有のプロパティに安全にアクセスできます。
 
 ```svelte
 <script lang="ts">
-  function handleClick(event: MouseEvent): void {
-    const target = event.currentTarget as HTMLButtonElement;
-    console.log('Button clicked:', target.textContent);
+  // クリックイベント
+  function handleClick(event: MouseEvent & { 
+    currentTarget: HTMLButtonElement 
+  }) {
+    console.log(event.currentTarget.textContent);
+    console.log(event.clientX, event.clientY);
   }
   
-  function handleInput(event: Event): void {
-    const target = event.currentTarget as HTMLInputElement;
-    console.log('Input value:', target.value);
+  // 入力イベント
+  function handleInput(event: Event & {
+    currentTarget: HTMLInputElement
+  }) {
+    const value = event.currentTarget.value;
+    console.log(`Input value: ${value}`);
   }
   
-  function handleKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      console.log('Enter pressed');
-    }
-  }
-  
-  function handleSubmit(event: SubmitEvent): void {
+  // フォーム送信
+  function handleSubmit(event: SubmitEvent & {
+    currentTarget: HTMLFormElement
+  }) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget as HTMLFormElement);
-    // フォーム処理
+    const formData = new FormData(event.currentTarget);
+    // フォームデータの処理
   }
 </script>
 
-<button on:click={handleClick}>クリック</button>
-<input on:input={handleInput} on:keydown={handleKeydown} />
-<form on:submit={handleSubmit}>
+<button onclick={handleClick}>Click me</button>
+<input oninput={handleInput} />
+<form onsubmit={handleSubmit}>
   <!-- フォーム要素 -->
 </form>
 ```
 
 ### カスタムイベント
 
-Svelteの`createEventDispatcher`を使用する際、ジェネリクスを使ってカスタムイベントの型を定義できます。これにより、イベント名とペイロードの型が厳密にチェックされます。
+コンポーネント間でカスタムイベントを使用する際の型定義です。
 
 ```svelte
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   
-  // イベントの型定義
+  // イベントの型を定義
   interface EventMap {
-    save: { id: number; data: string };
-    delete: { id: number };
-    update: { field: string; value: any };
+    save: { id: string; data: string };
+    delete: { id: string };
+    update: null;  // ペイロードなし
   }
   
   const dispatch = createEventDispatcher<EventMap>();
   
-  function handleSave(): void {
-    // 型安全なイベント発火
-    dispatch('save', { id: 1, data: 'test' });
-    
-    // TypeScriptエラー：型が合わない
-    // dispatch('save', { id: 'string' }); // Error!
+  function handleSave() {
+    // 型チェックが効く
+    dispatch('save', { id: '123', data: 'test' });
+  }
+  
+  function handleDelete(id: string) {
+    dispatch('delete', { id });
+  }
+  
+  function handleUpdate() {
+    dispatch('update');
   }
 </script>
 ```
 
-## ジェネリック型の使用
+### キーボードイベント
 
-Svelte 5では、コンポーネント自体をジェネリックにすることができます。これにより、異なる型のデータを扱える汎用的なコンポーネントを作成できます。
-
-### ジェネリックコンポーネント
-
-`<script>`タグに`generics`属性を追加することで、型パラメーターを定義できます。
-
-```svelte
-<!-- List.svelte -->
-<script lang="ts" generics="T">
-  export let items: T[];
-  export let getKey: (item: T) => string | number;
-  export let renderItem: (item: T) => string;
-  export let onSelect: ((item: T) => void) | undefined = undefined;
-</script>
-
-{#each items as item (getKey(item))}
-  <div on:click={() => onSelect?.(item)}>
-    {@html renderItem(item)}
-  </div>
-{/each}
-```
-
-### 使用例
-
-上記のジェネリックコンポーネントを使用する際、TypeScriptは自動的に型を推論し、型安全性を保証します。
+キーボードイベントの型安全な処理方法です。
 
 ```svelte
 <script lang="ts">
-  import List from './List.svelte';
-  
-  interface User {
-    id: number;
-    name: string;
-  }
-  
-  let users: User[] = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' }
-  ];
-</script>
-
-<List
-  items={users}
-  getKey={(user) => user.id}
-  renderItem={(user) => `<strong>${user.name}</strong>`}
-  onSelect={(user) => console.log('Selected:', user)}
-/>
-```
-
-## 型ガードと型の絞り込み
-
-TypeScriptの型ガードを使用することで、条件分岐内で型を絞り込み、より安全なコードを書くことができます。Svelteのテンプレート内でも、この機能は有効に働きます。
-
-```svelte
-<script lang="ts">
-  type Status = 'loading' | 'success' | 'error';
-  
-  interface LoadingState {
-    status: 'loading';
-  }
-  
-  interface SuccessState<T> {
-    status: 'success';
-    data: T;
-  }
-  
-  interface ErrorState {
-    status: 'error';
-    error: Error;
-  }
-  
-  type State<T> = LoadingState | SuccessState<T> | ErrorState;
-  
-  let state: State<string[]> = { status: 'loading' };
-  
-  // 型ガード関数
-  function isSuccess<T>(state: State<T>): state is SuccessState<T> {
-    return state.status === 'success';
-  }
-  
-  function isError<T>(state: State<T>): state is ErrorState {
-    return state.status === 'error';
-  }
-</script>
-
-{#if state.status === 'loading'}
-  <p>読み込み中...</p>
-{:else if isSuccess(state)}
-  <!-- TypeScriptはここでstateがSuccessStateであることを認識 -->
-  <ul>
-    {#each state.data as item}
-      <li>{item}</li>
-    {/each}
-  </ul>
-{:else if isError(state)}
-  <!-- TypeScriptはここでstateがErrorStateであることを認識 -->
-  <p>エラー: {state.error.message}</p>
-{/if}
-```
-
-## Snippets（Svelte 5推奨）の型定義
-
-Svelte 5では、従来の`<slot>`の代わりにSnippetsを使用することが推奨されています。Snippetsはより型安全で柔軟性があり、TypeScriptとの統合も優れています。
-
-:::tip[Svelte 5の新機能]
-SnippetsはSvelte 5で導入された新しい機能で、スロットの代替として設計されました。型安全性が向上し、パラメーターの受け渡しがより明確になります。
-:::
-
-### 基本的なSnippetの使用
-
-```svelte
-<!-- Card.svelte -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  
-  interface Props {
-    title: string;
-    header?: Snippet<[{ title: string }]>;
-    children: Snippet;  // デフォルトスロットの代わり
-    footer?: Snippet<[{ timestamp: Date }]>;
-  }
-  
-  let { title, header, children, footer }: Props = $props();
-</script>
-
-<div class="card">
-  {#if header}
-    {@render header({ title })}
-  {/if}
-  
-  {@render children()}
-  
-  {#if footer}
-    {@render footer({ timestamp: new Date() })}
-  {/if}
-</div>
-```
-
-### Snippetを使用する親コンポーネント
-
-親コンポーネントでSnippetを定義する際、`{#snippet}`ブロックを使用します。パラメーターの型は自動的に推論されます。
-
-```svelte
-<!-- 親コンポーネント -->
-<script lang="ts">
-  import Card from './Card.svelte';
-</script>
-
-<Card title="サンプルカード">
-  {#snippet header({ title })}
-    <h2>{title}</h2>
-  {/snippet}
-  
-  <!-- childrenはデフォルトコンテンツ -->
-  <p>カードの本文内容</p>
-  
-  {#snippet footer({ timestamp })}
-    <small>更新日時: {timestamp.toLocaleString()}</small>
-  {/snippet}
-</Card>
-```
-
-### 従来のスロット（後方互換性）
-
-:::note[Svelte 5でのスロット]
-Svelte 5でも`<slot>`は引き続きサポートされていますが、新しいプロジェクトではSnippetsの使用が推奨されます。既存のコードベースとの互換性のために残されています。
-:::
-
-```svelte
-<!-- 従来のスロット方式（非推奨だが動作する） -->
-<script lang="ts">
-  export let title: string;
-</script>
-
-<div class="card">
-  <slot name="header" {title} />
-  <slot />
-  <slot name="footer" timestamp={new Date()} />
-</div>
-```
-
-## コンテキストAPI の型定義
-
-SvelteのコンテキストAPIを使用する際も、TypeScriptの型システムを活用することで、コンポーネント間で共有されるデータの型安全性を確保できます。
-
-```svelte
-<!-- Parent.svelte -->
-<script lang="ts">
-  import { setContext } from 'svelte';
-  
-  interface AppContext {
-    user: {
-      id: number;
-      name: string;
-    };
-    theme: 'light' | 'dark';
-    updateTheme: (theme: 'light' | 'dark') => void;
-  }
-  
-  const context: AppContext = {
-    user: { id: 1, name: 'Alice' },
-    theme: 'light',
-    updateTheme: (theme) => {
-      context.theme = theme;
+  function handleKeydown(event: KeyboardEvent & {
+    currentTarget: HTMLInputElement
+  }) {
+    if (event.key === 'Enter') {
+      console.log('Enter pressed');
+      const value = event.currentTarget.value;
+      // 処理...
     }
-  };
-  
-  // キーは Symbol を使用することを推奨
-  const CONTEXT_KEY = Symbol('app');
-  setContext(CONTEXT_KEY, context);
-</script>
-```
-
-### 子コンポーネントでのコンテキスト取得
-
-子コンポーネントでコンテキストを取得する際、ジェネリクスを使って型を指定します。
-
-```svelte
-<!-- Child.svelte -->
-<script lang="ts">
-  import { getContext } from 'svelte';
-  
-  interface AppContext {
-    user: {
-      id: number;
-      name: string;
-    };
-    theme: 'light' | 'dark';
-    updateTheme: (theme: 'light' | 'dark') => void;
-  }
-  
-  const CONTEXT_KEY = Symbol('app');
-  const context = getContext<AppContext>(CONTEXT_KEY);
-  
-  // contextは型安全に使用できる
-  console.log(context.user.name);
-  context.updateTheme('dark');
-</script>
-```
-
-## ストアの型定義
-
-SvelteのストアシステムもTypeScriptと完全に統合されています。`Writable`、`Readable`、`Derived`などの型を使用して、ストアの型を明確に定義できます。
-
-:::note[ストアとRunes]
-Svelte 5では、新しいRunesシステム（`$state`、`$derived`など）が推奨されていますが、従来のストアシステムも引き続きサポートされています。
-:::
-
-```svelte
-<script lang="ts">
-  import { writable, derived, type Writable, type Readable } from 'svelte/store';
-  
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-  }
-  
-  // Writableストア
-  const user: Writable<User | null> = writable(null);
-  
-  // Readableストア（derived）
-  const userName: Readable<string> = derived(
-    user,
-    ($user) => $user?.name ?? 'Guest'
-  );
-  
-  // カスタムストア
-  function createCounter(initial = 0) {
-    const { subscribe, set, update } = writable(initial);
     
-    return {
-      subscribe,
-      increment: () => update(n => n + 1),
-      decrement: () => update(n => n - 1),
-      reset: () => set(initial)
-    };
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
+      // 保存処理
+    }
   }
-  
-  const counter = createCounter(10);
 </script>
 
-<!-- ストアの値を使用 -->
-<p>User: {$userName}</p>
-<button on:click={counter.increment}>
-  Count: {$counter}
-</button>
+<input onkeydown={handleKeydown} />
 ```
 
-## 実践例：型安全なフォームコンポーネント
+## 基本的な型パターン
 
-以下は、TypeScriptの型システムを活用した、完全に型安全なフォームコンポーネントの実装例です。実際に入力して動作を確認できます。
+### コンポーネントの状態管理
 
-### TypeScript の型定義
-```typescript
-interface FormData {
-  name: string;
-  email: string;
-  age: number;
-  role: 'admin' | 'user' | 'guest';
-}
-```
+型安全な状態管理の基本パターンです。
 
-このフォームは完全に型安全です。TypeScriptが各フィールドの型を検証し、IDEでの自動補完やエラー検出が可能です。
-
-### ライブデモ
-
-```svelte in live
-<!-- UserForm.svelte -->
+```svelte
 <script lang="ts">
-  // フォームデータの型
-  interface FormData {
+  // ユーザー情報の型定義
+  interface User {
+    id: string;
     name: string;
     email: string;
-    age: number;
     role: 'admin' | 'user' | 'guest';
   }
   
-  // バリデーションエラーの型
-  type FormErrors = Partial<Record<keyof FormData, string>>;
+  // 状態の型定義
+  let user = $state<User | null>(null);
+  let loading = $state(false);
+  let error = $state<string | null>(null);
   
-  // フォームの状態
-  let formData: FormData = {
-    name: '',
-    email: '',
-    age: 20,
-    role: 'user'
-  };
-  
-  let errors: FormErrors = {};
-  let submitted = false;
-  let submittedData: FormData | null = null;
-  
-  // バリデーション
-  function validate(): boolean {
-    errors = {};
+  // 非同期データ取得
+  async function fetchUser(id: string): Promise<void> {
+    loading = true;
+    error = null;
     
-    if (!formData.name.trim()) {
-      errors.name = '名前は必須です';
-    } else if (formData.name.length < 2) {
-      errors.name = '名前は2文字以上で入力してください';
+    try {
+      const response = await fetch(`/api/users/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user');
+      }
+      user = await response.json();
+    } catch (err) {
+      error = err instanceof Error ? err.message : 'Unknown error';
+    } finally {
+      loading = false;
     }
-    
-    if (!formData.email.trim()) {
-      errors.email = 'メールアドレスは必須です';
-    } else if (!formData.email.includes('@')) {
-      errors.email = '有効なメールアドレスを入力してください';
-    }
-    
-    if (formData.age < 0 || formData.age > 120) {
-      errors.age = '年齢は0〜120の間で入力してください';
-    }
-    
-    return Object.keys(errors).length === 0;
-  }
-  
-  // リアルタイムバリデーション（名前フィールド）
-  function validateName(): void {
-    if (!formData.name.trim()) {
-      errors.name = '名前は必須です';
-    } else if (formData.name.length < 2) {
-      errors.name = '名前は2文字以上で入力してください';
-    } else {
-      delete errors.name;
-    }
-    errors = errors; // リアクティビティのトリガー
-  }
-  
-  // リアルタイムバリデーション（メールフィールド）
-  function validateEmail(): void {
-    if (!formData.email.trim()) {
-      errors.email = 'メールアドレスは必須です';
-    } else if (!formData.email.includes('@')) {
-      errors.email = '有効なメールアドレスを入力してください';
-    } else {
-      delete errors.email;
-    }
-    errors = errors; // リアクティビティのトリガー
-  }
-  
-  // 送信処理
-  function handleSubmit(event: SubmitEvent): void {
-    event.preventDefault();
-    
-    if (validate()) {
-      submitted = true;
-      submittedData = { ...formData };
-      
-      // 3秒後に成功メッセージを非表示にする
-      setTimeout(() => {
-        submitted = false;
-      }, 3000);
-    }
-  }
-  
-  // リセット処理
-  function handleReset(): void {
-    formData = {
-      name: '',
-      email: '',
-      age: 20,
-      role: 'user'
-    };
-    errors = {};
-    submitted = false;
-    submittedData = null;
   }
 </script>
 
-<div class="demo-container">
-  <h3>🎯 ライブデモ: 型安全なフォームコンポーネント</h3>
+{#if loading}
+  <p>Loading...</p>
+{:else if error}
+  <p class="error">{error}</p>
+{:else if user}
+  <div>
+    <h2>{user.name}</h2>
+    <p>{user.email}</p>
+    <span class="role">{user.role}</span>
+  </div>
+{/if}
+```
+
+### フォームの型定義
+
+フォーム入力を扱う際の型安全な実装です。
+
+```svelte
+<script lang="ts">
+  // フォームデータの型
+  interface FormData {
+    username: string;
+    email: string;
+    age: number;
+    agreed: boolean;
+  }
   
-  <form on:submit={handleSubmit} novalidate>
-    <div class="form-group">
-      <label for="name">
-        名前 <span class="required">*</span>
-      </label>
-      <input
-        id="name"
-        type="text"
-        bind:value={formData.name}
-        on:blur={validateName}
-        class:error={errors.name}
-        placeholder="山田太郎"
-      />
-      {#if errors.name}
-        <p class="error-message">{errors.name}</p>
-      {/if}
-    </div>
-    
-    <div class="form-group">
-      <label for="email">
-        メールアドレス <span class="required">*</span>
-      </label>
-      <input
-        id="email"
-        type="email"
-        bind:value={formData.email}
-        on:blur={validateEmail}
-        class:error={errors.email}
-        placeholder="example@example.com"
-      />
-      {#if errors.email}
-        <p class="error-message">{errors.email}</p>
-      {/if}
-    </div>
-    
-    <div class="form-group">
-      <label for="age">
-        年齢
-      </label>
-      <input
-        id="age"
-        type="number"
-        bind:value={formData.age}
-        class:error={errors.age}
-        min="0"
-        max="120"
-      />
-      {#if errors.age}
-        <p class="error-message">{errors.age}</p>
-      {/if}
-    </div>
-    
-    <div class="form-group">
-      <label for="role">
-        役割
-      </label>
-      <select id="role" bind:value={formData.role}>
-        <option value="admin">管理者</option>
-        <option value="user">ユーザー</option>
-        <option value="guest">ゲスト</option>
-      </select>
-    </div>
-    
-    <div class="button-group">
-      <button type="submit" class="btn-primary">
-        送信
-      </button>
-      <button type="button" class="btn-secondary" on:click={handleReset}>
-        リセット
-      </button>
-    </div>
-  </form>
+  // フォームエラーの型
+  type FormErrors = Partial<Record<keyof FormData, string>>;
   
-  {#if submitted && submittedData}
-    <div class="success-message">
-      <h4>✅ フォームが正常に送信されました！</h4>
-      <div class="submitted-data">
-        <p><strong>送信されたデータ:</strong></p>
-        <pre>{JSON.stringify(submittedData, null, 2)}</pre>
-      </div>
-    </div>
-  {/if}
+  // 状態
+  let formData = $state<FormData>({
+    username: '',
+    email: '',
+    age: 0,
+    agreed: false
+  });
+  
+  let errors = $state<FormErrors>({});
+  
+  // バリデーション
+  function validate(): boolean {
+    const newErrors: FormErrors = {};
+    
+    if (!formData.username) {
+      newErrors.username = 'ユーザー名は必須です';
+    }
+    
+    if (!formData.email.includes('@')) {
+      newErrors.email = '有効なメールアドレスを入力してください';
+    }
+    
+    if (formData.age < 18) {
+      newErrors.age = '18歳以上である必要があります';
+    }
+    
+    errors = newErrors;
+    return Object.keys(newErrors).length === 0;
+  }
+  
+  function handleSubmit() {
+    if (validate()) {
+      console.log('Form submitted:', formData);
+    }
+  }
+</script>
+
+<form onsubmit|preventDefault={handleSubmit}>
+  <label>
+    ユーザー名:
+    <input bind:value={formData.username} />
+    {#if errors.username}
+      <span class="error">{errors.username}</span>
+    {/if}
+  </label>
+  
+  <label>
+    メール:
+    <input type="email" bind:value={formData.email} />
+    {#if errors.email}
+      <span class="error">{errors.email}</span>
+    {/if}
+  </label>
+  
+  <label>
+    年齢:
+    <input type="number" bind:value={formData.age} />
+    {#if errors.age}
+      <span class="error">{errors.age}</span>
+    {/if}
+  </label>
+  
+  <label>
+    <input type="checkbox" bind:checked={formData.agreed} />
+    利用規約に同意する
+  </label>
+  
+  <button type="submit">送信</button>
+</form>
+```
+
+### リストの型安全な操作
+
+配列を扱う際の型安全なパターンです。
+
+```svelte
+<script lang="ts">
+  interface Todo {
+    id: string;
+    text: string;
+    completed: boolean;
+    createdAt: Date;
+  }
+  
+  let todos = $state<Todo[]>([]);
+  let newTodoText = $state('');
+  
+  function addTodo() {
+    if (!newTodoText.trim()) return;
+    
+    const newTodo: Todo = {
+      id: crypto.randomUUID(),
+      text: newTodoText,
+      completed: false,
+      createdAt: new Date()
+    };
+    
+    todos = [...todos, newTodo];
+    newTodoText = '';
+  }
+  
+  function toggleTodo(id: string) {
+    todos = todos.map(todo =>
+      todo.id === id 
+        ? { ...todo, completed: !todo.completed }
+        : todo
+    );
+  }
+  
+  function deleteTodo(id: string) {
+    todos = todos.filter(todo => todo.id !== id);
+  }
+  
+  // 派生値
+  let completedCount = $derived(
+    todos.filter(todo => todo.completed).length
+  );
+  
+  let pendingCount = $derived(
+    todos.length - completedCount
+  );
+</script>
+
+<div>
+  <input 
+    bind:value={newTodoText}
+    onkeydown={(e) => e.key === 'Enter' && addTodo()}
+    placeholder="新しいタスクを入力"
+  />
+  <button onclick={addTodo}>追加</button>
 </div>
 
+<ul>
+  {#each todos as todo (todo.id)}
+    <li class:completed={todo.completed}>
+      <input 
+        type="checkbox"
+        checked={todo.completed}
+        onchange={() => toggleTodo(todo.id)}
+      />
+      <span>{todo.text}</span>
+      <button onclick={() => deleteTodo(todo.id)}>削除</button>
+    </li>
+  {/each}
+</ul>
+
+<p>
+  完了: {completedCount} / 未完了: {pendingCount}
+</p>
+
 <style>
-  .demo-container {
-    padding: 1.5rem;
-    background: var(--vp-c-bg-soft);
-    border-radius: 8px;
-    margin: 2rem 0;
-  }
-  
-  h3 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: var(--vp-c-text-1);
-  }
-  
-  h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--vp-c-text-1);
-  }
-  
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--vp-c-text-1);
-  }
-  
-  .required {
-    color: #dc2626;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--vp-c-divider);
-    border-radius: 4px;
-    background: var(--vp-c-bg);
-    color: var(--vp-c-text-1);
-    font-size: 0.95rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  
-  input:focus,
-  select:focus {
-    outline: none;
-    border-color: var(--vp-c-brand);
-    box-shadow: 0 0 0 3px rgba(255, 62, 0, 0.1);
-  }
-  
-  input.error {
-    border-color: #dc2626;
-  }
-  
-  input.error:focus {
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-  }
-  
-  .error-message {
-    margin-top: 0.25rem;
-    color: #dc2626;
-    font-size: 0.875rem;
-  }
-  
-  .button-group {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  
-  button {
-    padding: 0.5rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-  }
-  
-  button:active {
-    transform: translateY(1px);
-  }
-  
-  .btn-primary {
-    background: var(--vp-c-brand);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background: var(--vp-c-brand-dark);
-  }
-  
-  .btn-secondary {
-    background: var(--vp-c-gray-soft);
-    color: var(--vp-c-text-1);
-  }
-  
-  .btn-secondary:hover {
-    background: var(--vp-c-gray);
-  }
-  
-  .success-message {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: #10b98114;
-    border: 1px solid #10b981;
-    border-radius: 4px;
-    animation: slideIn 0.3s ease-out;
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .submitted-data {
-    margin-top: 1rem;
-  }
-  
-  .submitted-data p {
-    margin-bottom: 0.5rem;
-    color: var(--vp-c-text-1);
-  }
-  
-  pre {
-    padding: 0.75rem;
-    background: var(--vp-c-bg);
-    border-radius: 4px;
-    overflow-x: auto;
-    font-size: 0.875rem;
-    color: var(--vp-c-text-1);
-  }
-  
-  .type-info {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: var(--vp-c-bg);
-    border-radius: 4px;
-    border: 1px solid var(--vp-c-divider);
-  }
-  
-  .type-info code {
-    color: var(--vp-c-text-code);
-  }
-  
-  .note {
-    margin-top: 0.75rem;
-    font-size: 0.875rem;
-    color: var(--vp-c-text-2);
-    line-height: 1.6;
-  }
-  
-  /* ダークモード対応 */
-  :global(.dark) .demo-container {
-    background: rgba(30, 30, 30, 0.5);
-  }
-  
-  :global(.dark) input,
-  :global(.dark) select {
-    background: #1a1a1a;
-  }
-  
-  :global(.dark) .type-info {
-    background: #1a1a1a;
-  }
-  
-  :global(.dark) pre {
-    background: #0a0a0a;
+  .completed {
+    text-decoration: line-through;
+    opacity: 0.6;
   }
 </style>
 ```
 
+## スロットの型定義
 
-### デモの説明
+Svelteのスロットシステムでの型定義方法です。
 
-このライブデモでは、TypeScriptを活用した型安全なフォームコンポーネントを実際に操作できます。以下の機能を試してみてください：
-
-#### 📝 試してみる
-
-1. **入力フィールドの検証**
-   - 名前フィールドを空のままフォーカスを外すとエラーが表示されます
-   - 名前を1文字だけ入力すると「2文字以上」のエラーが表示されます
-   - メールアドレスに`@`を含まない文字列を入力するとエラーになります
-
-2. **リアルタイムバリデーション**
-   - 名前とメールアドレスはフォーカスが外れた時点（`blur`イベント）で検証されます
-   - エラーがある場合は赤い枠線とエラーメッセージが表示されます
-   - 正しい値を入力するとエラーが自動的にクリアされます
-
-3. **フォーム送信**
-   - すべての必須フィールドが正しく入力されていないと送信できません
-   - 送信成功時には、入力されたデータがJSON形式で表示されます
-   - 成功メッセージは3秒後に自動的に消えます
-
-4. **リセット機能**
-   - リセットボタンを押すと、すべてのフィールドが初期値に戻ります
-   - エラーメッセージもすべてクリアされます
-
-### 実装のポイント
-
-このフォームコンポーネントは以下のTypeScript機能を活用しています：
-
-1. **インターフェースによる型定義**
-   - `FormData`インターフェースでフォームデータの構造を定義
-   - リテラル型（`'admin' | 'user' | 'guest'`）による厳密な型制約
-
-2. **型エイリアスの活用**
-   - `FormErrors`型でバリデーションエラーの構造を定義
-   - `Partial`と`Record`を組み合わせた柔軟な型定義
-
-3. **イベントハンドラの型安全性**
-   - `SubmitEvent`型による送信イベントの型定義
-   - `MouseEvent`、`InputEvent`などDOM標準の型を活用
-
-4. **リアルタイムバリデーション**
-   - 各フィールドの`blur`イベントで個別バリデーション
-   - 型安全性を保ちながら動的なエラー表示
-
-### TypeScriptによる開発時のメリット
-
-- **コンパイル時エラー検出**: 型の不一致やプロパティの誤りを事前に発見
-- **IDE支援**: 自動補完、リファクタリング、定義へのジャンプが可能
-- **ドキュメント化**: 型定義自体がAPIドキュメントとして機能
-- **保守性向上**: 大規模なアプリケーションでも安全に変更が可能
-
-### ソースコード
-
-<details>
-<summary>完全なソースコードを見る</summary>
+### 基本的なスロット
 
 ```svelte
-<!-- UserForm.svelte -->
+<!-- Card.svelte -->
 <script lang="ts">
-  // フォームデータの型
-  interface FormData {
-    name: string;
-    email: string;
-    age: number;
-    role: 'admin' | 'user' | 'guest';
+  interface Props {
+    title: string;
+    children?: import('svelte').Snippet;
   }
   
-  // バリデーションエラーの型
-  type FormErrors = Partial<Record<keyof FormData, string>>;
-  
-  // フォームの状態
-  let formData: FormData = {
-    name: '',
-    email: '',
-    age: 20,
-    role: 'user'
-  };
-  
-  let errors: FormErrors = {};
-  let submitted = false;
-  let submittedData: FormData | null = null;
-  
-  // バリデーション
-  function validate(): boolean {
-    errors = {};
-    
-    if (!formData.name.trim()) {
-      errors.name = '名前は必須です';
-    } else if (formData.name.length < 2) {
-      errors.name = '名前は2文字以上で入力してください';
-    }
-    
-    if (!formData.email.trim()) {
-      errors.email = 'メールアドレスは必須です';
-    } else if (!formData.email.includes('@')) {
-      errors.email = '有効なメールアドレスを入力してください';
-    }
-    
-    if (formData.age < 0 || formData.age > 120) {
-      errors.age = '年齢は0〜120の間で入力してください';
-    }
-    
-    return Object.keys(errors).length === 0;
-  }
-  
-  // リアルタイムバリデーション（名前フィールド）
-  function validateName(): void {
-    if (!formData.name.trim()) {
-      errors.name = '名前は必須です';
-    } else if (formData.name.length < 2) {
-      errors.name = '名前は2文字以上で入力してください';
-    } else {
-      delete errors.name;
-    }
-    errors = errors; // リアクティビティのトリガー
-  }
-  
-  // 送信処理
-  function handleSubmit(event: SubmitEvent): void {
-    event.preventDefault();
-    
-    if (validate()) {
-      submitted = true;
-      submittedData = { ...formData };
-      
-      // 3秒後に成功メッセージを非表示
-      setTimeout(() => {
-        submitted = false;
-      }, 3000);
-    }
-  }
+  let { title, children }: Props = $props();
 </script>
+
+<div class="card">
+  <h3>{title}</h3>
+  {#if children}
+    {@render children()}
+  {/if}
+</div>
 ```
 
-</details>
+### スロットプロップス
 
-### TypeScriptの利点
+スロットに値を渡す場合の型定義です。
 
-このフォーム実装により、以下のメリットが得られます：
+```svelte
+<!-- List.svelte -->
+<script lang="ts">
+  interface Item {
+    id: string;
+    name: string;
+  }
+  
+  interface Props {
+    items: Item[];
+    children?: import('svelte').Snippet<[Item]>;
+  }
+  
+  let { items, children }: Props = $props();
+</script>
 
-- **コンパイル時の型チェック** - 型の不一致を事前に検出
-- **IDEの自動補完** - プロパティ名やメソッド名を自動提案
-- **リファクタリングの安全性** - 型定義の変更が自動的に波及
-- **ドキュメントとしての型** - 型定義がAPIドキュメントの役割を果たす
+<ul>
+  {#each items as item (item.id)}
+    <li>
+      {#if children}
+        {@render children(item)}
+      {:else}
+        {item.name}
+      {/if}
+    </li>
+  {/each}
+</ul>
+```
+
+## よくあるTypeScriptエラーと解決法
+
+### 1. $stateの型推論エラー
+
+```typescript
+// ❌ エラー: any[]として推論される
+let items = $state([]);
+
+// ✅ 正しい: 明示的な型指定
+let items = $state<string[]>([]);
+```
+
+### 2. イベントハンドラの型エラー
+
+```typescript
+// ❌ エラー: event.targetが不明
+function handleClick(event: Event) {
+  console.log(event.target.value);
+}
+
+// ✅ 正しい: currentTargetを使用
+function handleClick(event: Event & {
+  currentTarget: HTMLButtonElement
+}) {
+  console.log(event.currentTarget.textContent);
+}
+```
+
+### 3. $propsの型エラー
+
+```typescript
+// ❌ エラー: 型定義なし
+let props = $props();
+
+// ✅ 正しい: 型を定義
+interface Props {
+  title: string;
+}
+let { title }: Props = $props();
+```
 
 ## まとめ
 
-このページで学んだこと
+このページでは、SvelteコンポーネントでTypeScriptを使用する基本について学びました：
 
-- SvelteコンポーネントでのTypeScript有効化
-- Propsの型定義とインターフェース
-- DOM/カスタムイベントの型安全な処理
-- ジェネリック型を使った汎用コンポーネント
-- 型ガードによる型の絞り込み
-- コンテキストAPIとストアの型定義
-- 実践的な型安全フォームの実装
+- **TypeScriptの有効化** - `lang="ts"`属性の追加
+- **Runesの型定義** - $state、$props、$derivedなどの型安全な使用
+- **イベントハンドラ** - DOM・カスタムイベントの型定義
+- **基本パターン** - 状態管理、フォーム、リストの型安全な実装
+- **スロット** - Snippetシステムでの型定義
+
+これらの基本を理解することで、型安全なSvelteコンポーネントを作成できます。
 
 ## 次のステップ
 
-TypeScriptとの統合を理解したら、[use:アクション](/svelte-basics/actions/)でDOM要素を直接操作する方法を学びましょう。その後、[Runesシステム](/runes/)でSvelte 5の新しいリアクティビティシステムを学びましょう。
+TypeScriptの基本的な使い方を理解したら、より高度なパターンを学びましょう。
+
+- [なぜTypeScriptが必要か](/introduction/why-typescript/) - TypeScriptの重要性を理解
+- [TypeScript設定](/introduction/typescript-setup/) - プロジェクトの詳細な設定方法
+- [TypeScriptパターン](/advanced/typescript-patterns/) - 高度な型定義パターンとベストプラクティス

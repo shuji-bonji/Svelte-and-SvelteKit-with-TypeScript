@@ -408,9 +408,17 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 </div>
 ```
 
-### 元のコード例
+## 実践的な実装パターン
+
+ここからは、テンプレート構文を組み合わせた実践的な実装例を紹介します。
+
+### タブシステムの実装
+
+Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネントの実装例です。
 
 ```svelte
+import type { Snippet } from 'svelte';
+
 <script lang="ts">
   type TabContent = {
     id: string;
@@ -459,7 +467,9 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 </div>
 ```
 
-### 条件付きHTMLレンダリング
+### 安全なMarkdownレンダリング
+
+`@html`を使用してMarkdownコンテンツを安全にレンダリングする実装例です。DOMPurifyによるサニタイズで、XSS攻撃を防ぎます。
 
 ```svelte
 <script lang="ts">
@@ -492,7 +502,9 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 </div>
 ```
 
-### デバッグ付きフォーム
+### フォームバリデーション with デバッグ機能
+
+`@debug`と`@const`を組み合わせた、実用的なフォームバリデーションの実装例です。
 
 ```svelte
 <script lang="ts">

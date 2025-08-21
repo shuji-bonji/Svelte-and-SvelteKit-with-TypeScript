@@ -45,7 +45,7 @@ Svelteコンポーネントは`.svelte`拡張子を持つファイルです。�
 <p>Welcome to {name}</p>
 ```
 
-### TypeScriptバージョン
+### TypeScriptを利用
 
 TypeScriptを使用する場合は、`<script lang="ts">`を指定します。
 
@@ -197,6 +197,10 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 Svelte 5では、`$state`ルーンを使ってより明示的にリアクティビティを表現します。
 
+:::tip[コード展開]
+Click fold/expand codeをクリックするとコードが展開表示されます。
+:::
+
 ```svelte live ln title=Counter.svelte
 <script lang="ts">
   // Svelte 5の新しい書き方
@@ -227,6 +231,10 @@ Svelte 5では、`$state`ルーンを使ってより明示的にリアクティ�
 ### 多言語挨拶の例
 
 ボタンクリックで挨拶を変更する例も、Svelte 5スタイルで書いてみましょう。
+
+:::tip[コード展開]
+Click fold/expand codeをクリックするとコードが展開表示されます。
+:::
 
 ```svelte live ln title=HelloWorld.svelte
 <script lang="ts">

@@ -339,7 +339,13 @@ Svelte 5では、イベントハンドラの記法が`on:click`から標準的�
 
 DOM要素のイベントを処理します。`on:`ディレクティブを使用してイベントハンドラーを登録し、修飾子を使用してイベントの挙動を制御できます。
 
-```svelte
+ブラウザの開発ルールでコンソールで出力を確認できます。
+
+:::tip[コード展開]
+Click fold/expand codeをクリックするとコードが展開表示されます。
+:::
+
+```svelte live
 <script lang="ts">
   function handleClick(event: MouseEvent): void {
     console.log('クリックされました', event);

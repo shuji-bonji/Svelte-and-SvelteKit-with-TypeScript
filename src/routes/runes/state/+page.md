@@ -9,10 +9,6 @@ description: Svelte 5のRunesシステムにおける状態管理の基礎
 
 ### プリミティブ値
 
-:::tip[コード表記]
-`Click fold/expand code`をクリックすると実行コードを確認できます。
-:::
-
 ```svelte live
 <script lang="ts">
   // 数値

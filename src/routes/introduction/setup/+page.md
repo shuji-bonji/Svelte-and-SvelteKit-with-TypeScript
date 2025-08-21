@@ -7,8 +7,11 @@ description: Svelte 5とSvelteKitの開発環境セットアップ
 
 ### 前提条件
 
-- **Node.js** 18.19以上（推奨: 20.x LTS または 22.x LTS）
-- **npm** 9以上（Node.jsに同梱）
+- **Node.js** 20.x LTS以上（推奨: 20.x LTS、次点: 22.x LTS）
+  - 最低要件: Node.js 18.13（SvelteKit 2の最低要件）
+  - **Node.js 20.x LTS**: 安定性重視、エコシステム対応が完璧
+  - **Node.js 22.x LTS**: 最新機能、2027年まで長期サポート
+- **npm** 10以上（Node.js 20/22に同梱）
 - **VS Code**（推奨エディタ）
 
 ### Node.jsのインストール
@@ -258,6 +261,9 @@ npm run build && npm run preview
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "typescript": "^5.5.0",
     "vite": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"  // Node.js 20以上を推奨
   }
 }
 ```
@@ -312,8 +318,10 @@ npm install
    # Node.js バージョン確認
    node --version
    
-   # nvm を使ってバージョン切り替え
+   # nvm を使ってバージョン切り替え（20.x LTS推奨）
    nvm use 20
+   # または22.x LTSを使用
+   nvm use 22
    ```
 
 2. **依存関係の問題**

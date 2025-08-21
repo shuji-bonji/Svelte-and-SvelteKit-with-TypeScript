@@ -38,7 +38,11 @@
 - SvelteKit: 2.x以上
 - TypeScript: 5.x以上
 - Vite: 5.x以上
-- Node.js: 18.19以上（推奨: 20.x LTS または 22.x LTS）
+- Node.js: 20.x LTS以上（推奨: 20.x LTS、次点: 22.x LTS）
+  - 最低要件: Node.js 18.13（SvelteKit 2の要件）
+  - Node.js 20.x LTS: 安定性重視、エコシステム対応が完璧
+  - Node.js 22.x LTS: 最新機能、2027年まで長期サポート
+- npm: 10.x以上（Node.js 20/22に同梱）
 - pnpm: 8.x以上（推奨パッケージマネージャ）
 
 ## 📚 カリキュラム構成

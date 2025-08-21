@@ -5,12 +5,26 @@ description: 最初のSvelteコンポーネントを作成する
 
 プログラミング学習の第一歩は「Hello World」から始まります。このページでは、最初のSvelteコンポーネントを作成し、Svelteの基本的な仕組みを理解します。
 
+## 環境構築で生成されたファイルを確認
+
+[前のページ](/introduction/setup/)で環境構築を行うと、`src/routes/+page.svelte`というファイルが生成されます。これがホームページとなる最初のSvelteコンポーネントです。
+
+### 生成される基本的な構造
+
+```svelte
+<!-- src/routes/+page.svelte -->
+<h1>Welcome to SvelteKit</h1>
+<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+```
+
 ## 最初のSvelteコンポーネント
 
 Svelteコンポーネントは`.svelte`拡張子を持つファイルです。最もシンプルなコンポーネントは、HTMLをそのまま書くだけで動作します。
 
+生成された`+page.svelte`を以下のように書き換えてみましょう 。
+
 ```svelte
-<!-- HelloWorld.svelte -->
+<!-- src/routes/+page.svelte -->
 <h1>Hello World!</h1>
 ```
 
@@ -18,9 +32,10 @@ Svelteコンポーネントは`.svelte`拡張子を持つファイルです。�
 
 ## 動的な値を表示する
 
-変数の値を表示するには、`{}`（中括弧）を使用します。
+変数の値を表示するには、`{}`（中括弧）を使用します。`src/routes/+page.svelte`を更新してみましょう 。
 
 ```svelte
+<!-- src/routes/+page.svelte -->
 <script>
   let message = 'Hello World!';
   let name = 'Svelte';
@@ -35,6 +50,7 @@ Svelteコンポーネントは`.svelte`拡張子を持つファイルです。�
 TypeScriptを使用する場合は、`<script lang="ts">`を指定します。
 
 ```svelte
+<!-- src/routes/+page.svelte -->
 <script lang="ts">
   let message: string = 'Hello World!';
   let name: string = 'Svelte';
@@ -50,6 +66,7 @@ TypeScriptを使用する場合は、`<script lang="ts">`を指定します。
 中括弧内では、任意のJavaScript式を使用できます。
 
 ```svelte
+<!-- src/routes/+page.svelte -->
 <script lang="ts">
   let count: number = 0;
   let items: string[] = ['Apple', 'Banana', 'Orange'];
@@ -155,11 +172,14 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 ## 実践例：インタラクティブなHello World
 
+ここまでは基本的な表示方法を学びました。次に`src/routes/+page.svelte`をインタラクティブなコンポーネントに更新してみましょう。
+
 ### 従来の書き方
 
 まず、従来のSvelteの書き方を見てみましょう。
 
 ```svelte
+<!-- src/routes/+page.svelte（従来の書き方） -->
 <script lang="ts">
   let count: number = 0;
   
@@ -273,6 +293,7 @@ Svelte 5では、`$state`ルーンを使ってより明示的にリアクティ�
 - `@html`ディレクティブの使用（注意事項含む）
 - デバッグ機能の活用
 - TypeScriptとの統合
+- Svelte 5のRunesシステム（`$state`）の基本
 
 ## 次のステップ
 

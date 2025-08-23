@@ -307,6 +307,9 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
 ```
 
 ## ライフサイクルの流れ
+
+Svelte 5のコンポーネントライフサイクルは、以下の段階を経て進行します。各段階で何が起こるのか、詳しく見ていきましょう。
+
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   
@@ -328,7 +331,89 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
 </script>
 <Mermaid code={diagramCode} />
 
+### 各段階の詳細
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <div class="card">
+    <h4>1. コンポーネント作成</h4>
+    <ul>
+    <li>Svelteがコンポーネントインスタンスを生成</li>
+    <li>この時点ではまだDOMには何も存在しない</li>
+    <li>コンポーネントのスコープが確立される</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>2. $state初期化</h4>
+    <ul>
+    <li>`$state`で定義された状態変数が初期値で初期化</li>
+    <li>リアクティブな値の追跡システムが準備される</li>
+    <li>TypeScriptの型チェックが行われる</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>3. $effect.pre実行</h4>
+    <ul>
+    <li>DOM構築前に実行が必要な処理が実行される</li>
+    <li>データの事前準備や計算処理に適している</li>
+    <li>この段階ではDOM要素へのアクセスはできない</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>4. DOM構築</h4>
+    <ul>
+    <li>テンプレートに基づいてDOM要素が作成される</li>
+    <li>イベントリスナーが登録される</li>
+    <li>バインディングが確立される</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>5. $effect実行</h4>
+    <ul>
+    <li>DOM構築後に実行される副作用処理</li>
+    <li>DOM要素へのアクセスが可能</li>
+    <li>外部APIとの連携やサブスクリプションの設定</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>6. レンダリング完了</h4>
+    <ul>
+    <li>コンポーネントが完全に画面に表示される</li>
+    <li>ユーザーインタラクションが可能になる</li>
+    <li>初期ライフサイクルが完了</li>
+    </ul>
+  </div>
+</div>
+
+### 更新サイクル
+
+状態が変更されると、以下のサイクルが実行されます。
+
+1. **変更の検出** - Svelteが状態の変更を検出
+2. **$effect.pre再実行** - 変更された値に依存する`$effect.pre`が再実行
+3. **DOM更新** - 必要最小限のDOM更新が効率的に実行
+4. **$effect再実行** - 変更された値に依存する`$effect`が再実行
+
+### 破棄プロセス
+
+コンポーネントが破棄される際は。
+
+1. **破棄の開始** - 親コンポーネントから破棄が指示される
+2. **クリーンアップ実行** - すべての`$effect`のクリーンアップ関数が実行
+3. **リソースの解放** - イベントリスナー、タイマー、サブスクリプションの解除
+4. **メモリの解放** - コンポーネントインスタンスがガベージコレクションの対象に
+
+:::tip[パフォーマンスの最適化]
+Svelte 5のライフサイクルは以下の点で最適化されています。
+- 必要な部分だけを更新する細粒度のリアクティビティ
+- コンパイル時の最適化により実行時のオーバーヘッドが最小
+- 自動的なメモリ管理によりメモリリークを防止
+:::
+
 ## 実践例：データフェッチング
+
+実際のアプリケーションでよく使われる、APIからデータを取得して表示するパターンを詳しく見ていきましょう。このパターンは、ライフサイクル管理の重要な要素をすべて含んでいます。
+
+### 基本的なデータフェッチング
 
 ```svelte live
 <script lang="ts">
@@ -344,7 +429,7 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
   
   // コンポーネントマウント時にデータを取得
   $effect(() => {
-    let aborted = false;
+    let aborted = false; // クリーンアップ用のフラグ
     
     async function fetchPosts() {
       try {
@@ -356,6 +441,7 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
         
         const data = await response.json();
         
+        // コンポーネントが破棄されていない場合のみ状態を更新
         if (!aborted) {
           posts = data;
           loading = false;
@@ -370,7 +456,7 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
     
     fetchPosts();
     
-    // クリーンアップ：リクエストの中断
+    // クリーンアップ：コンポーネント破棄時にリクエストを中断
     return () => {
       aborted = true;
     };
@@ -416,12 +502,58 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
 </style>
 ```
 
+### 重要なポイント
+
+この実装例では、以下のライフサイクル管理のベストプラクティスが含まれています。
+
+1. **非同期処理の管理** - `aborted`フラグを使用して、コンポーネント破棄後の状態更新を防止
+2. **エラーハンドリング** - try-catchブロックで適切にエラーを処理
+3. **ローディング状態** - ユーザーに進行状況を表示
+4. **クリーンアップ** - returnでクリーンアップ関数を提供し、メモリリークを防止
+
+### AbortControllerを使用した高度な例
+
+より洗練された実装では、`AbortController`を使用してネットワークリクエスト自体をキャンセルできます。
+
+```typescript
+$effect(() => {
+  const controller = new AbortController();
+  
+  async function fetchData() {
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal
+      });
+      // データ処理
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        // リクエストがキャンセルされた
+        console.log('Request was cancelled');
+      } else {
+        // その他のエラー
+        handleError(e);
+      }
+    }
+  }
+  
+  fetchData();
+  
+  return () => {
+    controller.abort(); // リクエストをキャンセル
+  };
+});
+```
+
 ## ベストプラクティス
+
+Svelte 5でライフサイクルを管理する際の推奨事項とアンチパターンを詳しく見ていきましょう。
 
 ### 1. $effectを優先的に使用
 
+Svelte 5では、従来のライフサイクル関数よりも`$effect`を使用することが推奨されます。
+
 ```typescript
-// ✅ 推奨：$effect
+// ✅ 推奨：$effectによる統一的な管理
 $effect(() => {
   const timer = setTimeout(() => {
     console.log('1秒後');
@@ -431,6 +563,8 @@ $effect(() => {
 });
 
 // ⚠️ 動作するが非推奨：onMount
+import { onMount } from 'svelte';
+
 onMount(() => {
   const timer = setTimeout(() => {
     console.log('1秒後');
@@ -440,7 +574,14 @@ onMount(() => {
 });
 ```
 
+#### $effectを使うメリット
+- リアクティビティと密接に統合
+- 依存関係の自動追跡
+- より宣言的でわかりやすいコード
+
 ### 2. クリーンアップを忘れない
+
+メモリリークを防ぐため、必ずクリーンアップ処理を実装しましょう。
 
 ```typescript
 // ✅ 良い例：適切なクリーンアップ
@@ -452,9 +593,24 @@ $effect(() => {
     window.removeEventListener('resize', handler);
   };
 });
+
+// ❌ 悪い例：クリーンアップなし
+$effect(() => {
+  // リスナーが残り続ける！
+  window.addEventListener('resize', (e) => console.log(e));
+});
 ```
 
+#### クリーンアップが必要な場面
+- イベントリスナー
+- タイマー（setTimeout、setInterval）
+- WebSocketやServer-Sent Events
+- IntersectionObserverなどのオブザーバー
+- 外部ライブラリのインスタンス
+
 ### 3. 非同期処理の適切な管理
+
+非同期処理では、コンポーネントの破棄後に状態を更新しないよう注意が必要です。
 
 ```typescript
 // ✅ 良い例：中断フラグを使用
@@ -474,6 +630,63 @@ $effect(() => {
   return () => {
     cancelled = true;
   };
+});
+
+// ❌ 悪い例：破棄後の更新
+$effect(() => {
+  async function loadData() {
+    const data = await fetchData();
+    updateState(data); // コンポーネント破棄後に実行される可能性
+  }
+  
+  loadData();
+});
+```
+
+### 4. 依存関係の明確化
+
+`$effect`は自動的に依存関係を追跡しますが、意図を明確にすることが重要です。
+
+```typescript
+// ✅ 良い例：依存関係が明確
+let userId = $state(1);
+let userData = $state(null);
+
+$effect(() => {
+  // userIdの変更時のみ実行される
+  fetchUserData(userId).then(data => {
+    userData = data;
+  });
+});
+
+// ⚠️ 注意が必要：外部変数への依存
+let config = { apiUrl: 'https://api.example.com' };
+
+$effect(() => {
+  // configオブジェクトは追跡されない
+  fetch(config.apiUrl); // 変更を検知できない
+});
+```
+
+### 5. $effect.preとの使い分け
+
+DOM操作の有無で適切に使い分けましょう。
+
+```typescript
+// ✅ DOM操作なし：$effect.pre
+$effect.pre(() => {
+  // データの計算や準備
+  const processedData = processData(rawData);
+  displayData = processedData;
+});
+
+// ✅ DOM操作あり：$effect
+$effect(() => {
+  // DOM要素への直接操作
+  const element = document.getElementById('chart');
+  if (element) {
+    renderChart(element, data);
+  }
 });
 ```
 

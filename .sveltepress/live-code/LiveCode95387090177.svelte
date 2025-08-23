@@ -13,7 +13,7 @@
     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">HTML入力:</label>
     <textarea
       bind:value={htmlInput}
-      style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9;"
+      style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; color: #333"
       placeholder="HTMLコードを入力..."
     />
   </div>
@@ -35,7 +35,7 @@
   
   <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-weight: bold;">
     <input type="checkbox" bind:checked={renderAsHtml} />
-    <span style="color: {renderAsHtml ? '#ff6b6b' : '#666'};">
+    <span style="color: {renderAsHtml ? '#ff6b6b' : '#999'};">
       {'@html'}を使用 {renderAsHtml ? '（危険！）' : '（オフ）'}
     </span>
   </label>

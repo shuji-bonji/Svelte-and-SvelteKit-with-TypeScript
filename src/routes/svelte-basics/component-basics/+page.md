@@ -116,10 +116,23 @@ Svelte 5より前のバージョンでは、`let`で宣言した変数は自動�
   import { helper } from '$lib/utils';
   import type { User } from '$lib/types';
   
-  // propsをエクスポート（親コンポーネントから受け取る）
-  export let title: string;
-  export let count: number = 0; // デフォルト値
-  export let user: User | undefined = undefined;
+  // Svelte 5: $props()を使用してpropsを定義
+  type Props = {
+    title: string;
+    count?: number;
+    user?: User;
+  };
+  
+  let { 
+    title, 
+    count = 0,  // デフォルト値
+    user = undefined 
+  }: Props = $props();
+  
+  // Svelte 4（非推奨）: export letを使用
+  // export let title: string;
+  // export let count: number = 0;
+  // export let user: User | undefined = undefined;
 </script>
 ```
 
@@ -211,6 +224,11 @@ Svelte 5より前のバージョンでは、`let`で宣言した変数は自動�
 
 ```svelte
 <script lang="ts">
+  type User = {
+    id: string,
+    name: string,
+  }
+
   async function fetchData(): Promise<User[]> {
     const response = await fetch('/api/users');
     return response.json();
@@ -341,10 +359,6 @@ DOM要素のイベントを処理します。`on:`ディレクティブを使用
 
 ブラウザの開発ルールでコンソールで出力を確認できます。
 
-:::tip[コード展開]
-Click fold/expand codeをクリックするとコードが展開表示されます。
-:::
-
 ```svelte live
 <script lang="ts">
   function handleClick(event: MouseEvent): void {
@@ -393,6 +407,10 @@ Click fold/expand codeをクリックするとコードが展開表示されま�
   bind:value
 />
 ```
+
+:::tip[Click fold/expand code をクリックするとコードが展開表示されます。]
+:::
+
 
 ### イベント修飾子の変更
 
@@ -621,9 +639,28 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
     createdAt: Date;
   }
   
-  let todos = $state<Todo[]>([
-    // 初期データ
+   let todos = $state<Todo[]>([ // 初期データ
+    {
+      id: 1,
+      text: 'Svelte 5を学習する',
+      completed: false,
+      createdAt: new Date('2024-01-15')
+    },
+    {
+      id: 2,
+      text: 'Runesシステムを理解する',
+      completed: true,
+      createdAt: new Date('2024-01-16')
+    },
+    {
+      id: 3,
+      text: 'TODOアプリを作成する',
+      completed: false,
+      createdAt: new Date('2024-01-17')
+    }
   ]);
+
+  let newTodoText = $state('');
   
   function toggleTodo(id: number) {
     todos = todos.map(todo =>
@@ -634,7 +671,30 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
   function deleteTodo(id: number) {
     todos = todos.filter(todo => todo.id !== id);
   }
+
+  function addTodo() {
+    if (newTodoText.trim()) {
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: newTodoText,
+        completed: false,
+        createdAt: new Date()
+      };
+      todos = [...todos, newTodo];
+      newTodoText = '';
+    }
+  }
 </script>
+
+  <div class="add-todo">
+    <input
+      type="text"
+      bind:value={newTodoText}
+      placeholder="新しいタスクを入力..."
+      onkeydown={(e) => e.key === 'Enter' && addTodo()}
+    />
+    <button onclick={addTodo}>追加</button>
+  </div>
 
 <div class="todo-list">
   {#each todos as todo (todo.id)}
@@ -645,6 +705,55 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
     />
   {/each}
 </div>
+
+
+<style>
+  .todo-app {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  h1 {
+    color: #ff3e00;
+    text-align: center;
+  }
+  
+  .add-todo {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .add-todo input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .add-todo button {
+    padding: 0.5rem 1rem;
+    background: #ff3e00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .add-todo button:hover {
+    background: #ff5a00;
+  }
+  
+  .todo-list {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+</style>
 ```
 
 ### デモ

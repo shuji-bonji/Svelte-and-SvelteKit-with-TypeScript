@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Search from '$lib/components/Search.svelte';
   import { page } from '$app/stores';
+  import Search from '$lib/components/Search.svelte';
   import { onMount } from 'svelte';
-  
+
   const { children } = $props();
-  
+
   // ページの状態を判定
   const routeId = $derived($page.route.id);
   const isHome = $derived(routeId === '/');
   const showSearch = $derived($page.url.pathname !== '/search');
   let mounted = $state(false);
-  
+
   onMount(() => {
     mounted = true;
   });
@@ -23,6 +23,9 @@
   </div>
 {/if}
 
+<!-- Leave this. Or you can add more content for your custom layout -->
+{@render children?.()}
+
 <style>
   /* 検索ボタンを固定位置に配置 */
   .search-teleport {
@@ -30,13 +33,13 @@
     top: 18px;
     z-index: 890; /* ヘッダーより少し低く */
   }
-  
+
   /* デスクトップ: 通常ページではサイドバーの右側に配置 */
   @media (min-width: 950px) {
     .search-teleport:not(.is-home) {
       left: 260px; /* サイドバーの幅 + 余白 */
     }
-    
+
     /* ホームページでは中央に配置、ただしロゴの右側 */
     .search-teleport.is-home {
       left: calc(10vw + 200px); /* ロゴの右側に配置 */
@@ -44,17 +47,17 @@
       max-width: 400px;
     }
   }
-  
+
   @media (min-width: 1240px) {
     .search-teleport:not(.is-home) {
       left: 300px; /* 大画面でのサイドバーの幅 + 余白 */
     }
-    
+
     .search-teleport.is-home {
       left: calc(10vw + 220px); /* 大画面でロゴの右側に配置 */
     }
   }
-  
+
   /* タブレット・モバイル表示 */
   @media (max-width: 949px) {
     .search-teleport {
@@ -62,51 +65,51 @@
       left: auto;
       top: 12px;
     }
-    
+
     /* ホームページでも同じ位置 */
     .search-teleport.is-home {
       transform: none;
     }
   }
-  
+
   @media (max-width: 640px) {
     .search-teleport {
       right: 100px; /* ハンバーガーメニューの右側 */
       top: 14px;
     }
   }
-  
+
   /* ヘッダーのレイアウト調整 */
   :global(.header .header-inner) {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
   }
-  
+
   /* ホームページでのヘッダー調整 */
   :global(.home .header .left) {
     flex: 0 0 auto !important;
   }
-  
+
   /* ナビゲーションリンクを右寄せ */
   :global(.header .nav-links) {
     margin-left: auto !important;
     flex: 0 0 auto !important;
   }
-  
+
   :global(.header .navbar-pc) {
     gap: 0.75rem !important;
     display: flex !important;
     align-items: center !important;
   }
-  
+
   /* 検索ボックスのスタイル調整 */
   :global(.search-teleport .search-button) {
     background: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
   }
-  
+
   :global(.dark .search-teleport .search-button) {
     background: rgba(30, 30, 30, 0.9) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -116,22 +119,22 @@
   :global(.theme-default-sidebar) {
     padding-left: 1rem !important;
   }
-  
+
   /* サイドバーのフォントサイズ調整（セクションタイトル以外） */
   :global(.sidebar-group .link) {
     font-size: 15px !important;
   }
-  
+
   :global(.sidebar-group .link .text) {
     font-size: 15px !important;
   }
-  
+
   /* セクションタイトルはそのまま */
   :global(.sidebar-group .group-title) {
     font-size: 16px !important;
     font-weight: 600 !important;
   }
-  
+
   /* ホームページでのロゴ調整 */
   :global(.home .header .logo-container) {
     position: relative !important;
@@ -144,7 +147,7 @@
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15) !important;
       background: linear-gradient(to bottom, #f8f9fa, #ffffff) !important;
     }
-    
+
     :global(.dark .theme-default-sidebar) {
       background: linear-gradient(to bottom, #1a1a1a, #0f0f0f) !important;
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5) !important;
@@ -210,39 +213,39 @@
     overflow-x: hidden !important;
     padding-bottom: 2rem !important; /* 下部に余白 */
   }
-  
+
   /* スクロールバーのスタイリング */
   :global(.toc .anchors::-webkit-scrollbar) {
     width: 6px;
   }
-  
+
   :global(.toc .anchors::-webkit-scrollbar-track) {
     background: rgba(0, 0, 0, 0.05);
     border-radius: 3px;
   }
-  
+
   :global(.toc .anchors::-webkit-scrollbar-thumb) {
     background: rgba(251, 113, 133, 0.3);
     border-radius: 3px;
   }
-  
+
   :global(.toc .anchors::-webkit-scrollbar-thumb:hover) {
     background: rgba(251, 113, 133, 0.5);
   }
-  
+
   /* ダークモードのスクロールバー */
   :global(.dark .toc .anchors::-webkit-scrollbar-track) {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   :global(.dark .toc .anchors::-webkit-scrollbar-thumb) {
     background: rgba(251, 113, 133, 0.4);
   }
-  
+
   :global(.dark .toc .anchors::-webkit-scrollbar-thumb:hover) {
     background: rgba(251, 113, 133, 0.6);
   }
-  
+
   /* モバイルでハンバーガーメニューボタンをシンプルに */
   @media (max-width: 949px) {
     :global(.nav-trigger) {
@@ -266,7 +269,7 @@
       font-size: 1.5rem !important;
       stroke-width: 2.5 !important;
     }
-    
+
     /* ダークモードでの色調整 */
     :global(.dark .nav-trigger) {
       color: rgb(251, 113, 133) !important;
@@ -412,38 +415,44 @@
       margin-right: 0 !important;
     }
   }
-  
+
   /* コンテンツエリアの幅を調整 - サイドバーとTOCの間を最大限活用 */
   @media (min-width: 950px) and (max-width: 1239px) {
     /* サイドバーのみ表示、TOCなし */
     :global(.theme-default--page-layout .content) {
       /* max-width: none !important; */
-      width: calc(100vw - 240px - 240px - 4rem) !important; /* viewport - sidebar(240px) - margins */
+      width: calc(
+        100vw - 240px - 240px - 4rem
+      ) !important; /* viewport - sidebar(240px) - margins */
       margin-left: calc(240px + 1rem) !important;
       margin-right: 2rem !important;
     }
   }
-  
+
   @media (min-width: 1240px) and (max-width: 1439px) {
     /* サイドバー拡大、TOCなし */
     :global(.theme-default--page-layout .content) {
       /* max-width: none !important; */
-      width: calc(100vw - 280px - 240px - 4rem) !important; /* viewport - sidebar(280px) - margins */
-      margin-left: calc(240px + 3rem) !important;
+      width: calc(
+        100vw - 280px - 240px - 4rem
+      ) !important; /* viewport - sidebar(280px) - margins */
+      margin-left: calc(240px + 4rem) !important;
       margin-right: 3rem !important;
     }
   }
-  
+
   @media (min-width: 1440px) {
     /* サイドバーとTOC両方表示 */
     :global(.theme-default--page-layout .content) {
       /* max-width: none !important; */
-      width: calc(100vw - 280px - 240px - 5rem) !important; /* viewport - sidebar - toc - margins */
+      width: calc(
+        100vw - 280px - 240px - 5rem
+      ) !important; /* viewport - sidebar - toc - margins */
       margin-left: calc(240px + 4rem) !important;
       margin-right: 4rem !important;
     }
   }
-  
+
   /* 超ワイドスクリーン対応 - 読みやすさのため最大幅を設定 */
   @media (min-width: 1920px) {
     :global(.theme-default--page-layout .content) {
@@ -453,6 +462,3 @@
     }
   }
 </style>
-
-<!-- Leave this. Or you can add more content for your custom layout -->
-{@render children?.()}

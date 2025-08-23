@@ -170,6 +170,9 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 `{@debug}`タグに到達すると、ブラウザの開発者ツールでデバッガーが一時停止し、指定した変数の値を確認できます。
 
+:::note[デバッガーはブラウザの開発者ツールを利用しているときに動作します。]
+:::
+
 ## 実践例：インタラクティブなHello World
 
 ここまでは基本的な表示方法を学びました。次に`src/routes/+page.svelte`をインタラクティブなコンポーネントに更新してみましょう。
@@ -197,10 +200,6 @@ Svelteコンポーネント内では、HTMLコメントとJavaScriptコメント
 
 Svelte 5では、`$state`ルーンを使ってより明示的にリアクティビティを表現します。
 
-:::tip[コード展開]
-Click fold/expand codeをクリックするとコードが展開表示されます。
-:::
-
 ```svelte live ln title=Counter.svelte
 <script lang="ts">
   // Svelte 5の新しい書き方
@@ -221,6 +220,8 @@ Click fold/expand codeをクリックするとコードが展開表示されま�
   </p>
 </div>
 ```
+:::tip[Click fold/expand code をクリックするとコードが展開表示されます。]
+:::
 
 :::tip[違いのポイント]
 - **従来**: `let`で宣言した変数が自動的にリアクティブ
@@ -231,10 +232,6 @@ Click fold/expand codeをクリックするとコードが展開表示されま�
 ### 多言語挨拶の例
 
 ボタンクリックで挨拶を変更する例も、Svelte 5スタイルで書いてみましょう。
-
-:::tip[コード展開]
-Click fold/expand codeをクリックするとコードが展開表示されます。
-:::
 
 ```svelte live ln title=HelloWorld.svelte
 <script lang="ts">
@@ -289,6 +286,9 @@ Click fold/expand codeをクリックするとコードが展開表示されま�
   }
 </style>
 ```
+
+:::tip[Click fold/expand code をクリックするとコードが展開表示されます。]
+:::
 
 
 ## まとめ

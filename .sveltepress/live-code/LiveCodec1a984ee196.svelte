@@ -28,7 +28,7 @@
   </button>
   
   {#if showElement}
-    <div use:lifecycleAction={parameter} class="target">
+    <div use:lifecycleAction={parameter} class="target" >
       この要素にアクションが適用されています
     </div>
   {/if}
@@ -39,9 +39,10 @@
 </div>
 
 <style>
+
   .demo {
     padding: 1rem;
-    background: #f5f5f5;
+    background: #ccc;
     border-radius: 8px;
   }
   
@@ -51,6 +52,7 @@
   }
   
   .target {
+    color: #333;
     padding: 1rem;
     border-radius: 4px;
     transition: background-color 0.3s;

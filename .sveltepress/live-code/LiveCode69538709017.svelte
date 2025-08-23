@@ -4,7 +4,7 @@
 </script>
 
 {#snippet tab1Content()}
-  <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+  <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px; color: #333">
     <h3>📝 タブ1: 基本情報</h3>
     <p>Snippetを使った動的なコンテンツレンダリングの例です。</p>
     <button onclick={() => count++} style="padding: 0.5rem; background: #ff3e00; color: white; border: none; border-radius: 4px;">
@@ -14,7 +14,7 @@
 {/snippet}
 
 {#snippet tab2Content()}
-  <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px;">
+  <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px; color: #333">
     <h3>🎨 タブ2: デザイン設定</h3>
     <p>異なるSnippetを切り替えて表示できます。</p>
     <p>現在のカウント値: <strong>{count}</strong></p>
@@ -23,7 +23,7 @@
 
 {#snippet tab3Content()}
   {@const doubled = count * 2}
-  <div style="padding: 1rem; background: #fff3e0; border-radius: 4px;">
+  <div style="padding: 1rem; background: #fff3e0; border-radius: 4px; color: #333">
     <h3>⚙️ タブ3: 詳細設定</h3>
     <p>@constを使って計算値を定義: {count} × 2 = <strong>{doubled}</strong></p>
   </div>

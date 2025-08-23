@@ -59,12 +59,14 @@ ReactやVueは、アプリケーションに常にフレームワークのラン
 ### Svelteの革新的アプローチ
 Svelteはビルド時にすべてを「素のJavaScript」に変換します。フレームワーク自体が消えてなくなるのです。
 
+#### あなたが書くコード（Svelte 5）
 ```typescript
-// あなたが書くコード（Svelte 5）
 let count = $state(0);
 let doubled = $derived(count * 2);
+```
 
-// 実際にブラウザで動くコード（コンパイル後）
+#### 実際にブラウザで動くコード（コンパイル後）
+```typescript 
 let count = 0;
 let doubled = 0;
 function update_count(value) {
@@ -98,15 +100,17 @@ ReactやVueは変更を検出するために、以下のステップを毎回実
 ### Svelteの賢いアプローチ
 コンパイル時に「どこが変わる可能性があるか」を完全に把握し、変更箇所だけを直接更新するコードを生成します。
 
+#### React：毎回全体を再計算
 ```typescript
-// React：毎回全体を再計算
 function Component() {
   const [items, setItems] = useState([...]);
   // 毎回、全itemsを仮想DOMで再生成・比較
   return items.map(item => <li>{item}</li>);
 }
+```
 
-// Svelte：変更箇所だけを外科的に更新
+#### Svelte：変更箇所だけを外科的に更新
+```typescript
 let items = $state([...]);
 // コンパイル時に「配列のindex 3が変わったら、
 // DOM の4番目のliだけを更新」というコードを生成
@@ -254,18 +258,24 @@ let count = $state(0);
 </div>
 ```
 
+:::tip[Click fold/expand code をクリックするとコードが展開表示されます。]
+:::
+
+
 ## Svelte 5の新機能
 
 ### Runesシステム
 
 Svelte 5の最大の変更点は、新しい**Runesシステム**の導入です。これにより、リアクティビティがより明示的で予測可能になりました。
 
+#### 従来のSvelte 4
 ```typescript
-// 従来のSvelte 4
 let count = 0;
 $: doubled = count * 2;
+```
 
-// Svelte 5 Runes
+#### Svelte 5 Runes
+```typescript
 let count = $state(0);
 let doubled = $derived(count * 2);
 ```

@@ -83,7 +83,7 @@
   }
   
   .column {
-    background: #f8f9fa;
+    background: #ddd;
     border-radius: 8px;
     padding: 1rem;
     min-height: 200px;
@@ -95,7 +95,8 @@
   }
   
   .task-item {
-    background: white;
+    color: white;
+    background: #a5a;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
     border-radius: 6px;
@@ -112,7 +113,7 @@
   }
   
   .task-item.done {
-    background: #e8f5e9;
+    background: #45B7D1;
     text-decoration: line-through;
     opacity: 0.8;
   }

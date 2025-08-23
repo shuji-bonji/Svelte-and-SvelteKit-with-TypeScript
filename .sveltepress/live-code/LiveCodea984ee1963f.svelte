@@ -43,16 +43,18 @@
   .container {
     position: relative;
     padding: 1rem;
-    background: #f5f5f5;
+    background: #ccc;
     min-height: 200px;
   }
   
   .menu {
+
+    color: #ddd;
     position: absolute;
     top: 50px;
     left: 0;
-    background: white;
-    border: 1px solid #ddd;
+    background: #333;
+    border: 1px solid ##ccc;
     padding: 1rem;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);

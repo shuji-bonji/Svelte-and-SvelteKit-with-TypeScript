@@ -59,7 +59,7 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
     <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">HTML入力:</label>
     <textarea
       bind:value={htmlInput}
-      style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9;"
+      style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; color: #333"
       placeholder="HTMLコードを入力..."
     />
   </div>
@@ -81,7 +81,7 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
   
   <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-weight: bold;">
     <input type="checkbox" bind:checked={renderAsHtml} />
-    <span style="color: {renderAsHtml ? '#ff6b6b' : '#666'};">
+    <span style="color: {renderAsHtml ? '#ff6b6b' : '#999'};">
       {'@html'}を使用 {renderAsHtml ? '（危険！）' : '（オフ）'}
     </span>
   </label>
@@ -314,7 +314,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
   contenteditable="true"
   bind:innerHTML={editorContent}
   class="editor"
-/>
+></div>
 
 <!-- プレビュー -->
 <div class="preview">
@@ -335,7 +335,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
   contenteditable="true"
   bind:textContent={textContent}
   class="text-editor"
-/>
+></div>
 
 <p>文字数: {textContent.length}</p>
 ```
@@ -351,7 +351,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 </script>
 
 {#snippet tab1Content()}
-  <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+  <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px; color: #333">
     <h3>📝 タブ1: 基本情報</h3>
     <p>Snippetを使った動的なコンテンツレンダリングの例です。</p>
     <button onclick={() => count++} style="padding: 0.5rem; background: #ff3e00; color: white; border: none; border-radius: 4px;">
@@ -361,7 +361,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 {/snippet}
 
 {#snippet tab2Content()}
-  <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px;">
+  <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px; color: #333">
     <h3>🎨 タブ2: デザイン設定</h3>
     <p>異なるSnippetを切り替えて表示できます。</p>
     <p>現在のカウント値: <strong>{count}</strong></p>
@@ -370,7 +370,7 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 
 {#snippet tab3Content()}
   {@const doubled = count * 2}
-  <div style="padding: 1rem; background: #fff3e0; border-radius: 4px;">
+  <div style="padding: 1rem; background: #fff3e0; border-radius: 4px; color: #333">
     <h3>⚙️ タブ3: 詳細設定</h3>
     <p>@constを使って計算値を定義: {count} × 2 = <strong>{doubled}</strong></p>
   </div>
@@ -417,9 +417,8 @@ Svelte 5では、`$inspect`ルーンも利用できます。それぞれの特�
 Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネントの実装例です。
 
 ```svelte
-import type { Snippet } from 'svelte';
-
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   type TabContent = {
     id: string;
     title: string;
@@ -441,30 +440,32 @@ import type { Snippet } from 'svelte';
   <div>タブ3のコンテンツ</div>
 {/snippet}
 
-{@const tabs = [
-  { id: 'tab1', title: 'タブ1', snippet: tab1Content },
-  { id: 'tab2', title: 'タブ2', snippet: tab2Content },
-  { id: 'tab3', title: 'タブ3', snippet: tab3Content }
-]}
+{#if true}
+  {@const tabs = [
+    { id: 'tab1', title: 'タブ1', snippet: tab1Content },
+    { id: 'tab2', title: 'タブ2', snippet: tab2Content },
+    { id: 'tab3', title: 'タブ3', snippet: tab3Content }
+  ]}
 
-<div class="tabs">
-  {#each tabs as tab}
-    <button
-      class:active={activeTab === tab.id}
-      onclick={() => activeTab = tab.id}
-    >
-      {tab.title}
-    </button>
-  {/each}
-</div>
+  <div class="tabs">
+    {#each tabs as tab}
+      <button
+        class:active={activeTab === tab.id}
+        onclick={() => activeTab = tab.id}
+      >
+        {tab.title}
+      </button>
+    {/each}
+  </div>
 
-<div class="tab-content">
-  {#each tabs as tab}
-    {#if activeTab === tab.id}
-      {@render tab.snippet()}
-    {/if}
-  {/each}
-</div>
+  <div class="tab-content">
+    {#each tabs as tab}
+      {#if activeTab === tab.id}
+        {@render tab.snippet()}
+      {/if}
+    {/each}
+  </div>
+{/if}
 ```
 
 ### 安全なMarkdownレンダリング

@@ -106,7 +106,7 @@ Runesは以下のような場面で特に有効です。
 </script>
 
 <p>合計: {total}円</p>
-<p>税込: {summary.total}円</p>
+<p>税込: {summary().total}円</p>
 ```
 
 ### $effect - 副作用

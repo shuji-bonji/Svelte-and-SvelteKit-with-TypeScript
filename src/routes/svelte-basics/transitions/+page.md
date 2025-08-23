@@ -566,7 +566,7 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
   }
   
   .column {
-    background: #f8f9fa;
+    background: #ddd;
     border-radius: 8px;
     padding: 1rem;
     min-height: 200px;
@@ -578,7 +578,8 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
   }
   
   .task-item {
-    background: white;
+    color: white;
+    background: #a5a;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
     border-radius: 6px;
@@ -595,7 +596,7 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
   }
   
   .task-item.done {
-    background: #e8f5e9;
+    background: #45B7D1;
     text-decoration: line-through;
     opacity: 0.8;
   }

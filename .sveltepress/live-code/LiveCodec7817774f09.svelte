@@ -18,4 +18,4 @@
 </script>
 
 <p>合計: {total}円</p>
-<p>税込: {summary.total}円</p>
+<p>税込: {summary().total}円</p>

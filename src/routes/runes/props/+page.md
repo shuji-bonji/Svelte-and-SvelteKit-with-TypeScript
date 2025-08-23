@@ -37,6 +37,8 @@ let { name, age = 0 } = $props<{ name: string; age?: number }>();
 
 ## 基本的な使い方
 
+最もシンプルな`$props`の使い方から、デフォルト値の設定方法までを見ていきましょう。
+
 ### シンプルなProps
 
 ```typescript
@@ -56,6 +58,8 @@ let { label, disabled = false }: Props = $props();
 
 ### デフォルト値
 
+propsが渡されなかった場合に使用されるデフォルト値を、分割代入時に設定できます。
+
 ```typescript
 type Props = {
   count?: number;
@@ -72,7 +76,7 @@ let {
 
 ## Rest Props
 
-残りのプロパティをまとめて受け取ることができます。
+HTML属性の透過や、予期しないpropsの処理に便利なrest propsパターンを紹介します。
 
 ```typescript
 type Props = {
@@ -98,7 +102,11 @@ let {
 
 ## 高度な型定義
 
+TypeScriptの型システムを活用した、より複雑で型安全なpropsの定義方法を解説します。
+
 ### HTMLAttributes との組み合わせ
+
+ネイティブHTML要素の属性を継承しつつ、独自のpropsを追加するパターンです。
 
 ```typescript
 import type { HTMLButtonAttributes } from 'svelte/elements';
@@ -121,6 +129,8 @@ $: isDisabled = disabled || loading;
 
 ### ジェネリック型を使用
 
+汎用的なコンポーネントを作成する際に、ジェネリック型を使用して柔軟性を保ちます。
+
 ```typescript
 // SelectList.svelte
 type Props<T> = {
@@ -139,6 +149,8 @@ let {
 ```
 
 ## イベントハンドラ
+
+親コンポーネントにイベントを伝えるためのコールバック関数のprops定義パターンです。
 
 ```typescript
 type Props = {
@@ -159,6 +171,8 @@ function handleClick(event: MouseEvent) {
 ```
 
 ## 子要素としてのコンポーネント
+
+Snippetを使用して、子要素やスロットのような柔軟なコンテンツの受け渡しを実現します。
 
 ```typescript
 import type { Snippet } from 'svelte';
@@ -730,6 +744,8 @@ let { title, icon, actions, children }: Props = $props();
 
 ## 実践例：コード例
 
+実際のプロジェクトで使える、再利用可能なコンポーネントの実装例を見ていきましょう。
+
 ### カスタムInputコンポーネント
 
 ```typescript
@@ -783,6 +799,8 @@ let {
 
 ### モーダルコンポーネント
 
+ユーザーインタラクションを管理するモーダルダイアログの実装例です。
+
 ```typescript
 // Modal.svelte
 import type { Snippet } from 'svelte';
@@ -821,6 +839,8 @@ function handleEscape(event: KeyboardEvent) {
 ```
 
 ### データテーブル
+
+ジェネリック型を活用した、汎用的なデータテーブルコンポーネントの実装例です。
 
 ```typescript
 // DataTable.svelte
@@ -869,7 +889,7 @@ let sortedData = $derived(() => {
 
 ## 型のエクスポート
 
-コンポーネントのPropsの型を他のファイルで使用できるようにエクスポートします。
+コンポーネントのProps型をエクスポートして、他のファイルで再利用する方法を紹介します。
 
 ```typescript
 // Button.svelte
@@ -896,7 +916,11 @@ function createButtonProps(): ButtonProps {
 
 ## ベストプラクティス
 
+`$props`を効果的に使用するためのベストプラクティスとアンチパターンを紹介します。
+
 ### 1. 型定義を明確に
+
+TypeScriptを使用する場合は、必ずPropsの型を明示的に定義しましょう。
 
 ```typescript
 // ❌ 型定義なし
@@ -912,6 +936,8 @@ let props: Props = $props();
 
 ### 2. デフォルト値の設定
 
+オプショナルなpropsには必ずデフォルト値を設定して、安全に使用できるようにしましょう。
+
 ```typescript
 // ✅ デフォルト値で安全に
 let { 
@@ -922,6 +948,8 @@ let {
 ```
 
 ### 3. オプショナルプロパティの処理
+
+オプショナルチェーン演算子を使用して、安全にオプショナルなコールバックを呼び出しましょう。
 
 ```typescript
 type Props = {
@@ -938,6 +966,8 @@ function handleSave(data: Data) {
 
 ### 4. 不変性の維持
 
+propsは読み取り専用として扱い、直接変更しないように注意しましょう。
+
 ```typescript
 // ❌ propsを直接変更
 let { items }: Props = $props();
@@ -950,4 +980,5 @@ localItems.push(newItem);
 
 ## 次のステップ
 
-プロパティの受け渡しを理解したら、[$bindable - 双方向バインディング](/runes/bindable/)で双方向データバインディングを学びましょう。
+`$props`で単方向のデータ受け渡しをマスターしたら、次は双方向バインディングを学びましょう。
+[$bindable - 双方向バインディング](/runes/bindable/)では、子コンポーネントから親の状態を更新する方法を解説します。

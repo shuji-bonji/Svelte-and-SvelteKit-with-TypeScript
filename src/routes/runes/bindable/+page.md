@@ -34,6 +34,8 @@ let { value = $bindable('') }: Props = $props();
 
 ## 基本的な使い方
 
+`$bindable`を使用して、親コンポーネントから子コンポーネントへの双方向データバインディングを実現します。
+
 ### 子コンポーネント
 
 ```typescript
@@ -66,6 +68,8 @@ function handleInput(event: Event) {
 
 ## オプショナルなバインディング
 
+バインディング可能なpropsにデフォルト値を設定し、親からの値が提供されない場合の動作を定義できます。
+
 ```typescript
 type Props = {
   value?: $bindable<string>;
@@ -79,6 +83,8 @@ let {
 ```
 
 ## 複数の値のバインディング
+
+複数の`$bindable`プロパティを組み合わせて、複雑なコンポーネント間のデータ同期を実現します。
 
 ```typescript
 // RangeSlider.svelte
@@ -108,6 +114,8 @@ function handleMaxChange(event: Event) {
 ```
 
 ## オブジェクトと配列のバインディング
+
+配列やオブジェクトなどの参照型データも`$bindable`で双方向バインディング可能で、深いリアクティビティが保持されます。
 
 ### オブジェクト
 
@@ -1810,6 +1818,8 @@ function handleBlur() {
 
 ## バインディングの制御
 
+ゲッターとセッターを使用して、バインディング時の値の検証や変換処理を実装する方法を紹介します。
+
 ### 条件付きバインディング
 
 ```typescript
@@ -1876,6 +1886,8 @@ function handleInput(event: Event) {
 
 ## ベストプラクティス
 
+`$bindable`を使用する際の推奨される設計パターンと、保守性の高いコードを書くためのガイドラインです。
+
 ### 1. 必要な場合のみ使用
 
 ```typescript
@@ -1928,6 +1940,8 @@ todos = [...todos, newTodo];
 ```
 
 ## トラブルシューティング
+
+`$bindable`使用時に遭遇しやすいエラーパターンとその解決方法を具体例と共に紹介します。
 
 ### バインディングが機能しない
 

@@ -7,6 +7,8 @@ description: React、Vue、Angularの経験者向けRunesシステム比較ガ�
 
 ## React との比較
 
+React開発者向けに、Hooks APIとSvelte 5のRunesシステムの対応関係と主な違いを解説します。
+
 ### 状態管理
 
 <div class="comparison-table">
@@ -60,6 +62,8 @@ function Counter() {
 ```
 
 ### 主な違い
+
+ReactとSvelteのアプローチの根本的な違いを、具体的なコード例と共に説明します。
 
 #### 1. 直接変更 vs イミュータブル更新
 
@@ -139,6 +143,8 @@ export function createCounter(initial = 0) {
 
 ## Vue との比較
 
+Vue 3のComposition APIユーザー向けに、Svelte 5のRunesとの対応関係を示します。
+
 ### Composition API との対応
 
 <div class="comparison-table">
@@ -209,6 +215,8 @@ watchEffect(() => {
 
 ### 主な違い
 
+VueとSvelteのリアクティビティシステムの違いと、テンプレート構文の比較を行います。
+
 #### 1. .value アクセス vs 直接アクセス
 
 ```javascript
@@ -261,6 +269,8 @@ state.count++; // 直接アクセス
 ```
 
 ## Angular との比較
+
+Angular 16以降のSignals APIとSvelte 5のRunesの類似点と相違点を解説します。
 
 ### Signals との対応
 
@@ -327,6 +337,8 @@ export class CounterComponent {
 
 ### 主な違い
 
+Angularの構造化されたアプローチとSvelteのシンプルなアプローチの違いを比較します。
+
 #### 1. クラスベース vs 関数ベース
 
 ```typescript
@@ -392,6 +404,8 @@ const dataService = createDataService();
 
 ## 移行のヒント
 
+各フレームワークからSvelte 5へ移行する際の重要なポイントと、よくある落とし穴を解説します。
+
 ### React からの移行
 
 1. **思考の転換**
@@ -435,6 +449,8 @@ items.push(newItem);
 
 ## パフォーマンス比較
 
+各フレームワークのバンドルサイズとランタイムパフォーマンスを数値で比較します。
+
 ### バンドルサイズ
 
 | フレームワーク | Hello World | 実際のアプリ |
@@ -452,6 +468,8 @@ items.push(newItem);
 - **細粒度のリアクティビティ** - 必要な部分のみ更新
 
 ## まとめ
+
+Svelte 5のRunesシステムの特徴を他フレームワークと比較し、それぞれの強みを整理します。
 
 ### Svelte 5 Runesの優位性
 
@@ -478,5 +496,7 @@ items.push(newItem);
 :::
 
 ## 次のステップ
+
+他フレームワークとの比較を理解したら、実際にSvelteでコンポーネントを作成してみましょう。
 
 基礎的なRunesの理解ができたら、[Svelteの基本](/svelte-basics/)でコンポーネントの作り方を学びましょう。

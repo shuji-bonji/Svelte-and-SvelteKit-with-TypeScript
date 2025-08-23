@@ -10,6 +10,23 @@
     { id: '2', text: 'Runesシステムを理解する', done: false }
   ]);
   let newTodoText = $state('');
+  let darkMode = $state(false);
+  
+  // ダークモード初期化（システム設定を検出）
+  $effect(() => {
+    if (typeof window !== 'undefined') {
+      darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // システム設定の変更を監視
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = (e: MediaQueryListEvent) => {
+        darkMode = e.matches;
+      };
+      mediaQuery.addEventListener('change', handler);
+      
+      return () => mediaQuery.removeEventListener('change', handler);
+    }
+  });
   
   // 完了していないTODOの数
   let remainingCount = $derived(
@@ -51,8 +68,17 @@
   }
 </script>
 
-<div class="todo-container">
-  <h2>TODOリスト（Runesシステム）</h2>
+<div class="todo-container" class:dark={darkMode}>
+  <div class="header">
+    <h2>TODOリスト（Runesシステム）</h2>
+    <button 
+      onclick={() => darkMode = !darkMode} 
+      class="theme-toggle"
+      aria-label="テーマ切り替え"
+    >
+      {darkMode ? '☀️' : '🌙'}
+    </button>
+  </div>
   
   <div class="input-group">
     <input 
@@ -103,11 +129,40 @@
     padding: 2rem;
     background: #f9f9f9;
     border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .todo-container.dark {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
   
   h2 {
     color: #ff3e00;
-    margin-bottom: 1rem;
+    margin: 0;
+  }
+  
+  .theme-toggle {
+    background: transparent;
+    border: 2px solid #ff3e00;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .theme-toggle:hover {
+    background: #ff3e00;
+    transform: rotate(180deg);
   }
   
   .input-group {
@@ -122,6 +177,19 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    background: white;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+  
+  .dark .todo-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
+  }
+  
+  .dark .todo-input::placeholder {
+    color: #888;
   }
   
   .add-btn {
@@ -153,6 +221,12 @@
     border-radius: 4px;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .dark .todo-item {
+    background: #2a2a2a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
   
   .todo-checkbox {
@@ -164,12 +238,22 @@
   .todo-text {
     flex: 1;
     font-size: 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+  
+  .dark .todo-text {
+    color: #e0e0e0;
   }
   
   .todo-text.done {
     text-decoration: line-through;
     opacity: 0.5;
     color: #666;
+  }
+  
+  .dark .todo-text.done {
+    color: #888;
   }
   
   .delete-btn {
@@ -191,11 +275,21 @@
     background: white;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .dark .stats {
+    background: #2a2a2a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
   
   .stats p {
     margin: 0.5rem 0;
     color: #333;
+  }
+  
+  .dark .stats p {
+    color: #e0e0e0;
   }
   
   .stats strong {
@@ -209,6 +303,11 @@
     border-radius: 10px;
     overflow: hidden;
     margin-top: 0.5rem;
+    transition: background 0.3s ease;
+  }
+  
+  .dark .progress-bar {
+    background: #444;
   }
   
   .progress-fill {
@@ -223,5 +322,11 @@
     padding: 2rem;
     background: white;
     border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  .dark .empty-message {
+    background: #2a2a2a;
+    color: #999;
   }
 </style>

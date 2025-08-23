@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/sitemap.xml

@@ -22,17 +22,42 @@ Runesは大きく分けて「状態管理」と「コンポーネント間通信
 
 ## Rune が使える場所と使えない場所
 
-RunesはSvelteコンポーネント内でのみ使用可能で、サーバーサイドのコードや通常のTypeScriptモジュールでは使用できません。
+Runesは特定のファイルタイプでのみ使用可能です。以下の表で詳しく説明します。
 
 | ファイル/場所 | Rune 使用可否 | 理由 |
 |---|---|---|
+| `*.svelte` | ✅ 使用可能 | Svelteコンポーネント内で完全にサポート |
 | `+page.svelte` | ✅ 使用可能 | UI と連動する状態を管理できる |
 | `+layout.svelte` | ✅ 使用可能 | グローバルな UI 状態やヘッダー・ナビゲーションなどで有用 |
-| `+page.ts` / `+layout.ts` | ⚠️ 条件付き | `load()` で Rune は使えないが、コンポーネント内で使う前提のデータ生成には使える場合がある |
+| **`.svelte.js` / `.svelte.ts`** | ✅ 使用可能 | リアクティブなストアやユーティリティを作成できる特別なファイル |
+| `+page.ts` / `+layout.ts` | ⚠️ 条件付き | `load()` 関数内では使えないが、トップレベルでは使用可能 |
 | `+page.server.ts` | ❌ 使用不可 | SSR 実行時に1回限りで状態管理の意味がないため |
 | `+layout.server.ts` | ❌ 使用不可 | 同上 |
 | `hooks.server.ts` | ❌ 使用不可 | Rune のリアクティブ性が不要なサーバーロジック専用ファイル |
-| 通常の `.ts` モジュール（サーバー専用） | ❌ 使用不可 | Rune は Svelte runtime が動作するクライアント環境に依存する |
+| 通常の `.ts` / `.js` モジュール | ❌ 使用不可 | Rune は Svelte のコンパイラが処理する特別な構文 |
+
+:::tip[重要：`.svelte.js` / `.svelte.ts` ファイル]
+`.svelte.js`と`.svelte.ts`は、Svelte 5で導入された特別な拡張子で、**コンポーネント外でRunesを使用できる唯一の方法**です。これらのファイルでは：
+- グローバルな状態管理（ストア）を作成できる
+- 複数コンポーネントで共有するリアクティブなロジックを定義できる  
+- カスタムのリアクティブなクラスやユーティリティを作成できる
+
+**例：グローバルカウンターストア（counter.svelte.ts）**
+```typescript
+// counter.svelte.ts
+export function createCounter(initial = 0) {
+  let count = $state(initial);
+  
+  return {
+    get value() { return count; },
+    increment() { count++; },
+    decrement() { count--; }
+  };
+}
+```
+
+詳しい使い方は[リアクティブストア（.svelte.js/.svelte.ts）](/advanced/reactive-stores/)で解説しています。
+:::
 
 ## Rune が必要な場面
 

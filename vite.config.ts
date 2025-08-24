@@ -31,8 +31,14 @@ const config = defineConfig({
                 { title: 'なぜSvelteか', to: '/introduction/why-svelte/' },
                 { title: '環境構築', to: '/introduction/setup/' },
                 { title: 'Hello World', to: '/introduction/hello-world/' },
-                { title: 'なぜTypeScriptが必要か', to: '/introduction/why-typescript/' },
-                { title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
+                {
+                  title: 'なぜTypeScriptが必要か',
+                  to: '/introduction/why-typescript/',
+                },
+                {
+                  title: 'TypeScript設定',
+                  to: '/introduction/typescript-setup/',
+                },
               ],
             },
             {
@@ -40,7 +46,10 @@ const config = defineConfig({
               collapsible: true,
               items: [
                 { title: 'Svelteの基本概要', to: '/svelte-basics/' },
-                { title: 'コンポーネントの基本', to: '/svelte-basics/component-basics/' },
+                {
+                  title: 'コンポーネントの基本',
+                  to: '/svelte-basics/component-basics/',
+                },
                 {
                   title: 'テンプレート構文',
                   to: '/svelte-basics/template-syntax/',
@@ -68,12 +77,18 @@ const config = defineConfig({
               collapsible: true,
               items: [
                 { title: 'Runesシステム概要', to: '/runes/' },
-                { title: 'Runesシステム入門', to: '/runes/runes-introduction/' },
+                {
+                  title: 'Runesシステム入門',
+                  to: '/runes/runes-introduction/',
+                },
                 { title: '$state - リアクティブな状態', to: '/runes/state/' },
                 { title: '$derived - 派生値', to: '/runes/derived/' },
                 { title: '$effect - 副作用', to: '/runes/effect/' },
                 { title: '$props - プロパティ', to: '/runes/props/' },
-                { title: '$bindable - 双方向バインディング', to: '/runes/bindable/' },
+                {
+                  title: '$bindable - 双方向バインディング',
+                  to: '/runes/bindable/',
+                },
                 { title: '$inspect - デバッグ', to: '/runes/inspect/' },
                 { title: '他フレームワークとの比較', to: '/runes/comparison/' },
               ],
@@ -179,6 +194,18 @@ const config = defineConfig({
                 {
                   title: 'HTML <template> と Svelte #snippet の違い',
                   to: '/deep-dive/html-templates-and-snippets',
+                },
+                {
+                  title: 'Runesシステムへの批判と評価',
+                  to: '/deep-dive/criticism-of-the-runes-system',
+                },
+                {
+                  title: '素のJavaScript構文でリアクティビティを実現',
+                  to: '/deep-dive/reactivity-with-plain-javascript-syntax',
+                },
+                {
+                  title: 'SvelteKitが自動生成する型の一覧',
+                  to: '/deep-dive/auto-generated-types',
                 },
               ],
             },

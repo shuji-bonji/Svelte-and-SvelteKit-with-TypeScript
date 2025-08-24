@@ -14,13 +14,17 @@
     type = 'text',
     error
   }: Props = $props();
+  
+  // ユニークなIDを生成
+  const inputId = `input-${Math.random().toString(36).substr(2, 9)}`;
 </script>
 
 <div class="input-wrapper">
   {#if label}
-    <label class="input-label">{label}</label>
+    <label class="input-label" for={inputId}>{label}</label>
   {/if}
   <input 
+    id={inputId}
     bind:value={value}
     {type}
     {placeholder}

@@ -19,17 +19,21 @@
 
   // スライダーの進捗率を計算
   let progress = $derived(((value - min) / (max - min)) * 100);
+  
+  // ユニークなIDを生成
+  const sliderId = `slider-${Math.random().toString(36).substr(2, 9)}`;
 </script>
 
 <div class="slider-wrapper">
   {#if label}
-    <label class="slider-label">
+    <label class="slider-label" for={sliderId}>
       {label}: {value}{unit}
     </label>
   {/if}
   
   <div class="slider-container">
     <input 
+      id={sliderId}
       type="range"
       bind:value={value}
       {min}

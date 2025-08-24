@@ -56,8 +56,9 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
   <h4 style="margin-top: 0; color: #ff3e00;">@html デモ - セキュリティを理解する</h4>
   
   <div style="margin-bottom: 1rem;">
-    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">HTML入力:</label>
+    <label for="html-input" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">HTML入力:</label>
     <textarea
+      id="html-input"
       bind:value={htmlInput}
       style="width: 100%; height: 100px; padding: 0.5rem; font-family: monospace; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; color: #333"
       placeholder="HTMLコードを入力..."

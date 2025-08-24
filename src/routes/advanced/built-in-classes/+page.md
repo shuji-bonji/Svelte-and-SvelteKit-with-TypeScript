@@ -21,7 +21,7 @@ Svelte 5の組み込みリアクティブクラスは、通常のJavaScriptク�
 
 `Map`のリアクティブ版で、キーと値のペアを管理します。
 
-```typescript
+```svelte ln live
 <script lang="ts">
   import { SvelteMap } from 'svelte/reactivity';
   
@@ -86,7 +86,7 @@ Svelte 5の組み込みリアクティブクラスは、通常のJavaScriptク�
 
 `Set`のリアクティブ版で、一意な値のコレクションを管理します。
 
-```typescript
+```svelte ln live
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity';
   
@@ -155,6 +155,7 @@ Svelte 5の組み込みリアクティブクラスは、通常のJavaScriptク�
     background: white;
     cursor: pointer;
     border-radius: 20px;
+    color: #333;
   }
   
   .tag.selected {

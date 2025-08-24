@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from 'fs';
+import { cpSync, existsSync, mkdirSync, copyFileSync } from 'fs';
 import { join } from 'path';
 
 // GitHub Pages用のベースパス
@@ -25,4 +25,12 @@ if (existsSync(sourceDir)) {
   console.log('Pagefind files copied successfully');
 } else {
   console.error('Pagefind directory not found in dist. Run pagefind first.');
+}
+
+// robots.txtをコピー（staticフォルダから）
+const robotsSource = join('static', 'robots.txt');
+const robotsDest = join(distDir, BASE_PATH, 'robots.txt');
+if (existsSync(robotsSource)) {
+  copyFileSync(robotsSource, robotsDest);
+  console.log('Robots.txt copied to', robotsDest);
 }

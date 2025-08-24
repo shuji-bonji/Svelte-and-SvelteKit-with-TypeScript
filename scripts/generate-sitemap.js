@@ -75,6 +75,7 @@ function getSourcePath(htmlPath) {
 async function generateSitemap() {
   const domain = 'https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript';
   const distDir = 'dist';
+  const BASE_PATH = 'Svelte-and-SvelteKit-with-TypeScript';
   
   console.log('Generating sitemap with git lastmod dates...');
   
@@ -131,8 +132,9 @@ async function generateSitemap() {
   
   xml += '</urlset>';
   
-  // ファイルに書き込み
+  // ファイルに書き込み（両方の場所に）
   await writeFile(join(distDir, 'sitemap.xml'), xml);
+  await writeFile(join(distDir, BASE_PATH, 'sitemap.xml'), xml);
   console.log(`✓ Sitemap generated with ${urls.length} URLs`);
 }
 

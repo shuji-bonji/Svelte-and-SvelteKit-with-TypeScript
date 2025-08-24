@@ -364,32 +364,62 @@ Svelte以外のライブラリ（Chart.js、D3.jsなど）をSvelteのリアク�
 <script lang="ts">
   import { onDestroy } from 'svelte';
   
-  // 独立したエフェクトスコープを作成
-  const cleanup = $effect.root(() => {
-    let count = $state(0);
-    
-    $effect(() => {
-      const timer = setInterval(() => {
-        count++;
-        console.log('独立したカウント:', count);
-      }, 1000);
+  // グローバルなイベントリスナーを管理する例
+  function createGlobalEventListener() {
+    // $effect.rootは独立したリアクティブスコープを作成
+    const cleanup = $effect.root(() => {
+      let mouseX = $state(0);
+      let mouseY = $state(0);
       
-      return () => clearInterval(timer);
+      // スコープ内でエフェクトを設定
+      $effect(() => {
+        function handleMouseMove(e: MouseEvent) {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          console.log(`マウス位置: (${mouseX}, ${mouseY})`);
+        }
+        
+        window.addEventListener('mousemove', handleMouseMove);
+        
+        // エフェクトのクリーンアップ
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+        };
+      });
+      
+      // $effect.rootのクリーンアップ関数を返す
+      // これは cleanup() が呼ばれたときに実行される
+      return () => {
+        console.log('グローバルイベントリスナーを削除');
+      };
     });
     
-    // スコープ内の状態とエフェクトを返す
-    return {
-      getCount: () => count,
-      reset: () => count = 0
-    };
-  });
+    return cleanup;
+  }
+  
+  // 使用例
+  const cleanupGlobalListener = createGlobalEventListener();
   
   // コンポーネント破棄時にクリーンアップ
   onDestroy(() => {
-    cleanup();
+    cleanupGlobalListener();
   });
 </script>
 ```
+
+### $effect.rootの使用シーン
+
+1. **グローバルな状態管理**: コンポーネントに依存しない状態を管理
+2. **外部ライブラリの統合**: サードパーティライブラリのライフサイクル管理
+3. **手動制御が必要なエフェクト**: 特定のタイミングで開始・停止したいエフェクト
+
+:::warning[重要な制約]
+`$effect.root`の戻り値は以下のいずれかでなければなりません：
+- `void`（何も返さない）
+- `() => void`（クリーンアップ関数）
+
+オブジェクトや他の値を返すことはできません。
+:::
 
 ## 非同期処理との組み合わせ
 

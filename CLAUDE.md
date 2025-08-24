@@ -460,7 +460,7 @@ let {
 ```typescript
 // 双方向バインディング可能なprop
 type Props = {
-  value: $bindable<string>;
+  value: string;
 };
 
 let { value = $bindable('default') }: Props = $props();

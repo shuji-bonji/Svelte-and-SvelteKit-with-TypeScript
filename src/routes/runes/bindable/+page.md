@@ -41,7 +41,7 @@ let { value = $bindable('') }: Props = $props();
 ```typescript
 // Input.svelte
 type Props = {
-  value: $bindable<string>;
+  value: string;
 };
 
 let { value = $bindable('') }: Props = $props();
@@ -72,8 +72,8 @@ function handleInput(event: Event) {
 
 ```typescript
 type Props = {
-  value?: $bindable<string>;
-  checked?: $bindable<boolean>;
+  value?: string;
+  checked?: boolean;
 };
 
 let { 
@@ -89,8 +89,8 @@ let {
 ```typescript
 // RangeSlider.svelte
 type Props = {
-  min: $bindable<number>;
-  max: $bindable<number>;
+  min: number;
+  max: number;
   step?: number;
 };
 
@@ -128,10 +128,10 @@ type User = {
 };
 
 type Props = {
-  user: $bindable<User>;
+  user: User;
 };
 
-let { user = $bindable<User>({
+let { user = $bindable({
   name: '',
   email: '',
   age: 0
@@ -155,10 +155,10 @@ type Todo = {
 };
 
 type Props = {
-  todos: $bindable<Todo[]>;
+  todos: Todo[];
 };
 
-let { todos = $bindable<Todo[]>([]) }: Props = $props();
+let { todos = $bindable([]) }: Props = $props();
 
 function addTodo(text: string) {
   todos = [...todos, {
@@ -344,7 +344,7 @@ function removeTodo(id: string) {
 ```svelte
 <script lang="ts">
   type Props = {
-    value: $bindable<string>;
+    value: string;
     label?: string;
     placeholder?: string;
     type?: 'text' | 'email' | 'password';
@@ -424,7 +424,7 @@ function removeTodo(id: string) {
 ```svelte
 <script lang="ts">
   type Props = {
-    checked: $bindable<boolean>;
+    checked: boolean;
     label?: string;
     disabled?: boolean;
   };
@@ -728,7 +728,7 @@ function removeTodo(id: string) {
 ```svelte
 <script lang="ts">
   type Props = {
-    value: $bindable<number>;
+    value: number;
     label?: string;
     min?: number;
     max?: number;
@@ -778,7 +778,7 @@ function removeTodo(id: string) {
 ```svelte
 <script lang="ts">
   type Props = {
-    value: $bindable<number>;
+    value: number;
     label?: string;
     min?: number;
     max?: number;
@@ -1454,7 +1454,7 @@ type RGB = {
 };
 
 type Props = {
-  color: $bindable<string>;
+  color: string;
   format?: 'hex' | 'rgb';
 };
 
@@ -1732,7 +1732,7 @@ function updateColor() {
 ```typescript
 // Modal.svelte
 type Props = {
-  open: $bindable<boolean>;
+  open: boolean;
   title?: string;
   children: Snippet;
 };
@@ -1779,8 +1779,8 @@ function handleKeydown(event: KeyboardEvent) {
 ```typescript
 // ValidatedInput.svelte
 type Props = {
-  value: $bindable<string>;
-  error: $bindable<string | null>;
+  value: string;
+  error: string | null;
   validator?: (value: string) => string | null;
   label?: string;
   required?: boolean;
@@ -1788,7 +1788,7 @@ type Props = {
 
 let { 
   value = $bindable(''),
-  error = $bindable<string | null>(null),
+  error = $bindable(null),
   validator,
   label,
   required = false
@@ -1824,7 +1824,7 @@ function handleBlur() {
 
 ```typescript
 type Props = {
-  value: $bindable<string>;
+  value: string;
   readonly?: boolean;
 };
 
@@ -1855,7 +1855,7 @@ function handleChange(newValue: string) {
 
 ```typescript
 type Props = {
-  value: $bindable<string>;
+  value: string;
   debounce?: number;
 };
 
@@ -1893,7 +1893,7 @@ function handleInput(event: Event) {
 ```typescript
 // ❌ 読み取り専用なら$bindableは不要
 type Props = {
-  label: $bindable<string>;
+  label: string;
 };
 
 // ✅ 読み取り専用
@@ -1903,7 +1903,7 @@ type Props = {
 
 // ✅ 双方向バインディングが必要な場合のみ
 type Props = {
-  value: $bindable<string>;
+  value: string;
 };
 ```
 
@@ -1914,7 +1914,7 @@ type Props = {
 let { 
   text = $bindable(''),
   number = $bindable(0),
-  items = $bindable<Item[]>([])
+  items = $bindable([])
 }: Props = $props();
 ```
 
@@ -1923,10 +1923,10 @@ let {
 ```typescript
 // ✅ 型を明確に定義
 type Props = {
-  selected: $bindable<string | null>;
+  selected: string | null;
 };
 
-let { selected = $bindable<string | null>(null) }: Props = $props();
+let { selected = $bindable(null) }: Props = $props();
 ```
 
 ### 4. イミュータブルな更新
@@ -1953,7 +1953,7 @@ type Props = {
 
 // ✅ $bindableを使用
 type Props = {
-  value: $bindable<string>;
+  value: string;
 };
 ```
 

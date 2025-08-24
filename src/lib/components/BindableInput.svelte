@@ -1,6 +1,6 @@
 <script lang="ts">
   type Props = {
-    value: $bindable<string>;
+    value: string;
     label?: string;
     placeholder?: string;
     type?: 'text' | 'email' | 'password';

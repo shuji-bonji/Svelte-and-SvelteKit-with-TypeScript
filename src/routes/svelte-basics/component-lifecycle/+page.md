@@ -197,6 +197,11 @@ DOMアクセスが不要な初期化処理には`$effect.pre`を使用します�
           
           return () => clearTimeout(timer);
         });
+        
+        // $effect.rootは明示的にクリーンアップ関数を返す必要がある
+        return () => {
+          console.log('自動保存エフェクトをクリーンアップ');
+        };
       });
       
       // autoSaveがfalseになったらクリーンアップ

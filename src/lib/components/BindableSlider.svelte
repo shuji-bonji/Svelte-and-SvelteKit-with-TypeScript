@@ -1,6 +1,6 @@
 <script lang="ts">
   type Props = {
-    value: $bindable<number>;
+    value: number;
     label?: string;
     min?: number;
     max?: number;

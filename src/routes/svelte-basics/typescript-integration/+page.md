@@ -152,8 +152,8 @@ Svelte 5の新しいPropsシステムでの型定義方法です。
 ```svelte
 <script lang="ts">
   interface Props {
-    value: $bindable<string>;
-    checked?: $bindable<boolean>;
+    value: string;
+    checked?: boolean;
   }
   
   let { 

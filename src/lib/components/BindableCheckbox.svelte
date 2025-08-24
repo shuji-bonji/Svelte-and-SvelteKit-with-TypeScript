@@ -1,6 +1,6 @@
 <script lang="ts">
   type Props = {
-    checked: $bindable<boolean>;
+    checked: boolean;
     label?: string;
     disabled?: boolean;
   };

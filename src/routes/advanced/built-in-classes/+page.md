@@ -15,9 +15,177 @@ Svelte 5の組み込みリアクティブクラスは、通常のJavaScriptク�
 - 内部状態の変更が自動的にUIに反映
 :::
 
+## リアクティブクラス対応表
+
+JavaScriptの組み込みクラスとSvelte 5のリアクティブクラスの対応関係を示します。
+
+<div class="class-comparison">
+  <table>
+    <thead>
+      <tr>
+        <th>JavaScript標準クラス</th>
+        <th>Svelteリアクティブクラス</th>
+        <th>主な用途</th>
+        <th>状態</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="available">
+        <td><code>Map</code></td>
+        <td><code>SvelteMap</code></td>
+        <td>キーと値のペアを管理</td>
+        <td>✅ 利用可能</td>
+      </tr>
+      <tr class="available">
+        <td><code>Set</code></td>
+        <td><code>SvelteSet</code></td>
+        <td>一意な値のコレクション</td>
+        <td>✅ 利用可能</td>
+      </tr>
+      <tr class="available">
+        <td><code>Date</code></td>
+        <td><code>SvelteDate</code></td>
+        <td>日時の操作と管理</td>
+        <td>✅ 利用可能</td>
+      </tr>
+      <tr class="available">
+        <td><code>URL</code></td>
+        <td><code>SvelteURL</code></td>
+        <td>URLの解析と操作</td>
+        <td>✅ 利用可能</td>
+      </tr>
+      <tr class="available">
+        <td><code>URLSearchParams</code></td>
+        <td><code>SvelteURLSearchParams</code></td>
+        <td>クエリパラメータの管理</td>
+        <td>✅ 利用可能</td>
+      </tr>
+      <tr class="native">
+        <td><code>Array</code></td>
+        <td><code>$state([])</code></td>
+        <td>配列データの管理</td>
+        <td>🔄 ネイティブ対応</td>
+      </tr>
+      <tr class="native">
+        <td><code>Object</code></td>
+        <td><code>$state(&#123;&#125;)</code></td>
+        <td>オブジェクトの管理</td>
+        <td>🔄 ネイティブ対応</td>
+      </tr>
+      <tr class="planned">
+        <td><code>WeakMap</code></td>
+        <td><code>SvelteWeakMap</code></td>
+        <td>弱参照キーマップ</td>
+        <td>📝 計画中</td>
+      </tr>
+      <tr class="planned">
+        <td><code>WeakSet</code></td>
+        <td><code>SvelteWeakSet</code></td>
+        <td>弱参照セット</td>
+        <td>📝 計画中</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .class-comparison {
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+  
+  .class-comparison table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .class-comparison th {
+    background: #f5f5f5;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .class-comparison td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .class-comparison code {
+    background: #f0f0f0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .class-comparison tr.available {
+    background: #f0fdf4;
+  }
+  
+  .class-comparison tr.native {
+    background: #fef3c7;
+  }
+  
+  .class-comparison tr.planned {
+    background: #f3f4f6;
+  }
+  
+  .class-comparison tr:hover {
+    background: #f9fafb;
+  }
+  
+  /* ダークモード対応 */
+  :global(.dark) .class-comparison table {
+    background: #1f2937;
+  }
+  
+  :global(.dark) .class-comparison th {
+    background: #374151;
+    color: #f3f4f6;
+    border-bottom-color: #4b5563;
+  }
+  
+  :global(.dark) .class-comparison td {
+    color: #e5e7eb;
+    border-bottom-color: #374151;
+  }
+  
+  :global(.dark) .class-comparison code {
+    background: #4b5563;
+    color: #f3f4f6;
+  }
+  
+  :global(.dark) .class-comparison tr.available {
+    background: rgba(34, 197, 94, 0.1);
+  }
+  
+  :global(.dark) .class-comparison tr.native {
+    background: rgba(251, 191, 36, 0.1);
+  }
+  
+  :global(.dark) .class-comparison tr.planned {
+    background: rgba(156, 163, 175, 0.05);
+  }
+  
+  :global(.dark) .class-comparison tr:hover {
+    background: #4b5563;
+  }
+</style>
+
+:::info[リアクティブクラスの選択基準]
+- **専用クラスがある場合**: `SvelteMap`、`SvelteSet`など専用のリアクティブクラスを使用
+- **ArrayとObject**: `$state()`でラップするだけで自動的にリアクティブになる
+- **その他のクラス**: 必要に応じてカスタムラッパークラスを作成
+:::
+
 ## 主要な組み込みクラス
 
-Svelte 5で利用可能なリアクティブクラスの一覧と、それぞれの特徴を詳しく解説します。
+Svelte 5で利用可能なリアクティブクラスの詳細な使い方を解説します。
 
 ### SvelteMap
 

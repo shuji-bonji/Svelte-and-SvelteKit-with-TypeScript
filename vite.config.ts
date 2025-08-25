@@ -147,8 +147,6 @@ const config = defineConfig({
                 { title: '認証システム', to: '/examples/auth-system/' },
                 { title: 'データフェッチング', to: '/examples/data-fetching/' },
                 { title: 'WebSocket実装', to: '/examples/websocket/' },
-                { title: 'Mermaidダイアグラム', to: '/examples/mermaid-demo/' },
-                { title: '機能デモ', to: '/examples/features-demo/' },
               ],
             },
             {

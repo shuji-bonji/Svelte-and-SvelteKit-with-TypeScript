@@ -111,8 +111,6 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       <li><a href="{base}/examples/auth-system/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">認証システム</a></li>
       <li><a href="{base}/examples/data-fetching/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">データフェッチング</a></li>
       <li><a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">WebSocket実装</a></li>
-      <li><a href="{base}/examples/mermaid-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Mermaidダイアグラム</a></li>
-      <li><a href="{base}/examples/features-demo/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">機能デモ</a></li>
     </ol>
   </div>
 </div>

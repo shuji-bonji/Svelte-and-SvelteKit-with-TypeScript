@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>リダイレクト中...</title>
+    <script>
+        // GitHub Pages用のSPAリダイレクト処理
+        const path = window.location.pathname;
+        const base = '/Svelte-and-SvelteKit-with-TypeScript';
+        
+        // index.htmlを削除してクリーンなURLにリダイレクト
+        if (path.endsWith('/index.html')) {
+            const cleanPath = path.replace('/index.html', '');
+            window.location.replace(base + cleanPath);
+        } else if (path.endsWith('.html')) {
+            const cleanPath = path.replace('.html', '');
+            window.location.replace(base + cleanPath);
+        } else {
+            // 404の場合はホームにリダイレクト
+            window.location.replace(base + '/');
+        }
+    </script>
+</head>
+<body>
+    <p>リダイレクト中です...</p>
+</body>
+</html>

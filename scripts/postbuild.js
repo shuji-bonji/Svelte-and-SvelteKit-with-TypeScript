@@ -34,3 +34,11 @@ if (existsSync(robotsSource)) {
   copyFileSync(robotsSource, robotsDest);
   console.log('Robots.txt copied to', robotsDest);
 }
+
+// 404.htmlをベースパスにコピー（GitHub Pages用）
+const notFoundSource = join(distDir, BASE_PATH, '404.html');
+const notFoundDest = join(distDir, '404.html');
+if (existsSync(notFoundSource)) {
+  copyFileSync(notFoundSource, notFoundDest);
+  console.log('404.html copied to root for GitHub Pages');
+}

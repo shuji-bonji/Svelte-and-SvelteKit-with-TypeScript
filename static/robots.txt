@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /*.html$
+Disallow: /404.html
+
+# 推奨URL形式
+# Good: /introduction/
+# Bad: /introduction/index.html
 
 Sitemap: https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/sitemap.xml

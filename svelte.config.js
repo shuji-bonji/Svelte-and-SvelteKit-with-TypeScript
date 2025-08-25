@@ -29,9 +29,9 @@ const config = {
 		adapter: adapter({
 			pages: 'dist',
 			assets: 'dist',
-			fallback: undefined,
+			fallback: '404.html', // 404ページをフォールバックとして使用
 			precompress: false,
-			strict: true
+			strict: false // strictモードを無効化してエラーを回避
 		}),
 		paths: {
 			base: '/Svelte-and-SvelteKit-with-TypeScript'

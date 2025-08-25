@@ -734,15 +734,128 @@ let todo = new TodoItem();
 
 A: 状況に応じて選択してください。
 
-**クラスベースが適している場合：**
-- 複雑な内部状態を持つエンティティを表現する時
-- 継承やポリモーフィズムが必要な時
-- インスタンスメソッドを多く持つ場合
+<div class="approach-cards">
+  <div class="approach-card">
+    <h4><span class="icon">🏗️</span> クラスベースが適している場合</h4>
+    <ul>
+      <li><strong style="color: #3b82f6;">複雑な内部状態</strong>を持つエンティティを表現する時</li>
+      <li><strong style="color: #3b82f6;">継承やポリモーフィズム</strong>が必要な時</li>
+      <li><strong style="color: #3b82f6;">インスタンスメソッド</strong>を多く持つ場合</li>
+    </ul>
+    <div class="card-example">
+      <code>例: TodoItem, User, ShoppingCart</code>
+    </div>
+  </div>
+  
+  <div class="approach-card">
+    <h4><span class="icon">⚡</span> 関数ベースが適している場合</h4>
+    <ul>
+      <li><strong style="color: #10b981;">シンプルな状態管理</strong>の時</li>
+      <li><strong style="color: #10b981;">グローバルストア</strong>（シングルトン）を作成する時</li>
+      <li><strong style="color: #10b981;">コンポジション</strong>を重視する設計の時</li>
+    </ul>
+    <div class="card-example">
+      <code>例: counter, theme, auth</code>
+    </div>
+  </div>
+</div>
 
-**関数ベースが適している場合：**
-- シンプルな状態管理の時
-- グローバルストア（シングルトン）を作成する時
-- コンポジションを重視する設計の時
+<style>
+  .approach-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .approach-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .approach-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+  }
+  
+  .approach-card h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .approach-card .icon {
+    font-size: 1.5rem;
+  }
+  
+  .approach-card ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #475569;
+  }
+  
+  .approach-card li {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+  }
+  
+  .card-example {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 6px;
+    border-left: 3px solid;
+  }
+  
+  .approach-card:first-child .card-example {
+    border-left-color: #3b82f6;
+  }
+  
+  .approach-card:last-child .card-example {
+    border-left-color: #10b981;
+  }
+  
+  .card-example code {
+    font-size: 0.9rem;
+    color: #64748b;
+    background: none;
+    padding: 0;
+  }
+  
+  /* ダークモード対応 */
+  :global(.dark) .approach-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-color: #334155;
+  }
+  
+  :global(.dark) .approach-card:hover {
+    border-color: #475569;
+  }
+  
+  :global(.dark) .approach-card h4 {
+    color: #f1f5f9;
+  }
+
+  :global(.dark) .approach-card ul {
+    color: #cbd5e1;
+  }
+  
+  :global(.dark) .card-example {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  :global(.dark) .card-example code {
+    color: #94a3b8;
+  }
+</style>
 
 詳しくは[リアクティブストア](/advanced/reactive-stores/)のページで関数ベースのアプローチを確認してください。
 

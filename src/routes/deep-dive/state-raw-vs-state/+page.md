@@ -108,7 +108,7 @@ function increment() {
 
 ## 図解：状態管理の構造の違い
 
-<Mermaid code={flowChartCode} />
+<Mermaid diagram={flowChartCode} />
 
 ## 使用例：Mapなどの特殊型
 

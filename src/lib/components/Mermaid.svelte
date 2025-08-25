@@ -47,12 +47,36 @@
       // ダイアグラムをレンダリング
       if (container) {
         try {
-          const { svg } = await mermaid.render(`mermaid-${Date.now()}`, diagram);
+          // Mermaidのグラフ定義を検証
+          if (!diagram || diagram.trim().length === 0) {
+            throw new Error('Empty diagram definition');
+          }
+          
+          // ユニークなIDを生成（タイムスタンプとランダム値）
+          const id = `mermaid-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+          
+          // 既存のSVGをクリア
+          container.innerHTML = '';
+          
+          // レンダリング実行
+          const { svg } = await mermaid.render(id, diagram.trim());
           container.innerHTML = svg;
           mermaidLoaded = true;
         } catch (error) {
           console.error('Mermaid rendering error:', error);
-          container.innerHTML = `<div class="error">ダイアグラムのレンダリングに失敗しました</div>`;
+          console.error('Diagram content:', diagram);
+          
+          // より詳細なエラーメッセージ
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          container.innerHTML = `
+            <div class="error">
+              <p>ダイアグラムのレンダリングに失敗しました</p>
+              <details>
+                <summary>エラー詳細</summary>
+                <code>${errorMessage}</code>
+              </details>
+            </div>
+          `;
         }
       }
       

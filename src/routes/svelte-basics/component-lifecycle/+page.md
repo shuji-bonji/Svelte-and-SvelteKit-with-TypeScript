@@ -334,7 +334,7 @@ Svelte 5のコンポーネントライフサイクルは、以下の段階を経
     L --> M[コンポーネント破棄]
     K -->|No| G`;
 </script>
-<Mermaid code={diagramCode} />
+<Mermaid diagram={diagramCode} />
 
 ### 各段階の詳細
 

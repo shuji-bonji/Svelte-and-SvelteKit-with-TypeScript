@@ -72,31 +72,31 @@ description: SveltePressでMermaidダイアグラムを使用する例（ダー�
 
 Svelte 5のリアクティビティフローを表現：
 
-<Mermaid code={flowChartCode} />
+<Mermaid diagram={flowChartCode} />
 
 ## シーケンス図
 
 ユーザーインタラクションの流れ：
 
-<Mermaid code={sequenceCode} />
+<Mermaid diagram={sequenceCode} />
 
 ## クラス図
 
 Svelteコンポーネントの構造：
 
-<Mermaid code={classDiagramCode} />
+<Mermaid diagram={classDiagramCode} />
 
 ## ガントチャート
 
 学習ロードマップ：
 
-<Mermaid code={ganttCode} />
+<Mermaid diagram={ganttCode} />
 
 ## 円グラフ
 
 学習時間の配分：
 
-<Mermaid code={pieCode} />
+<Mermaid diagram={pieCode} />
 
 ## ダークモード対応
 
@@ -126,7 +126,7 @@ Mermaidダイアグラムを使用するには、
     B --> C[終了]\`;
 </script>
 
-<Mermaid code={diagramCode} />
+<Mermaid diagram={diagramCode} />
 ```
 
 ## 注意事項

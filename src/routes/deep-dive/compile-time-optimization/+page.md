@@ -22,7 +22,7 @@ description: Svelteが行う、コンパイル時最適化 について詳しく
 
 Svelteは**ビルド時にコンポーネントを解析し、必要最小限のJavaScriptコードに変換**します。これは、ReactやVueのようにランタイムでフレームワークのコードを実行するのとは根本的に異なります。
 
-<Mermaid code={svelteCompiler} />
+<Mermaid diagram={svelteCompiler} />
 
 
 ## リアクティブな変数の依存関係を静的解析

@@ -130,7 +130,7 @@ Svelte 5の内部実装や高度なトピックを扱います。
     B --> C[終了]`;
 </script>
 
-<Mermaid code={diagramCode} />
+<Mermaid diagram={diagramCode} />
 ```
 
 詳細は[Mermaidデモページ](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/examples/mermaid-demo/)をご確認ください。

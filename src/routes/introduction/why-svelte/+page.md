@@ -16,6 +16,10 @@ Svelteは、**コンパイル時に最適化を行う**という革新的なア�
 詳しくは、技術詳細の[Svelte はコンパイル時に何をやっているのか？]({base}/deep-dive/compile-time-optimization/)を参照してください。
 :::
 
+:::tip[リアクティビティの仕組みを理解する]
+Svelteのリアクティビティシステムがどのように動作するか、内部実装に興味がある方は[素のJavaScript構文でリアクティビティを実現]({base}/deep-dive/reactivity-with-plain-javascript-syntax/)をご覧ください。Object.definePropertyからProxyまで、リアクティビティの実装方法を詳しく解説しています。
+:::
+
 ## 主な特徴
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
@@ -284,7 +288,7 @@ let doubled = $derived(count * 2);
 
 Runesにより、リアクティビティがより明示的で予測可能になりました。
 
-- `$state` - リアクティブな状態を定義（[Proxyベースの実装詳細]({base}/deep-dive/state-use-proxy-object/)）
+- `$state` - リアクティブな状態を定義（内部でProxyを使用）
 - `$derived` - 計算値を定義
 - `$effect` - 副作用を実行
 - `$props` - コンポーネントのプロパティを定義

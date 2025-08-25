@@ -14,7 +14,7 @@ const svelteLiveCodeWarningFilter = (): Plugin => {
     config(config) {
       if (!config.server) config.server = {};
       if (!config.server.hmr) config.server.hmr = {};
-      
+
       // 開発サーバーの警告を抑制
       const originalWarn = console.warn;
       console.warn = (...args: any[]) => {
@@ -24,9 +24,9 @@ const svelteLiveCodeWarningFilter = (): Plugin => {
         }
         originalWarn(...args);
       };
-      
+
       return config;
-    }
+    },
   };
 };
 
@@ -188,18 +188,6 @@ const config = defineConfig({
                   to: '/deep-dive/compile-time-optimization',
                 },
                 {
-                  title: 'Svelte 5におけるProxyオブジェクトの活用',
-                  to: '/deep-dive/leveraging-proxy-objects-in-svelte-5',
-                },
-                {
-                  title: '$stateとProxyオブジェクト',
-                  to: '/deep-dive/state-use-proxy-object',
-                },
-                {
-                  title: '$state.raw() vs $state() の違いと使い分け',
-                  to: '/deep-dive/state-raw-vs-state',
-                },
-                {
                   title:
                     '$state: リアクティブな状態変数と、バインディングの違い',
                   to: '/deep-dive/reactive-state-variables-vs-bindings',
@@ -214,17 +202,8 @@ const config = defineConfig({
                   to: '/deep-dive/custom-elements-vs-svelte-components',
                 },
                 {
-                  title:
-                    '@renderディレクティブとSnippetオブジェクト、#snippetディレクティブ',
-                  to: '/deep-dive/render-directive-snippet-object-snippet-directive',
-                },
-                {
                   title: 'HTML <template> と Svelte #snippet の違い',
                   to: '/deep-dive/html-templates-and-snippets',
-                },
-                {
-                  title: 'Runesシステムへの批判と評価',
-                  to: '/deep-dive/criticism-of-the-runes-system',
                 },
                 {
                   title: '素のJavaScript構文でリアクティビティを実現',
@@ -242,7 +221,7 @@ const config = defineConfig({
           'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript',
         logo: '/svelteAndTypescript.svg',
         editLink:
-          'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScriptedit/main/src/routes/',
+          'https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/edit/main/src/routes/',
       }),
       siteConfig: {
         title: 'TypeScriptで学ぶ Svelte 5/SvelteKit',

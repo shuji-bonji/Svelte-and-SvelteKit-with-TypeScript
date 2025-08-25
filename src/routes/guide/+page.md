@@ -128,19 +128,9 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       </a> - Virtual DOMを使わない理由と仕組み
     </li>
     <li>
-      <a href="{base}/deep-dive/state-use-proxy-object/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
-        🔍 Proxyオブジェクトの活用
-      </a> - リアクティビティシステムの中核技術
-    </li>
-    <li>
       <a href="{base}/deep-dive/reactive-state-variables-vs-bindings/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
         ⚡ リアクティブ状態とバインディング
       </a> - 違いを理解して正しく使う
-    </li>
-    <li>
-      <a href="{base}/deep-dive/state-raw-vs-state/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
-        🔧 $state.raw vs $state
-      </a> - パフォーマンス最適化のための使い分け
     </li>
     <li>
       <a href="{base}/deep-dive/derived-vs-effect-vs-derived-by/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
@@ -151,6 +141,21 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       <a href="{base}/deep-dive/html-templates-and-snippets/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
         🎨 HTMLテンプレートとSnippets
       </a> - 再利用可能なUIパーツの作成
+    </li>
+    <li>
+      <a href="{base}/deep-dive/custom-elements-vs-svelte-components/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🔌 カスタム要素 vs Svelteコンポーネント
+      </a> - Web標準との統合方法
+    </li>
+    <li>
+      <a href="{base}/deep-dive/auto-generated-types/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        🤖 自動生成型
+      </a> - SvelteKitの型生成機能
+    </li>
+    <li>
+      <a href="{base}/deep-dive/reactivity-with-plain-javascript-syntax/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
+        ✨ プレーンJavaScript構文でのリアクティビティ
+      </a> - なぜSvelteは特別な記法が不要なのか
     </li>
   </ul>
 </div>
@@ -188,7 +193,6 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   <ul class="phase-list">
     <li><a href="{base}/introduction/why-svelte/">なぜSvelteか</a> - 他フレームワークとの違いを理解</li>
     <li><a href="{base}/deep-dive/compile-time-optimization/">コンパイル時最適化</a>の仕組み</li>
-    <li><a href="{base}/deep-dive/state-use-proxy-object/">Proxyオブジェクトの活用</a> - Svelte 5の内部実装</li>
   </ul>
   
   <h4 class="text-lg font-bold mb-3 mt-4">Phase 2: Runesマスター（3-4日）</h4>

@@ -353,7 +353,6 @@ $effect(() => {
 
 ### さらに深く理解する
 - [リアクティブな状態変数とバインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - $stateとbind:の使い分け
-- [state.raw() vs $state()の違いと使い分け](/deep-dive/state-raw-vs-state/) - 深いリアクティビティの制御
 
 ### 実践的な活用
 - [リアクティブストア（.svelte.js/.svelte.ts）](/advanced/reactive-stores/) - 複数コンポーネント間での状態共有

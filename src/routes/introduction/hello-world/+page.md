@@ -252,7 +252,7 @@ Svelte 5では、`$state`ルーンを使ってより明示的にリアクティ�
 </script>
 
 <div class="greeting-container">
-  <h1>{greetings[currentIndex]}</h1>
+  <h2>{greetings[currentIndex]}</h2>
   <button onclick={nextGreeting}>
     次の言語
   </button>

@@ -826,7 +826,7 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
 </script>
 
 <div class="todo-app">
-  <h1>TODOリスト</h1>
+  <h2>TODOリスト</h2>
   
   <div class="add-todo">
     <input

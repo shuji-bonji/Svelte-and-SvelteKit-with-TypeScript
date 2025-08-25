@@ -251,32 +251,49 @@ Svelte 5では、以下の配列メソッドがリアクティブです。
 </div>
 ```
 
-## $state.raw - 浅いリアクティビティ
+## $state.raw - Proxyを使わない状態管理
 
-大規模なデータ構造を扱う際のパフォーマンス最適化として、`$state.raw`を使用できます。
-これは第一階層のプロパティのみをリアクティブにし、深い階層の変更は追跡しないため、メモリ使用量と処理負荷を削減できます。
+`$state.raw()`は、Proxyを経由せず、生の状態オブジェクトを手動で管理するための低レベルAPIです。特殊なケースで使用します。
 
-```svelte
-<script lang="ts">
-  // 浅いリアクティビティ（第一階層のみ）
-  let shallowState = $state.raw({
-    level1: {
-      level2: {
-        value: 'deep value'
-      }
-    }
-  });
-  
-  // これはリアクティブ
-  shallowState.level1 = { level2: { value: 'new' } };
-  
-  // これはリアクティブではない（深いプロパティ）
-  shallowState.level1.level2.value = 'updated'; // UIは更新されない
-</script>
+### $state vs $state.raw の違い
+
+| 項目 | `$state()` | `$state.raw()` |
+| --- |--- |--- |
+| リアクティブ | 自動（Proxy） | 手動（`$get` / `$set`） |
+| 直感的な書き方 | 可能 | 不可（明示的な操作が必要） |
+| 適用例 | 通常のフォームや状態管理 | Map/Set、外部ライブラリ連携、デバッグ用途など |
+| 内部処理 | Proxy による追跡 | 生値への直接アクセス |
+
+### $state.raw の使用例
+
+```typescript
+// Map や Set などの特殊型で使用
+let myMap = $state.raw(new Map());
+
+function updateMap() {
+  const map = $get(myMap);
+  map.set('key', 'updated');
+  $set(myMap, map); // 明示的に通知
+}
+
+// 外部ライブラリとの連携
+let chartData = $state.raw([]);
+
+function fetchDataFromLibrary() {
+  const data = externalLibrary.getData();
+  $set(chartData, data); // 手動で設定
+}
 ```
 
-:::warning[`$state.raw`の使用注意]
-`$state.raw`は大きなデータ構造でパフォーマンスを最適化する場合にのみ使用してください。通常は`$state`の深いリアクティビティが便利で十分です。
+### いつ $state.raw を使うべきか
+
+1. **特殊なネイティブ型**を扱うとき（Map、Set、Date、File など）
+2. **外部ライブラリ**と状態を連携する際
+3. **変更検知のタイミング**を明示的に制御したいとき
+4. **デバッグ**目的で状態の取得・更新をログしたいとき
+
+:::tip[通常は $state を使用]
+高度な制御が必要な場面を除いては、`$state()`で完結するコードの方が簡潔かつ安全です。
 :::
 
 ## 実践例：フォーム管理
@@ -552,6 +569,65 @@ items = items.filter(item => item !== 'item1'); // フィルターで新配列
 Svelte 5では、ミュータブルな更新の方が簡潔で直感的です。Reactから移行してきた開発者は、最初はイミュータブルな更新を使いがちですが、Svelteではミュータブルな更新を恐れる必要はありません。パフォーマンス的にも問題ありません。
 :::
 
+## Proxyによる内部実装
+
+Svelte 5の`$state`は内部でProxyを使用してリアクティビティを実現しています。
+
+### Proxyの仕組み
+
+Proxyは、オブジェクトへの操作を「横取り」して、カスタムの動作を定義できるJavaScriptの機能です。
+
+```typescript
+// Proxyの基本的な動作
+const target = { value: 0 };
+const proxy = new Proxy(target, {
+  get(target, property) {
+    console.log(`読み取り: ${String(property)}`);
+    return target[property];
+  },
+  set(target, property, value) {
+    console.log(`書き込み: ${String(property)} = ${value}`);
+    target[property] = value;
+    // Svelteはここで依存する要素を更新
+    return true;
+  }
+});
+
+proxy.value; // "読み取り: value"
+proxy.value = 10; // "書き込み: value = 10"
+```
+
+### Svelteが実現している機能
+
+| 機能 | Proxyの活用 | 利点 |
+|------|------------|------|
+| **自然な文法** | オブジェクト・配列の通常操作を検知 | 学習コストが低い |
+| **自動追跡** | getトラップで依存関係を記録 | 明示的な宣言不要 |
+| **深いリアクティビティ** | ネストされたオブジェクトも自動Proxy化 | 複雑な状態も簡単管理 |
+| **破壊的メソッド対応** | 配列のpush/splice等も検知 | 自然なコードが書ける |
+
+### ビルトインクラスのリアクティブ化
+
+Svelte 5では、ネイティブのビルトインクラスも`$state()`でリアクティブになります。
+
+```typescript
+// Map - キーバリューストアがリアクティブに
+let userPreferences = $state(new Map<string, string>());
+userPreferences.set('theme', 'dark'); // UIが自動更新
+
+// Set - 重複なしコレクションがリアクティブに
+let selectedTags = $state(new Set<string>());
+selectedTags.add('svelte'); // 追加を検知
+
+// Date - 日時オブジェクトもリアクティブに
+let deadline = $state(new Date());
+deadline.setDate(deadline.getDate() + 7); // 1週間後に変更でUI更新
+
+// URL - URL操作がリアクティブに
+let apiUrl = $state(new URL('https://api.example.com'));
+apiUrl.searchParams.set('page', '2'); // クエリパラメータ変更を検知
+```
+
 ## まとめ
 
 `$state`ルーンは、Svelte 5の中核となる機能で、リアクティブな状態管理を直感的かつ強力に実現します。
@@ -567,6 +643,13 @@ Svelte 5では、ミュータブルな更新の方が簡潔で直感的です。
 - **Vue 3**: `ref`/`reactive`と似た概念だが、より簡潔
 - **Angular**: Signalsと似ているが、より少ないボイラープレート
 :::
+
+## 関連ドキュメント
+
+### さらに深く理解する
+
+- [📖 リアクティブな状態変数とバインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - $stateと$bindableの使い分け
+- [🔬 素のJavaScript構文でリアクティビティを実現](/deep-dive/reactivity-with-plain-javascript-syntax/) - Object.definePropertyとProxyを使ったリアクティビティの内部実装を理解
 
 ## 次のステップ
 

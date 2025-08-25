@@ -118,6 +118,7 @@ const config = defineConfig({
                   title: '$bindable - 双方向バインディング',
                   to: '/runes/bindable/',
                 },
+                { title: '$host - カスタムエレメント', to: '/runes/host/' },
                 { title: '$inspect - デバッグ', to: '/runes/inspect/' },
                 { title: '他フレームワークとの比較', to: '/runes/comparison/' },
               ],
@@ -196,10 +197,6 @@ const config = defineConfig({
                   title:
                     '$state: $derived vs $effect vs derived.by 完全比較ガイド',
                   to: '/deep-dive/derived-vs-effect-vs-derived-by',
-                },
-                {
-                  title: 'カスタムエレメントと通常のSvelteコンポーネントの違い',
-                  to: '/deep-dive/custom-elements-vs-svelte-components',
                 },
                 {
                   title: 'HTML <template> と Svelte #snippet の違い',

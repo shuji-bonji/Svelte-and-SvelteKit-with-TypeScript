@@ -70,31 +70,31 @@ description: SveltePressでMermaidダイアグラムを使用する例（ダー�
 
 ## フローチャート
 
-Svelte 5のリアクティビティフローを表現：
+### Svelte 5のリアクティビティフローを表現
 
 <Mermaid diagram={flowChartCode} />
 
 ## シーケンス図
 
-ユーザーインタラクションの流れ：
+### ユーザーインタラクションの流れ
 
 <Mermaid diagram={sequenceCode} />
 
 ## クラス図
 
-Svelteコンポーネントの構造：
+### Svelteコンポーネントの構造
 
 <Mermaid diagram={classDiagramCode} />
 
 ## ガントチャート
 
-学習ロードマップ：
+### 学習ロードマップ
 
 <Mermaid diagram={ganttCode} />
 
 ## 円グラフ
 
-学習時間の配分：
+### 学習時間の配分
 
 <Mermaid diagram={pieCode} />
 

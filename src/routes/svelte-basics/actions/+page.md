@@ -651,7 +651,7 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 
 `use:action`は、DOM要素を直接操作する必要がある場合に最適な機能です。
 
-主なポイント：
+### 主なポイント
 
 - **実行タイミング**: 要素のマウント時に自動実行
 - **用途**: DOM操作、外部ライブラリ統合、カスタム動作の追加

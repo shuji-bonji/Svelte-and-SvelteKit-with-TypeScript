@@ -284,7 +284,7 @@ description: ページの説明
 
 ##### 情報の強調表示ルール
 
-他のフレームワーク（React、Vue、Angular等）の経験者が疑問に思う点や、Svelte特有の概念については、以下のMarkdown記法を使って目立たせてください：
+他のフレームワーク（React、Vue、Angular等）の経験者が疑問に思う点や、Svelte特有の概念については、以下のMarkdown記法を使って目立たせてください。
 
 ```markdown
 :::note[タイトル]

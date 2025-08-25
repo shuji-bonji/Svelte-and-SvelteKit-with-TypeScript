@@ -13,6 +13,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 ## このガイドで学べること
 
+この学習ガイドは、Svelte 5とSvelteKitを体系的に学習するための完全なリソースです。最新のRunesシステムを中心に、実践的なTypeScript統合まで、モダンなWeb開発に必要なすべてをカバーしています。
+
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
   <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
     <h3 class="text-xl font-bold mb-4">🎯 Svelte 5の基礎</h3>
@@ -36,9 +38,12 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 ## 📚 レベル別学習パス
 
+Svelte 5とSvelteKitを効率的に学習するために、各セクションごとに体系的な学習コンテンツを用意しています。あなたの経験レベルに合わせて、最適な学習順序で進めていきましょう。
+
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🎯 はじめに</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Svelte 5の世界への第一歩。フレームワークの哲学と開発環境の準備から始めます。</p>
     <ol class="space-y-2">
       <li><a href="{base}/introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelte 5の概要</a></li>
       <li><a href="{base}/introduction/why-svelte/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">なぜSvelteか</a></li>
@@ -50,6 +55,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">🔧 Svelteの基本</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">コンポーネントの構造、テンプレート構文、ライフサイクルなど、Svelteの基礎を学びます。</p>
     <ol class="space-y-2">
       <li><a href="{base}/svelte-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Svelteの基本概要</a></li>
       <li><a href="{base}/svelte-basics/component-basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">コンポーネントの基本</a></li>
@@ -62,6 +68,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">📦 Runesシステム</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Svelte 5の中核機能。$state、$derived、$effectなどのリアクティビティシステムを完全マスター。</p>
     <ol class="space-y-2">
       <li><a href="{base}/runes/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム概要</a></li>
       <li><a href="{base}/runes/runes-introduction/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">Runesシステム入門</a></li>
@@ -76,6 +83,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">📚 実践編</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">実際のアプリケーション開発で必要となる、高度なパターンとテクニックを習得します。</p>
     <ol class="space-y-2">
       <li><a href="{base}/advanced/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実践概要</a></li>
       <li><a href="{base}/advanced/reactive-stores/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">リアクティブストア</a></li>
@@ -93,6 +101,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">⚡ SvelteKit</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">フルスタックフレームワーク。ルーティング、SSR、APIエンドポイントなど本格的なWebアプリ構築。</p>
     <ol class="space-y-2">
       <li><a href="{base}/sveltekit/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">SvelteKit概要</a></li>
       <li><a href="{base}/sveltekit/routing/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">ルーティング</a></li>
@@ -105,6 +114,7 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
   </div>
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <h3 class="font-bold text-lg mb-2">💡 実装例</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">実際に動作するサンプルアプリケーションを通じて、実践的な開発スキルを身につけます。</p>
     <ol class="space-y-2">
       <li><a href="{base}/examples/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実装例一覧</a></li>
       <li><a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TODOアプリ</a></li>
@@ -117,6 +127,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 
 ## 🔬 技術詳細（Deep Dive）
+
+フレームワークの内部動作やアーキテクチャを理解することで、より効率的で保守性の高いコードを書けるようになります。上級者向けの技術的な深掘りコンテンツです。
 
 <div class="deep-dive-section p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg mb-8">
   <h3 class="text-lg font-bold mb-3">内部実装を理解する</h3>
@@ -143,11 +155,6 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
       </a> - 再利用可能なUIパーツの作成
     </li>
     <li>
-      <a href="{base}/deep-dive/custom-elements-vs-svelte-components/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
-        🔌 カスタム要素 vs Svelteコンポーネント
-      </a> - Web標準との統合方法
-    </li>
-    <li>
       <a href="{base}/deep-dive/auto-generated-types/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline">
         🤖 自動生成型
       </a> - SvelteKitの型生成機能
@@ -163,7 +170,11 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 ## 🗺️ 推奨学習ロードマップ
 
+あなたの経験レベルと目的に応じて、最適な学習パスをご提案します。各コースは実践的な演習を含み、段階的にスキルを構築できるよう設計されています。
+
 ### 🌱 初心者コース（3-4週間）
+
+Web開発の基礎知識はあるが、Svelteは初めてという方向け。基礎から着実にステップアップしていきます。
 
 <div class="roadmap-section">
   <h4 class="text-lg font-bold mb-3">Week 1: 基礎を固める</h4>
@@ -188,6 +199,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 ### 🚀 経験者コース（1-2週間）
 
+React、Vue、Angularなど他のフレームワーク経験者向け。既存の知識を活かしながら、Svelteの特徴を効率的に学習します。
+
 <div class="roadmap-section">
   <h4 class="text-lg font-bold mb-3">Phase 1: Svelteの哲学（2-3日）</h4>
   <ul class="phase-list">
@@ -211,6 +224,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 </div>
 
 ### ⚡ 移行者コース（3-5日）
+
+Svelte 4からSvelte 5への移行を検討している方向け。新しいRunesシステムへのスムーズな移行方法を解説します。
 
 <div class="migration-guide p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
   <h4 class="text-lg font-bold mb-3">Svelte 4 → Svelte 5 移行ガイド</h4>
@@ -249,6 +264,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 
 ## ✅ スキルチェックリスト
 
+学習の進捗を確認し、次のステップを明確にするためのチェックリストです。各項目をマスターすることで、実務レベルの開発が可能になります。
+
 <div class="skill-checklist grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
   <div class="skill-section">
     <h4 class="font-bold mb-2">基礎スキル</h4>
@@ -274,6 +291,8 @@ description: あなたのレベルに応じた最適な学習パスを提供し�
 </div>
 
 ## 💡 学習のコツ
+
+Svelteを効率的に学習し、実務で活用するための実践的なアドバイス。多くの開発者が陥りがちな落とし穴を避け、スムーズに学習を進めるためのポイントをまとめました。
 
 <div class="tips-section grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
   <div class="tip-card p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">

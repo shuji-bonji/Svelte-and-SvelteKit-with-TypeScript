@@ -18,66 +18,13 @@
 
 <!-- カスタム検索コンポーネント -->
 {#if mounted && showSearch}
-  <div class="search-teleport" class:is-home={isHome}>
-    <Search />
-  </div>
+  <Search />
 {/if}
 
 <!-- Leave this. Or you can add more content for your custom layout -->
 {@render children?.()}
 
 <style>
-  /* 検索ボタンを固定位置に配置 */
-  .search-teleport {
-    position: fixed;
-    top: 18px;
-    z-index: 890; /* ヘッダーより少し低く */
-  }
-
-  /* デスクトップ: 通常ページではサイドバーの右側に配置 */
-  @media (min-width: 950px) {
-    .search-teleport:not(.is-home) {
-      left: 260px; /* サイドバーの幅 + 余白 */
-    }
-
-    /* ホームページでは中央に配置、ただしロゴの右側 */
-    .search-teleport.is-home {
-      left: calc(10vw + 200px); /* ロゴの右側に配置 */
-      transform: none;
-      max-width: 400px;
-    }
-  }
-
-  @media (min-width: 1240px) {
-    .search-teleport:not(.is-home) {
-      left: 300px; /* 大画面でのサイドバーの幅 + 余白 */
-    }
-
-    .search-teleport.is-home {
-      left: calc(10vw + 220px); /* 大画面でロゴの右側に配置 */
-    }
-  }
-
-  /* タブレット・モバイル表示 */
-  @media (max-width: 949px) {
-    .search-teleport {
-      right: 120px; /* GitHubアイコンの左側 */
-      left: auto;
-      top: 12px;
-    }
-
-    /* ホームページでも同じ位置 */
-    .search-teleport.is-home {
-      transform: none;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .search-teleport {
-      right: 100px; /* ハンバーガーメニューの右側 */
-      top: 14px;
-    }
-  }
 
   /* ヘッダーのレイアウト調整 */
   :global(.header .header-inner) {

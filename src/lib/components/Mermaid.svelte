@@ -1,124 +1,208 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import mermaid from 'mermaid';
   
-  let { code }: { code: string } = $props();
+  type Props = {
+    diagram: string;
+    class?: string;
+  };
+  
+  let { diagram, class: className = '' }: Props = $props();
   
   let container: HTMLDivElement;
-  let isDarkMode = $state(false);
-  let id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+  let mermaidLoaded = $state(false);
   
   onMount(() => {
-    // ダークモードの検出
-    const checkDarkMode = () => {
-      isDarkMode = document.documentElement.classList.contains('dark') || 
-                   document.documentElement.getAttribute('data-theme') === 'dark' ||
-                   window.matchMedia('(prefers-color-scheme: dark)').matches;
-    };
-    
-    checkDarkMode();
-    
-    // Mermaidの初期化
-    const initMermaid = () => {
+    const loadMermaid = async () => {
+      // Mermaidを動的にインポート（クライアントサイドのみ）
+      const mermaid = (await import('mermaid')).default;
+      
+      // Mermaidの初期設定
       mermaid.initialize({
         startOnLoad: false,
-        theme: isDarkMode ? 'dark' : 'default',
-        themeVariables: isDarkMode ? {
-          primaryColor: '#1e293b',
-          primaryTextColor: '#e2e8f0',
-          primaryBorderColor: '#475569',
-          lineColor: '#64748b',
-          secondaryColor: '#475569',
-          tertiaryColor: '#334155',
-          background: '#0f172a',
-          mainBkg: '#1e293b',
-          secondBkg: '#334155',
-          tertiaryBkg: '#475569',
-          primaryBorderColor: '#64748b',
-          secondaryBorderColor: '#475569',
-          tertiaryBorderColor: '#334155',
-          textColor: '#e2e8f0',
-          labelTextColor: '#e2e8f0',
-          altBackground: '#1e293b',
-          edgeLabelBackground: '#1e293b',
-          nodeTextColor: '#e2e8f0',
-        } : {
-          primaryColor: '#ff3e00',
-          primaryTextColor: '#333',
-          primaryBorderColor: '#ff3e00',
-          lineColor: '#ff3e00',
-          secondaryColor: '#40b3ff',
-          tertiaryColor: '#ffa500',
+        theme: 'neutral',
+        themeVariables: {
+          primaryColor: '#f3f4f6',
+          primaryTextColor: '#1f2937',
+          primaryBorderColor: '#d1d5db',
+          lineColor: '#9ca3af',
+          secondaryColor: '#e5e7eb',
+          tertiaryColor: '#f9fafb',
+          background: '#ffffff',
+          mainBkg: '#f3f4f6',
+          secondBkg: '#e5e7eb',
+          tertiaryBkg: '#f9fafb',
+          nodeBkg: '#ffffff',
+          nodeTextColor: '#1f2937',
+          clusterBkg: '#f9fafb',
+          clusterBorder: '#d1d5db',
+          defaultLinkColor: '#6b7280',
+          titleColor: '#111827',
+          edgeLabelBackground: '#ffffff',
+          actorBorder: '#d1d5db',
+          actorBkg: '#ffffff',
+          actorTextColor: '#1f2937'
         }
       });
       
+      // ダイアグラムをレンダリング
       if (container) {
-        container.innerHTML = `<div class="mermaid">${code}</div>`;
-        mermaid.run({
-          querySelector: `.mermaid`,
-          suppressErrors: true
+        try {
+          const { svg } = await mermaid.render(`mermaid-${Date.now()}`, diagram);
+          container.innerHTML = svg;
+          mermaidLoaded = true;
+        } catch (error) {
+          console.error('Mermaid rendering error:', error);
+          container.innerHTML = `<div class="error">ダイアグラムのレンダリングに失敗しました</div>`;
+        }
+      }
+      
+      // ダークモード対応
+      const updateTheme = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: isDark ? 'dark' : 'neutral',
+          themeVariables: isDark ? {
+            primaryColor: '#374151',
+            primaryTextColor: '#f3f4f6',
+            primaryBorderColor: '#4b5563',
+            lineColor: '#6b7280',
+            secondaryColor: '#4b5563',
+            tertiaryColor: '#1f2937',
+            background: '#111827',
+            mainBkg: '#1f2937',
+            secondBkg: '#374151',
+            tertiaryBkg: '#111827',
+            nodeBkg: '#1f2937',
+            nodeTextColor: '#f3f4f6',
+            clusterBkg: '#111827',
+            clusterBorder: '#4b5563',
+            defaultLinkColor: '#9ca3af',
+            titleColor: '#f9fafb',
+            edgeLabelBackground: '#1f2937',
+            actorBorder: '#4b5563',
+            actorBkg: '#1f2937',
+            actorTextColor: '#f3f4f6',
+            textColor: '#e5e7eb'
+          } : {
+            primaryColor: '#f3f4f6',
+            primaryTextColor: '#1f2937',
+            primaryBorderColor: '#d1d5db',
+            lineColor: '#9ca3af',
+            secondaryColor: '#e5e7eb',
+            tertiaryColor: '#f9fafb',
+            background: '#ffffff',
+            mainBkg: '#f3f4f6',
+            secondBkg: '#e5e7eb',
+            tertiaryBkg: '#f9fafb',
+            nodeBkg: '#ffffff',
+            nodeTextColor: '#1f2937',
+            clusterBkg: '#f9fafb',
+            clusterBorder: '#d1d5db',
+            defaultLinkColor: '#6b7280',
+            titleColor: '#111827',
+            edgeLabelBackground: '#ffffff',
+            actorBorder: '#d1d5db',
+            actorBkg: '#ffffff',
+            actorTextColor: '#1f2937'
+          }
         });
-      }
+        
+        // 再レンダリング
+        if (container) {
+          mermaid.render(`mermaid-${Date.now()}`, diagram).then(({ svg }) => {
+            container.innerHTML = svg;
+          });
+        }
+      };
+      
+      // テーマ変更を監視
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            updateTheme();
+          }
+        });
+      });
+      
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+      
+      return () => {
+        observer.disconnect();
+      };
     };
     
-    initMermaid();
-    
-    // テーマ変更の監視
-    const observer = new MutationObserver(() => {
-      const newDarkMode = document.documentElement.classList.contains('dark') || 
-                          document.documentElement.getAttribute('data-theme') === 'dark';
-      if (newDarkMode !== isDarkMode) {
-        checkDarkMode();
-        initMermaid();
-      }
-    });
-    
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme']
-    });
-    
-    // メディアクエリの変更を監視
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => {
-      checkDarkMode();
-      initMermaid();
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleChange);
-    };
+    loadMermaid();
   });
 </script>
 
-<div bind:this={container} class="mermaid-container" {id}></div>
+<div bind:this={container} class="mermaid-container {className}">
+  {#if !mermaidLoaded}
+    <div class="loading">ダイアグラムを読み込み中...</div>
+  {/if}
+</div>
 
 <style>
   .mermaid-container {
-    width: 100%;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     overflow-x: auto;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background-color: var(--sp-color-bg-soft, #f5f5f5);
-    margin: 1rem 0;
-  }
-  
-  :global(.dark) .mermaid-container,
-  :global([data-theme="dark"]) .mermaid-container {
-    background-color: var(--sp-color-bg-soft, #1a1a1a);
-  }
-  
-  .mermaid-container :global(.mermaid) {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 200px;
   }
   
-  .mermaid-container :global(svg) {
+  :global(.dark) .mermaid-container {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  .loading {
+    color: #64748b;
+    font-style: italic;
+  }
+  
+  :global(.dark) .loading {
+    color: #94a3b8;
+  }
+  
+  .error {
+    color: #ef4444;
+    padding: 1rem;
+    background: #fee2e2;
+    border-radius: 4px;
+  }
+  
+  :global(.dark) .error {
+    background: #7f1d1d;
+    color: #fca5a5;
+  }
+  
+  /* Mermaid SVGのスタイル調整 */
+  :global(.mermaid-container svg) {
     max-width: 100%;
     height: auto;
+  }
+  
+  :global(.mermaid-container .node rect),
+  :global(.mermaid-container .node circle),
+  :global(.mermaid-container .node ellipse),
+  :global(.mermaid-container .node polygon) {
+    transition: all 0.3s ease;
+  }
+  
+  :global(.mermaid-container .node:hover rect),
+  :global(.mermaid-container .node:hover circle),
+  :global(.mermaid-container .node:hover ellipse),
+  :global(.mermaid-container .node:hover polygon) {
+    filter: brightness(1.1);
+    stroke-width: 2px;
   }
 </style>

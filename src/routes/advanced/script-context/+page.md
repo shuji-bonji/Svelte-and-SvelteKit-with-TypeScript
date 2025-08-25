@@ -3,6 +3,78 @@ title: スクリプトコンテキスト
 description: script要素とscript context="module"の違いと使い分け
 ---
 
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const executionFlowDiagram = `graph TB
+      Start([ファイルインポート]) --> ModuleCheck{script module<br/>が存在？}
+      
+      ModuleCheck -->|Yes| ModuleExec[script module 実行<br/>📦 一度だけ]
+      ModuleCheck -->|No| ComponentCreate
+      
+      ModuleExec --> ModuleStore[(モジュール変数<br/>すべてのインスタンスで共有)]
+      ModuleStore --> ComponentCreate
+      
+      ComponentCreate[コンポーネント作成] --> Instance1[インスタンス 1]
+      ComponentCreate --> Instance2[インスタンス 2]
+      ComponentCreate --> Instance3[インスタンス n...]
+      
+      Instance1 --> Script1[script 実行<br/>🎯 独立した状態]
+      Instance2 --> Script2[script 実行<br/>🎯 独立した状態]
+      Instance3 --> Script3[script 実行<br/>🎯 独立した状態]
+      
+      Script1 --> State1[(インスタンス変数 1)]
+      Script2 --> State2[(インスタンス変数 2)]
+      Script3 --> State3[(インスタンス変数 n)]
+      `;
+  
+  const decisionFlowDiagram = `flowchart TD
+    Start([機能を実装したい]) --> Q1{リアクティブな<br/>状態が必要？}
+    
+    Q1 -->|Yes| Q2{複数インスタンスで<br/>共有する？}
+    Q1 -->|No| Q3{定数や静的な<br/>関数？}
+    
+    Q2 -->|Yes| UseStore[.svelte.ts ファイル<br/>+ Runes を使用<br/>💡 推奨]
+    Q2 -->|No| UseScript[script を使用<br/>🎯 インスタンス毎の状態]
+    
+    Q3 -->|Yes| Q4{SvelteKit の<br/>設定？}
+    Q3 -->|No| UseScript2[script を使用<br/>📝 通常の処理]
+    
+    Q4 -->|Yes| UseModule[script module を使用<br/>📦 prerender, load など]
+    Q4 -->|No| Q5{全インスタンスで<br/>共有する定数？}
+    
+    Q5 -->|Yes| UseModule2[script module を使用<br/>🔧 静的な値]
+    Q5 -->|No| UseScript3[script を使用<br/>🎨 コンポーネント固有]
+    
+`;
+    
+  const scopeDiagram = `graph LR
+    subgraph "モジュールレベル（1回のみ）"
+        ModuleScope[script module<br/>📦 静的な値・関数]
+        ModuleScope --> Shared[(共有領域)]
+    end
+    
+    subgraph "インスタンスレベル（n回）"
+        Instance1[script インスタンス1<br/>🎯 独立状態]
+        Instance2[script インスタンス2<br/>🎯 独立状態]
+        Instance3[script インスタンス3<br/>🎯 独立状態]
+    end
+    
+    subgraph "外部ストア（推奨）"
+        Store[.svelte.ts<br/>💡 Runes + 共有状態]
+    end
+    
+    Shared -.->|参照可能| Instance1
+    Shared -.->|参照可能| Instance2
+    Shared -.->|参照可能| Instance3
+    
+    Store ==>|import| Instance1
+    Store ==>|import| Instance2
+    Store ==>|import| Instance3
+    `;
+</script>
+
+
 Svelteコンポーネントには2種類のスクリプトブロックがあります。  
 通常の`<script>`と`<script context="module">`です。  
 これらの違いを理解することで、より効率的なコンポーネント設計が可能になります。
@@ -56,6 +128,14 @@ Svelte 5では、`<script context="module">`を`<script module>`と短縮して�
 |---|---|---|---|---|
 | インスタンススクリプト | `<script>` | クライアントで実行 | コンポーネントのインスタンスごと | リアクティブ変数、イベント、状態管理など |
 | モジュールスクリプト（module） | `<script module>` | ビルド時または SSR時 | モジュール単位（1度のみ） | `load()`、`prerender` などSvelteKit固有の設定やサーバー向け処理 |
+
+### スコープと実行タイミングの視覚化
+
+<Mermaid diagram={scopeDiagram} />
+
+### 実行フローの図解
+
+<Mermaid diagram={executionFlowDiagram} />
 
 
 ## script module の特徴
@@ -575,6 +655,9 @@ APIクライアントのインスタンスを一度だけ作成し、アプリ�
 | SSRでのデータフェッチを記述したい | `<script module>` | `load()` を使う |
 | ページ内でイベントバインディングしたい| `<script>` | DOM と連動した動的処理を書くため |
 
+### 使い分けフローチャート
+
+<Mermaid diagram={decisionFlowDiagram} />
 
 ## まとめ
 

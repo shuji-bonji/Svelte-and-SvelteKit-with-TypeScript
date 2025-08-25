@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && npx pagefind --site dist && node scripts/postbuild.js",
+    "build": "NODE_ENV=production vite build --logLevel=error && npx pagefind --site dist && node scripts/postbuild.js",
     "preview": "vite preview",
     "postbuild": "node scripts/postbuild.js && node scripts/generate-sitemap.js"
   },

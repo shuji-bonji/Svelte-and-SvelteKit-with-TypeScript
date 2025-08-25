@@ -7,6 +7,24 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 const config = {
 	extensions: ['.svelte', '.md'],
 	preprocess: [vitePreprocess()],
+	onwarn: (warning, handler) => {
+		// .sveltepress/live-code内の自動生成ファイルの警告を抑制
+		if (warning.filename && warning.filename.includes('.sveltepress/live-code/')) {
+			return; // live-code内のすべての警告を無視
+		}
+		// その他の警告は通常通り処理
+		handler(warning);
+	},
+	compilerOptions: {
+		// ビルド時の警告制御
+		warningFilter: (warning) => {
+			// .sveltepress/live-code内の警告をフィルタ
+			if (warning.filename && warning.filename.includes('.sveltepress/live-code/')) {
+				return false; // 警告を表示しない
+			}
+			return true; // その他の警告は表示
+		}
+	},
 	kit: {
 		adapter: adapter({
 			pages: 'dist',

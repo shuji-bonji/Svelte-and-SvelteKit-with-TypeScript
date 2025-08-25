@@ -18,7 +18,9 @@
 
 <!-- カスタム検索コンポーネント -->
 {#if mounted && showSearch}
-  <Search />
+  <div class="search-container" class:is-home={isHome}>
+    <Search />
+  </div>
 {/if}
 
 <!-- Leave this. Or you can add more content for your custom layout -->

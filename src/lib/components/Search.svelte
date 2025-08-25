@@ -379,16 +379,16 @@
 		}
 	}
 
-	/* ホームページでの配置 */
+	/* ホームページでの配置 - 4rem右にずらす */
 	@media (min-width: 950px) {
-		:global(.home-page) .search-wrapper {
-			left: calc(10vw + 200px);
+		:global(.is-home) .search-wrapper {
+			left: calc(260px + 4rem); /* 通常位置から4rem右へ */
 		}
 	}
 
 	@media (min-width: 1240px) {
-		:global(.home-page) .search-wrapper {
-			left: calc(10vw + 220px);
+		:global(.is-home) .search-wrapper {
+			left: calc(300px + 4rem); /* 通常位置から4rem右へ */
 		}
 	}
 

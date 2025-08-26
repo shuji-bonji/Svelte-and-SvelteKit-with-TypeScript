@@ -346,14 +346,14 @@ $effect(() => {
 ## 関連ページ
 
 ### 基礎を学ぶ
-- [Runesシステム入門](/runes/runes-introduction/) - Runesの基本概念と全体像
-- [$stateルーン](/runes/state/) - リアクティブな状態管理の基礎
-- [$derivedルーン](/runes/derived/) - 派生値の詳細解説
-- [$effectルーン](/runes/effect/) - 副作用の詳細解説
+- [Runesシステム入門](/svelte/runes/runes-introduction/) - Runesの基本概念と全体像
+- [$stateルーン](/svelte/runes/state/) - リアクティブな状態管理の基礎
+- [$derivedルーン](/svelte/runes/derived/) - 派生値の詳細解説
+- [$effectルーン](/svelte/runes/effect/) - 副作用の詳細解説
 
 ### さらに深く理解する
 - [リアクティブな状態変数とバインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - $stateとbind:の使い分け
 
 ### 実践的な活用
-- [リアクティブストア（.svelte.js/.svelte.ts）](/advanced/reactive-stores/) - 複数コンポーネント間での状態共有
-- [クラスとリアクティビティ](/advanced/class-reactivity/) - オブジェクト指向とRunesの組み合わせ
+- [リアクティブストア（.svelte.js/.svelte.ts）](/svelte/advanced/reactive-stores/) - 複数コンポーネント間での状態共有
+- [クラスとリアクティビティ](/svelte/advanced/class-reactivity/) - オブジェクト指向とRunesの組み合わせ

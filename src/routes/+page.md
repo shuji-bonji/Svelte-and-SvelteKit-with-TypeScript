@@ -7,9 +7,12 @@ actions:
   - label: 学習を始める
     type: primary
     to: ./introduction
-  - label: 学習ガイド
+  - label: Svelte
     type: secondary
-    to: ./guide
+    to: ./svelte
+  - label: SvelteKit
+    type: secondary
+    to: ./sveltekit
 features:
   - title: Svelte 5 Runes
     description: 最新のRunesシステム（$state, $derived, $effect）を完全解説

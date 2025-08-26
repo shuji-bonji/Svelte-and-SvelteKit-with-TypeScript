@@ -1,92 +1,449 @@
 ---
-title: SvelteKit概要
-description: フルスタックフレームワークSvelteKitの紹介
+title: SvelteKit完全ガイド
+description: エンタープライズ対応のフルスタックフレームワークをマスターする
 ---
 
-## SvelteKitとは
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
 
-SvelteKitは、Svelteをベースにしたフルスタックアプリケーションフレームワークです。
+  const learningFlow = `flowchart LR
+    Start([🎯 SvelteKit学習開始])
+    Check[Svelte習得済み？]
+    Svelte[📚 Svelte基礎へ]
+    
+    Basics[🔰 基礎編]
+    
+    Server[⚙️ サーバーサイド編]
+    
+    App[🏗️ アプリ構築編]
+    
+    Opt[⚡ 最適化編]
+    
+    Deploy[🚀 デプロイ・運用編]
+    
+    Production([🎉 本番運用開始])
+    
+    Start --> Check
+    Check -->|いいえ| Svelte
+    Check -->|はい| Basics
+    Basics --> Server
+    Server --> App
+    App --> Opt
+    Opt --> Deploy
+    Deploy --> Production
+    
+    style Start fill:#FF5722,color:#fff
+    style Check fill:#FFC107,color:#333
+    style Svelte fill:#FF4081,color:#fff
+    style Basics fill:#2196F3,color:#fff
+    style Server fill:#00BCD4,color:#fff
+    style App fill:#4CAF50,color:#fff
+    style Opt fill:#FF9800,color:#fff
+    style Deploy fill:#9C27B0,color:#fff
+    style Production fill:#8BC34A,color:#fff`;
+</script>
 
-## 主な機能
+SvelteKitは、Svelteをベースにした**モダンなフルスタックWebアプリケーションフレームワーク**です。Next.js（React）やNuxt（Vue）と同等以上の機能を持ちながら、より軽量で高速、そして優れた開発者体験を提供します。
 
-### 1. ファイルベースルーティング
+## 🎯 なぜSvelteKitを学ぶべきか
 
-```
-src/routes/
-├── +page.svelte        # /
-├── about/+page.svelte  # /about
-└── blog/
-    ├── +page.svelte    # /blog
-    └── [slug]/
-        └── +page.svelte # /blog/[slug]
-```
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-3">🚀</div>
+    <h3 class="font-bold text-xl mb-3">パフォーマンスの優位性</h3>
+    <ul class="space-y-2 text-sm">
+      <li><strong class="text-orange-500">最小バンドルサイズ:</strong> ~40KB（Next.js: ~70KB）</li>
+      <li><strong class="text-orange-500">ランタイムなし:</strong> コンパイル時最適化</li>
+      <li><strong class="text-orange-500">高速な初期表示:</strong> 効率的なSSR/SSG</li>
+    </ul>
+  </div>
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-3">⚡</div>
+    <h3 class="font-bold text-xl mb-3">開発者体験の向上</h3>
+    <ul class="space-y-2 text-sm">
+      <li><strong class="text-orange-500">型安全性:</strong> TypeScript完全対応</li>
+      <li><strong class="text-orange-500">ゼロコンフィグ:</strong> すぐに開発開始</li>
+      <li><strong class="text-orange-500">統合ツールチェーン:</strong> Vite採用</li>
+    </ul>
+  </div>
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="text-3xl mb-3">🏢</div>
+    <h3 class="font-bold text-xl mb-3">エンタープライズ対応</h3>
+    <ul class="space-y-2 text-sm">
+      <li><strong class="text-orange-500">スケーラブル:</strong> マイクロサービス対応</li>
+      <li><strong class="text-orange-500">セキュア:</strong> 組み込みセキュリティ機能</li>
+      <li><strong class="text-orange-500">柔軟:</strong> 様々なデプロイ環境に対応</li>
+    </ul>
+  </div>
+</div>
 
-### 2. サーバーサイドレンダリング（SSR）
+## 📚 学習ロードマップ
 
+<Mermaid diagram={learningFlow} />
+
+### 推奨学習順序
+
+1. **Svelte習得確認** - Svelte 5の基礎知識があるか確認
+   - ない場合 → [📚 Svelte基礎へ](/svelte/)
+2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、データ読み込み
+3. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
+4. **🏗️ アプリ構築編** - 認証・認可、データベース統合、環境変数管理、エラーハンドリング
+5. **⚡ 最適化編** - パフォーマンス最適化、キャッシュ戦略、SEO最適化
+6. **🚀 デプロイ・運用編** - プラットフォーム選定、セキュリティ設定、モニタリング
+7. **🎉 本番運用開始**
+
+## 🔰 基礎編 - SvelteKitの基本を理解
+
+| セクション | 内容 |
+|-----------|------|
+| [概要とアーキテクチャ](/sveltekit/basics/overview/) | フレームワークの全体像 |
+| [プロジェクト構造](/sveltekit/basics/project-structure/) | ファイル構成と規約 |
+| [ルーティング詳解](/sveltekit/basics/routing/) | 動的ルート、レイアウト |
+| [データ読み込み](/sveltekit/basics/load-functions/) | Load関数、ストリーミングSSR |
+
+## ⚙️ サーバーサイド編 - バックエンド機能をマスター
+
+| セクション | 内容 |
+|-----------|------|
+| [サーバーサイド処理](/sveltekit/server-side/) | SSR、サーバー専用コード |
+| [フォーム処理とActions](/sveltekit/basics/forms/) | Progressive Enhancement |
+| [APIルート設計](/sveltekit/api-routes/) | RESTful API構築 |
+| [Hooks](/sveltekit/hooks/) | ミドルウェア実装 |
+
+## 🏗️ アプリケーション構築編 - 実践的な実装
+
+| セクション | 内容 |
+|-----------|------|
+| [認証・認可](/sveltekit/auth/) | Lucia Auth、JWT、OAuth |
+| [データベース統合](/sveltekit/database/) | Prisma、Drizzle ORM |
+| [環境変数管理](/sveltekit/env-variables/) | PUBLIC_変数、秘密情報 |
+| [エラーハンドリング](/sveltekit/error-handling/) | エラーページ、ログ戦略 |
+
+## ⚡ 最適化編 - パフォーマンスを極める
+
+| セクション | 内容 |
+|-----------|------|
+| [パフォーマンス最適化](/sveltekit/performance/) | コード分割、遅延読み込み |
+| [キャッシュ戦略](/sveltekit/caching/) | HTTP、CDN、Service Worker |
+| [SEO最適化](/sveltekit/seo/) | メタタグ、構造化データ |
+
+## 🚀 デプロイ・運用編 - 本番環境へ
+
+| セクション | 内容 |
+|-----------|------|
+| [デプロイメント](/sveltekit/deployment/) | Vercel、Netlify、Node.js |
+| [セキュリティ](/sveltekit/security/) | CSRF、XSS、CSP |
+| [モニタリング](/sveltekit/monitoring/) | Analytics、エラー追跡 |
+
+## 🎓 学習の始め方
+
+### Step 1: 基礎を固める
+まず[概要とアーキテクチャ](/sveltekit/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/project-structure/)でファイル構成を学びます。
+
+### Step 2: コア機能をマスター
+[ルーティング](/sveltekit/routing/)と[データ読み込み](/sveltekit/load-functions/)で、SvelteKitの中核機能を習得します。
+
+### Step 3: 実践的な実装
+[フォーム処理](/sveltekit/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
+
+## 🛠️ 推奨開発環境
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div class="text-3xl mb-3">⚙️</div>
+    <h3 class="font-bold text-lg mb-3">必須ツール</h3>
+    <ul class="space-y-2 text-sm">
+      <li class="flex items-start">
+        <span class="font-semibold text-orange-500 mr-2">Node.js:</span>
+        <span class="text-gray-6 dark:text-gray-4">20.x LTS以上</span>
+      </li>
+      <li class="flex items-start">
+        <span class="font-semibold text-orange-500 mr-2">TypeScript:</span>
+        <span class="text-gray-6 dark:text-gray-4">5.x以上</span>
+      </li>
+      <li class="flex items-start">
+        <span class="font-semibold text-orange-500 mr-2">VS Code:</span>
+        <span class="text-gray-6 dark:text-gray-4">推奨エディタ</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div class="text-3xl mb-3">🔌</div>
+    <h3 class="font-bold text-lg mb-3">推奨拡張機能</h3>
+    <ul class="space-y-2 text-sm text-gray-6 dark:text-gray-4">
+      <li>Svelte for VS Code</li>
+      <li>TypeScript Vue Plugin</li>
+      <li>Prettier - Code formatter</li>
+      <li>ESLint</li>
+      <li>Tailwind CSS IntelliSense</li>
+    </ul>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div class="text-3xl mb-3">🚀</div>
+    <h3 class="font-bold text-lg mb-3">プロジェクト作成</h3>
+    <div class="bg-gray-1 dark:bg-gray-8 rounded p-3 text-xs">
+      <code class="text-orange-500">
+        npm create svelte@latest my-app<br/>
+        cd my-app<br/>
+        npm install<br/>
+        npm run dev
+      </code>
+    </div>
+  </div>
+</div>
+
+## 📖 関連リソース
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div class="text-3xl mb-3">📚</div>
+    <h3 class="font-bold text-lg mb-3">公式ドキュメント</h3>
+    <ul class="space-y-2 text-sm">
+      <li>
+        <a href="https://kit.svelte.dev" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          SvelteKit公式サイト →
+        </a>
+      </li>
+      <li>
+        <a href="https://svelte.dev" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          Svelte公式サイト →
+        </a>
+      </li>
+      <li>
+        <a href="https://kit.svelte.dev/docs" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          SvelteKitドキュメント →
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div class="text-3xl mb-3">👥</div>
+    <h3 class="font-bold text-lg mb-3">コミュニティ</h3>
+    <ul class="space-y-2 text-sm">
+      <li>
+        <a href="https://discord.gg/svelte" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          Discord サーバー →
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sveltejs/kit/discussions" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          GitHub Discussions →
+        </a>
+      </li>
+      <li>
+        <a href="https://www.reddit.com/r/sveltejs/" class="text-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
+          Reddit コミュニティ →
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+## 🏆 実際のプロジェクト例
+
+### SvelteKitで構築されたサービス
+- **Vercel Dashboard**: デプロイ管理ダッシュボード
+- **GitPod**: クラウドベースのIDE
+- **StackBlitz**: オンラインコードエディタ
+- **Svelte公式サイト**: svelte.dev自体もSvelteKit製
+
+### プロジェクトテンプレート
+
+#### 1. ブログサイト（初級）
 ```typescript
 // +page.server.ts
-import type { PageServerLoad } from './$types';
-
 export const load: PageServerLoad = async () => {
-  const posts = await fetchPosts();
-  
-  return {
-    posts
-  };
+  const posts = await getPosts();
+  return { posts };
 };
+
+// +page.svelte
+<script lang="ts">
+  let { data } = $props();
+</script>
+
+{#each data.posts as post}
+  <article>
+    <h2>{post.title}</h2>
+    <p>{post.excerpt}</p>
+  </article>
+{/each}
 ```
 
-### 3. APIルート
+#### 2. ECサイト（中級）
+- Stripeとの決済統合
+- 在庫管理システム
+- ユーザー認証・注文履歴
 
-```typescript
-// +server.ts
-import type { RequestHandler } from './$types';
+#### 3. SaaSダッシュボード（上級）
+- リアルタイムデータ更新
+- マルチテナント対応
+- WebSocket/Server-Sent Events
 
-export const GET: RequestHandler = async () => {
-  const data = await fetchData();
-  
-  return new Response(JSON.stringify(data), {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-};
+## ❓ よくある質問
+
+<div class="space-y-4 my-8">
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <h3 class="font-bold text-lg mb-3 flex items-center">
+      <span class="text-2xl mr-2">Q:</span>
+      A: Next.jsとの違いは？
+    </h3>
+    <div class="space-y-3">
+      <p class="text-gray-7 dark:text-gray-3">主な違いを比較します。</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-28">ビルドサイズ:</span>
+          <span class="text-gray-6 dark:text-gray-4">SvelteKitの方が小さい（40-60%削減）</span>
+        </div>
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-28">パフォーマンス:</span>
+          <span class="text-gray-6 dark:text-gray-4">コンパイル時最適化により高速</span>
+        </div>
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-28">学習曲線:</span>
+          <span class="text-gray-6 dark:text-gray-4">SvelteKitの方がシンプル</span>
+        </div>
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-28">エコシステム:</span>
+          <span class="text-gray-6 dark:text-gray-4">Next.jsの方が成熟</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <h3 class="font-bold text-lg mb-3 flex items-center">
+      <span class="text-2xl mr-2">Q:</span>
+      A: どのデプロイ先がおすすめ？
+    </h3>
+    <div class="space-y-3">
+      <p class="text-gray-7 dark:text-gray-3">用途別の推奨プラットフォーム</p>
+      <div class="space-y-2">
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-32">静的サイト:</span>
+          <span class="text-gray-6 dark:text-gray-4">Netlify、Vercel、Cloudflare Pages</span>
+        </div>
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-32">動的アプリ:</span>
+          <span class="text-gray-6 dark:text-gray-4">Vercel、Railway、Fly.io</span>
+        </div>
+        <div class="flex items-start">
+          <span class="font-semibold text-orange-500 w-32">エンタープライズ:</span>
+          <span class="text-gray-6 dark:text-gray-4">AWS、Google Cloud、Azure</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <h3 class="font-bold text-lg mb-3 flex items-center">
+      <span class="text-2xl mr-2">Q:</span>
+      SEO対策は十分？
+    </h3>
+    <div class="space-y-3">
+      <p class="text-gray-7 dark:text-gray-3 font-semibold">
+        A: はい、完全対応しています。
+      </p>
+      <div class="space-y-2">
+        <div class="flex items-center">
+          <span class="text-green-500 font-bold mr-2">✅</span>
+          <span class="text-gray-6 dark:text-gray-4">SSR/SSGによる事前レンダリング</span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-green-500 font-bold mr-2">✅</span>
+          <span class="text-gray-6 dark:text-gray-4">メタタグの動的生成</span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-green-500 font-bold mr-2">✅</span>
+          <span class="text-gray-6 dark:text-gray-4">構造化データのサポート</span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-green-500 font-bold mr-2">✅</span>
+          <span class="text-gray-6 dark:text-gray-4">サイトマップ自動生成</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <h3 class="font-bold text-lg mb-3 flex items-center">
+      <span class="text-2xl mr-2">Q:</span>
+      大規模プロジェクトに向いている？
+    </h3>
+    <div class="space-y-3">
+      <p class="text-gray-7 dark:text-gray-3 font-semibold">
+        A: 中〜大規模プロジェクトに最適です。
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        <div>
+          <span class="font-semibold text-orange-500">モノレポ対応:</span>
+          <span class="text-gray-6 dark:text-gray-4 ml-2">pnpm workspaces対応</span>
+        </div>
+        <div>
+          <span class="font-semibold text-orange-500">型安全性:</span>
+          <span class="text-gray-6 dark:text-gray-4 ml-2">TypeScript完全統合</span>
+        </div>
+        <div>
+          <span class="font-semibold text-orange-500">テスト:</span>
+          <span class="text-gray-6 dark:text-gray-4 ml-2">Vitest、Playwright統合</span>
+        </div>
+        <div>
+          <span class="font-semibold text-orange-500">CI/CD:</span>
+          <span class="text-gray-6 dark:text-gray-4 ml-2">GitHub Actions、GitLab CI対応</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+## 🔧 開発のベストプラクティス
+
+### プロジェクト構成
+```
+src/
+├── routes/           # ページとAPI
+├── lib/
+│   ├── components/   # 共有コンポーネント
+│   ├── server/       # サーバー専用
+│   └── stores/       # グローバルストア
+├── hooks.server.ts   # ミドルウェア
+└── app.d.ts          # 型定義
 ```
 
-### 4. フォーム処理
+### パフォーマンスチェックリスト
+- [ ] 画像の最適化（@sveltejs/enhanced-img）
+- [ ] コード分割の適切な実装
+- [ ] プリロード・プリフェッチの活用
+- [ ] キャッシュヘッダーの設定
+- [ ] Critical CSSのインライン化
 
-```typescript
-// +page.server.ts
-import type { Actions } from './$types';
+## 🎯 次のステップ
 
-export const actions: Actions = {
-  default: async ({ request }) => {
-    const formData = await request.formData();
-    const email = formData.get('email');
-    
-    // 処理...
-    
-    return { success: true };
-  }
-};
-```
+**基礎から始める方**:
+[概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解
 
-## レンダリングモード
+**すぐに実装したい方**:
+[ルーティング詳解](/sveltekit/basics/routing/)で実践的な実装を開始
 
-- **SSR** - サーバーサイドレンダリング
-- **CSR** - クライアントサイドレンダリング
-- **SSG** - 静的サイト生成
-- **ISR** - インクリメンタル静的再生成
+**特定の機能を学びたい方**:
+上記の学習ロードマップから必要なセクションを選択
 
-## 学習内容
+**Svelteから来た方**:
+[プロジェクト構造](/sveltekit/basics/project-structure/)でファイル規約を理解
 
-1. [ルーティング](/sveltekit/routing/) - ファイルベースルーティング
-2. [Load関数](/sveltekit/load-functions/) - データ読み込み
-3. [サーバーサイド処理](/sveltekit/server-side/) - SSRとAPI
-4. [フォーム処理](/sveltekit/forms/) - Progressive Enhancement
-5. [APIルート](/sveltekit/api-routes/) - RESTful API構築
-6. [デプロイメント](/sveltekit/deployment/) - 本番環境へのデプロイ
+---
 
-## 次のステップ
+:::tip[学習のコツ]
+SvelteKitは「規約重視」のフレームワークです。まずファイル構造と命名規約を理解することが、効率的な学習の鍵となります。
+:::
 
-[ルーティング](/sveltekit/routing/)から、SvelteKitの基本を学び始めましょう。
+:::info[TypeScript推奨]
+このガイドは全てTypeScriptで記述されています。型安全性を最大限活用することで、エンタープライズレベルの堅牢なアプリケーションが構築できます。
+:::
+
+:::warning[Svelte 5前提]
+このガイドはSvelte 5とSvelteKit 2.x以降を前提としています。古いバージョンを使用している場合は、まず[Svelte 5完全ガイド](/svelte/)で最新のRunesシステムを学習してください。
+:::

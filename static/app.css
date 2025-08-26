@@ -17,6 +17,65 @@
   }
 }
 
+/* サイドバーの幅を拡張 */
+/* UnoCSS/Tailwindクラスを直接上書き */
+
+/* 1024px以上（lg） */
+@media (min-width: 1024px) {
+  /* w-50 = 200px を 280px に拡張 */
+  .lg\:block.w-50 {
+    width: 280px !important;
+  }
+  
+  /* pl-50 = padding-left: 200px を 280px に拡張 */
+  .lg\:pl-50 {
+    padding-left: 280px !important;
+  }
+}
+
+/* 1280px以上（xl） */
+@media (min-width: 1280px) {
+  /* サイドバーを 320px に拡張 */
+  .lg\:block.w-50 {
+    width: 320px !important;
+  }
+  
+  /* コンテンツエリアのパディングも調整 */
+  .lg\:pl-50 {
+    padding-left: 320px !important;
+  }
+}
+
+/* 1536px以上（2xl） */
+@media (min-width: 1536px) {
+  /* サイドバーを 350px に拡張 */
+  .lg\:block.w-50 {
+    width: 350px !important;
+  }
+  
+  /* コンテンツエリアのパディングも調整 */
+  .lg\:pl-50 {
+    padding-left: 350px !important;
+  }
+}
+
+/* サイドバー内のテキストの調整 */
+.sidebar-item,
+aside li {
+  max-width: 100%;
+}
+
+/* ネストされたアイテムのパディングを少し減らす */
+aside ul ul {
+  padding-left: 0.875rem;
+}
+
+/* サイドバーアイテムのホバー効果エリアを拡張 */
+aside a {
+  display: block;
+  width: 100%;
+}
+
 /* @media (max-width: 768px) {
   .logo-container .title {
     font-size: 2rem !important;

@@ -55,72 +55,83 @@ src/routes/
 ├── introduction/
 │   ├── +page.md                  # Svelte5の概要
 │   ├── why-svelte/+page.md       # なぜSvelteか
+│   ├── why-typescript/+page.md   # なぜTypeScriptが必要か
 │   ├── setup/+page.md            # 環境構築
+│   ├── hello-world/+page.md      # Hello World
 │   ├── typescript-setup/+page.md # TypeScript設定
-│   └── learning-path/            # 学習パス（新規）
+│   └── learning-path/+page.md    # 学習パス
 ```
 
-### 第2部：Svelteの基本
+### 第2部：Svelte編
 ```
-├── svelte-basics/
-│   ├── +page.md                     # Svelteの基本概要
-│   ├── hello-world/+page.md         # Hello World
-│   ├── component-basics/+page.md    # コンポーネントの基本
-│   ├── template-syntax/+page.md     # テンプレート構文
-│   ├── typescript-integration/+page.md # TypeScript統合
-│   ├── actions/+page.md             # Actions
-│   └── transitions/+page.md        # トランジション・アニメーション
-```
-
-### 第3部：Runesシステム（基本編）
-```
-├── runes-basics/                 # Runes基礎編
-│   ├── +page.md                  # Runes基礎概要
-│   ├── state/+page.md            # $stateルーン
-│   ├── derived/+page.md          # $derivedルーン
-│   ├── effect/+page.md           # $effectルーン
-│   └── comparison/+page.md       # 他フレームワークとの比較
-```
-
-### 第4部：Runesシステム（応用編）
-```
-├── runes/
-│   ├── +page.md                  # Runesシステム概要
-│   ├── runes-introduction/+page.md # Runesシステム入門
-│   ├── state/+page.md            # $state詳細
-│   ├── derived/+page.md          # $derived詳細
-│   ├── effect/+page.md           # $effect詳細
-│   ├── props/+page.md            # $propsルーン
-│   ├── bindable/+page.md         # $bindableルーン
-│   └── inspect/+page.md          # $inspectルーン
-```
-
-### 第5部：実践編
-```
-├── advanced/
-│   ├── +page.md                  # 実践概要
-│   ├── reactive-stores/+page.md  # .svelte.js/.svelte.tsファイル
-│   ├── class-reactivity/+page.md # クラスとリアクティビティ
-│   ├── built-in-classes/+page.md # 組み込みリアクティブクラス
-│   ├── snippets/+page.md         # Snippets機能
-│   ├── component-patterns/+page.md # コンポーネントパターン
-│   ├── typescript-patterns/+page.md # TypeScriptパターン
-│   └── script-context/+page.md   # スクリプトコンテキスト
+├── svelte/
+│   ├── +page.md                  # Svelte完全ガイド（ランディングページ）
+│   ├── basics/                   # Svelteの基本
+│   │   ├── +page.md             # Svelteの基本概要
+│   │   ├── component-basics/+page.md    # コンポーネントの基本
+│   │   ├── template-syntax/+page.md     # テンプレート構文
+│   │   ├── component-lifecycle/+page.md # コンポーネントライフサイクル
+│   │   ├── actions/+page.md            # use:アクション
+│   │   ├── transitions/+page.md        # トランジション・アニメーション
+│   │   ├── typescript-integration/+page.md # TypeScript統合
+│   │   └── hello-world/+page.md        # Hello World（基本例）
+│   ├── runes/                    # Runesシステム
+│   │   ├── +page.md             # Runesシステム概要
+│   │   ├── runes-introduction/+page.md # Runesシステム入門
+│   │   ├── state/+page.md      # $state - リアクティブな状態
+│   │   ├── derived/+page.md    # $derived - 派生値
+│   │   ├── effect/+page.md     # $effect - 副作用
+│   │   ├── props/+page.md      # $props - プロパティ
+│   │   ├── bindable/+page.md   # $bindable - 双方向バインディング
+│   │   ├── host/+page.md        # $host - カスタムエレメント
+│   │   ├── inspect/+page.md    # $inspect - デバッグ
+│   │   └── comparison/+page.md # 他フレームワークとの比較
+│   └── advanced/                 # 実践編
+│       ├── +page.md             # 実践概要
+│       ├── reactive-stores/+page.md     # リアクティブストア
+│       ├── class-reactivity/+page.md    # クラスとリアクティビティ
+│       ├── built-in-classes/+page.md    # 組み込みリアクティブクラス
+│       ├── snippets/+page.md            # Snippets機能
+│       ├── script-context/+page.md      # スクリプトコンテキスト
+│       ├── component-patterns/+page.md  # コンポーネントパターン
+│       └── typescript-patterns/+page.md # TypeScriptパターン
 ```
 
-### 第6部：SvelteKit編
+### 第3部：SvelteKit編
 ```
 ├── sveltekit/
-│   ├── +page.md                  # SvelteKit概要
-│   ├── routing/+page.md          # ルーティング
-│   ├── load-functions/+page.md  # Load関数
-│   ├── server-side/+page.md     # サーバーサイド処理
-│   ├── forms/+page.md            # フォーム処理
-│   ├── api-routes/+page.md      # APIルート
-│   └── deployment/+page.md      # デプロイメント
+│   ├── +page.md                  # SvelteKit完全ガイド（ランディングページ）
+│   ├── basics/                   # 基礎編
+│   │   ├── +page.md             # 基礎編概要
+│   │   ├── overview/+page.md    # 概要とアーキテクチャ ✅完成
+│   │   ├── project-structure/+page.md # プロジェクト構造 ✅完成
+│   │   ├── routing/+page.md     # ルーティング詳解 ✅完成
+│   │   └── load-functions/+page.md # データ読み込み ✅完成
+│   ├── server/                   # サーバーサイド編
+│   │   ├── +page.md             # サーバーサイド編概要
+│   │   ├── forms/+page.md       # フォーム処理とActions ✅完成
+│   │   ├── server-side/+page.md # サーバーサイド処理（準備中）
+│   │   ├── api-routes/+page.md  # APIルート設計（準備中）
+│   │   └── hooks/+page.md       # Hooks（準備中）
+│   ├── application/              # アプリケーション構築編
+│   │   ├── +page.md             # アプリケーション構築編概要
+│   │   ├── authentication/+page.md # 認証・認可（準備中）
+│   │   ├── database/+page.md    # データベース統合（準備中）
+│   │   ├── environment/+page.md # 環境変数管理（準備中）
+│   │   └── error-handling/+page.md # エラーハンドリング（準備中）
+│   ├── optimization/             # 最適化編
+│   │   ├── +page.md             # 最適化編概要
+│   │   ├── performance/+page.md # パフォーマンス最適化（準備中）
+│   │   ├── caching/+page.md     # キャッシュ戦略（準備中）
+│   │   └── seo/+page.md         # SEO最適化（準備中）
+│   └── deployment/               # デプロイ・運用編
+│       ├── +page.md             # デプロイ・運用編概要
+│       ├── platforms/+page.md   # プラットフォーム別デプロイ ✅完成
+│       ├── security/+page.md    # セキュリティ（準備中）
+│       └── monitoring/+page.md  # モニタリング（準備中）
 ```
 
-### 第7部：実装例
+### 第4部：実装例
 ```
 ├── examples/
 │   ├── +page.md                  # 実装例一覧
@@ -128,20 +139,30 @@ src/routes/
 │   ├── auth-system/+page.md     # 認証システム
 │   ├── data-fetching/+page.md   # データフェッチング
 │   ├── websocket/+page.md       # WebSocket実装
-│   ├── mermaid-demo/+page.md    # Mermaidデモ
-│   └── features-demo/+page.md   # 機能デモ
+│   └── mermaid-ssr-demo/+page.md # Mermaid SSRデモ
 ```
 
-### 第8部：ディープダイブ（技術詳細）
+### 第5部：技術詳解（ディープダイブ）
 ```
 ├── deep-dive/
-│   ├── state-use-proxy-object/+page.md     # Proxyオブジェクト活用
+│   ├── compile-time-optimization/+page.md      # コンパイル時最適化
 │   ├── reactive-state-variables-vs-bindings/+page.md # リアクティブ状態とバインディング
-│   ├── state-raw-vs-state/+page.md         # $state.raw vs $state
-│   ├── derived-vs-effect-vs-derived-by/+page.md # 派生値の違い
-│   ├── compile-time-optimization/+page.md  # コンパイル時最適化
-│   ├── html-templates-and-snippets/+page.md # HTMLテンプレートとSnippets
-│   └── custom-elements-vs-svelte-components/+page.md # カスタム要素とSvelteコンポーネント
+│   ├── derived-vs-effect-vs-derived-by/+page.md # 派生値の完全比較
+│   ├── html-templates-and-snippets/+page.md    # HTMLテンプレートとSnippets
+│   ├── reactivity-with-plain-javascript-syntax/+page.md # 素のJS構文でリアクティビティ
+│   └── auto-generated-types/+page.md           # SvelteKitが自動生成する型
+```
+
+### その他のページ
+```
+├── about/+page.md                # このサイトについて
+├── search/+page.md               # 検索ページ
+├── docs/+page.md                 # ドキュメント
+├── blog/                         # ブログ（準備中）
+└── _archive/                     # アーカイブ（非公開）
+    └── examples/
+        ├── mermaid-demo/         # Mermaidデモ（テスト用）
+        └── features-demo/        # 機能デモ（テスト用）
 ```
 
 ## 🔄 移行計画と変更履歴

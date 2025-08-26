@@ -547,5 +547,5 @@ type Check = typeof value;  // number
 プロジェクトの設定が完了したら、次はSvelteコンポーネントでTypeScriptを使う方法を学びましょう。
 
 - [なぜTypeScriptが必要か](/introduction/why-typescript/) - TypeScriptの重要性を理解
-- [TypeScript統合](/svelte-basics/typescript-integration/) - SvelteコンポーネントでのTypeScriptの使い方
-- [TypeScriptパターン](/advanced/typescript-patterns/) - 高度な型定義パターンとベストプラクティス
+- [TypeScript統合](/svelte/basics/typescript-integration/) - SvelteコンポーネントでのTypeScriptの使い方
+- [TypeScriptパターン](/svelte/advanced/typescript-patterns/) - 高度な型定義パターンとベストプラクティス

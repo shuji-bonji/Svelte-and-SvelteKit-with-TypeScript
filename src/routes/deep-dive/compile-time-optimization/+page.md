@@ -7,7 +7,7 @@ description: Svelteが行う、コンパイル時最適化 について詳しく
   import Mermaid from '$lib/components/Mermaid.svelte';
   const svelteCompiler = `graph LR
     A["Svelteコンポーネント .svelte"] --> B["コンパイラ svelte/compiler"]
-    B --> C["最適化されたJS バニラJavaScript"]
+    B --> C["最適化されたJS Vanilla JavaScript"]
     C --> D["ブラウザ実行 フレームワークなし"]
     
     style A fill:#ff6b6b

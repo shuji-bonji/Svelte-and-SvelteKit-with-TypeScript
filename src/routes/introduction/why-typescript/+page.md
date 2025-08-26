@@ -301,5 +301,5 @@ TypeScriptを導入することで、より堅牢で保守しやすいSvelteア�
 TypeScriptの重要性を理解したら、次は実際にプロジェクトをセットアップしましょう。
 
 - [TypeScript設定](/introduction/typescript-setup/) - プロジェクトのセットアップとtsconfig.jsonの設定
-- [TypeScript統合](/svelte-basics/typescript-integration/) - SvelteコンポーネントでのTypeScriptの使い方
-- [TypeScriptパターン](/advanced/typescript-patterns/) - 高度な型定義パターンとベストプラクティス
+- [TypeScript統合](/svelte/basics/typescript-integration/) - SvelteコンポーネントでのTypeScriptの使い方
+- [TypeScriptパターン](/svelte/advanced/typescript-patterns/) - 高度な型定義パターンとベストプラクティス

@@ -197,7 +197,7 @@ const config = defineConfig({
                   items: [
                     { title: '基礎編概要', to: '/sveltekit/basics/' },
                     {
-                      title: '概要とアーキテクチャ',
+                      title: 'SvelteKit概要',
                       to: '/sveltekit/basics/overview/',
                     },
                     {
@@ -211,6 +211,33 @@ const config = defineConfig({
                     {
                       title: 'データ読み込み',
                       to: '/sveltekit/basics/load-functions/',
+                    },
+                  ],
+                },
+                {
+                  title: 'アーキテクチャ詳解',
+                  to: '/sveltekit/architecture/',
+                  collapsible: true,
+                  items: [
+                    {
+                      title: 'アーキテクチャ概要',
+                      to: '/sveltekit/architecture/',
+                    },
+                    {
+                      title: '実行環境別アーキテクチャ',
+                      to: '/sveltekit/architecture/execution-environments/',
+                    },
+                    {
+                      title: 'ファイル構成と実行環境',
+                      to: '/sveltekit/architecture/file-structure/',
+                    },
+                    {
+                      title: 'データロードフロー',
+                      to: '/sveltekit/architecture/data-loading/',
+                    },
+                    {
+                      title: 'レンダリングパイプライン',
+                      to: '/sveltekit/architecture/rendering-pipeline/',
                     },
                   ],
                 },

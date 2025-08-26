@@ -1,6 +1,6 @@
 ---
-title: SvelteKit概要とアーキテクチャ
-description: SvelteKitの全体像を理解する - フルスタックフレームワークの設計思想からアーキテクチャまで
+title: SvelteKit概要
+description: SvelteKitの全体像を理解する - フルスタックフレームワークの基本概念と特徴
 ---
 
 <script>
@@ -25,55 +25,26 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     
     style SvelteKit fill:#ff3e00,color:#fff`;
 
-  const renderingPipelineDiagram = `graph LR
-    subgraph "ビルド時"
-        Source["ソースコード<br/>(.svelte, .ts)"] 
-        --> Compile["Svelteコンパイラ"]
-        --> Bundle["Viteバンドル"]
-    end
+  const basicFlowDiagram = `graph LR
+    Dev["開発者がコードを書く"]
+    Build["SvelteKitがビルド"]
+    Server["サーバーでHTML生成"]
+    Browser["ブラウザで表示"]
     
-    subgraph "実行時"
-        Bundle --> SSR["サーバーサイド<br/>レンダリング"]
-        SSR --> HTML["HTML生成"]
-        HTML --> Hydration["ハイドレーション"]
-        Hydration --> SPA["SPAモード"]
-    end
+    Dev --> Build
+    Build --> Server
+    Server --> Browser
     
-    style Compile fill:#ff3e00,color:#fff
-    style SSR fill:#40b3ff,color:#fff`;
+    style Dev fill:#ff3e00,color:#fff
+    style Build fill:#40b3ff,color:#fff
+    style Server fill:#4CAF50,color:#fff
+    style Browser fill:#FF9800,color:#fff`;
 
-  const dataFlowDiagram = `sequenceDiagram
-    participant Browser
-    participant Server
-    participant Database
-    
-    Browser->>Server: ページリクエスト
-    
-    rect rgba(255, 62, 0, 0.1)
-        Note over Server: +layout.server.ts
-        Server->>Database: データ取得
-        Database-->>Server: レイアウトデータ
-    end
-    
-    rect rgba(64, 179, 255, 0.1)
-        Note over Server: +page.server.ts
-        Server->>Database: ページデータ取得
-        Database-->>Server: ページデータ
-    end
-    
-    Server->>Server: HTML生成（SSR）
-    Server-->>Browser: HTML + データ
-    
-    rect rgba(76, 175, 80, 0.1)
-        Note over Browser: ハイドレーション
-        Browser->>Browser: イベントリスナー登録
-        Browser->>Browser: SPAモード開始
-    end`;
 
   const progressiveEnhancementDiagram = `graph TB
-    HTML["1. HTML<br/>基本機能"]
-    CSS["2. CSS<br/>見た目の改善"]
-    JS["3. JavaScript<br/>インタラクティブ性"]
+    HTML[1.HTML<br/>基本機能]
+    CSS["2.CSS<br/>見た目の改善"]
+    JS["3.JavaScript<br/>インタラクティブ性"]
     
     HTML --> CSS
     CSS --> JS
@@ -90,7 +61,7 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     style CSS fill:#2196F3,color:#fff
     style JS fill:#FF9800,color:#fff`;
 
-  const bundleSizeDiagram = `graph BH
+  const bundleSizeDiagram = `graph BT
     subgraph "初期バンドルサイズ"
         Next["Next.js<br/>~70KB"]
         Nuxt["Nuxt<br/>~65KB"]
@@ -100,22 +71,37 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     style SvelteKit fill:#4CAF50,color:#fff
     style Next fill:#ff6b6b
     style Nuxt fill:#ffa94d`;
+
+  const adapterChoiceFlow = `flowchart TD
+    Q1(SSRやAPIを使いたい？) -->|Yes| Q2(どこにホスティングする？)
+    Q1 -->|No（静的サイトでOK）| A1[✅ adapter-static]
+
+    Q2 --> Q2A[自前Node.js環境がある？]
+    Q2A -->|Yes| A2[✅ adapter-node]
+    Q2A -->|No| Q2B[どのサービス？]
+
+    Q2B -->|Vercel| A3[✅ adapter-vercel]
+    Q2B -->|Netlify| A4[✅ adapter-netlify]
+    Q2B -->|Cloudflare Pages| A5[✅ adapter-cloudflare]
+    Q2B -->|その他のサーバレス| A6[✅ adapter-auto（推奨）]`;
 </script>
 
----
-title: SvelteKit概要とアーキテクチャ
-description: SvelteKitの全体像を理解する - フルスタックフレームワークの設計思想からアーキテクチャまで
----
 
-SvelteKitは、Svelteを基盤とした**フルスタックWebアプリケーションフレームワーク**です。Next.js（React）やNuxt（Vue）に相当する位置づけでありながら、より軽量で高速、そして開発者体験に優れた設計となっています。このページでは、SvelteKitの全体像とアーキテクチャを詳しく解説します。
+SvelteKitは、Svelteを基盤とした**フルスタックWebアプリケーションフレームワーク**です。このページでは、SvelteKitの全体像と基本的な概念を理解します。
 
 ## SvelteKitとは何か
 
+Svelteをベースにしたフルスタックフレームワークで、サーバーサイド機能とクライアントサイド機能を統合し、モダンなWebアプリケーションを効率的に構築できます。
+
 ### フレームワークの位置づけ
+
+Next.js（React）やNuxt（Vue）に相当する位置づけでありながら、より軽量で高速、そして開発者体験に優れた設計となっています。
 
 <Mermaid diagram={frameworkPositionDiagram} />
 
 ### 主要な特徴
+
+SvelteKitは開発効率とパフォーマンスを両立させる多くの機能を標準で提供しています。
 
 | 特徴 | 説明 |
 |------|------|
@@ -127,43 +113,33 @@ SvelteKitは、Svelteを基盤とした**フルスタックWebアプリケーシ
 | **型安全性** | TypeScriptによる完全な型サポート |
 | **ゼロコンフィグ** | 設定なしですぐに開発開始可能 |
 
-## アーキテクチャ概要
+## 基本的な仕組み
 
-### レンダリングパイプライン
+SvelteKitがどのように動作するか、基本的な流れを理解しましょう。
 
-<Mermaid diagram={renderingPipelineDiagram} />
+### 基本的な動作フロー
 
-### コンポーネントアーキテクチャ
+SvelteKitがどのように動作するか、シンプルな流れで理解しましょう。
 
-```typescript
-// SvelteKitのコンポーネント階層
-interface SvelteKitArchitecture {
-  app: {
-    layout: {                    // +layout.svelte
-      page: Component            // +page.svelte
-      error: ErrorComponent      // +error.svelte
-    }
-  }
-  
-  server: {
-    hooks: Handle               // hooks.server.ts
-    load: ServerLoad           // +page.server.ts
-    actions: Actions           // +page.server.ts
-    api: RequestHandler        // +server.ts
-  }
-  
-  universal: {
-    load: UniversalLoad       // +page.ts
-    layout: LayoutLoad        // +layout.ts
-  }
-}
-```
+<Mermaid diagram={basicFlowDiagram} />
+
+**主な処理の流れ**
+1. 開発者がSvelteコンポーネントとTypeScriptでコードを書く
+2. SvelteKitがコードをコンパイル・最適化
+3. サーバーでHTMLを生成（SSR）またはビルド時に生成（SSG）
+4. ブラウザで高速に表示され、その後インタラクティブ化
+
+:::info[ファイル構造について]
+SvelteKitの特殊なファイル命名規則については、[プロジェクト構造](/sveltekit/basics/project-structure/)のページで詳しく解説しています。
+:::
 
 ## レンダリングモード
 
 SvelteKitは複数のレンダリングモードを柔軟に組み合わせることができます。
 
 ### 1. サーバーサイドレンダリング（SSR）
+
+サーバー側でHTMLを生成することで、SEO対応と初期表示の高速化を実現します。
 
 ```typescript
 // +page.ts
@@ -176,6 +152,8 @@ export const ssr = true; // デフォルト
 ```
 
 ### 2. クライアントサイドレンダリング（CSR）
+
+SPAとして動作し、クライアント側で動的にコンテンツを生成・更新します。
 
 ```typescript
 // +page.ts
@@ -190,6 +168,8 @@ export const csr = true;
 
 ### 3. 静的サイト生成（SSG）
 
+ビルド時にHTMLを事前生成し、CDNから配信することで最高のパフォーマンスを実現します。
+
 ```typescript
 // +page.ts
 export const prerender = true;
@@ -201,6 +181,8 @@ export const prerender = true;
 ```
 
 ### 4. ハイブリッドレンダリング
+
+ページごとに最適なレンダリング方式を選択し、パフォーマンスとユーザー体験を最大化します。
 
 ```typescript
 // 各ページで個別に設定可能
@@ -214,55 +196,49 @@ export const ssr = true;
 export const ssr = false;
 ```
 
-## データフローアーキテクチャ
+## データの流れ
 
-### Load関数の実行フロー
+SvelteKitでは、Load関数を使ってデータを取得します。
 
-<Mermaid diagram={dataFlowDiagram} />
-
-### データの流れ
+### シンプルな例
 
 ```typescript
-// 1. サーバーサイドLoad（+page.server.ts）
-export const load: PageServerLoad = async ({ cookies, locals }) => {
-  // データベースアクセス
-  // 秘密情報の扱い
-  // Cookieの読み取り
-  const user = await db.user.findUnique({
-    where: { id: locals.userId }
-  });
-  
+// +page.server.ts
+export async function load() {
+  // サーバーでデータを取得
+  const posts = await fetchPostsFromDB();
   return {
-    user // Dateオブジェクトも可
+    posts
   };
-};
-
-// 2. ユニバーサルLoad（+page.ts）
-export const load: PageLoad = async ({ data, fetch }) => {
-  // data: サーバーLoadの結果
-  // 追加のAPI呼び出し
-  const posts = await fetch('/api/posts').then(r => r.json());
-  
-  return {
-    ...data,
-    posts // シリアライズ可能な値のみ
-  };
-};
-
-// 3. コンポーネント（+page.svelte）
-<script lang="ts">
-  import type { PageData } from './$types';
-  
-  export let data: PageData;
-  // data.user と data.posts が利用可能
-</script>
+}
 ```
+
+```svelte
+<!-- +page.svelte -->
+<script lang="ts">
+  // Load関数のデータを受け取る
+  export let data;
+</script>
+
+<h1>投稿一覧</h1>
+{#each data.posts as post}
+  <article>{post.title}</article>
+{/each}
+```
+
+このシンプルなパターンで、サーバーサイドでデータを取得し、コンポーネントで表示できます。
+
+:::info[詳細なデータフロー]
+Load関数の詳細や、より複雑なデータフローについては、[データ読み込み](/sveltekit/basics/load-functions/)のページで解説しています。
+:::
 
 ## プログレッシブエンハンスメント
 
 SvelteKitの設計思想の中核：**JavaScriptが無効でも動作する**
 
 ### フォーム処理の例
+
+JavaScriptの有無に関わらず動作するフォーム実装により、アクセシビリティと信頼性を確保します。
 
 ```svelte
 <!-- JavaScript無効時：通常のフォーム送信 -->
@@ -275,9 +251,13 @@ SvelteKitの設計思想の中核：**JavaScriptが無効でも動作する**
 
 ### 段階的な機能強化
 
+HTML、CSS、JavaScriptの順に機能を追加し、すべてのユーザーに適切な体験を提供します。
+
 <Mermaid diagram={progressiveEnhancementDiagram} />
 
 ## ビルドとデプロイメント
+
+アダプターシステムにより、様々なプラットフォームへの柔軟なデプロイが可能です。
 
 ### アダプターシステム
 
@@ -297,18 +277,26 @@ export default {
 };
 ```
 
-### デプロイメントターゲット
+### アダプター選定ガイド
 
-| プラットフォーム | アダプター | 特徴 |
-|-----------------|-----------|------|
-| **Vercel** | `@sveltejs/adapter-vercel` | エッジファンクション対応 |
-| **Netlify** | `@sveltejs/adapter-netlify` | 自動デプロイ |
-| **Node.js** | `@sveltejs/adapter-node` | 従来型サーバー |
-| **静的ホスティング** | `@sveltejs/adapter-static` | GitHub Pages等 |
-| **Cloudflare** | `@sveltejs/adapter-cloudflare` | Workers/Pages |
-| **AWS** | コミュニティアダプター | Lambda/Amplify |
+<Mermaid diagram={adapterChoiceFlow} />
+
+### デプロイメントターゲット一覧
+
+各プラットフォームに最適化されたアダプターを選択することで、最高のパフォーマンスを実現します。
+
+| アダプター | プラットフォーム | 特徴 | 用途例 |
+|-----------|-----------------|------|--------|
+| **`adapter-static`** | GitHub Pages, Netlify (静的) | 静的HTML/JS/CSSで完結 | ブログ、LP、ドキュメントサイト |
+| **`adapter-node`** | Node.js サーバー | 従来型サーバーで稼働 | VPS、EC2、Firebase Hosting with Functions |
+| **`adapter-vercel`** | Vercel | エッジファンクション対応 | Vercel公式推奨、エッジ最適化 |
+| **`adapter-netlify`** | Netlify | 自動デプロイ、専用機能対応 | Netlify Forms、Redirects活用 |
+| **`adapter-cloudflare`** | Cloudflare Pages | Workers/Pages向け最適化 | Edge Functions環境 |
+| **`adapter-auto`** | 汎用 | 多くの環境で自動選択 | 開発中の自動判別や汎用利用 |
 
 ## パフォーマンス最適化
+
+SvelteKitは多くの最適化を自動で行い、高速なWebアプリケーションを実現します。
 
 ### 自動最適化機能
 
@@ -334,11 +322,17 @@ SvelteKitが自動的に行う最適化
 
 ### バンドルサイズの比較
 
+他のフレームワークと比較して、SvelteKitは最小のバンドルサイズを実現しています。
+
 <Mermaid diagram={bundleSizeDiagram} />
 
 ## 開発者体験（DX）
 
+型安全性、HMR、デバッグツールなど、開発効率を最大化する機能が充実しています。
+
 ### 型安全性
+
+自動生成される型定義により、TypeScriptの恩恵を最大限に活用できます。
 
 ```typescript
 // 自動生成される型定義
@@ -351,6 +345,8 @@ import type { ActionData } from './$types';
 
 ### ホットモジュールリロード（HMR）
 
+変更を即座に反映し、開発中の状態を保持したまま更新できます。
+
 ```bash
 # 開発サーバー起動
 npm run dev
@@ -362,6 +358,8 @@ npm run dev
 ```
 
 ### デバッグツール
+
+$inspectルーンや開発環境専用の機能により、効率的なデバッグが可能です。
 
 ```typescript
 // $inspectルーンでデバッグ
@@ -377,7 +375,11 @@ if (dev) {
 
 ## 実世界での利用例
 
+SvelteKitは様々な種類のWebアプリケーションに適していますが、特に得意とする分野があります。
+
 ### 適したユースケース
+
+コンテンツサイト、Eコマース、ダッシュボードなど、多様な用途で活用されています。
 
 ✅ **最適な用途**
 - コンテンツサイト（ブログ、ドキュメント）
@@ -393,7 +395,11 @@ if (dev) {
 
 ## 他のフレームワークとの比較
 
+Next.js、Nuxt、Remixなどの主要フレームワークと比較した際のSvelteKitの特徴を理解しましょう。
+
 ### 主要メトリクス比較
+
+バンドルサイズ、ビルド速度、学習曲線など、重要な指標で優れた結果を示しています。
 
 | 項目 | SvelteKit | Next.js | Nuxt | Remix |
 |------|-----------|---------|------|--------|
@@ -413,7 +419,11 @@ if (dev) {
 
 ## セキュリティ機能
 
+CSRF保護、XSS対策、CSPヘッダーなど、Webアプリケーションのセキュリティを標準で提供します。
+
 ### 組み込みのセキュリティ対策
+
+追加設定なしで基本的なセキュリティ対策が有効になり、安全なアプリケーションを構築できます。
 
 ```typescript
 // CSRF保護
@@ -438,7 +448,11 @@ export default {
 
 ## エコシステムと統合
 
+豊富なライブラリとツールとの統合により、複雑な要件にも対応可能です。
+
 ### 主要なツール・ライブラリ
+
+状態管理、フォーム処理、認証、データベース連携など、必要な機能を簡単に追加できます。
 
 ```typescript
 // 状態管理
@@ -460,6 +474,8 @@ import { expect, test } from '@playwright/test';
 
 ## まとめ
 
+SvelteKitは現代的なWebアプリケーション開発に必要なすべてを提供する、完成度の高いフレームワークです。
+
 SvelteKitは、
 - **モダン**: 最新のWeb標準に準拠
 - **高速**: コンパイル時最適化による高パフォーマンス
@@ -467,10 +483,10 @@ SvelteKitは、
 - **堅牢**: プログレッシブエンハンスメント
 - **生産的**: 優れた開発者体験
 
-:::info[アーキテクチャの詳細]
-より詳しいアーキテクチャの理解には、[プロジェクト構造](/sveltekit/project-structure/)のページで、実際のファイル構成と役割を学びましょう。
+:::tip[次に学ぶこと]
+基本を理解したら、[プロジェクト構造](/sveltekit/basics/project-structure/)のページで、実際のファイル構成と規約を詳しく学びましょう。
 :::
 
 ## 次のステップ
 
-[プロジェクト構造](/sveltekit/project-structure/)で、SvelteKitプロジェクトのファイル構成と各ファイルの役割について詳しく学びましょう。
+[プロジェクト構造](/sveltekit/basics/project-structure/)で、SvelteKitプロジェクトのファイル構成と各ファイルの役割について詳しく学びましょう。

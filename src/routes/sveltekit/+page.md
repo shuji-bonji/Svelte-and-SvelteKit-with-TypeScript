@@ -4,6 +4,7 @@ description: エンタープライズ対応のフルスタックフレームワ�
 ---
 
 <script>
+  import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const learningFlow = `flowchart LR
@@ -84,56 +85,256 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 ### 推奨学習順序
 
 1. **Svelte習得確認** - Svelte 5の基礎知識があるか確認
-   - ない場合 → [📚 Svelte基礎へ](/svelte/)
+   - ない場合 → [📚 Svelte基礎へ]({base}/svelte/)
 2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、データ読み込み
-3. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
-4. **🏗️ アプリ構築編** - 認証・認可、データベース統合、環境変数管理、エラーハンドリング
-5. **⚡ 最適化編** - パフォーマンス最適化、キャッシュ戦略、SEO最適化
-6. **🚀 デプロイ・運用編** - プラットフォーム選定、セキュリティ設定、モニタリング
-7. **🎉 本番運用開始**
+3. **🏛️ アーキテクチャ詳解** - 実行環境、ファイル構成、データフロー、レンダリングパイプライン
+4. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
+5. **🏗️ アプリ構築編** - 認証・認可、データベース統合、環境変数管理、エラーハンドリング
+6. **⚡ 最適化編** - パフォーマンス最適化、キャッシュ戦略、SEO最適化
+7. **🚀 デプロイ・運用編** - プラットフォーム選定、セキュリティ設定、モニタリング
+8. **🎉 本番運用開始**
 
-## 🔰 基礎編 - SvelteKitの基本を理解
+## 📖 学習コンテンツ
 
-| セクション | 内容 |
-|-----------|------|
-| [概要とアーキテクチャ](/sveltekit/basics/overview/) | フレームワークの全体像 |
-| [プロジェクト構造](/sveltekit/basics/project-structure/) | ファイル構成と規約 |
-| [ルーティング詳解](/sveltekit/basics/routing/) | 動的ルート、レイアウト |
-| [データ読み込み](/sveltekit/basics/load-functions/) | Load関数、ストリーミングSSR |
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <!-- 基礎編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🔰</span>
+      <h3 class="font-bold text-xl">基礎編 - SvelteKitの基本を理解</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/overview/" class="text-blue-600 dark:text-blue-400 hover:underline">SvelteKit概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">フレームワークの全体像</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/project-structure/" class="text-blue-600 dark:text-blue-400 hover:underline">プロジェクト構造</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ファイル構成と規約</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/routing/" class="text-blue-600 dark:text-blue-400 hover:underline">ルーティング詳解</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">動的ルート、レイアウト</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/load-functions/" class="text-blue-600 dark:text-blue-400 hover:underline">データ読み込み</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Load関数、ストリーミングSSR</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/basics/" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-## ⚙️ サーバーサイド編 - バックエンド機能をマスター
+  <!-- アーキテクチャ詳解カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🏛️</span>
+      <h3 class="font-bold text-xl">アーキテクチャ詳解 - 内部動作を深く理解</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/execution-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境別アーキテクチャ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SSR/SSG/SPAの詳細な動作</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/file-structure/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイル構成と実行環境</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">各ファイルの役割と実行場所</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/data-loading/" class="text-indigo-600 dark:text-indigo-400 hover:underline">データロードフロー</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Load関数の実行順序とデータの流れ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/rendering-pipeline/" class="text-indigo-600 dark:text-indigo-400 hover:underline">レンダリングパイプライン</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">コンパイルから実行までの詳細</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/architecture/" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-| セクション | 内容 |
-|-----------|------|
-| [サーバーサイド処理](/sveltekit/server-side/) | SSR、サーバー専用コード |
-| [フォーム処理とActions](/sveltekit/basics/forms/) | Progressive Enhancement |
-| [APIルート設計](/sveltekit/api-routes/) | RESTful API構築 |
-| [Hooks](/sveltekit/hooks/) | ミドルウェア実装 |
+  <!-- サーバーサイド編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">⚙️</span>
+      <h3 class="font-bold text-xl">サーバーサイド編 - バックエンド機能をマスター</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/server-side/" class="text-green-600 dark:text-green-400 hover:underline">サーバーサイド処理</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SSR、サーバー専用コード</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/forms/" class="text-green-600 dark:text-green-400 hover:underline">フォーム処理とActions</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Progressive Enhancement</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/api-routes/" class="text-green-600 dark:text-green-400 hover:underline">APIルート設計</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">RESTful API構築</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/hooks/" class="text-green-600 dark:text-green-400 hover:underline">Hooks</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ミドルウェア実装</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/server/" class="text-sm font-medium text-green-600 dark:text-green-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-## 🏗️ アプリケーション構築編 - 実践的な実装
+  <!-- アプリケーション構築編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🏗️</span>
+      <h3 class="font-bold text-xl">アプリケーション構築編 - 実践的な実装</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/authentication/" class="text-purple-600 dark:text-purple-400 hover:underline">認証・認可</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Lucia Auth、JWT、OAuth</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/database/" class="text-purple-600 dark:text-purple-400 hover:underline">データベース統合</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Prisma、Drizzle ORM</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/environment/" class="text-purple-600 dark:text-purple-400 hover:underline">環境変数管理</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">PUBLIC_変数、秘密情報</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/error-handling/" class="text-purple-600 dark:text-purple-400 hover:underline">エラーハンドリング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">エラーページ、ログ戦略</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/application/" class="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-| セクション | 内容 |
-|-----------|------|
-| [認証・認可](/sveltekit/auth/) | Lucia Auth、JWT、OAuth |
-| [データベース統合](/sveltekit/database/) | Prisma、Drizzle ORM |
-| [環境変数管理](/sveltekit/env-variables/) | PUBLIC_変数、秘密情報 |
-| [エラーハンドリング](/sveltekit/error-handling/) | エラーページ、ログ戦略 |
+  <!-- 最適化編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">⚡</span>
+      <h3 class="font-bold text-xl">最適化編 - パフォーマンスを極める</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/performance/" class="text-orange-600 dark:text-orange-400 hover:underline">パフォーマンス最適化</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">コード分割、遅延読み込み</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/caching/" class="text-orange-600 dark:text-orange-400 hover:underline">キャッシュ戦略</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">HTTP、CDN、Service Worker</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/seo/" class="text-orange-600 dark:text-orange-400 hover:underline">SEO最適化</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">メタタグ、構造化データ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/optimization/" class="text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-## ⚡ 最適化編 - パフォーマンスを極める
-
-| セクション | 内容 |
-|-----------|------|
-| [パフォーマンス最適化](/sveltekit/performance/) | コード分割、遅延読み込み |
-| [キャッシュ戦略](/sveltekit/caching/) | HTTP、CDN、Service Worker |
-| [SEO最適化](/sveltekit/seo/) | メタタグ、構造化データ |
-
-## 🚀 デプロイ・運用編 - 本番環境へ
-
-| セクション | 内容 |
-|-----------|------|
-| [デプロイメント](/sveltekit/deployment/) | Vercel、Netlify、Node.js |
-| [セキュリティ](/sveltekit/security/) | CSRF、XSS、CSP |
-| [モニタリング](/sveltekit/monitoring/) | Analytics、エラー追跡 |
+  <!-- デプロイ・運用編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🚀</span>
+      <h3 class="font-bold text-xl">デプロイ・運用編 - 本番環境へ</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/deployment/platforms/" class="text-teal-600 dark:text-teal-400 hover:underline">プラットフォーム別デプロイ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Vercel、Netlify、Node.js</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/security/" class="text-teal-600 dark:text-teal-400 hover:underline">セキュリティ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">CSRF、XSS、CSP</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/monitoring/" class="text-teal-600 dark:text-teal-400 hover:underline">モニタリング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Analytics、エラー追跡</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/deployment/" class="text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
+</div>
 
 ## 🎓 学習の始め方
 

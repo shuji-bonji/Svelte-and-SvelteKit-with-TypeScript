@@ -4,6 +4,7 @@ description: コンパイラベースの革新的UIフレームワークをマ�
 ---
 
 <script>
+  import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const learningFlow = `flowchart LR
@@ -80,59 +81,198 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
 2. **Runesシステム** - Svelte 5の革新的なリアクティビティシステム
 3. **実践編** - 実際のアプリケーション開発テクニック
 4. **次のステップ**
-   - **フルスタック開発** → [SvelteKit学習へ](/sveltekit/)
+   - **フルスタック開発** → [SvelteKit学習へ]({base}/sveltekit/)
    - **プロジェクト実践** → 実プロジェクトでの開発
 
-## 🎯 基本編 - Svelteの基礎を理解
+## 🎯 学習コンテンツ
 
-| セクション | 内容 |
-|-----------|------|
-| [Svelteの基本概要](/svelte/basics/) | フレームワークの基本概念 |
-| [コンポーネントの基本](/svelte/basics/component-basics/) | script、markup、styleの3要素 |
-| [テンプレート構文](/svelte/basics/template-syntax/) | 条件分岐、ループ、イベント |
-| [コンポーネントライフサイクル](/svelte/basics/component-lifecycle/) | onMount、onDestroy、tick |
-| [use:アクション](/svelte/basics/actions/) | DOM要素の直接操作 |
-| [トランジション・アニメーション](/svelte/basics/transitions/) | 要素の出入りアニメーション |
-| [TypeScript統合](/svelte/basics/typescript-integration/) | 型安全な開発 |
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <!-- 基本編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">📚</span>
+      <h3 class="font-bold text-xl">基本編 - Svelteの基礎を理解</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/" class="text-blue-600 dark:text-blue-400 hover:underline">Svelteの基本概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">フレームワークの基本概念</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/component-basics/" class="text-blue-600 dark:text-blue-400 hover:underline">コンポーネントの基本</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">script、markup、styleの3要素</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/template-syntax/" class="text-blue-600 dark:text-blue-400 hover:underline">テンプレート構文</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">条件分岐、ループ、イベント</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/component-lifecycle/" class="text-blue-600 dark:text-blue-400 hover:underline">コンポーネントライフサイクル</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">onMount、onDestroy、tick</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/actions/" class="text-blue-600 dark:text-blue-400 hover:underline">use:アクション</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">DOM要素の直接操作</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/transitions/" class="text-blue-600 dark:text-blue-400 hover:underline">トランジション・アニメーション</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">要素の出入りアニメーション</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/typescript-integration/" class="text-blue-600 dark:text-blue-400 hover:underline">TypeScript統合</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">型安全な開発</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/svelte/basics/" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-## ⚡ Runesシステム - Svelte 5の革新
+  <!-- Runesシステムカード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">⚡</span>
+      <h3 class="font-bold text-xl">Runesシステム - Svelte 5の革新</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/" class="text-orange-600 dark:text-orange-400 hover:underline">Runesシステム概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Svelte 5の新しいリアクティビティ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/runes-introduction/" class="text-orange-600 dark:text-orange-400 hover:underline">Runesシステム入門</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">基本的な使い方</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/state/" class="text-orange-600 dark:text-orange-400 hover:underline">$state - リアクティブな状態</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">状態管理の基本</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/derived/" class="text-orange-600 dark:text-orange-400 hover:underline">$derived - 派生値</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">計算プロパティ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/effect/" class="text-orange-600 dark:text-orange-400 hover:underline">$effect - 副作用</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">副作用の実行</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/props/" class="text-orange-600 dark:text-orange-400 hover:underline">$props - プロパティ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">コンポーネント間通信</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/bindable/" class="text-orange-600 dark:text-orange-400 hover:underline">$bindable - 双方向バインディング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">双方向データフロー</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/host/" class="text-orange-600 dark:text-orange-400 hover:underline">$host - カスタムエレメント</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Web Components対応</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/inspect/" class="text-orange-600 dark:text-orange-400 hover:underline">$inspect - デバッグ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">開発時のデバッグ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/runes/comparison/" class="text-orange-600 dark:text-orange-400 hover:underline">他フレームワークとの比較</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">React、Vue、Angularとの違い</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/svelte/runes/" class="text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
 
-| セクション | 内容 |
-|-----------|------|
-| [Runesシステム概要](/svelte/runes/) | Svelte 5の新しいリアクティビティ |
-| [Runesシステム入門](/svelte/runes/runes-introduction/) | 基本的な使い方 |
-| [$state - リアクティブな状態](/svelte/runes/state/) | 状態管理の基本 |
-| [$derived - 派生値](/svelte/runes/derived/) | 計算プロパティ |
-| [$effect - 副作用](/svelte/runes/effect/) | 副作用の実行 |
-| [$props - プロパティ](/svelte/runes/props/) | コンポーネント間通信 |
-| [$bindable - 双方向バインディング](/svelte/runes/bindable/) | 双方向データフロー |
-| [$host - カスタムエレメント](/svelte/runes/host/) | Web Components対応 |
-| [$inspect - デバッグ](/svelte/runes/inspect/) | 開発時のデバッグ |
-| [他フレームワークとの比較](/svelte/runes/comparison/) | React、Vue、Angularとの違い |
-
-## 🏗️ 実践編 - 高度な機能と実装パターン
-
-| セクション | 内容 |
-|-----------|------|
-| [実践概要](/svelte/advanced/) | 高度な機能の概要 |
-| [リアクティブストア](/svelte/advanced/reactive-stores/) | .svelte.js/.svelte.tsファイル |
-| [クラスとリアクティビティ](/svelte/advanced/class-reactivity/) | OOPとリアクティビティ |
-| [組み込みリアクティブクラス](/svelte/advanced/built-in-classes/) | SvelteDate、SvelteURLなど |
-| [Snippets機能](/svelte/advanced/snippets/) | 再利用可能なテンプレート |
-| [スクリプトコンテキスト](/svelte/advanced/script-context/) | module contextの活用 |
-| [コンポーネントパターン](/svelte/advanced/component-patterns/) | 実践的な設計パターン |
-| [TypeScriptパターン](/svelte/advanced/typescript-patterns/) | 型安全な実装パターン |
+  <!-- 実践編カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🏗️</span>
+      <h3 class="font-bold text-xl">実践編 - 高度な機能と実装パターン</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/" class="text-purple-600 dark:text-purple-400 hover:underline">実践概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">高度な機能の概要</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/reactive-stores/" class="text-purple-600 dark:text-purple-400 hover:underline">リアクティブストア</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">.svelte.js/.svelte.tsファイル</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/class-reactivity/" class="text-purple-600 dark:text-purple-400 hover:underline">クラスとリアクティビティ</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">OOPとリアクティビティ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/built-in-classes/" class="text-purple-600 dark:text-purple-400 hover:underline">組み込みリアクティブクラス</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteDate、SvelteURLなど</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/snippets/" class="text-purple-600 dark:text-purple-400 hover:underline">Snippets機能</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">再利用可能なテンプレート</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/script-context/" class="text-purple-600 dark:text-purple-400 hover:underline">スクリプトコンテキスト</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">module contextの活用</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/component-patterns/" class="text-purple-600 dark:text-purple-400 hover:underline">コンポーネントパターン</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">実践的な設計パターン</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/svelte/advanced/typescript-patterns/" class="text-purple-600 dark:text-purple-400 hover:underline">TypeScriptパターン</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">型安全な実装パターン</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/svelte/advanced/" class="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
+</div>
 
 ## 🎓 学習の始め方
 
 ### Step 1: 基礎を固める
-まず[Svelteの基本概要](/svelte/basics/)で基本概念を理解し、[コンポーネントの基本](/svelte/basics/component-basics/)で実際にコンポーネントを作成します。
+まず[Svelteの基本概要]({base}/svelte/basics/)で基本概念を理解し、[コンポーネントの基本]({base}/svelte/basics/component-basics/)で実際にコンポーネントを作成します。
 
 ### Step 2: Runesシステムをマスター
-Svelte 5の核心である[Runesシステム](/svelte/runes/)を学び、モダンなリアクティビティを習得します。
+Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、モダンなリアクティビティを習得します。
 
 ### Step 3: 実践的な実装
-[実践編](/svelte/advanced/)で、プロダクションレベルのアプリケーション開発に必要な高度な機能を学びます。
+[実践編]({base}/svelte/advanced/)で、プロダクションレベルのアプリケーション開発に必要な高度な機能を学びます。
 
 ## 🛠️ 推奨開発環境
 
@@ -387,16 +527,16 @@ Svelte 5の核心である[Runesシステム](/svelte/runes/)を学び、モダ�
 ## 🎯 次のステップ
 
 **完全初心者の方**:
-[Svelteの基本概要](/svelte/basics/)から始めて、基礎をしっかり学習
+[Svelteの基本概要]({base}/svelte/basics/)から始めて、基礎をしっかり学習
 
 **他フレームワーク経験者**:
-[Runesシステム概要](/svelte/runes/)でSvelte 5の革新的な機能を理解
+[Runesシステム概要]({base}/svelte/runes/)でSvelte 5の革新的な機能を理解
 
 **すぐに実装したい方**:
-[コンポーネントの基本](/svelte/basics/component-basics/)で実践的な開発を開始
+[コンポーネントの基本]({base}/svelte/basics/component-basics/)で実践的な開発を開始
 
 **フルスタック開発を目指す方**:
-Svelteをマスター後、[SvelteKit完全ガイド](/sveltekit/)へ進む
+Svelteをマスター後、[SvelteKit完全ガイド]({base}/sveltekit/)へ進む
 
 ---
 

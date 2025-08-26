@@ -28,7 +28,7 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎯</div>
       <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        概要とアーキテクチャ
+        SvelteKit概要
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitの全体像とフレームワーク設計を理解します。</p>

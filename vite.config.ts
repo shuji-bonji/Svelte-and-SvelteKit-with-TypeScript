@@ -46,8 +46,12 @@ const config = defineConfig({
             to: '/introduction/',
           },
           {
-            title: 'ガイド',
-            to: '/guide/',
+            title: 'Svelte',
+            to: '/svelte/',
+          },
+          {
+            title: 'SvelteKit',
+            to: '/sveltekit/',
           },
         ],
         sidebar: {
@@ -71,87 +75,113 @@ const config = defineConfig({
               ],
             },
             {
-              title: 'Svelteの基本',
+              title: 'Svelte',
               collapsible: true,
               items: [
-                { title: 'Svelteの基本概要', to: '/svelte-basics/' },
+                { title: 'Svelte概要', to: '/svelte/' },
                 {
-                  title: 'コンポーネントの基本',
-                  to: '/svelte-basics/component-basics/',
+                  title: '基本',
+                  to: '/svelte/basics/',
+                  collapsible: true,
+                  items: [
+                    { title: 'Svelteの基本概要', to: '/svelte/basics/' },
+                    {
+                      title: 'コンポーネントの基本',
+                      to: '/svelte/basics/component-basics/',
+                    },
+                    {
+                      title: 'テンプレート構文',
+                      to: '/svelte/basics/template-syntax/',
+                    },
+                    {
+                      title: 'コンポーネントライフサイクル',
+                      to: '/svelte/basics/component-lifecycle/',
+                    },
+                    { title: 'use:アクション', to: '/svelte/basics/actions/' },
+                    {
+                      title: 'トランジション・アニメーション',
+                      to: '/svelte/basics/transitions/',
+                    },
+                    {
+                      title: 'TypeScript統合',
+                      to: '/svelte/basics/typescript-integration/',
+                    },
+                  ],
                 },
                 {
-                  title: 'テンプレート構文',
-                  to: '/svelte-basics/template-syntax/',
+                  title: 'Runesシステム',
+                  to: '/svelte/runes/',
+                  collapsible: true,
+                  items: [
+                    { title: 'Runesシステム概要', to: '/svelte/runes/' },
+                    {
+                      title: 'Runesシステム入門',
+                      to: '/svelte/runes/runes-introduction/',
+                    },
+                    {
+                      title: '$state - リアクティブな状態',
+                      to: '/svelte/runes/state/',
+                    },
+                    {
+                      title: '$derived - 派生値',
+                      to: '/svelte/runes/derived/',
+                    },
+                    { title: '$effect - 副作用', to: '/svelte/runes/effect/' },
+                    {
+                      title: '$props - プロパティ',
+                      to: '/svelte/runes/props/',
+                    },
+                    {
+                      title: '$bindable - 双方向バインディング',
+                      to: '/svelte/runes/bindable/',
+                    },
+                    {
+                      title: '$host - カスタムエレメント',
+                      to: '/svelte/runes/host/',
+                    },
+                    {
+                      title: '$inspect - デバッグ',
+                      to: '/svelte/runes/inspect/',
+                    },
+                    {
+                      title: '他フレームワークとの比較',
+                      to: '/svelte/runes/comparison/',
+                    },
+                  ],
                 },
                 {
-                  title: 'コンポーネントライフサイクル',
-                  to: '/svelte-basics/component-lifecycle/',
-                },
-                {
-                  title: 'use:アクション',
-                  to: '/svelte-basics/actions/',
-                },
-                {
-                  title: 'トランジション・アニメーション',
-                  to: '/svelte-basics/transitions/',
-                },
-                {
-                  title: 'TypeScript統合',
-                  to: '/svelte-basics/typescript-integration/',
-                },
-              ],
-            },
-            {
-              title: 'Runesシステム',
-              collapsible: true,
-              items: [
-                { title: 'Runesシステム概要', to: '/runes/' },
-                {
-                  title: 'Runesシステム入門',
-                  to: '/runes/runes-introduction/',
-                },
-                { title: '$state - リアクティブな状態', to: '/runes/state/' },
-                { title: '$derived - 派生値', to: '/runes/derived/' },
-                { title: '$effect - 副作用', to: '/runes/effect/' },
-                { title: '$props - プロパティ', to: '/runes/props/' },
-                {
-                  title: '$bindable - 双方向バインディング',
-                  to: '/runes/bindable/',
-                },
-                { title: '$host - カスタムエレメント', to: '/runes/host/' },
-                { title: '$inspect - デバッグ', to: '/runes/inspect/' },
-                { title: '他フレームワークとの比較', to: '/runes/comparison/' },
-              ],
-            },
-            {
-              title: '実践編',
-              collapsible: true,
-              items: [
-                { title: '実践概要', to: '/advanced/' },
-                {
-                  title: 'リアクティブストア',
-                  to: '/advanced/reactive-stores/',
-                },
-                {
-                  title: 'クラスとリアクティビティ',
-                  to: '/advanced/class-reactivity/',
-                },
-                {
-                  title: '組み込みリアクティブクラス',
-                  to: '/advanced/built-in-classes/',
-                },
-                { title: 'Snippets機能', to: '/advanced/snippets/' },
-                {
-                  title: 'スクリプトコンテキスト',
-                  to: '/advanced/script-context/',
-                },
-                {
-                  title: 'コンポーネントパターン',
-                  to: '/advanced/component-patterns/',
-                },
-                {
-                  title: 'TypeScriptパターン',
-                  to: '/advanced/typescript-patterns/',
+                  title: '実践編',
+                  to: '/svelte/advanced/',
+                  collapsible: true,
+                  collapsed: true,
+                  items: [
+                    { title: '実践概要', to: '/svelte/advanced/' },
+                    {
+                      title: 'リアクティブストア',
+                      to: '/svelte/advanced/reactive-stores/',
+                    },
+                    {
+                      title: 'クラスとリアクティビティ',
+                      to: '/svelte/advanced/class-reactivity/',
+                    },
+                    {
+                      title: '組み込みリアクティブクラス',
+                      to: '/svelte/advanced/built-in-classes/',
+                    },
+                    { title: 'Snippets機能', to: '/svelte/advanced/snippets/' },
+                    {
+                      title: 'スクリプトコンテキスト',
+                      to: '/svelte/advanced/script-context/',
+                    },
+                    {
+                      title: 'コンポーネントパターン',
+                      to: '/svelte/advanced/component-patterns/',
+                    },
+                    {
+                      title: 'TypeScriptパターン',
+                      to: '/svelte/advanced/typescript-patterns/',
+                    },
+                  ],
                 },
               ],
             },
@@ -160,12 +190,148 @@ const config = defineConfig({
               collapsible: true,
               items: [
                 { title: 'SvelteKit概要', to: '/sveltekit/' },
-                { title: 'ルーティング', to: '/sveltekit/routing/' },
-                { title: 'Load関数', to: '/sveltekit/load-functions/' },
-                { title: 'サーバーサイド処理', to: '/sveltekit/server-side/' },
-                { title: 'フォーム処理', to: '/sveltekit/forms/' },
-                { title: 'APIルート', to: '/sveltekit/api-routes/' },
-                { title: 'デプロイメント', to: '/sveltekit/deployment/' },
+                {
+                  title: '基礎編',
+                  to: '/sveltekit/basics/',
+                  collapsible: true,
+                  items: [
+                    { title: '基礎編概要', to: '/sveltekit/basics/' },
+                    {
+                      title: 'SvelteKit概要',
+                      to: '/sveltekit/basics/overview/',
+                    },
+                    {
+                      title: 'プロジェクト構造',
+                      to: '/sveltekit/basics/project-structure/',
+                    },
+                    {
+                      title: 'ルーティング詳解',
+                      to: '/sveltekit/basics/routing/',
+                    },
+                    {
+                      title: 'データ読み込み',
+                      to: '/sveltekit/basics/load-functions/',
+                    },
+                  ],
+                },
+                {
+                  title: 'アーキテクチャ詳解',
+                  to: '/sveltekit/architecture/',
+                  collapsible: true,
+                  items: [
+                    {
+                      title: 'アーキテクチャ概要',
+                      to: '/sveltekit/architecture/',
+                    },
+                    {
+                      title: '実行環境別アーキテクチャ',
+                      to: '/sveltekit/architecture/execution-environments/',
+                    },
+                    {
+                      title: 'ファイル構成と実行環境',
+                      to: '/sveltekit/architecture/file-structure/',
+                    },
+                    {
+                      title: 'データロードフロー',
+                      to: '/sveltekit/architecture/data-loading/',
+                    },
+                    {
+                      title: 'レンダリングパイプライン',
+                      to: '/sveltekit/architecture/rendering-pipeline/',
+                    },
+                  ],
+                },
+                {
+                  title: 'サーバーサイド編',
+                  to: '/sveltekit/server/',
+                  collapsible: true,
+                  items: [
+                    { title: 'サーバーサイド編概要', to: '/sveltekit/server/' },
+                    {
+                      title: 'フォーム処理とActions',
+                      to: '/sveltekit/basics/forms/',
+                    },
+                    {
+                      title: 'サーバーサイド処理 (準備中)',
+                      to: '/sveltekit/server-side/',
+                    },
+                    {
+                      title: 'APIルート設計 (準備中)',
+                      to: '/sveltekit/api-routes/',
+                    },
+                    { title: 'Hooks (準備中)', to: '/sveltekit/hooks/' },
+                  ],
+                },
+                {
+                  title: 'アプリケーション構築編',
+                  to: '/sveltekit/application/',
+                  collapsible: true,
+                  collapsed: true,
+                  items: [
+                    {
+                      title: 'アプリケーション構築編概要',
+                      to: '/sveltekit/application/',
+                    },
+                    {
+                      title: '認証・認可 (準備中)',
+                      to: '/sveltekit/authentication/',
+                    },
+                    {
+                      title: 'データベース統合 (準備中)',
+                      to: '/sveltekit/database/',
+                    },
+                    {
+                      title: '環境変数管理 (準備中)',
+                      to: '/sveltekit/environment/',
+                    },
+                    {
+                      title: 'エラーハンドリング (準備中)',
+                      to: '/sveltekit/error-handling/',
+                    },
+                  ],
+                },
+                {
+                  title: '最適化編',
+                  to: '/sveltekit/optimization/',
+                  collapsible: true,
+                  collapsed: true,
+                  items: [
+                    { title: '最適化編概要', to: '/sveltekit/optimization/' },
+                    {
+                      title: 'パフォーマンス最適化 (準備中)',
+                      to: '/sveltekit/performance/',
+                    },
+                    {
+                      title: 'キャッシュ戦略 (準備中)',
+                      to: '/sveltekit/caching/',
+                    },
+                    { title: 'SEO最適化 (準備中)', to: '/sveltekit/seo/' },
+                  ],
+                },
+                {
+                  title: 'デプロイ・運用編',
+                  to: '/sveltekit/deployment/',
+                  collapsible: true,
+                  collapsed: true,
+                  items: [
+                    {
+                      title: 'デプロイ・運用編概要',
+                      to: '/sveltekit/deployment/',
+                    },
+                    {
+                      title: 'プラットフォーム別デプロイ',
+                      to: '/sveltekit/deployment/platforms/',
+                    },
+                    {
+                      title: 'セキュリティ (準備中)',
+                      to: '/sveltekit/security/',
+                    },
+                    {
+                      title: 'モニタリング (準備中)',
+                      to: '/sveltekit/monitoring/',
+                    },
+                  ],
+                },
               ],
             },
             {

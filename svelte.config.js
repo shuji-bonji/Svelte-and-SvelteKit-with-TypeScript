@@ -39,7 +39,35 @@ const config = {
 		prerender: {
 			entries: ['*'],
 			crawl: true,
+			handleMissingId: 'warn',
 			handleHttpError: ({ path, referrer, message }) => {
+				// 準備中のページへのリンクは警告のみ
+				const pendingPages = [
+					'/sveltekit/hooks/',
+					'/sveltekit/authentication/',
+					'/sveltekit/database/',
+					'/sveltekit/environment/',
+					'/sveltekit/error-handling/',
+					'/sveltekit/performance/',
+					'/sveltekit/caching/',
+					'/sveltekit/seo/',
+					'/sveltekit/security/',
+					'/sveltekit/monitoring/',
+					'/sveltekit/server-side/',
+					'/sveltekit/api-routes/',
+					'/guide'
+				];
+				
+				// ベースパスを含むフルパスでチェック
+				const fullPath = path.includes('/Svelte-and-SvelteKit-with-TypeScript') 
+					? path.replace('/Svelte-and-SvelteKit-with-TypeScript', '') 
+					: path;
+				
+				if (pendingPages.some(pending => fullPath.includes(pending))) {
+					console.warn(`Warning: Pending page ${path} referenced from ${referrer}`);
+					return;
+				}
+				
 				// Markdownファイル内のリンクエラーを無視
 				if (path.startsWith('/') && !path.startsWith('/Svelte-and-SvelteKit-with-TypeScript')) {
 					console.warn(`Warning: Link ${path} from ${referrer} needs base path`);

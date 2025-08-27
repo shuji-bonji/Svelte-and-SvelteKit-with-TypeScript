@@ -20,63 +20,110 @@ Runesは大きく分けて「状態管理」と「コンポーネント間通信
 - [**$props**](../props/) - コンポーネントのプロパティを定義。親コンポーネントからデータを受け取ります
 - [**$bindable**](../bindable/) - 双方向バインディングを可能にし、親子間で値を同期します
 
-## Rune が使える場所と使えない場所
+## 基本的な使い方
 
-Runesは特定のファイルタイプでのみ使用可能です。以下の表で詳しく説明します。
+### $state - 状態の定義
 
-| ファイル/場所 | Rune 使用可否 | 理由 |
-|---|---|---|
-| `*.svelte` | ✅ 使用可能 | Svelteコンポーネント内で完全にサポート |
-| `+page.svelte` | ✅ 使用可能 | UI と連動する状態を管理できる |
-| `+layout.svelte` | ✅ 使用可能 | グローバルな UI 状態やヘッダー・ナビゲーションなどで有用 |
-| **`.svelte.js` / `.svelte.ts`** | ✅ 使用可能 | リアクティブなストアやユーティリティを作成できる特別なファイル |
-| `+page.ts` / `+layout.ts` | ⚠️ 条件付き | `load()` 関数内では使えないが、トップレベルでは使用可能 |
-| `+page.server.ts` | ❌ 使用不可 | SSR 実行時に1回限りで状態管理の意味がないため |
-| `+layout.server.ts` | ❌ 使用不可 | 同上 |
-| `hooks.server.ts` | ❌ 使用不可 | Rune のリアクティブ性が不要なサーバーロジック専用ファイル |
-| 通常の `.ts` / `.js` モジュール | ❌ 使用不可 | Rune は Svelte のコンパイラが処理する特別な構文 |
+`$state`はリアクティブな状態を宣言する最も基本的なRuneです。値が変更されると、その値を参照しているUIが自動的に更新されます。
 
-:::tip[重要：`.svelte.js` / `.svelte.ts` ファイル]
-`.svelte.js`と`.svelte.ts`は、Svelte 5で導入された特別な拡張子で、**コンポーネント外でRunesを使用できる唯一の方法**です。これらのファイルでは、
-- グローバルな状態管理（ストア）を作成できる
-- 複数コンポーネントで共有するリアクティブなロジックを定義できる  
-- カスタムのリアクティブなクラスやユーティリティを作成できる
-
-**例：グローバルカウンターストア（counter.svelte.ts）**
-```typescript
-// counter.svelte.ts
-export function createCounter(initial = 0) {
-  let count = $state(initial);
+```svelte ln live
+<script lang="ts">
+  // プリミティブ値
+  let count = $state(0);
   
-  return {
-    get value() { return count; },
-    increment() { count++; },
-    decrement() { count--; }
-  };
-}
+  // オブジェクト
+  let user = $state({
+    name: '太郎',
+    age: 25
+  });
+  
+  // 配列
+  let items = $state<string[]>([]);
+</script>
+
+<button onclick={() => count++}>
+  カウント: {count}
+</button>
 ```
 
-詳しい使い方は[リアクティブストア（.svelte.js/.svelte.ts）](/svelte/advanced/reactive-stores/)で解説しています。
-:::
+### $derived - 計算値
 
-## Rune が必要な場面
+`$derived`は他のリアクティブな値から自動的に計算される値を作成します。依存する値が変更されるたびに、自動的に再計算されます。
 
-Runesは以下のような場面で特に有効です。
+```svelte ln live
+<script lang="ts">
+  let price = $state(100);
+  let quantity = $state(2);
+  
+  // priceやquantityが変更されると自動的に再計算
+  let total = $derived(price * quantity);
+  
+  // 複雑な計算も可能
+  let summary = $derived(() => {
+    const subtotal = price * quantity;
+    const tax = subtotal * 0.1;
+    return {
+      subtotal,
+      tax,
+      total: subtotal + tax
+    };
+  });
+</script>
 
-- **インタラクティブなUIの構築**: ユーザーがUI上でインタラクションするたびに状態が変わる場面（カウントアップ、チェック状態、フォーム入力など）
-- **計算値の管理**: 複数の状態が依存し合うロジックを簡潔に書きたい場合（`$derived`を使った合計計算、フィルタリングなど）
-- **副作用の管理**: DOM操作、ローカルストレージへの保存、APIコールなどをリアクティブに実行したい場合（`$effect`）
+<p>合計: {total}円</p>
+<p>税込: {summary().total}円</p>
+```
 
-## Rune が使えない場面（代替方法）
+### $effect - 副作用
 
-サーバーサイドの処理ではRunesは使用できません。以下の表は一般的なケースとその代替手段を示しています。
+`$effect`はリアクティブな値の変更に応じて副作用を実行します。DOM操作、ログ出力、外部APIへの通信などに使用されます。
 
-| 処理内容 | 使用不可な例 | 代替手段 |
-|---|---|---|
-| 認証トークンの取得 | `+page.server.ts` 内で `$state` を使う | `load()` + `event.locals` を使って処理 |
-| DBへのアクセス | `+page.server.ts` 内で `$effect` を使う | 通常の async 関数として記述 |
-| セッション情報の保持 | `hooks.server.ts` 内で `$state` を使う | `handle` フックで `event.locals` に保存 |
+```typescript
+<script lang="ts">
+  let count = $state(0);
+  
+  // countが変更されるたびに実行
+  $effect(() => {
+    console.log(`カウント: ${count}`);
+    document.title = `カウント: ${count}`;
+    
+    // クリーンアップ関数（オプション）
+    return () => {
+      console.log('クリーンアップ');
+    };
+  });
+</script>
+```
 
+## Svelte 4との違い
+
+Svelte 4からSvelte 5への移行で、リアクティビティの書き方が大きく変わりました。以下は同じ機能を実装した例です。
+
+### 古い書き方（Svelte 4）
+
+```svelte
+<script>
+  let count = 0;
+  $: doubled = count * 2;
+  
+  $: {
+    console.log(`Count: ${count}`);
+  }
+</script>
+```
+
+### 新しい書き方（Svelte 5）
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let doubled = $derived(count * 2);
+  
+  $effect(() => {
+    console.log(`Count: ${count}`);
+  });
+</script>
+```
 
 ## 基本的な使い方
 
@@ -213,8 +260,6 @@ let selected = $derived(() =>
 ### 3. 予測可能な動作
 
 `$derived`や`$effect`は依存関係を自動的に追跡し、必要な時だけ再実行されます。これにより、パフォーマンスが向上し、バグも減少します。
-
-依存関係が自動的に追跡され、必要な時だけ再実行されます。
 
 ## 実践例：TODOリスト
 
@@ -554,6 +599,59 @@ Runesシステムを使った実際のTODOリストアプリケーションで�
   }
 </style>
 ```
+
+## Runesが使える場所・使えない場所
+
+Runesは特定の場所（ファイルタイプ）でのみ使用可能です。  
+特にSvelteKitプロジェクトでは、ファイルの種類によって使用可否が異なるため注意が必要です。
+
+### Svelteコンポーネント
+| ファイル（場所） | 使用可否 | 理由 |
+|---|:---:|---|
+| `*.svelte` | 使用可能✅ | Svelteコンポーネント内で完全にサポート |
+| `+page.svelte` |使用可能✅ | SvelteKitのページコンポーネント。UI と連動する状態を管理できる |
+| `+layout.svelte` | 使用可能✅ | SvelteKitのレイアウトコンポーネント。グローバルな UI 状態やヘッダー・ナビゲーションなどで有用 |
+
+### リアクティブモジュール
+| ファイル（場所） | 使用可否 | 理由 |
+|---|:---:|---|
+| `.svelte.js`、<br>`.svelte.ts` | 使用可能✅ | リアクティブなストアやユーティリティを作成できる特別なファイル |
+
+### 通常のモジュール
+| ファイル（場所） | 使用可否 | 理由 |
+|---|:---:|---|
+| 通常の `.ts` / `.js` | 使用不可❌ | Rune は Svelte のコンパイラが処理する特別な構文 |
+
+### SvelteKitファイル
+| ファイル（場所） | 使用可否 | 理由 |
+|---|:---:|---|
+| `+page.ts`、<br>`+layout.ts` | 条件付き⚠️ | `load()` 関数内では使えないが、トップレベルでは使用可能 |
+| `+page.server.ts` | 使用不可❌ | サーバーサイド専用。SSR 実行時に1回限りで状態管理の意味がないため |
+| `+layout.server.ts` | 使用不可❌ | 同上 |
+| `hooks.server.ts` | 使用不可❌ | Rune のリアクティブ性が不要なサーバーロジック専用ファイル |
+
+:::tip[重要：`.svelte.js` / `.svelte.ts` ファイル]
+`.svelte.js`と`.svelte.ts`は、Svelte 5で導入された特別な拡張子で、**コンポーネント外でRunesを使用できる唯一の方法**です。これらのファイルでは、
+- グローバルな状態管理（ストア）を作成できる
+- 複数コンポーネントで共有するリアクティブなロジックを定義できる  
+- カスタムのリアクティブなクラスやユーティリティを作成できる
+
+**例：グローバルカウンターストア（counter.svelte.ts）**
+```typescript
+// counter.svelte.ts
+export function createCounter(initial = 0) {
+  let count = $state(initial);
+  
+  return {
+    get value() { return count; },
+    increment() { count++; },
+    decrement() { count--; }
+  };
+}
+```
+
+詳しい使い方は[リアクティブストア（.svelte.js/.svelte.ts）](/svelte/advanced/reactive-stores/)で解説しています。
+:::
 
 ## ベストプラクティス
 

@@ -7,42 +7,418 @@ description: カスタムエレメント内でホスト要素にアクセスす�
 
 ## 基本的な使い方
 
-カスタムエレメントとして定義されたコンポーネント内で、`$host()`を呼び出すことでホスト要素（カスタムエレメント自体）への参照を取得できます。
+`$host`を使ったカスタムエレメントの作成から使用まで、実際のプロジェクトでの完全な手順を説明します。
+
+### ステップ1: Svelteプロジェクトの作成
+
+まず、新しいSvelteプロジェクトを作成します。
+
+```bash
+# Svelteプロジェクトの作成
+npx sv create my-custom-elements
+
+# プロンプトで以下を選択:
+# - SvelteKit demo app
+# - TypeScript
+# - その他は必要に応じて選択
+
+cd my-custom-elements
+npm install
+```
+
+### プロジェクト構成
+
+```
+my-custom-elements/
+├── src/
+│   ├── routes/           # SvelteKitのルート（今回は使用しない）
+│   ├── lib/              # 共有コンポーネント
+│   │   └── components/   # カスタムエレメント用のコンポーネント
+│   │       ├── MyButton.svelte
+│   │       ├── MyCounter.svelte
+│   │       └── index.ts  # エクスポート用
+│   ├── app.d.ts
+│   └── app.html
+├── static/              # 静的ファイル
+│   └── demo.html       # カスタムエレメントのデモページ
+├── vite.config.ts
+├── svelte.config.js
+├── package.json
+└── tsconfig.json
+```
+
+### ステップ2: カスタムエレメントコンポーネントの作成
+
+カスタムエレメントとして使用するコンポーネントを作成します。
 
 ```svelte
-<!-- MyButton.svelte -->
+<!-- src/lib/components/MyButton.svelte -->
 <svelte:options customElement="my-button" />
 
 <script lang="ts">
+  let { label = 'Click me', variant = 'primary' }: {
+    label?: string;
+    variant?: 'primary' | 'secondary' | 'danger';
+  } = $props();
+
   function handleClick() {
     // ホスト要素（<my-button>）にカスタムイベントをディスパッチ
     $host().dispatchEvent(
       new CustomEvent('boom', {
-        detail: { message: 'ボタンがクリックされました！' },
+        detail: { 
+          message: `Button "${label}" was clicked!`,
+          timestamp: Date.now()
+        },
         bubbles: true,
         composed: true // Shadow DOMの境界を越えてバブリング
       })
     );
+    
+    // ホスト要素にアニメーションクラスを追加
+    const host = $host();
+    host.classList.add('clicked');
+    setTimeout(() => host.classList.remove('clicked'), 300);
   }
-</script>
-
-<button onclick={handleClick}>
-  クリックしてイベントを発火
-</button>
-```
-
-### 外部からの使用
-
-```html
-<!-- HTML側 -->
-<my-button id="custom-btn"></my-button>
-
-<script>
-  const btn = document.getElementById('custom-btn');
-  btn.addEventListener('boom', (e) => {
-    console.log(e.detail.message); // "ボタンがクリックされました！"
+  
+  // ホスト要素の初期設定
+  $effect(() => {
+    const host = $host();
+    host.setAttribute('role', 'button');
+    host.setAttribute('tabindex', '0');
+    host.style.display = 'inline-block';
   });
 </script>
+
+<button 
+  onclick={handleClick}
+  class="btn btn-{variant}"
+>
+  {label}
+</button>
+
+<style>
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background: #007bff;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .btn-danger {
+    background: #dc3545;
+    color: white;
+  }
+  
+  :global(.clicked) {
+    animation: pulse 0.3s ease;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+</style>
+```
+
+もう一つカウンターコンポーネントも作成：
+
+```svelte
+<!-- src/lib/components/MyCounter.svelte -->
+<svelte:options customElement="my-counter" />
+
+<script lang="ts">
+  let { initial = 0, step = 1 }: {
+    initial?: number;
+    step?: number;
+  } = $props();
+  
+  let count = $state(initial);
+  
+  function increment() {
+    count += step;
+    notifyChange();
+  }
+  
+  function decrement() {
+    count -= step;
+    notifyChange();
+  }
+  
+  function notifyChange() {
+    $host().dispatchEvent(
+      new CustomEvent('countchange', {
+        detail: { count, step },
+        bubbles: true
+      })
+    );
+  }
+  
+  // ホスト要素の初期設定
+  $effect(() => {
+    const host = $host();
+    host.setAttribute('data-count', String(count));
+  });
+</script>
+
+<div class="counter">
+  <button onclick={decrement}>-</button>
+  <span class="count">{count}</span>
+  <button onclick={increment}>+</button>
+</div>
+
+<style>
+  .counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  
+  .count {
+    min-width: 40px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
+```
+
+### ステップ3: エクスポート設定
+
+コンポーネントをエクスポートするためのエントリーポイントを作成：
+
+```typescript
+// src/lib/components/index.ts
+// カスタムエレメントの自動登録
+import './MyButton.svelte';
+import './MyCounter.svelte';
+
+// 必要に応じて追加のコンポーネントをインポート
+console.log('Custom elements registered: my-button, my-counter');
+```
+
+### ステップ4: ビルド設定
+
+Viteの設定を更新してカスタムエレメントをビルドできるようにします：
+
+```javascript
+// vite.config.ts
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [sveltekit()],
+  build: {
+    lib: {
+      entry: 'src/lib/components/index.ts',
+      name: 'MyCustomElements',
+      fileName: (format) => `custom-elements.${format}.js`
+    },
+    rollupOptions: {
+      // 外部依存を除外（必要に応じて）
+      external: [],
+      output: {
+        globals: {}
+      }
+    }
+  }
+});
+```
+
+package.jsonにビルドスクリプトを追加：
+
+```javascript
+// package.json
+{
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "build:lib": "vite build --mode library",
+    "preview": "vite preview",
+    // ... 他のスクリプト
+  }
+}
+```
+
+### ステップ5: ビルドとテスト
+
+```bash
+# カスタムエレメントとしてビルド
+npm run build:lib
+
+# 生成されるファイル:
+# dist/custom-elements.es.js    # ES module
+# dist/custom-elements.umd.js   # UMD
+```
+
+### ステップ6: テスト用HTMLファイルの作成
+
+デモ用のHTMLファイルを作成してテスト：
+
+```html
+<!-- static/demo.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カスタムエレメントデモ</title>
+  <script type="module" src="/dist/custom-elements.es.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    h1 { color: #333; }
+    
+    .demo-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Svelteカスタムエレメントデモ</h1>
+  
+  <div class="demo-section">
+    <h2>ボタンコンポーネント</h2>
+    <my-button label="Primary Button" variant="primary"></my-button>
+    <my-button label="Secondary" variant="secondary"></my-button>
+    <my-button label="Danger!" variant="danger"></my-button>
+    
+    <div id="button-output" class="output">
+      ボタンをクリックしてください...
+    </div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>カウンターコンポーネント</h2>
+    <my-counter initial="10" step="5"></my-counter>
+    <my-counter initial="0" step="1"></my-counter>
+    
+    <div id="counter-output" class="output">
+      カウンターの値が変更されると表示されます...
+    </div>
+  </div>
+  
+  <script>
+    // カスタムエレメントが定義されるまで待つ
+    Promise.all([
+      customElements.whenDefined('my-button'),
+      customElements.whenDefined('my-counter')
+    ]).then(() => {
+      // ボタンのイベントリスナー
+      const buttons = document.querySelectorAll('my-button');
+      const buttonOutput = document.getElementById('button-output');
+      
+      buttons.forEach(btn => {
+        btn.addEventListener('boom', (e) => {
+          buttonOutput.textContent = `Event: ${e.detail.message} at ${new Date(e.detail.timestamp).toLocaleTimeString()}`;
+        });
+      });
+      
+      // カウンターのイベントリスナー
+      const counters = document.querySelectorAll('my-counter');
+      const counterOutput = document.getElementById('counter-output');
+      
+      counters.forEach(counter => {
+        counter.addEventListener('countchange', (e) => {
+          counterOutput.textContent = `Counter changed: ${e.detail.count} (step: ${e.detail.step})`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+```
+
+### ステップ7: 開発サーバーでテスト
+
+```bash
+# 開発サーバーを起動
+npm run dev
+
+# ブラウザで以下にアクセス
+# http://localhost:5173/demo.html
+```
+
+### NPMパッケージとして配布する場合
+
+package.jsonの設定例:
+
+```javascript
+// package.json
+{
+  "name": "my-svelte-components",
+  "version": "1.0.0",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/my-button.umd.js",
+  "module": "./dist/my-button.js",
+  "exports": {
+    ".": {
+      "import": "./dist/my-button.js",
+      "require": "./dist/my-button.umd.js"
+    }
+  }
+}
+```
+
+使用側:
+
+```javascript
+// ESモジュールとしてインポート
+import 'my-svelte-components';
+
+// カスタムエレメントが自動的に登録される
+// HTMLで<my-button>が使用可能に
 ```
 
 ## カスタムエレメントとは

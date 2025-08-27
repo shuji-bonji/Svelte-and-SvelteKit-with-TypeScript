@@ -38,25 +38,29 @@ let { value = $bindable('') }: Props = $props();
 
 ### 子コンポーネント
 
-```typescript
-// Input.svelte
-type Props = {
-  value: string;
-};
+```svelte
+<!-- Input.svelte -->
+<script lang="ts">
+  type Props = {
+    value: string;
+  };
 
-let { value = $bindable('') }: Props = $props();
+  let { value = $bindable('') }: Props = $props();
 
-function handleInput(event: Event) {
-  const target = event.target as HTMLInputElement;
-  value = target.value; // 親コンポーネントの値も更新される
-}
+  function handleInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    value = target.value; // 親コンポーネントの値も更新される
+  }
+</script>
+
+<input type="text" {value} oninput={handleInput} />
 ```
 
 ### 親コンポーネント
 
 ```svelte
 <script lang="ts">
-  import Input from './Input.svelte';
+  import Input from '$lib/components/Input.svelte';
   
   let name = $state('');
 </script>
@@ -70,47 +74,111 @@ function handleInput(event: Event) {
 
 バインディング可能なpropsにデフォルト値を設定し、親からの値が提供されない場合の動作を定義できます。
 
-```typescript
-type Props = {
-  value?: string;
-  checked?: boolean;
-};
+### 子コンポーネント（オプショナルなprops）
 
-let { 
-  value = $bindable('デフォルト値'),
-  checked = $bindable(false)
-}: Props = $props();
+```svelte
+<!-- OptionalInput.svelte -->
+<script lang="ts">
+  type Props = {
+    value?: string;
+    placeholder?: string;
+  };
+
+  let { 
+    value = $bindable('デフォルト値'),
+    placeholder = 'テキストを入力'
+  }: Props = $props();
+
+  function handleInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    value = target.value;
+  }
+</script>
+
+<input 
+  type="text" 
+  {value} 
+  {placeholder}
+  oninput={handleInput} 
+/>
+```
+
+### 親コンポーネントでの使用例
+
+```svelte
+<!-- Parent.svelte -->
+<script lang="ts">
+  import OptionalInput from '$lib/components/OptionalInput.svelte';
+  
+  let boundValue = $state('');
+  // bindしない場合の値は追跡しない
+</script>
+
+<!-- ケース1: bind:valueで双方向バインディング -->
+<div>
+  <h3>双方向バインディングあり</h3>
+  <OptionalInput bind:value={boundValue} placeholder="名前を入力" />
+  <p>バインドされた値: {boundValue}</p>
+</div>
+
+<!-- ケース2: bindなしで使用（デフォルト値が使用される） -->
+<div>
+  <h3>バインディングなし（デフォルト値使用）</h3>
+  <OptionalInput placeholder="デフォルト値で動作" />
+  <p>親側では値を追跡しません</p>
+</div>
+
+<!-- ケース3: 片方向で初期値のみ渡す -->
+<div>
+  <h3>初期値のみ設定（片方向）</h3>
+  <OptionalInput value="初期値" />
+  <p>初期値は設定されますが、変更は親に反映されません</p>
+</div>
 ```
 
 ## 複数の値のバインディング
 
 複数の`$bindable`プロパティを組み合わせて、複雑なコンポーネント間のデータ同期を実現します。
 
-```typescript
-// RangeSlider.svelte
-type Props = {
-  min: number;
-  max: number;
-  step?: number;
-};
+```svelte
+<!-- RangeSlider.svelte -->
+<script lang="ts">
+  type Props = {
+    min: number;
+    max: number;
+    step?: number;
+  };
 
-let { 
-  min = $bindable(0),
-  max = $bindable(100),
-  step = 1
-}: Props = $props();
+  let { 
+    min = $bindable(0),
+    max = $bindable(100),
+    step = 1
+  }: Props = $props();
 
-function handleMinChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  min = Number(target.value);
-  if (min > max) max = min;
-}
+  function handleMinChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    min = Number(target.value);
+    if (min > max) max = min;
+  }
 
-function handleMaxChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  max = Number(target.value);
-  if (max < min) min = max;
-}
+  function handleMaxChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    max = Number(target.value);
+    if (max < min) min = max;
+  }
+</script>
+
+<div class="range-slider">
+  <label>
+    Min: <input type="range" value={min} oninput={handleMinChange} {step} max="100" />
+    <span>{min}</span>
+  </label>
+  <label>
+    Max: <input type="range" value={max} oninput={handleMaxChange} {step} min="0" />
+    <span>{max}</span>
+  </label>
+</div>
+
 ```
 
 ## オブジェクトと配列のバインディング
@@ -119,64 +187,127 @@ function handleMaxChange(event: Event) {
 
 ### オブジェクト
 
-```typescript
-// UserForm.svelte
-type User = {
-  name: string;
-  email: string;
-  age: number;
-};
+```svelte
+<!-- UserForm.svelte -->
+<script lang="ts">
+  type User = {
+    name: string;
+    email: string;
+    age: number;
+  };
 
-type Props = {
-  user: User;
-};
+  type Props = {
+    user: User;
+  };
 
-let { user = $bindable({
-  name: '',
-  email: '',
-  age: 0
-}) }: Props = $props();
+  let { user = $bindable({
+    name: '',
+    email: '',
+    age: 0
+  }) }: Props = $props();
 
-// オブジェクトのプロパティを直接更新
-function updateName(event: Event) {
-  const target = event.target as HTMLInputElement;
-  user.name = target.value;
-}
+  // オブジェクトのプロパティを直接更新
+  function updateName(event: Event) {
+    const target = event.target as HTMLInputElement;
+    user.name = target.value;
+  }
+
+  function updateEmail(event: Event) {
+    const target = event.target as HTMLInputElement;
+    user.email = target.value;
+  }
+
+  function updateAge(event: Event) {
+    const target = event.target as HTMLInputElement;
+    user.age = Number(target.value);
+  }
+</script>
+
+<form>
+  <label>
+    名前: <input type="text" value={user.name} oninput={updateName} />
+  </label>
+  <label>
+    メール: <input type="email" value={user.email} oninput={updateEmail} />
+  </label>
+  <label>
+    年齢: <input type="number" value={user.age} oninput={updateAge} />
+  </label>
+</form>
 ```
 
 ### 配列
 
-```typescript
-// TodoList.svelte
-type Todo = {
-  id: string;
-  text: string;
-  done: boolean;
-};
+```svelte
+<!-- TodoList.svelte -->
+<script lang="ts">
+  type Todo = {
+    id: string;
+    text: string;
+    done: boolean;
+  };
 
-type Props = {
-  todos: Todo[];
-};
+  type Props = {
+    todos: Todo[];
+  };
 
-let { todos = $bindable([]) }: Props = $props();
+  let { todos = $bindable([]) }: Props = $props();
+  let newTodoText = $state('');
 
-function addTodo(text: string) {
-  todos = [...todos, {
-    id: crypto.randomUUID(),
-    text,
-    done: false
-  }];
-}
+  function addTodo() {
+    if (newTodoText.trim()) {
+      todos = [...todos, {
+        id: crypto.randomUUID(),
+        text: newTodoText,
+        done: false
+      }];
+      newTodoText = '';
+    }
+  }
 
-function toggleTodo(id: string) {
-  todos = todos.map(todo =>
-    todo.id === id ? { ...todo, done: !todo.done } : todo
-  );
-}
+  function toggleTodo(id: string) {
+    todos = todos.map(todo =>
+      todo.id === id ? { ...todo, done: !todo.done } : todo
+    );
+  }
 
-function removeTodo(id: string) {
-  todos = todos.filter(todo => todo.id !== id);
-}
+  function removeTodo(id: string) {
+    todos = todos.filter(todo => todo.id !== id);
+  }
+</script>
+
+<div class="todo-list">
+  <div class="add-todo">
+    <input 
+      type="text" 
+      bind:value={newTodoText}
+      onkeydown={(e) => e.key === 'Enter' && addTodo()}
+      placeholder="新しいタスクを入力"
+    />
+    <button onclick={addTodo}>追加</button>
+  </div>
+  
+  <ul>
+    {#each todos as todo (todo.id)}
+      <li>
+        <input 
+          type="checkbox" 
+          checked={todo.done}
+          onchange={() => toggleTodo(todo.id)}
+        />
+        <span class:done={todo.done}>{todo.text}</span>
+        <button onclick={() => removeTodo(todo.id)}>削除</button>
+      </li>
+    {/each}
+  </ul>
+</div>
+
+<style>
+  .done {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+</style>
 ```
 
 ## 実践例

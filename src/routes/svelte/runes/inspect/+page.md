@@ -37,9 +37,14 @@ description: Svelte 5のデバッグツール
   
   // countの変更を監視
   $inspect(count);
-  
+  // コンソールに 以下のように出力される
+  // init 0
+
+  // `increment()`が実行される度に以下のように出力される
+  // update 1
+  // update 2  
   function increment() {
-    count++; // コンソールに "count: 1" などが出力される
+    count++; 
   }
 </script>
 
@@ -58,13 +63,14 @@ description: Svelte 5のデバッグツール
   
   // 複数の値を一度に監視
   $inspect(name, age, isActive);
+  // 初期値として `init 太郎 25 false`と出力
   
   function updateUser() {
     name = '次郎';
     age = 26;
     isActive = true;
-    // 3つの値すべてがコンソールに出力される
   }
+  // `updateUser()`実行後 `update 太郎 25 false`と出力
 </script>
 ```
 
@@ -86,6 +92,7 @@ description: Svelte 5のデバッグツール
   });
   
   // オブジェクト全体の変更を監視
+  // init {name: '太郎', email: 'taro@example.com', settings: {…}}
   $inspect(user);
   
   function updateTheme() {
@@ -105,15 +112,18 @@ description: Svelte 5のデバッグツール
   ]);
   
   $inspect(todos);
+  // init (2) ['タスク1', 'タスク2']
   
   function addTodo() {
     todos.push('新しいタスク');
     // 配列の変更が出力される
+    // update (3) ['タスク1', 'タスク2', '新しいタスク']
   }
   
   function removeTodo(index: number) {
     todos.splice(index, 1);
     // 削除も検出される
+    // update (3) ['タスク1', '新しいタスク'
   }
 </script>
 ```
@@ -131,7 +141,9 @@ description: Svelte 5のデバッグツール
   
   // ラベルを使って区別しやすくする
   $inspect('カウンター:', count);
+  // init カウンター: 0
   $inspect('2倍の値:', doubleCount);
+  // init 2倍の値: 0
 </script>
 ```
 
@@ -145,6 +157,7 @@ description: Svelte 5のデバッグツール
   // 条件付きで監視を有効化
   if (debugMode) {
     $inspect(data);
+    // init {value: 0}
   }
   
   // 環境変数を使った制御
@@ -158,12 +171,21 @@ description: Svelte 5のデバッグツール
 
 ```typescript
 <script lang="ts">
+  // User型を定義
+  type User = {
+    id: string;
+    name: string;
+    // 必要に応じて他のプロパティを追加
+  };
+
   // Map/Setの監視
   let userMap = $state(new Map<string, User>());
   let selectedIds = $state(new Set<string>());
   
   $inspect('ユーザーマップ:', userMap);
+  // init ユーザーマップ: Map(0) {size: 0}
   $inspect('選択ID:', selectedIds);
+  // init 選択ID: Set(0) {size: 0}
   
   // クラスインスタンスの監視
   class TodoItem {
@@ -208,9 +230,13 @@ description: Svelte 5のデバッグツール
   
   // 計算の流れを追跡
   $inspect('商品リスト:', items);
+  // init 商品リスト: (3) [{…}, {…}, {…}]
   $inspect('小計:', subtotal);
+  // init 小計: 8500
   $inspect('税額:', tax);
+  // init 税額: 850
   $inspect('合計:', total);
+  // init 合計: 9350
   
   function updateQuantity(id: number, quantity: number) {
     const item = items.find(i => i.id === id);
@@ -326,6 +352,7 @@ description: Svelte 5のデバッグツール
   
   // API通信の状態を監視
   $inspect('API状態:', apiState);
+  // init API状態: {loading: false, data: null, error: null}
   
   async function fetchData() {
     apiState.loading = true;
@@ -347,38 +374,47 @@ description: Svelte 5のデバッグツール
 
 ```typescript
 <script lang="ts">
-  let items = $state<number[]>([]);
-  let searchQuery = $state('');
-  let sortOrder = $state<'asc' | 'desc'>('asc');
+  import { derived, get, writable } from 'svelte/store';
+
+  const items = writable<number[]>([]);
+  const searchQuery = writable('');
+  const sortOrder = writable<'asc' | 'desc'>('asc');
   
   // パフォーマンスを監視しながら最適化
   let startTime = performance.now();
-  
-  let filteredItems = $derived({
-    const result = items.filter(item => item > 50);
+
+  const filteredItems = derived(items, $items => {
+    const result = $items.filter(item => item > 50);
     const time = performance.now() - startTime;
-    $inspect(`フィルター処理時間: ${time.toFixed(2)}ms`);
+    // $inspect(`フィルター処理時間: ${time.toFixed(2)}ms`);
     return result;
   });
-  
-  let sortedItems = $derived({
-    const result = filteredItems.toSorted((a, b) => 
-      sortOrder === 'asc' ? a - b : b - a
-    );
-    const time = performance.now() - startTime;
-    $inspect(`ソート処理時間: ${time.toFixed(2)}ms`);
-    return result;
-  });
-  
-  // 派生値の再計算を監視
-  $inspect('元の配列:', items.length);
-  $inspect('フィルター後:', filteredItems.length);
-  $inspect('最終結果:', sortedItems);
-  
-  function addRandomItems(count: number) {
-    for (let i = 0; i < count; i++) {
-      items.push(Math.floor(Math.random() * 100));
+
+  const sortedItems = derived(
+    [filteredItems, sortOrder],
+    ([$filteredItems, $sortOrder]) => {
+      const result = [...$filteredItems].sort((a, b) =>
+        $sortOrder === 'asc' ? a - b : b - a
+      );
+      const time = performance.now() - startTime;
+      $inspect(`ソート処理時間: ${time.toFixed(2)}ms`);
+      return result;
     }
+  );
+
+  // 派生値の再計算を監視
+  $inspect('元の配列:', get(items).length);
+  $inspect('フィルター後:', get(filteredItems).length);
+  $inspect('最終結果:', get(sortedItems));
+
+  function addRandomItems(count: number) {
+    items.update(arr => {
+      const newArr = [...arr];
+      for (let i = 0; i < count; i++) {
+        newArr.push(Math.floor(Math.random() * 100));
+      }
+      return newArr;
+    });
     // 大量データ追加時のパフォーマンスを確認
   }
 </script>
@@ -388,6 +424,12 @@ description: Svelte 5のデバッグツール
 
 ```typescript
 // stores/app.svelte.ts
+type User = {
+  id: string;
+  name: string;
+  // add other user properties as needed
+};
+
 export function createAppStore() {
   let user = $state<User | null>(null);
   let theme = $state<'light' | 'dark'>('light');
@@ -561,6 +603,17 @@ todos: (3) ["タスク1", "タスク2", "タスク3"]
     console.groupEnd();
   });
 </script>
+// 📊 デバッグ情報
+// inspect.js:31 init 生データ: {date: Wed Aug 27 2025 14:27:00 GMT+0900 (日本標準時), amount: 1234567.89, items: Array(3)}
+// +page.svelte:23 整形済み: {
+//   "date": "2025-08-27T05:27:00.770Z",
+//   "amount": 1234567.89,
+//   "items": [
+//     "A",
+//     "B",
+//     "C"
+//   ]
+// }
 ```
 
 ### エラー追跡

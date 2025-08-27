@@ -526,4 +526,4 @@ SvelteKitのルーティングシステムは、
 
 ## 次のステップ
 
-[Load関数とデータフェッチング](/sveltekit/load-functions/)で、データの取得と管理について詳しく学びましょう。
+[Load関数とデータフェッチング](/sveltekit/basics/load-functions/)で、データの取得と管理について詳しく学びましょう。

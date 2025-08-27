@@ -675,4 +675,4 @@ SvelteKitのLoad関数は、
 
 ## 次のステップ
 
-[フォーム処理とActions](/sveltekit/forms/)で、インタラクティブなフォーム処理について学びましょう。
+[フォーム処理とActions](/sveltekit/basics/forms/)で、インタラクティブなフォーム処理について学びましょう。

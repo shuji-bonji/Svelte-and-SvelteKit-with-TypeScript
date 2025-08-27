@@ -339,13 +339,13 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 ## 🎓 学習の始め方
 
 ### Step 1: 基礎を固める
-まず[概要とアーキテクチャ](/sveltekit/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/project-structure/)でファイル構成を学びます。
+まず[概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/basics/project-structure/)でファイル構成を学びます。
 
 ### Step 2: コア機能をマスター
-[ルーティング](/sveltekit/routing/)と[データ読み込み](/sveltekit/load-functions/)で、SvelteKitの中核機能を習得します。
+[ルーティング](/sveltekit/basics/routing/)と[データ読み込み](/sveltekit/basics/load-functions/)で、SvelteKitの中核機能を習得します。
 
 ### Step 3: 実践的な実装
-[フォーム処理](/sveltekit/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
+[フォーム処理](/sveltekit/basics/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
 
 ## 🛠️ 推奨開発環境
 

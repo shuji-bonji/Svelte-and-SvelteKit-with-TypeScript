@@ -78,7 +78,7 @@ SvelteKitアプリケーションを**本番環境で安定稼働**させるた�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/ci-cd/" class="flex no-underline group h-full">
+  <a href="#" class="flex no-underline group h-full pointer-events-none opacity-50">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-teal-400 dark:hover:border-teal-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔄</div>
       <h3 class="font-bold text-lg mb-2 text-teal-600 dark:text-teal-400 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">

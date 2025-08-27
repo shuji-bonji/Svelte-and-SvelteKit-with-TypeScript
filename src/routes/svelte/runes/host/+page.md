@@ -5,7 +5,102 @@ description: カスタムエレメント内でホスト要素にアクセスす�
 
 `$host`ルーンは、Svelte 5で導入された、カスタムエレメント（Web Components）内でホスト要素にアクセスするための特別なルーンです。
 
-## 基本的な使い方
+## カスタムエレメントとは
+
+カスタムエレメント（Web Components）は、再利用可能なカスタムHTML要素を定義するWeb標準技術です。Svelteコンポーネントをカスタムエレメントとしてコンパイルすることで、Svelte以外の環境でも使用できるようになります。
+
+:::info[さらに詳しく学ぶ]
+カスタムエレメント（Web Components）についての詳細は、MDNのドキュメントをご参照ください：
+
+- 📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)
+- 📖 [カスタムエレメントの使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_custom_elements)
+- 📖 [Shadow DOM の使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_shadow_DOM)
+- 📖 [HTMLElement | MDN](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement)
+:::
+
+### カスタムエレメントの定義
+
+```svelte
+<!-- Counter.svelte -->
+<svelte:options customElement="my-counter" />
+
+<script lang="ts">
+  let { initial = 0 } = $props();
+  let count = $state(initial);
+  
+  function increment() {
+    count++;
+    // カウント変更をカスタムイベントで通知
+    $host().dispatchEvent(
+      new CustomEvent('countchange', {
+        detail: { count },
+        bubbles: true
+      })
+    );
+  }
+</script>
+
+<div class="counter">
+  <button onclick={increment}>+</button>
+  <span>{count}</span>
+</div>
+
+<style>
+  .counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+</style>
+```
+
+### 他フレームワークでの使用例
+
+```javascript
+// React
+function App() {
+  useEffect(() => {
+    const handleCountChange = (e) => {
+      console.log('Count:', e.detail.count);
+    };
+    
+    const counter = document.getElementById('counter');
+    counter?.addEventListener('countchange', handleCountChange);
+    
+    return () => {
+      counter?.removeEventListener('countchange', handleCountChange);
+    };
+  }, []);
+  
+  // JSXで使用
+  return React.createElement('my-counter', { id: 'counter', initial: '10' });
+}
+```
+
+```html
+<!-- Vue.jsでの使用例 -->
+<!-- Template部分 -->
+<div id="app">
+  <my-counter 
+    :initial="10" 
+    @countchange="handleCountChange">
+  </my-counter>
+</div>
+
+<!-- Script部分 -->
+<script>
+new Vue({
+  el: '#app',
+  methods: {
+    handleCountChange(event) {
+      console.log('Count:', event.detail.count);
+    }
+  }
+});
+</script>
+```
+
+## 実践例
 
 `$host`を使ったカスタムエレメントの作成から使用まで、実際のプロジェクトでの完全な手順を説明します。
 
@@ -607,92 +702,6 @@ import 'my-svelte-components';
 // HTMLで<my-button>が使用可能に
 ```
 
-## カスタムエレメントとは
-
-カスタムエレメント（Web Components）は、再利用可能なカスタムHTML要素を定義するWeb標準技術です。Svelteコンポーネントをカスタムエレメントとしてコンパイルすることで、Svelte以外の環境でも使用できるようになります。
-
-### カスタムエレメントの定義
-
-```svelte
-<!-- Counter.svelte -->
-<svelte:options customElement="my-counter" />
-
-<script lang="ts">
-  let { initial = 0 } = $props();
-  let count = $state(initial);
-  
-  function increment() {
-    count++;
-    // カウント変更をカスタムイベントで通知
-    $host().dispatchEvent(
-      new CustomEvent('countchange', {
-        detail: { count },
-        bubbles: true
-      })
-    );
-  }
-</script>
-
-<div class="counter">
-  <button onclick={increment}>+</button>
-  <span>{count}</span>
-</div>
-
-<style>
-  .counter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-</style>
-```
-
-### 他フレームワークでの使用例
-
-```javascript
-// React
-function App() {
-  useEffect(() => {
-    const handleCountChange = (e) => {
-      console.log('Count:', e.detail.count);
-    };
-    
-    const counter = document.getElementById('counter');
-    counter?.addEventListener('countchange', handleCountChange);
-    
-    return () => {
-      counter?.removeEventListener('countchange', handleCountChange);
-    };
-  }, []);
-  
-  // JSXで使用
-  return React.createElement('my-counter', { id: 'counter', initial: '10' });
-}
-```
-
-```html
-<!-- Vue.jsでの使用例 -->
-<!-- Template部分 -->
-<div id="app">
-  <my-counter 
-    :initial="10" 
-    @countchange="handleCountChange">
-  </my-counter>
-</div>
-
-<!-- Script部分 -->
-<script>
-new Vue({
-  el: '#app',
-  methods: {
-    handleCountChange(event) {
-      console.log('Count:', event.detail.count);
-    }
-  }
-});
-</script>
-```
-
 ## $hostでできること
 
 ### 1. カスタムイベントのディスパッチ
@@ -860,164 +869,6 @@ export default {
 <svelte:options customElement="my-component" />
 ```
 
-## 実践例：フォームコンポーネント
-
-```svelte
-<!-- CustomForm.svelte -->
-<svelte:options customElement="custom-form" />
-
-<script lang="ts">
-  import { onMount } from 'svelte';
-  
-  type FormData = {
-    name: string;
-    email: string;
-  };
-  
-  let formData = $state<FormData>({
-    name: '',
-    email: ''
-  });
-  
-  // フォーム送信
-  function handleSubmit(e: Event) {
-    e.preventDefault();
-    
-    // バリデーション
-    if (!formData.name || !formData.email) {
-      $host().dispatchEvent(
-        new CustomEvent('error', {
-          detail: { message: '全ての項目を入力してください' },
-          bubbles: true
-        })
-      );
-      return;
-    }
-    
-    // 送信イベント
-    $host().dispatchEvent(
-      new CustomEvent('submit', {
-        detail: formData,
-        bubbles: true
-      })
-    );
-  }
-  
-  // 外部からのリセット要求に対応
-  onMount(() => {
-    const host = $host();
-    
-    // カスタムメソッドを追加
-    (host as any).reset = () => {
-      formData = { name: '', email: '' };
-    };
-    
-    // 初期状態を通知
-    host.dispatchEvent(
-      new CustomEvent('ready', {
-        detail: { message: 'Form initialized' }
-      })
-    );
-  });
-</script>
-
-<form onsubmit={handleSubmit}>
-  <div>
-    <label>
-      名前:
-      <input 
-        type="text" 
-        bind:value={formData.name}
-        required
-      />
-    </label>
-  </div>
-  
-  <div>
-    <label>
-      メール:
-      <input 
-        type="email" 
-        bind:value={formData.email}
-        required
-      />
-    </label>
-  </div>
-  
-  <button type="submit">送信</button>
-</form>
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-  }
-  
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #0056b3;
-  }
-</style>
-```
-
-### 使用例
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <script type="module" src="/custom-form.js"></script>
-</head>
-<body>
-  <custom-form id="myForm"></custom-form>
-  
-  <script>
-    const form = document.getElementById('myForm');
-    
-    // イベントリスナー
-    form.addEventListener('submit', (e) => {
-      console.log('Form submitted:', e.detail);
-    });
-    
-    form.addEventListener('error', (e) => {
-      alert(e.detail.message);
-    });
-    
-    form.addEventListener('ready', (e) => {
-      console.log(e.detail.message);
-    });
-    
-    // カスタムメソッドの呼び出し
-    setTimeout(() => {
-      form.reset(); // フォームをリセット
-    }, 5000);
-  </script>
-</body>
-</html>
-```
-
 ## まとめ
 
 `$host`ルーンは、Svelteコンポーネントをカスタムエレメントとして使用する際の重要な機能です。
@@ -1027,6 +878,20 @@ export default {
 - **相互運用性**: 他のフレームワークやVanilla JavaScriptとの統合
 
 カスタムエレメントは、コンポーネントの再利用性を最大化し、フレームワークに依存しない形でUIコンポーネントを提供する強力な手段です。
+
+## 参考資料
+
+### 公式ドキュメント
+
+- 🔗 [Custom elements API - Svelte 5](https://svelte.dev/docs/svelte/custom-elements-api)
+- 🔗 [$host - Svelte 5 Docs](https://svelte.dev/docs/svelte/$host)
+- 🔗 [Compiling to custom elements - Svelte Tutorial](https://learn.svelte.dev/tutorial/custom-elements-api)
+
+### MDN Web Docs
+
+- 📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)
+- 📖 [CustomElementRegistry | MDN](https://developer.mozilla.org/ja/docs/Web/API/CustomElementRegistry)
+- 📖 [customElements.define() | MDN](https://developer.mozilla.org/ja/docs/Web/API/CustomElementRegistry/define)
 
 ## 次のステップ
 

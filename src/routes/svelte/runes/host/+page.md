@@ -15,36 +15,82 @@ description: カスタムエレメント内でホスト要素にアクセスす�
 
 ```bash
 # Svelteプロジェクトの作成
-npx sv create my-custom-elements
+% npx sv create my-custom-elements
+Need to install the following packages:
+sv@0.9.2
+Ok to proceed? (y) y
 
-# プロンプトで以下を選択:
-# - SvelteKit demo app
-# - TypeScript
-# - その他は必要に応じて選択
+┌  Welcome to the Svelte CLI! (v0.9.2)
+│
+◇  Which template would you like?
+│  SvelteKit minimal
+│
+◇  Add type checking with TypeScript?
+│  Yes, using TypeScript syntax
+│
+◆  Project created
+│
+◇  What would you like to add to your project? (use arrow keys / space bar)
+│  none
+│
+◇  Which package manager do you want to install dependencies with?
+│  npm
+│
+◆  Successfully installed dependencies
+│
+◇  What's next? ───────────────────────────────╮
+│                                              │
+│  📁 Project steps                            │
+│                                              │
+│    1: cd my-custom-elements                  │
+│    2: npm run dev -- --open                  │
+│                                              │
+│  To close the dev server, hit Ctrl-C         │
+│                                              │
+│  Stuck? Visit us at https://svelte.dev/chat  │
+│                                              │
+├──────────────────────────────────────────────╯
+│
+└  You're all set!
 
 cd my-custom-elements
-npm install
+
+# カスタムエレメント用のビルドプラグインもインストール
+npm install -D @sveltejs/vite-plugin-svelte
 ```
 
 ### プロジェクト構成
 
+初期構成を以下のように変更します：
+
 ```
 my-custom-elements/
 ├── src/
-│   ├── routes/           # SvelteKitのルート（今回は使用しない）
-│   ├── lib/              # 共有コンポーネント
-│   │   └── components/   # カスタムエレメント用のコンポーネント
-│   │       ├── MyButton.svelte
-│   │       ├── MyCounter.svelte
-│   │       └── index.ts  # エクスポート用
 │   ├── app.d.ts
-│   └── app.html
-├── static/              # 静的ファイル
-│   └── demo.html       # カスタムエレメントのデモページ
-├── vite.config.ts
+│   ├── app.html
+│   └── lib/
+│       ├── assets/
+│       │   └── favicon.svg
+│       └── components/      # 新規作成
+│           ├── index.ts     # 新規作成
+│           ├── MyButton.svelte   # 新規作成
+│           └── MyCounter.svelte  # 新規作成
+├── static/
+│   ├── demo.html           # 新規作成
+│   ├── demo-dev.html       # 新規作成
+│   └── robots.txt
+├── vite.lib.config.ts      # 新規作成
 ├── svelte.config.js
-├── package.json
-└── tsconfig.json
+├── tsconfig.json
+├── vite.config.ts
+└── package.json
+```
+
+まず必要なディレクトリとファイルを作成：
+
+```bash
+# componentsディレクトリを作成
+mkdir src/lib/components
 ```
 
 ### ステップ2: カスタムエレメントコンポーネントの作成
@@ -145,26 +191,28 @@ my-custom-elements/
 
 <script lang="ts">
   let { initial = 0, step = 1 }: {
-    initial?: number;
-    step?: number;
+    initial?: number | string;
+    step?: number | string;
   } = $props();
   
-  let count = $state(initial);
+  // 文字列の場合は数値に変換
+  let count = $state(Number(initial));
+  let stepValue = Number(step);
   
   function increment() {
-    count += step;
+    count += stepValue;
     notifyChange();
   }
   
   function decrement() {
-    count -= step;
+    count -= stepValue;
     notifyChange();
   }
   
   function notifyChange() {
     $host().dispatchEvent(
       new CustomEvent('countchange', {
-        detail: { count, step },
+        detail: { count, step: stepValue },
         bubbles: true
       })
     );
@@ -229,35 +277,62 @@ import './MyCounter.svelte';
 
 // 必要に応じて追加のコンポーネントをインポート
 console.log('Custom elements registered: my-button, my-counter');
+
+export {}; // モジュールとして扱うため
 ```
 
 ### ステップ4: ビルド設定
 
-Viteの設定を更新してカスタムエレメントをビルドできるようにします：
+カスタムエレメント専用のビルド設定ファイルを作成します：
 
-```javascript
-// vite.config.ts
-import { sveltekit } from '@sveltejs/kit/vite';
+```typescript
+// vite.lib.config.ts (新規作成)
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [sveltekit()],
+  plugins: [
+    svelte({
+      compilerOptions: {
+        customElement: true,
+      }
+    })
+  ],
   build: {
     lib: {
       entry: 'src/lib/components/index.ts',
       name: 'MyCustomElements',
-      fileName: (format) => `custom-elements.${format}.js`
+      // UMDは使用しない（ES moduleのみ）
+      formats: ['es'],
+      fileName: 'custom-elements'
     },
     rollupOptions: {
-      // 外部依存を除外（必要に応じて）
+      // 必要に応じて外部依存を追加
       external: [],
-      output: {
-        globals: {}
-      }
     }
   }
 });
 ```
+
+:::warning[IDEの警告について]
+VSCodeやWebStormで`<svelte:options customElement="..."`に対して警告が表示される場合があります：
+
+- **警告内容**: "The customElement option is used when generating a custom element. Did you forget the customElement: true compile option?"
+- **原因**: IDE用の設定（svelte.config.js）とビルド用の設定（vite.lib.config.ts）が異なるため
+- **対処**: この警告は無視して問題ありません。ビルド時は正常に動作します。
+
+もし警告を消したい場合は、`svelte.config.js`に以下を追加：
+
+```javascript
+// svelte.config.js (オプション)
+export default {
+  // ... 既存の設定
+  compilerOptions: {
+    customElement: true // IDE警告を消す場合のみ
+  }
+};
+```
+:::
 
 package.jsonにビルドスクリプトを追加：
 
@@ -266,10 +341,9 @@ package.jsonにビルドスクリプトを追加：
 {
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
-    "build:lib": "vite build --mode library",
-    "preview": "vite preview",
-    // ... 他のスクリプト
+    "build": "vite build", 
+    "build:lib": "vite build --config vite.lib.config.ts",
+    "preview": "vite preview"
   }
 }
 ```
@@ -281,13 +355,43 @@ package.jsonにビルドスクリプトを追加：
 npm run build:lib
 
 # 生成されるファイル:
-# dist/custom-elements.es.js    # ES module
-# dist/custom-elements.umd.js   # UMD
+# dist/custom-elements.js    # ES module
 ```
 
 ### ステップ6: テスト用HTMLファイルの作成
 
-デモ用のHTMLファイルを作成してテスト：
+開発用とビルド後で異なるHTMLファイルを作成：
+
+#### 開発用（推奨）
+
+```html
+<!-- static/demo-dev.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カスタムエレメントデモ（開発用）</title>
+  <!-- 開発サーバーから直接読み込み -->
+  <script type="module" src="/src/lib/components/index.ts"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>カスタムエレメントデモ</h1>
+  <my-button label="テストボタン"></my-button>
+  <my-counter initial="5"></my-counter>
+</body>
+</html>
+```
+
+#### ビルド後用
 
 ```html
 <!-- static/demo.html -->
@@ -297,7 +401,8 @@ npm run build:lib
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>カスタムエレメントデモ</title>
-  <script type="module" src="/dist/custom-elements.es.js"></script>
+  <!-- ビルド後のファイルを参照 -->
+  <script type="module" src="./custom-elements.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -381,31 +486,112 @@ npm run build:lib
 
 ### ステップ7: 開発サーバーでテスト
 
+#### 方法1: 開発サーバーで直接確認（推奨）
+
 ```bash
 # 開発サーバーを起動
 npm run dev
 
 # ブラウザで以下にアクセス
+# http://localhost:5173/demo-dev.html
+```
+
+開発サーバーではTypeScriptファイルが直接読み込まれ、ホットリロードも動作します。
+
+:::tip[動作確認]
+ブラウザのDevToolsで要素を確認すると、カスタムエレメントが正しく登録されているのが確認できます：
+
+```html
+<my-button label="テストボタン" role="button" tabindex="0" style="display: inline-block;">
+  #shadow-root (open)
+    <button class="btn btn-primary">テストボタン</button>
+</my-button>
+```
+
+カウンターをクリックすると、`data-count`属性が更新されるのも確認できます。
+:::
+
+#### 方法2: ビルド後の確認
+
+```bash
+# 1. カスタムエレメントをビルド
+npm run build:lib
+
+# 2. ビルドしたファイルをstaticディレクトリにコピー
+cp dist/custom-elements.js static/
+
+# 3. 開発サーバーを起動
+npm run dev
+
+# 4. ブラウザで以下にアクセス
 # http://localhost:5173/demo.html
 ```
+
+:::note[npm run buildとpreviewについて]
+**`npm run build`** はSvelteKitアプリケーション用のビルドコマンドです：
+- `.svelte-kit/output/`にSvelteKitアプリをビルド
+- カスタムエレメントのビルドには使用しません
+- カスタムエレメントには`npm run build:lib`を使用
+
+**`npm run preview`** はSvelteKitアプリのプレビュー用です：
+- `npm run build`後のSvelteKitアプリをプレビュー
+- `http://localhost:4173/`でアクセス
+- カスタムエレメントのテストには使用しません
+
+カスタムエレメントのテストは`npm run dev`と`demo-dev.html`を使用してください。
+:::
+
+### トラブルシューティング
+
+#### よくあるエラーと解決方法
+
+1. **"UMD and IIFE output formats are not supported"エラー**
+   - 原因: SvelteKitのデフォルト設定との競合
+   - 解決: 別のvite.lib.config.tsファイルを使用し、formatを`['es']`のみに設定
+
+2. **カスタムエレメントが登録されない**
+   - 原因: `<svelte:options customElement="...">`の記述漏れ
+   - 解決: 各コンポーネントファイルの先頭に追加
+
+3. **スタイルが適用されない**
+   - 原因: Shadow DOMのカプセル化
+   - 解決: `:global()`を使用するか、コンポーネント内でスタイルを定義
+
+4. **`$host()`が使えない**
+   - 原因: 通常のSvelteコンポーネントで使用している
+   - 解決: `<svelte:options customElement="...">`を追加
+
+5. **403 Forbidden エラー（demo.html）**
+   - 原因: Viteの開発サーバーが`/dist`ディレクトリへのアクセスを禁止
+   - 解決: 
+     - 開発時: `/src/lib/components/index.ts`を直接インポート
+     - ビルド後: ビルドファイルを`static`ディレクトリにコピー
+
+6. **カスタムエレメントの属性が文字列として扱われる**
+   - 原因: HTML属性は常に文字列として渡される
+   - 例: `<my-counter initial="5" step="10">` の`5`と`10`は文字列
+   - 解決: propsで`string | number`型を受け入れ、`Number()`で変換
+   ```typescript
+   let { step = 1 }: { step?: number | string } = $props();
+   let stepValue = Number(step);
+   ```
 
 ### NPMパッケージとして配布する場合
 
 package.jsonの設定例:
 
 ```javascript
-// package.json
+// package.json (NPMパッケージ用)
 {
   "name": "my-svelte-components",
   "version": "1.0.0",
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/my-button.umd.js",
-  "module": "./dist/my-button.js",
+  "main": "./dist/custom-elements.js",
+  "module": "./dist/custom-elements.js",
   "exports": {
     ".": {
-      "import": "./dist/my-button.js",
-      "require": "./dist/my-button.umd.js"
+      "import": "./dist/custom-elements.js"
     }
   }
 }

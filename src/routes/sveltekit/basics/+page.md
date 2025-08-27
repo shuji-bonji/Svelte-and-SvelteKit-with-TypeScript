@@ -3,6 +3,9 @@ title: SvelteKit 基礎編
 description: SvelteKitフレームワークの基本概念とアーキテクチャを理解する
 ---
 
+:::caution[タイトル]
+執筆中
+:::
 <script>
   import { base } from '$app/paths';
 </script>

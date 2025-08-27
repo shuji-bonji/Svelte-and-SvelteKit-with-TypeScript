@@ -87,6 +87,11 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
 </script>
 
 
+:::caution[タイトル]
+執筆中
+:::
+
+
 SvelteKitは、Svelteを基盤とした**フルスタックWebアプリケーションフレームワーク**です。このページでは、SvelteKitの全体像と基本的な概念を理解します。
 
 ## SvelteKitとは何か

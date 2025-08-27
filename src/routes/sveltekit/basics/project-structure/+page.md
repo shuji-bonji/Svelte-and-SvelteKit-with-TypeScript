@@ -52,6 +52,9 @@ description: SvelteKitプロジェクトの完全なディレクトリ構造と�
 </script>
 
 
+:::caution[タイトル]
+執筆中
+:::
 
 SvelteKitは **規約重視（Convention over Configuration）** の設計思想を採用しています。ファイル名と配置場所が機能を決定するため、プロジェクト構造の理解が極めて重要です。このページでは、SvelteKitプロジェクトの完全な構造と各ファイルの役割を詳しく解説します。
 

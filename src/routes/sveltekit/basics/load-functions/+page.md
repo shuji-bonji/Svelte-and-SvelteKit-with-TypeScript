@@ -3,6 +3,11 @@ title: Load関数とデータフェッチング
 description: SvelteKitのデータ取得戦略を完全マスター - Universal/Server Load、ストリーミング、キャッシュ戦略まで
 ---
 
+
+:::caution[タイトル]
+執筆中
+:::
+
 SvelteKitのLoad関数は、ページレンダリング前にデータを取得する強力な仕組みです。Universal LoadとServer Loadの使い分け、並列データ取得、ストリーミングSSR、エラーハンドリングまで、実践的なTypeScriptコード例で完全解説します。
 
 ## Load関数の基本

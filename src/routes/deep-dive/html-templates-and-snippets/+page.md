@@ -1,6 +1,6 @@
 ---
 title: HTML <template> と Svelte #snippet の違い
-description: 
+description: HTML標準のtemplate要素とSvelte 5のsnippet記法の違いを詳しく解説。両者の特徴、使い分け、実装例を紹介
 ---
 
 Svelte 5 では `#snippet` という記法が導入され、HTML の `<template>` に似た使い方もできますが、両者には明確な違いがあります。以下に特徴と違いを整理します。

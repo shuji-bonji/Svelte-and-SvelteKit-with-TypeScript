@@ -21,3 +21,7 @@ features:
   - title: 実践的な内容
     description: ビジネスレベルのアプリケーション開発に必要な知識を網羅
 ---
+
+<h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
+  TypeScriptで学ぶ Svelte 5/SvelteKit - 日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習ガイド
+</h1>

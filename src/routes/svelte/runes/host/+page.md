@@ -10,12 +10,17 @@ description: カスタムエレメント内でホスト要素にアクセスす�
 カスタムエレメント（Web Components）は、再利用可能なカスタムHTML要素を定義するWeb標準技術です。Svelteコンポーネントをカスタムエレメントとしてコンパイルすることで、Svelte以外の環境でも使用できるようになります。
 
 :::info[さらに詳しく学ぶ]
-カスタムエレメント（Web Components）についての詳細は、MDNのドキュメントをご参照ください：
+カスタムエレメント（Web Components）についての詳細は、以下のリソースをご参照ください：
 
+**MDN Web Docs**
 - 📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)
 - 📖 [カスタムエレメントの使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_custom_elements)
 - 📖 [Shadow DOM の使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_shadow_DOM)
 - 📖 [HTMLElement | MDN](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement)
+
+**TypeScriptでのWebComponentsの学習リソース**
+- 🎓 [WebComponents完全ガイド - TypeScriptで学ぶWebComponents](https://shuji-bonji.github.io/WebComponents-with-TypeScript/concepts/webcomponents-overview.html)
+
 :::
 
 ### カスタムエレメントの定義

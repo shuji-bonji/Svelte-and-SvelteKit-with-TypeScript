@@ -3,7 +3,8 @@ title: コンポーネントの基本
 description: Svelteコンポーネントの構造と基本的な機能
 ---
 
-Svelteコンポーネントは、以下のの3つの部分から構成されます。
+
+Svelteコンポーネントは、以下の3つの部分から構成されます。
 
 - **script**（ロジック）
 - **markup**（HTML）
@@ -988,3 +989,4 @@ DOM要素を直接操作する必要がある場合は、[use:アクション](/
 ## 次のステップ
 
 [TypeScript統合](/svelte/basics/typescript-integration/)では、SvelteでTypeScriptを効果的に使用する方法を詳しく学びます。
+

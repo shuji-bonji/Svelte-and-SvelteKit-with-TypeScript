@@ -3,6 +3,11 @@ title: $bindableルーン
 description: 親子コンポーネント間の双方向データバインディング
 ---
 
+<script>
+  import BindableDemo from '$lib/components/BindableDemo.svelte';
+  import BindableComponentsDemo from '$lib/components/BindableComponentsDemo.svelte';
+</script>
+
 `$bindable`は、親コンポーネントから受け取ったプロパティを子コンポーネント内で変更可能にするルーンです。従来の`bind:`ディレクティブと組み合わせることで、親子間の双方向データバインディングを実現します。
 
 :::tip[React/Vue経験者向け]
@@ -317,11 +322,6 @@ let { value = $bindable('') }: Props = $props();
 ### 実際の$bindableコンポーネント
 
 実際に`$bindable`を使用したコンポーネントの実装例を見てみましょう。
-
-<script lang="ts">
-  import BindableDemo from '$lib/components/BindableDemo.svelte';
-  import BindableComponentsDemo from '$lib/components/BindableComponentsDemo.svelte';
-</script>
 
 <BindableDemo />
 
@@ -2116,3 +2116,4 @@ $effect(() => {
 :::
 
 次は[実践編](/svelte/advanced/)で、より高度なパターンを学びましょう。
+

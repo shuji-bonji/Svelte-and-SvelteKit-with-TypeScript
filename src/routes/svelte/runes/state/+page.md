@@ -3,6 +3,7 @@ title: $state - リアクティブな状態
 description: Svelte 5のRunesシステムにおける状態管理の基礎
 ---
 
+
 `$state`ルーンは、Svelte 5でリアクティブな状態を作成するための基本的な方法です。値が変更されると、その値を使用しているUIが自動的に更新されます。
 
 ## 基本的な使い方
@@ -655,3 +656,4 @@ apiUrl.searchParams.set('page', '2'); // クエリパラメータ変更を検知
 
 `$state`の基本を理解したら、次は派生値の作成方法を学びましょう。
 [$derived - 派生値](/svelte/runes/derived/)では、`$state`から自動的に計算される値の作成方法を詳しく解説します。
+

@@ -3,6 +3,7 @@ title: フォーム処理とActions
 description: SvelteKitのフォーム処理を完全マスター - Actions、Progressive Enhancement、バリデーション、ファイルアップロードまで
 ---
 
+
 SvelteKitのActionsは、プログレッシブエンハンスメントに対応した強力なフォーム処理システムです。JavaScriptが無効でも動作し、有効時にはシームレスな体験を提供します。このガイドでは、基本的なフォーム処理から高度なバリデーション、ファイルアップロードまで、実践的なTypeScriptコード例で完全解説します。
 
 ## Actions の基本概念
@@ -51,12 +52,7 @@ export const actions = {
 
 ```svelte
 <!-- src/routes/contact/+page.svelte -->
-<script lang="ts">
-  import { enhance } from '$app/forms';
-  import type { ActionData } from './$types';
-  
-  export let form: ActionData;
-</script>
+
 
 <form method="POST" use:enhance>
   {#if form?.error}
@@ -846,3 +842,4 @@ SvelteKitのActions とフォーム処理は、
 ## 次のステップ
 
 [APIルート](/sveltekit/api-routes/)で、RESTful APIの構築について学びましょう。
+

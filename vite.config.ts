@@ -249,7 +249,7 @@ const config = defineConfig({
                     { title: 'サーバーサイド編概要', to: '/sveltekit/server/' },
                     {
                       title: 'フォーム処理とActions',
-                      to: '/sveltekit/basics/forms/',
+                      to: '/sveltekit/server/forms/',
                     },
                     {
                       title: 'サーバーサイド処理 (準備中)',

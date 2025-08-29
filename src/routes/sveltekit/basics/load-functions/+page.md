@@ -4,6 +4,7 @@ description: SvelteKitのデータ取得戦略を完全マスター - Universal/
 ---
 
 
+
 :::caution[タイトル]
 執筆中
 :::
@@ -108,12 +109,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
 ```svelte
 <!-- src/routes/products/[id]/+page.svelte -->
-<script lang="ts">
-  import type { PageData } from './$types';
-  
-  // data.product と data.variant が自動的に型付け
-  export let data: PageData;
-</script>
+
 
 <h1>{data.product.name}</h1>
 {#if data.variant}
@@ -680,4 +676,5 @@ SvelteKitのLoad関数は、
 
 ## 次のステップ
 
-[フォーム処理とActions](/sveltekit/basics/forms/)で、インタラクティブなフォーム処理について学びましょう。
+[フォーム処理とActions](/sveltekit/server/forms/)で、インタラクティブなフォーム処理について学びましょう。
+

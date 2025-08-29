@@ -209,7 +209,7 @@ const config = defineConfig({
                       to: '/sveltekit/basics/routing/',
                     },
                     {
-                      title: 'データ読み込み',
+                      title: 'Load関数とデータフェッチング',
                       to: '/sveltekit/basics/load-functions/',
                     },
                   ],

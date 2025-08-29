@@ -86,7 +86,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 
 1. **Svelte習得確認** - Svelte 5の基礎知識があるか確認
    - ない場合 → [📚 Svelte基礎へ]({base}/svelte/)
-2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、データ読み込み
+2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、Load関数とデータフェッチング
 3. **🏛️ アーキテクチャ詳解** - 実行環境、ファイル構成、データフロー、レンダリングパイプライン
 4. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
 5. **🏗️ アプリ構築編** - 認証・認可、データベース統合、環境変数管理、エラーハンドリング
@@ -125,8 +125,8 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">動的ルート、レイアウト</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/load-functions/" class="text-blue-600 dark:text-blue-400 hover:underline">データ読み込み</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Load関数、ストリーミングSSR</td>
+            <td class="py-2"><a href="{base}/sveltekit/basics/load-functions/" class="text-blue-600 dark:text-blue-400 hover:underline">Load関数とデータフェッチング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">データ取得戦略、ストリーミングSSR</td>
           </tr>
         </tbody>
       </table>
@@ -342,7 +342,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 まず[概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/basics/project-structure/)でファイル構成を学びます。
 
 ### Step 2: コア機能をマスター
-[ルーティング](/sveltekit/basics/routing/)と[データ読み込み](/sveltekit/basics/load-functions/)で、SvelteKitの中核機能を習得します。
+[ルーティング](/sveltekit/basics/routing/)と[Load関数によるデータフェッチング](/sveltekit/basics/load-functions/)で、SvelteKitの中核機能を習得します。
 
 ### Step 3: 実践的な実装
 [フォーム処理](/sveltekit/server/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。

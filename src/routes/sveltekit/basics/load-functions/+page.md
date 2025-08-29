@@ -23,10 +23,95 @@ description: SvelteKitのデータ取得戦略を完全マスター - Universal/
     
     Server --> ServerBenefit["✅ セキュア<br/>✅ サーバーリソース活用<br/>⚠️ サーバー負荷"]
     Universal --> UniversalBenefit["✅ 高速ナビゲーション<br/>✅ CDNキャッシュ<br/>⚠️ バンドルサイズ"]`;
+
+  // Load関数のデータフロー図
+  const DataFlowDiagram = `graph TB
+    subgraph "初回アクセス (SSR)"
+      direction TB
+      Browser1[ブラウザ] -->|リクエスト| Server1[サーバー]
+      Server1 -->|1. layout.server.ts| LayoutServerLoad[layout.server.ts<br/>実行]
+      Server1 -->|2. page.server.ts| PageServerLoad[page.server.ts<br/>実行]
+      Server1 -->|3. layout.ts| LayoutLoad[layout.ts<br/>実行]
+      Server1 -->|4. page.ts| PageLoad[page.ts<br/>実行]
+      PageLoad -->|HTML + データ| Browser1
+    end
+    
+    subgraph "クライアントサイドナビゲーション"
+      direction TB
+      Browser2[ブラウザ] -->|ナビゲーション| ClientRouter[クライアント<br/>ルーター]
+      ClientRouter -->|必要に応じて| ServerAPI[サーバー API]
+      ServerAPI -->|Server Load| ServerData[サーバーデータ]
+      ClientRouter -->|Universal Load| ClientData[クライアント<br/>実行]
+      ServerData --> Component[Svelteコンポーネント]
+      ClientData --> Component
+    end
+    
+    style LayoutServerLoad fill:#f9f,stroke:#333,stroke-width:2px,color:black
+    style PageServerLoad fill:#f9f,stroke:#333,stroke-width:2px,color:black
+    style LayoutLoad fill:#9ff,stroke:#333,stroke-width:2px,color:black
+    style PageLoad fill:#9ff,stroke:#333,stroke-width:2px,color:black
+    style ServerData fill:#f9f,stroke:#333,stroke-width:2px,color:black
+    style ClientData fill:#9ff,stroke:#333,stroke-width:2px,color:black`;
+
+  // Load関数の実行順序
+  const LoadSequenceDiagram = `sequenceDiagram
+    participant B as ブラウザ
+    participant S as サーバー
+    participant LS as layout.server.ts
+    participant PS as page.server.ts
+    participant L as layout.ts
+    participant P as page.ts
+    participant C as コンポーネント
+    
+    B->>S: ページリクエスト
+    S->>LS: ① 実行（サーバーのみ）
+    LS-->>S: 認証・DB データ
+    S->>PS: ② 実行（サーバーのみ）
+    PS-->>S: ページ固有データ
+    S->>L: ③ 実行（ユニバーサル）
+    L-->>S: 共通データ
+    S->>P: ④ 実行（ユニバーサル）
+    P-->>S: 公開データ
+    S->>C: ⑤ データを props として渡す
+    C-->>B: レンダリング済み HTML
+    
+    Note over B,C: クライアントサイドナビゲーション時
+    B->>L: layout.ts 実行
+    B->>P: page.ts 実行
+    P->>S: 必要に応じて Server Load を呼び出し
+    S-->>P: サーバーデータ
+    P-->>C: データ更新
+    C-->>B: 画面更新`;
 </script>
 
 
 SvelteKitのLoad関数は、ページレンダリング前にデータを取得する強力な仕組みです。Universal LoadとServer Loadの使い分け、並列データ取得、ストリーミングSSR、エラーハンドリングまで、実践的なTypeScriptコード例で完全解説します。
+
+## Load関数のデータフロー
+
+Load関数がどのようにデータを取得し、コンポーネントに渡すかを理解することで、効率的なデータ管理が可能になります。
+
+### 実行の流れ
+
+Load関数は階層構造に従って順番に実行されます。最初にサーバー専用のLoad関数（`.server.ts`）が実行され、その後ユニバーサルLoad関数（`.ts`）が実行されます。各関数で取得したデータは、最終的にコンポーネントのpropsとして渡されます。
+
+<Mermaid diagram={LoadSequenceDiagram} />
+
+この図が示すように、
+- **①②** サーバー専用Load関数は、機密データやデータベースアクセスなど、サーバーでのみ実行すべき処理を担当
+- **③④** ユニバーサルLoad関数は、公開可能なデータの取得や、クライアントサイドでも実行可能な処理を担当
+- **⑤** すべてのデータが統合され、コンポーネントに渡される
+
+### SSRとクライアントサイドナビゲーションの違い
+
+初回アクセス時のSSR（サーバーサイドレンダリング）と、その後のクライアントサイドナビゲーションでは、Load関数の実行場所が異なります。この違いを理解することで、パフォーマンスの最適化とセキュアな実装が可能になります。
+
+<Mermaid diagram={DataFlowDiagram} />
+
+#### 主な違い
+- **SSR時（初回アクセス）**: すべてのLoad関数がサーバー上で実行され、完全にレンダリングされたHTMLが返される
+- **クライアントサイドナビゲーション時**: Server Load関数はAPIとして呼び出され、Universal Load関数はブラウザで直接実行される
+- **パフォーマンス**: クライアントサイドナビゲーションは差分のみを更新するため高速
 
 ## Load関数の基本
 
@@ -211,10 +296,30 @@ export const load: PageServerLoad = async ({ locals, cookies }) => {
 
 ### 使い分けフローチャート
 
+どちらのLoad関数を使うべきか迷った時は、このフローチャートに従って判断できます。セキュリティ要件とパフォーマンス要件のバランスを考慮して、最適な選択をしましょう。
 
 <Mermaid diagram={FlowchartForDifferentUses} />
 
+#### 判断基準の詳細
 
+| 判断ポイント | Server Load を選ぶ理由 | Universal Load を選ぶ理由 |
+|---|---|---|
+| **秘密情報の扱い** | APIキー、認証トークン、環境変数などの機密情報を扱う必要がある | 公開可能な情報のみを扱う |
+| **データソース** | データベース、ファイルシステム、内部APIへの直接アクセスが必要 | 公開API、CDN、静的データの取得で十分 |
+| **実行環境** | Node.js固有の機能（fs、crypto等）を使用する | ブラウザでも実行可能な処理のみ |
+| **レスポンス形式** | Dateオブジェクト、Map、Set等の複雑な型を返したい | JSONシリアライズ可能な値のみ返す |
+| **キャッシュ戦略** | サーバーサイドでのキャッシュ制御が必要 | CDNやブラウザキャッシュを活用したい |
+
+#### 実際の使用例
+
+| 推奨 | ユースケース | 理由 |
+|---|---|---|
+| Universal Load | ブログ記事一覧の取得 | 公開APIから取得可能、CDNキャッシュも効く |
+|| 天気情報の表示 | 公開APIから取得、クライアントでも実行可能 |
+|| 検索結果の表示 | 公開検索APIを使用、高速なナビゲーション |
+| Server Load | ユーザー認証情報の取得 | セッションやJWTトークンの検証が必要 |
+|| 決済情報の処理 | 秘密鍵や決済APIキーを使用 |
+|| ファイルアップロード処理 | ファイルシステムへの書き込みが必要 |
 
 
 ## 型安全なデータ取得

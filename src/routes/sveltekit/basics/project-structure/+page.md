@@ -6,57 +6,32 @@ description: SvelteKitプロジェクトの完全なディレクトリ構造と�
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   
-  const fileExecutionOrderDiagram = `graph TB
-    subgraph "初回ロード時（SSR/SSG）"
-        direction TB
-        S1["1.+layout.server.ts<br/>(サーバー)"]
-        S2["2.+page.server.ts<br/>(サーバー)"]
-        S3["3.+layout.ts<br/>(サーバー)"]
-        S4["4.+page.ts<br/>(サーバー)"]
-        S5["5.+layout.svelte<br/>(サーバー→HTML生成)"]
-        S6["6.+page.svelte<br/>(サーバー→HTML生成)"]
-        S7["7.ハイドレーション<br/>(ブラウザ)"]
-        
-        S1 --> S2
-        S2 --> S3
-        S3 --> S4
-        S4 --> S5
-        S5 --> S6
-        S6 --> S7
-    end
+  const fileExecutionOrderDiagram = `flowchart TB
+
+    Layout1["+layout.server.ts"]
+    Page1["+page.server.ts"]
+    Layout2["+layout.ts"]
+    Page2["+page.ts"]
+    Layout3["+layout.svelte"]
+    Page3["+page.svelte"]
     
-    subgraph "クライアントサイドナビゲーション時"
-        direction TB
-        C1["1.+layout.ts<br/>(ブラウザ)"]
-        C2["2.+page.ts<br/>(ブラウザ)"]
-        C3["3.+layout.svelte<br/>(ブラウザ)"]
-        C4["4.+page.svelte<br/>(ブラウザ)"]
-        
-        C1 --> C2
-        C2 --> C3
-        C3 --> C4
-    end
+    Layout1 -->|1| Page1
+    Page1 -->|2| Layout2
+    Layout2 -->|3| Page2
+    Page2 -->|4| Layout3
+    Layout3 -->|5| Page3
     
-    style S1 fill:#ff6b6b
-    style S2 fill:#ff6b6b
-    style S3 fill:#4ecdc4
-    style S4 fill:#4ecdc4
-    style S5 fill:#45b7d1
-    style S6 fill:#45b7d1
-    style S7 fill:#FFC107
-    
-    style C1 fill:#4ecdc4
-    style C2 fill:#4ecdc4
-    style C3 fill:#45b7d1
-    style C4 fill:#45b7d1`;
+    style Layout1 fill:#ff6b6b,color:#fff
+    style Page1 fill:#ff6b6b,color:#fff
+    style Layout2 fill:#4ecdc4,color:#fff
+    style Page2 fill:#4ecdc4,color:#fff
+    style Layout3 fill:#45b7d1,color:#fff
+    style Page3 fill:#45b7d1,color:#fff`;
 </script>
 
+SvelteKitは **規約重視（Convention over Configuration）** の設計思想を採用しています。ファイル名と配置場所が機能を決定するため、プロジェクト構造の理解が極めて重要です。
 
-:::caution[タイトル]
-執筆中
-:::
-
-SvelteKitは **規約重視（Convention over Configuration）** の設計思想を採用しています。ファイル名と配置場所が機能を決定するため、プロジェクト構造の理解が極めて重要です。このページでは、SvelteKitプロジェクトの完全な構造と各ファイルの役割を詳しく解説します。
+このページでは、SvelteKitプロジェクトの完全な構造と各ファイルの役割を詳しく解説します。
 
 ## 基本的なプロジェクト構造
 
@@ -64,21 +39,31 @@ SvelteKitプロジェクトの基本的な構造を理解することで、効�
 
 ### 最小構成
 
-新規プロジェクトを作成した直後の、最も基本的なファイル構成です。この構成だけでも完全に動作するWebアプリケーションが構築できます。
+`npx sv create`で新規プロジェクトを作成した直後の、最も基本的なファイル構成です。この構成だけでも完全に動作するWebアプリケーションが構築できます。
 
 ```bash
 my-sveltekit-app/
 ├── src/
 │   ├── app.html          # HTMLテンプレート
 │   ├── app.d.ts          # 型定義
+│   ├── lib/              # 再利用可能コード
+│   │   ├── assets/       # アセットファイル
+│   │   │   └── favicon.svg
+│   │   └── index.ts      # ライブラリエントリー
 │   └── routes/           # ページとAPI
+│       ├── +layout.svelte # ルートレイアウト
 │       └── +page.svelte  # ホームページ
 ├── static/               # 静的ファイル
+│   └── robots.txt        # クローラー設定
 ├── package.json          # 依存関係
 ├── svelte.config.js      # Svelte設定
-├── vite.config.js        # Vite設定
+├── vite.config.ts        # Vite設定
 └── tsconfig.json         # TypeScript設定
 ```
+
+:::tip[Svelte CLIについて]
+最新の`npx sv create`コマンド（Svelte CLI v0.9.2以降）を使用すると、上記の構成が自動的に生成されます。旧来の`npm create svelte@latest`も引き続き使用可能です。
+:::
 
 ### 完全な構成
 
@@ -135,7 +120,7 @@ my-sveltekit-app/
 ├── .gitignore               
 ├── package.json
 ├── svelte.config.js         # Svelte設定
-├── vite.config.js           # Vite設定
+├── vite.config.ts           # Vite設定
 ├── tsconfig.json            # TypeScript設定
 └── playwright.config.ts      # E2Eテスト設定
 ```
@@ -146,39 +131,64 @@ SvelteKitはファイル名によって機能を決定します。特に`+`プ�
 
 ### 特殊ファイル名一覧
 
-SvelteKitは`+`プレフィックスで特殊ファイルを識別
+SvelteKitは`+`プレフィックスで特殊ファイルを識別します。各ファイルの実行環境は以下の通りです。
 
-| ファイル名 | 役割 | SSR/SSG<br/>（初回ロード） | ナビゲーション時 | CSR/SPA<br/>（ssr: false） |
-|-----------|------|---------|---------|---------|
-| `+page.svelte` | ページコンポーネント | サーバー → ブラウザ | ブラウザ | ブラウザのみ |
-| `+page.ts` | ページLoad関数 | サーバー → ブラウザ | ブラウザ | ブラウザのみ |
-| `+page.server.ts` | サーバーLoad関数とActions | サーバー | 実行されない | 実行されない |
-| `+layout.svelte` | レイアウトコンポーネント | サーバー → ブラウザ | ブラウザ | ブラウザのみ |
-| `+layout.ts` | レイアウトLoad関数 | サーバー → ブラウザ | ブラウザ | ブラウザのみ |
-| `+layout.server.ts` | サーバーレイアウトLoad | サーバー | 実行されない | 実行されない |
-| `+error.svelte` | エラーページ | サーバー → ブラウザ | ブラウザ | ブラウザのみ |
-| `+server.ts` | APIエンドポイント | サーバー | サーバー（API呼び出し） | サーバー（API呼び出し） |
+| ファイル名 | 役割 | 実行環境 |
+|-----------|------|---------|
+| `+page.svelte` | ページコンポーネント | SSR時: サーバー → クライアント<br/>CSR時: クライアントのみ |
+| `+page.ts` | ユニバーサルLoad関数 | SSR時: サーバー → クライアント<br/>CSR時: クライアントのみ |
+| `+page.server.ts` | サーバー専用Load関数とActions | サーバーのみ<br/>（SSR/SSG/フォーム送信/API呼び出し時） |
+| `+layout.svelte` | レイアウトコンポーネント | SSR時: サーバー → クライアント<br/>CSR時: クライアントのみ |
+| `+layout.ts` | レイアウトのユニバーサルLoad関数 | SSR時: サーバー → クライアント<br/>CSR時: クライアントのみ |
+| `+layout.server.ts` | レイアウトのサーバー専用Load関数 | サーバーのみ<br/>（SSR/SSG時） |
+| `+error.svelte` | エラーページコンポーネント | SSR時: サーバー → クライアント<br/>CSR時: クライアントのみ |
+| `+server.ts` | APIエンドポイント | サーバーのみ（API呼び出し時） |
 
-### ファイルの実行順序
+:::tip[実行環境の理解]
+- **ユニバーサル（.ts）**: サーバーとクライアント両方で実行可能なコード
+- **サーバー専用（.server.ts）**: サーバーのみで実行され、データベースアクセスや秘密情報を扱える
+- **コンポーネント（.svelte）**: SSR時はサーバーでHTMLを生成後、クライアントでハイドレーション
+:::
+
+### ファイルの基本的な実行順序
 
 <Mermaid diagram={fileExecutionOrderDiagram} />
 
-:::info[実行環境について]
-- **SSR/SSG（初回ロード）**: すべてのファイルがサーバーで実行され、HTMLが生成されます。その後、ブラウザでハイドレーションが行われます
-- **ナビゲーション時**: SSR/SSGモードでも、ページ遷移時は`.server.ts`ファイル以外はブラウザで実行されます
-- **CSR/SPA（`ssr: false`モード）**: 初回ロードを含め、アプリ全体がブラウザのみで動作し、`.server.ts`ファイルは一切実行されません。これが真のSPAモードです
-- **ユニバーサルファイル**（`.ts`、`.svelte`）: 実行コンテキストに応じてサーバーまたはブラウザで動作します
+上記は基本的な実行順序です。実際の実行環境はレンダリングモードによって異なります。
 
-**用語の整理**:
-- CSR（Client-Side Rendering）= SPA（Single Page Application）として`ssr: false`で設定
-- SSRアプリでのクライアントサイドナビゲーション ≠ CSR/SPA
+### レンダリングモード別の実行タイミング
+
+| ファイル | SSR（デフォルト） | SSG（prerender） | CSR（ssr: false） |
+|---------|-----------------|----------------|------------------|
+| **初回アクセス時** |
+| `+layout.server.ts` | サーバーで実行 | ビルド時に実行 | 実行されない |
+| `+page.server.ts` (load) | サーバーで実行 | ビルド時に実行 | 実行されない |
+| `+layout.ts` | サーバー → クライアント | ビルド時 → クライアント | クライアントのみ |
+| `+page.ts` | サーバー → クライアント | ビルド時 → クライアント | クライアントのみ |
+| `+layout.svelte` | サーバー → クライアント | 静的HTML → クライアント | クライアントのみ |
+| `+page.svelte` | サーバー → クライアント | 静的HTML → クライアント | クライアントのみ |
+| **ページ遷移時** |
+| `+layout.server.ts` | 実行されない | 実行されない | 実行されない |
+| `+page.server.ts` (load) | 実行されない | 実行されない | 実行されない |
+| `+layout.ts` | クライアントのみ | クライアントのみ | クライアントのみ |
+| `+page.ts` | クライアントのみ | クライアントのみ | クライアントのみ |
+| `+layout.svelte` | クライアントのみ | クライアントのみ | クライアントのみ |
+| `+page.svelte` | クライアントのみ | クライアントのみ | クライアントのみ |
+| **フォーム送信時** |
+| `+page.server.ts` (actions) | サーバーで実行 | サーバーで実行 | サーバーで実行 |
+
+:::tip[重要なポイント]
+- **Actions（フォーム処理）**: すべてのモードでサーバーで実行されます
+- **APIエンドポイント（+server.ts）**: すべてのモードで利用可能
+- **ページ遷移後**: どのモードでもクライアントサイドナビゲーションになります
+- 詳細なレンダリング戦略の違いは[レンダリング戦略とアーキテクチャパターン](/deep-dive/rendering-strategies/)で解説しています
 :::
 
-## src/ディレクトリ詳細
+## `src/`
 
 アプリケーションのソースコードを格納する中心的なディレクトリです。ここにあるファイルはSvelteKitによって処理され、最適化されたコードに変換されます。
 
-### app.html - アプリケーションシェル
+### `app.html` - アプリケーションシェル
 
 すべてのページで使用されるHTMLテンプレートです。SvelteKitが生成するコンテンツを挿入するためのプレースホルダーを含んでいます。
 
@@ -203,7 +213,7 @@ SvelteKitは`+`プレフィックスで特殊ファイルを識別
 - `%sveltekit.head%` - head要素の内容
 - `%sveltekit.body%` - アプリケーション本体
 
-### app.d.ts - 型定義
+### `app.d.ts` - 型定義
 
 アプリケーション全体で使用するグローバルな型定義を宣言するファイルです。エラー、ローカル状態、ページデータなど、SvelteKitの型システムを拡張できます。
 
@@ -242,7 +252,7 @@ declare global {
 export {};
 ```
 
-### hooks.server.ts - サーバーフック
+### `hooks.server.ts` - サーバーフック
 
 すべてのサーバーリクエストをインターセプトして処理できる強力なフックシステムです。認証、ロギング、セキュリティヘッダーの追加などの横断的な処理を実装できます。
 
@@ -289,11 +299,11 @@ export const handleFetch: HandleFetch = async ({ request, fetch }) => {
 };
 ```
 
-## lib/ディレクトリ - 共有コード
+## `lib/` - 共有コード
 
 再利用可能なコンポーネントやユーティリティを整理して配置するディレクトリです。`$lib`エイリアスを使用することで、どこからでも簡単にインポートできます。
 
-### $libエイリアス
+### `$lib`エイリアス
 
 `src/lib`ディレクトリへの特別なインポートエイリアスです。相対パスの代わりに使用することで、ファイルの移動時にもインポートパスの修正が不要になります。
 
@@ -352,13 +362,11 @@ export const db = new PrismaClient();
 // import { db } from '$lib/server/database';
 ```
 
-## routes/ディレクトリ - ルーティング
+## `routes/` - ルーティング
 
 ファイルベースルーティングの中核となるディレクトリです。ディレクトリ構造がそのままURLパスになるため、直感的なルート設計が可能です。
 
 ### 基本的なルート構造
-
-ディレクトリ構造がそのままURLパスにマッピングされる仕組みです。ファイルシステムベースの直感的なルーティングを実現します。
 
 ```bash
 routes/
@@ -368,62 +376,21 @@ routes/
 ├── products/
 │   ├── +page.svelte     # /products
 │   └── [id]/            # 動的ルート
-│       └── +page.svelte # /products/123
-└── blog/
-    ├── +page.svelte     # /blog
-    └── [...slug]/       # Rest parameters
-        └── +page.svelte # /blog/2024/12/title
+│       └── +page.svelte # /products/:id
+└── (admin)/             # ルートグループ（URLに影響しない）
+    └── dashboard/
+        └── +page.svelte # /dashboard
 ```
 
-### ルートグループ
-
-`()`で囲まれたディレクトリは、URLパスに影響を与えずにレイアウトや機能をグループ化できます。異なるセクション用のレイアウトを使い分ける際に便利です。
-
-```bash
-routes/
-├── (marketing)/         # URLに影響しないグループ
-│   ├── +layout.svelte   # マーケティングレイアウト
-│   ├── +page.svelte     # /
-│   └── pricing/
-│       └── +page.svelte # /pricing
-│
-├── (app)/              # アプリケーションUI
-│   ├── +layout.svelte  # アプリレイアウト  
-│   └── dashboard/
-│       └── +page.svelte # /dashboard
-│
-└── (api)/              # APIルート
-    └── v1/
-        └── users/
-            └── +server.ts # /v1/users
-```
-
-### 特殊なルート記法
-
-SvelteKitは動的ルーティングのための特殊な記法を提供します。`[]`を使用したパラメータ、Restパラメータ、マッチャーなど、柔軟なURL設計が可能です。
-
-```bash
-# 動的セグメント
-[param]/+page.svelte      # /anything
-
-# オプショナル
-[[optional]]/+page.svelte # / または /value
-
-# Rest Parameters
-[...rest]/+page.svelte    # /a/b/c
-
-# マッチャー付き
-[id=integer]/+page.svelte # /123 (数字のみ)
-
-# プライベート（ルーティング除外）
-_components/              # URLにならない
-```
+:::info[ルーティングの詳細]
+動的ルート、Restパラメータ、ルートグループ、マッチャーなどの高度なルーティング機能については、[ルーティング詳解](/sveltekit/basics/routing/)で詳しく解説しています。
+:::
 
 ## 設定ファイル
 
 SvelteKitプロジェクトの動作を制御する重要な設定ファイル群です。ビルド、デプロイ、開発環境のカスタマイズが可能です。
 
-### svelte.config.js
+### `svelte.config.js`
 
 SvelteコンパイラとSvelteKitの動作をカスタマイズするメイン設定ファイルです。アダプターの選択、エイリアスの設定、プリレンダリングオプションなどを制御します。
 
@@ -469,11 +436,11 @@ export default {
 };
 ```
 
-### vite.config.js
+### `vite.config.ts`
 
 Viteビルドツールの設定ファイルです。開発サーバーの設定、ビルド最適化、環境変数の定義など、開発環境とビルドプロセスをカスタマイズできます。
 
-```javascript
+```typescript
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
@@ -501,7 +468,7 @@ export default defineConfig({
 });
 ```
 
-### tsconfig.json
+### `tsconfig.json`
 
 TypeScriptコンパイラの設定ファイルです。型チェックの厳密度、モジュール解決、パスマッピングなどを設定します。SvelteKitが自動生成する設定を継承します。
 
@@ -531,7 +498,7 @@ const tsConfig = {
 
 セキュリティを保ちながら設定値を管理するための仕組みです。`PUBLIC_`プレフィックスの有無で、クライアントへの公開を制御できます。
 
-### .env ファイル
+### `.env` ファイル
 
 環境変数を定義するファイルです。`PUBLIC_`プレフィックス付きの変数はクライアントに公開され、それ以外はサーバー専用となります。
 
@@ -567,7 +534,7 @@ const response = await fetch(`${PUBLIC_API_URL}/users`);
 
 ビルド処理を経由せずに直接配信されるファイルを配置するディレクトリです。画像、フォント、ファビコンなど、変更频度の低いリソースに適しています。
 
-### static/ディレクトリ
+### `static/`
 
 ビルド処理を経由せずに直接配信されるファイルの配置場所です。ファビコン、ロボットファイル、画像などの静的リソースを格納します。
 
@@ -593,7 +560,7 @@ static/
 
 コンパイルおよびビルド処理の結果が出力されるディレクトリです。通常はGit管理から除外し、デプロイ時に生成します。
 
-### .svelte-kit/ディレクトリ
+### `.svelte-kit/`
 
 SvelteKitが自動生成する一時ファイルが格納されるディレクトリです。型定義、マニフェスト、ルート情報などが含まれます。Git管理からは除外します。
 
@@ -607,7 +574,7 @@ SvelteKitが自動生成する一時ファイルが格納されるディレク�
 └── tsconfig.json    # TypeScript設定
 ```
 
-### build/ディレクトリ
+### `build/`
 
 `npm run build`実行時に生成されるプロダクションビルドの出力ディレクトリです。クライアントコードとサーバーコードが最適化された状態で出力されます。
 

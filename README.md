@@ -247,3 +247,33 @@ pnpm preview
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
 **Last Updated**: 2025年8月 - SSR対応改善、実API連携例追加、`$derived.by()`構文の正しい使用法を反映、ビルドエラー修正
+
+
+```mermaid
+graph LR
+    subgraph Server
+        LayoutServerTS[1.+layout.server.ts]
+        PageServerTS[2.+page.server.ts<br/>サーバーオンリーローダー]
+        LaytouTsS[3.+layout.ts]
+        PageTsS[4.+page.ts<br/>ユニバーサルローダー]
+        LaytouSvelteS[5.+layout.svelte<br>HTML生成]
+        PageSvelteS[6.+page.svelte<br/>UIコンポーネント]
+    end
+
+    LayoutServerTS --> PageServerTS
+    PageServerTS --> LaytouTsS
+    LaytouTsS --> PageTsS
+    PageTsS --> LaytouSvelteS
+    LaytouSvelteS --> PageSvelteS
+    
+    subgraph Client
+        LaytouTS[1.+layout.ts]
+        PageTS[2.+page.ts<br/>ユニバーサルローダー]
+        LaytouSvelte[3.+layout.svelte<br>HTML生成]
+        PageSvelte[4,+page.svelte<br/>UIコンポーネント]
+    end
+
+    LaytouTS --> PageTS
+    PageTS --> LaytouSvelte
+    LaytouSvelte --> PageSvelte
+```

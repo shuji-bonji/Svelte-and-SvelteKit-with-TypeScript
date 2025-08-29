@@ -70,7 +70,7 @@ npm create svelte@latest my-app
 ### 対話形式での設定
 
 ```bash
-┌  Welcome to the Svelte CLI! (v0.5.0)
+┌  Welcome to the Svelte CLI! (v0.9.2)
 │
 ◇  Which template would you like?
 │  ○ SvelteKit demo

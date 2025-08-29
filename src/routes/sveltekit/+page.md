@@ -199,7 +199,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">SSR、サーバー専用コード</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/forms/" class="text-green-600 dark:text-green-400 hover:underline">フォーム処理とActions</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/server/forms/" class="text-green-600 dark:text-green-400 hover:underline">フォーム処理とActions</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">Progressive Enhancement</td>
           </tr>
           <tr>
@@ -345,7 +345,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 [ルーティング](/sveltekit/basics/routing/)と[データ読み込み](/sveltekit/basics/load-functions/)で、SvelteKitの中核機能を習得します。
 
 ### Step 3: 実践的な実装
-[フォーム処理](/sveltekit/basics/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
+[フォーム処理](/sveltekit/server/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
 
 ## 🛠️ 推奨開発環境
 

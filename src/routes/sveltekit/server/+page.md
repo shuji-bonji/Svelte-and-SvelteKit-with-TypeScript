@@ -26,7 +26,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/sveltekit/basics/forms/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/server/forms/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📝</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">

@@ -3,6 +3,7 @@ title: $host - カスタムエレメント
 description: カスタムエレメント内でホスト要素にアクセスするための$hostルーン
 ---
 
+
 `$host`ルーンは、Svelte 5で導入された、カスタムエレメント（Web Components）内でホスト要素にアクセスするための特別なルーンです。
 
 ## カスタムエレメントとは
@@ -901,3 +902,4 @@ export default {
 ## 次のステップ
 
 `$host`の基本を理解したら、次はデバッグに便利な[$inspect](/svelte/runes/inspect/)ルーンについて学びましょう。
+

@@ -3,6 +3,10 @@ title: $propsルーン
 description: コンポーネントのプロパティ定義と型安全な受け渡し
 ---
 
+<script>
+  import PropsDemo from '$lib/components/PropsDemo.svelte';
+</script>
+
 `$props`は、Svelte 5のRunesシステムでコンポーネント間のデータ受け渡しを行うための機能です。このページでは、`$props`の基本的な使い方から、TypeScriptとの統合、高度なパターンまで、実践的な活用方法を解説します。
 
 :::tip[React/Vue経験者向け]
@@ -207,10 +211,6 @@ let { title, icon, actions, children }: Props = $props();
 ## 実践例：コンポーネントライブラリ
 
 `$props`を活用した再利用可能なコンポーネントライブラリの実装例です。ボタン、カード、フォーム要素など、実際のプロジェクトで使えるコンポーネントを作成します。
-
-<script>
-  import PropsDemo from '$lib/components/PropsDemo.svelte';
-</script>
 
 <PropsDemo />
 
@@ -982,3 +982,4 @@ localItems.push(newItem);
 
 `$props`で単方向のデータ受け渡しをマスターしたら、次は双方向バインディングを学びましょう。
 [$bindable - 双方向バインディング](/svelte/runes/bindable/)では、子コンポーネントから親の状態を更新する方法を解説します。
+

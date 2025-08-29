@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import Search from '$lib/components/Search.svelte';
+  import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
   import { onMount } from 'svelte';
 
   const { children } = $props();
@@ -25,6 +26,9 @@
 
 <!-- Leave this. Or you can add more content for your custom layout -->
 {@render children?.()}
+
+<!-- 自動ページナビゲーション -->
+<AutoPageNavigation />
 
 <style>
 
@@ -409,5 +413,10 @@
       margin-left: auto !important;
       margin-right: auto !important;
     }
+  }
+
+  /* SveltePressの空のpage-switcherを非表示 */
+  :global(.page-switcher) {
+    display: none !important;
   }
 </style>

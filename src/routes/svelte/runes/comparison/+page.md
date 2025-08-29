@@ -3,6 +3,7 @@ title: 他フレームワークとの比較
 description: React、Vue、Angularの経験者向けRunesシステム比較ガイド
 ---
 
+
 他のフレームワークの経験がある方向けに、Svelte 5のRunesシステムと、React、Vue、Angularの類似機能を比較します。
 
 ## React との比較
@@ -500,3 +501,4 @@ Svelte 5のRunesシステムの特徴を他フレームワークと比較し、�
 他フレームワークとの比較を理解したら、実際にSvelteでコンポーネントを作成してみましょう。
 
 基礎的なRunesの理解ができたら、[Svelteの基本](/svelte/basics/)でコンポーネントの作り方を学びましょう。
+

@@ -2,7 +2,9 @@
 title: SvelteKit 最適化編
 description: パフォーマンスを極限まで追求する最適化テクニック
 ---
-
+:::caution[タイトル]
+一部、執筆中
+:::
 <script>
   import { base } from '$app/paths';
 </script>

@@ -4,7 +4,7 @@ description: SvelteKitフレームワークの基本概念とアーキテクチ�
 ---
 
 :::caution[タイトル]
-執筆中
+一部、執筆中
 :::
 <script>
   import { base } from '$app/paths';

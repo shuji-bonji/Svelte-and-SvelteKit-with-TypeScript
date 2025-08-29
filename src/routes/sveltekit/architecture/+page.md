@@ -2,7 +2,9 @@
 title: SvelteKit アーキテクチャ詳解
 description: SvelteKitの内部動作とアーキテクチャを深く理解する
 ---
-
+:::caution[タイトル]
+一部、執筆中
+:::
 <script>
   import { base } from '$app/paths';
 </script>

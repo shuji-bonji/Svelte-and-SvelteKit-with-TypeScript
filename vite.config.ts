@@ -346,10 +346,11 @@ const config = defineConfig({
               ],
             },
             {
-              title: '技術詳解',
+              title: 'ディープダイブ',
               collapsible: true,
               collapsed: true,
               items: [
+                { title: '概要', to: '/deep-dive/' },
                 {
                   title: 'コンパイル時最適化',
                   to: '/deep-dive/compile-time-optimization',
@@ -371,6 +372,10 @@ const config = defineConfig({
                 {
                   title: '素のJavaScript構文でリアクティビティを実現',
                   to: '/deep-dive/reactivity-with-plain-javascript-syntax',
+                },
+                {
+                  title: 'レンダリング戦略 と アーキテクチャパターン',
+                  to: '/deep-dive/rendering-strategies',
                 },
                 {
                   title: 'SvelteKitが自動生成する型の一覧',

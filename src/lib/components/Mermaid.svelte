@@ -16,11 +16,36 @@
       // Mermaidを動的にインポート（クライアントサイドのみ）
       const mermaid = (await import('mermaid')).default;
       
-      // Mermaidの初期設定
+      // 現在のテーマを確認
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      // Mermaidの初期設定（現在のテーマに応じて設定）
       mermaid.initialize({
         startOnLoad: false,
-        theme: 'neutral',
-        themeVariables: {
+        theme: isDark ? 'dark' : 'neutral',
+        themeVariables: isDark ? {
+          primaryColor: '#374151',
+          primaryTextColor: '#f3f4f6',
+          primaryBorderColor: '#4b5563',
+          lineColor: '#6b7280',
+          secondaryColor: '#4b5563',
+          tertiaryColor: '#1f2937',
+          background: '#111827',
+          mainBkg: '#1f2937',
+          secondBkg: '#374151',
+          tertiaryBkg: '#111827',
+          nodeBkg: '#1f2937',
+          nodeTextColor: '#f3f4f6',
+          clusterBkg: '#111827',
+          clusterBorder: '#4b5563',
+          defaultLinkColor: '#9ca3af',
+          titleColor: '#f9fafb',
+          edgeLabelBackground: '#1f2937',
+          actorBorder: '#4b5563',
+          actorBkg: '#1f2937',
+          actorTextColor: '#f3f4f6',
+          textColor: '#e5e7eb'
+        } : {
           primaryColor: '#f3f4f6',
           primaryTextColor: '#1f2937',
           primaryBorderColor: '#d1d5db',
@@ -133,10 +158,17 @@
         });
         
         // 再レンダリング
-        if (container) {
-          mermaid.render(`mermaid-${Date.now()}`, diagram).then(({ svg }) => {
-            container.innerHTML = svg;
-          });
+        if (container && diagram) {
+          try {
+            const id = `mermaid-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+            mermaid.render(id, diagram.trim()).then(({ svg }) => {
+              container.innerHTML = svg;
+            }).catch(error => {
+              console.error('Theme update rendering error:', error);
+            });
+          } catch (error) {
+            console.error('Theme update error:', error);
+          }
         }
       };
       

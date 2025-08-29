@@ -3,15 +3,144 @@ title: ルーティング完全ガイド
 description: SvelteKitのルーティングシステムを完全マスター - 基本から高度な機能まで
 ---
 
-:::caution[タイトル]
-執筆中
+SvelteKitのルーティングシステムは、ファイルベースの直感的な設計でありながら、エンタープライズレベルのアプリケーションに必要な高度な機能を全て備えています。このガイドでは、基本的なルーティングから動的ルート、レイアウト、エラーハンドリングまで、実践的なTypeScriptコード例とともに完全解説します。
+
+## 特殊ファイル一覧
+
+SvelteKitでは、`+`プレフィックスを持つ特殊なファイルがルーティングとレンダリングを制御します。これらのファイルは決められた役割を持ち、サーバーサイドとクライアントサイドで適切に実行されます。ファイル名によって実行環境が決まるため、秘密情報の取り扱いやパフォーマンス最適化を意識した設計が可能です。
+
+| ファイル名 | 実行環境 | 役割 | 用途 |
+|-----------|---------|------|------|
+| `+page.svelte` | ブラウザ | ページUI | ページのUIコンポーネント |
+| `+page.ts` | サーバー＆ブラウザ | ユニバーサルload | 両環境で実行可能なデータ取得 |
+| `+page.server.ts` | サーバーのみ | サーバーload & actions | DB接続、秘密情報、フォーム処理 |
+| `+layout.svelte` | ブラウザ | 共通レイアウト | ナビゲーション、ヘッダー、フッター |
+| `+layout.ts` | サーバー＆ブラウザ | レイアウトデータ | 共通データの取得 |
+| `+layout.server.ts` | サーバーのみ | サーバーレイアウトデータ | 認証チェック、権限確認 |
+| `+server.ts` | サーバーのみ | APIエンドポイント | REST API、Webhooks |
+| `+error.svelte` | ブラウザ | エラーページ | カスタムエラー表示 |
+
+:::tip[使い分けのポイント]
+- **`.ts`** - クライアントでも実行可能（公開情報のみ）
+- **`.server.ts`** - サーバー限定（秘密情報、DB接続可）
+- **`.svelte`** - UI表示用
 :::
 
-SvelteKitのルーティングシステムは、ファイルベースの直感的な設計でありながら、エンタープライズレベルのアプリケーションに必要な高度な機能を全て備えています。このガイドでは、基本的なルーティングから動的ルート、レイアウト、エラーハンドリングまで、実践的なTypeScriptコード例とともに完全解説します。
+## APIルート（+server.ts）
+
+`+server.ts`ファイルを使用することで、SvelteKitアプリケーション内に直接APIエンドポイントを実装できます。これにより、別途APIサーバーを立てることなく、フロントエンドとバックエンドを統合的に開発できます。HTTPメソッド（GET、POST、PUT、DELETE等）に対応する関数をエクスポートすることで、RESTful APIを簡単に構築できます。
+
+### 基本的なAPI実装
+
+```typescript
+// src/routes/api/posts/+server.ts
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+// GET /api/posts
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const limit = Number(url.searchParams.get('limit')) || 10;
+  const offset = Number(url.searchParams.get('offset')) || 0;
+  
+  const posts = await db.post.findMany({
+    take: limit,
+    skip: offset,
+    orderBy: { createdAt: 'desc' }
+  });
+  
+  return json(posts);
+};
+
+// POST /api/posts
+export const POST: RequestHandler = async ({ request, locals }) => {
+  const session = await locals.getSession();
+  
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  
+  const data = await request.json();
+  
+  // バリデーション
+  if (!data.title || !data.content) {
+    return json({ error: 'Missing required fields' }, { status: 400 });
+  }
+  
+  const post = await db.post.create({
+    data: {
+      ...data,
+      authorId: session.userId
+    }
+  });
+  
+  return json(post, { status: 201 });
+};
+```
+
+### 動的APIルート
+
+```typescript
+// src/routes/api/posts/[id]/+server.ts
+import { json, error } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+// GET /api/posts/:id
+export const GET: RequestHandler = async ({ params }) => {
+  const post = await db.post.findUnique({
+    where: { id: params.id }
+  });
+  
+  if (!post) {
+    throw error(404, 'Post not found');
+  }
+  
+  return json(post);
+};
+
+// PUT /api/posts/:id
+export const PUT: RequestHandler = async ({ params, request, locals }) => {
+  const session = await locals.getSession();
+  const data = await request.json();
+  
+  const post = await db.post.findUnique({
+    where: { id: params.id }
+  });
+  
+  if (!post) {
+    throw error(404, 'Post not found');
+  }
+  
+  if (post.authorId !== session?.userId) {
+    throw error(403, 'Forbidden');
+  }
+  
+  const updated = await db.post.update({
+    where: { id: params.id },
+    data
+  });
+  
+  return json(updated);
+};
+
+// DELETE /api/posts/:id
+export const DELETE: RequestHandler = async ({ params, locals }) => {
+  const session = await locals.getSession();
+  
+  if (!session?.isAdmin) {
+    throw error(403, 'Admin only');
+  }
+  
+  await db.post.delete({
+    where: { id: params.id }
+  });
+  
+  return new Response(null, { status: 204 });
+};
+```
 
 ## 基本的なルーティング
 
-SvelteKitはファイルシステムベースのルーティングを採用しています。`src/routes`ディレクトリ内のファイル構造がそのままURLパスになります。
+SvelteKitはファイルシステムベースのルーティングを採用しています。`src/routes`ディレクトリ内のファイル構造がそのままURLパスになります。この直感的な仕組みにより、ディレクトリとファイルを作成するだけで新しいページを追加でき、ルーティング設定ファイルを別途管理する必要がありません。
 
 ### ページの作成
 
@@ -42,6 +171,8 @@ export const load: PageLoad = async ({ params, url }) => {
 ```
 
 ## 動的ルーティング
+
+URLの一部を変数として扱い、動的にコンテンツを生成できる機能です。ブログ記事、ユーザープロフィール、商品詳細ページなど、同じレイアウトで異なるデータを表示する場合に活用します。パラメータは自動的に型付けされるため、TypeScriptの恩恵を最大限に受けられます。
 
 ### 基本的な動的ルート
 
@@ -141,6 +272,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ## 高度なルーティングパターン
 
+基本的なルーティングを超えて、より複雑な要件に対応するための高度な機能群です。パラメータの検証、レイアウトの組み合わせ、条件付きルーティングなど、実践的なアプリケーション開発で必要となる機能を提供します。
+
 ### ルートマッチャー
 
 パラメータのバリデーションを行うカスタムマッチャー
@@ -165,21 +298,181 @@ export const load: PageLoad = async ({ params }) => {
 };
 ```
 
-### レイアウトグループ
+### ルートグループ（レイアウトグループ）
 
-UIを共有しながら、URLには影響しないグループ化
+括弧`()`で囲まれたディレクトリは、URLパスに影響を与えずにルートを論理的にグループ化できます。
+
+#### 基本的な使い方
 
 ```
 src/routes/
-├── (app)/
+├── (app)/                    # URLパスには含まれない
 │   ├── +layout.svelte        # アプリケーションレイアウト
-│   ├── dashboard/+page.svelte
-│   └── settings/+page.svelte
-├── (marketing)/
+│   ├── dashboard/            # /dashboard
+│   │   └── +page.svelte
+│   └── settings/             # /settings
+│       └── +page.svelte
+├── (marketing)/              # URLパスには含まれない
 │   ├── +layout.svelte        # マーケティングサイトレイアウト
-│   ├── +page.svelte          # ホームページ
-│   └── pricing/+page.svelte
+│   ├── +page.svelte          # / (ホームページ)
+│   └── pricing/              # /pricing
+│       └── +page.svelte
 ```
+
+#### 認証が必要なルートグループ
+
+:::tip[命名規則のベストプラクティス]
+- `(authenticated)` or `(protected)` - 認証済みユーザー専用エリア
+- `(auth)` - ログイン・登録などの認証関連ページ
+- `(public)` - 誰でもアクセス可能なページ
+- `(admin)` - 管理者専用エリア
+
+括弧内の名前は自由ですが、チームで統一した命名規則を使用しましょう。
+:::
+
+```typescript
+// src/routes/(protected)/+layout.server.ts
+import { redirect } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+
+export const load: LayoutServerLoad = async ({ locals, url }) => {
+  // localsから認証情報を取得
+  const user = await locals.getUser();
+  
+  if (!user) {
+    // 未認証の場合はログインページへリダイレクト
+    throw redirect(302, `/login?redirectTo=${url.pathname}`);
+  }
+  
+  return {
+    user
+  };
+};
+```
+
+```svelte
+<!-- src/routes/(protected)/+layout.svelte -->
+<script lang="ts">
+  import type { LayoutData } from './$types';
+  export let data: LayoutData;
+</script>
+
+<div class="authenticated-layout">
+  <header>
+    <nav>
+      <span>Welcome, {data.user.name}!</span>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/profile">Profile</a>
+      <a href="/settings">Settings</a>
+      <form method="POST" action="/logout">
+        <button type="submit">Logout</button>
+      </form>
+    </nav>
+  </header>
+  
+  <main>
+    <slot />
+  </main>
+</div>
+```
+
+#### 認証ページ専用のルートグループ
+
+```typescript
+// src/routes/(auth)/+layout.server.ts
+import { redirect } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+
+export const load: LayoutServerLoad = async ({ locals, url }) => {
+  // すでにログイン済みの場合はダッシュボードへ
+  const user = await locals.getUser();
+  
+  if (user && !url.pathname.includes('logout')) {
+    throw redirect(302, '/dashboard');
+  }
+  
+  return {};
+};
+```
+
+```svelte
+<!-- src/routes/(auth)/+layout.svelte -->
+<div class="auth-layout">
+  <!-- シンプルなレイアウト（ヘッダーなし） -->
+  <div class="auth-container">
+    <img src="/logo.svg" alt="Logo" />
+    <slot />
+  </div>
+</div>
+
+<style>
+  .auth-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .auth-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+  }
+</style>
+```
+
+#### 管理者専用ルートグループ
+
+```typescript
+// src/routes/(admin)/+layout.server.ts
+import { error } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+
+export const load: LayoutServerLoad = async ({ locals }) => {
+  const user = await locals.getUser();
+  
+  // 管理者権限チェック
+  if (!user?.isAdmin) {
+    throw error(403, 'Access denied: Admin only');
+  }
+  
+  return {
+    user
+  };
+};
+```
+
+#### 複数のルートグループの組み合わせ
+
+```
+src/routes/
+├── (public)/
+│   ├── +layout.svelte        # 公開レイアウト
+│   ├── +page.svelte          # /
+│   ├── about/                # /about
+│   └── contact/              # /contact
+├── (auth)/
+│   ├── +layout.svelte        # 認証用レイアウト（ヘッダーなし）
+│   ├── login/                # /login
+│   └── register/             # /register
+└── (app)/
+    ├── +layout.server.ts     # 認証チェック
+    ├── +layout.svelte        # アプリレイアウト
+    ├── (user)/
+    │   ├── dashboard/        # /dashboard
+    │   └── profile/          # /profile
+    └── (admin)/
+        ├── +layout.server.ts # 管理者権限チェック
+        ├── users/            # /users (管理者のみ)
+        └── settings/         # /settings (管理者のみ)
+```
+
+:::tip[ルートグループの利点]
+- **URL構造を変えずに**論理的な整理が可能
+- グループごとに異なるレイアウトを適用
+- 認証・認可ロジックをグループ単位で実装
+- コードベースの保守性向上
+:::
 
 ### 並列ルート
 
@@ -208,6 +501,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 ```
 
 ## ネストされたレイアウト
+
+レイアウトファイルを階層的に配置することで、共通UIの継承と再利用を実現します。親レイアウトの内容を子レイアウトが引き継ぎ、段階的にUIを構築できます。これにより、グローバルナビゲーション、セクション固有のサイドバー、ページ固有のコンテンツを効率的に管理できます。
 
 ### レイアウトの継承
 
@@ -252,6 +547,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 ```
 
 ## エラーハンドリング
+
+アプリケーションで発生するエラーを適切に処理し、ユーザーフレンドリーなエラーページを表示する仕組みです。404エラー、500エラー、カスタムエラーなど、様々なエラー状況に対応できます。`+error.svelte`ファイルを使用して、階層ごとに異なるエラー表示を実装できます。
 
 ### エラーページの実装
 
@@ -303,6 +600,8 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
 ## プログラマティックナビゲーション
 
+JavaScriptコードから直接ページ遷移を制御する機能です。フォーム送信後のリダイレクト、条件に応じた動的な遷移、プリフェッチによる事前読み込みなど、インタラクティブなナビゲーションを実現します。`$app/navigation`モジュールが提供する関数群を使用します。
+
 ### goto関数による遷移
 
 ```svelte
@@ -348,6 +647,8 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
 ## ルートアノテーション
 
+ページごとにレンダリング方法やキャッシュ戦略を細かく制御するための設定です。静的生成（プリレンダリング）、サーバーサイドレンダリング、クライアントサイドレンダリングの有効/無効を個別に設定でき、パフォーマンスとSEOの最適化を図れます。
+
 ### プリレンダリングの設定
 
 ```typescript
@@ -365,6 +666,8 @@ export const trailingSlash = 'always'; // 'never', 'always', 'ignore'
 ```
 
 ## 実践的な実装例
+
+実際のアプリケーション開発でよく使用されるパターンを、完全なコード例とともに紹介します。ページネーション、認証ガード、並列データ取得など、すぐに活用できる実装パターンを学べます。
 
 ### ページネーション付きリスト
 
@@ -442,6 +745,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
 ## パフォーマンス最適化
 
+ルーティングとデータ取得を最適化し、高速なページ遷移とレスポンスを実現する技術です。並列データ取得、ストリーミングSSR、コード分割など、モダンなWeb開発のベストプラクティスを活用してユーザー体験を向上させます。
+
 ### データの並列読み込み
 
 ```typescript
@@ -492,7 +797,91 @@ export const load: PageServerLoad = async ({ fetch }) => {
 };
 ```
 
+## 高度なルーティングテクニック
+
+エンタープライズレベルのアプリケーションで必要となる、より洗練されたルーティング技術です。条件付きリダイレクト、ミドルウェア処理、動的インポートなど、複雑な要件に対応するための実装パターンを紹介します。
+
+### 条件付きリダイレクト
+
+```typescript
+// src/routes/+page.server.ts
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ locals, cookies }) => {
+  const user = await locals.getUser();
+  
+  // ユーザーの状態に応じて異なるページへリダイレクト
+  if (user) {
+    // 初回ログインの場合
+    if (!user.hasCompletedOnboarding) {
+      throw redirect(303, '/onboarding');
+    }
+    // 通常のユーザー
+    throw redirect(303, '/dashboard');
+  }
+  
+  // 未認証ユーザーはランディングページを表示
+  return {};
+};
+```
+
+### ミドルウェア的な処理（Hooks経由）
+
+```typescript
+// src/hooks.server.ts
+import type { Handle } from '@sveltejs/kit';
+
+export const handle: Handle = async ({ event, resolve }) => {
+  // 全てのルートで実行される前処理
+  const session = await getSessionFromCookie(event.cookies.get('session'));
+  
+  // localsに認証情報を設定
+  event.locals.user = session?.user || null;
+  
+  // 保護されたルートのチェック
+  if (event.url.pathname.startsWith('/admin')) {
+    if (!session?.user?.isAdmin) {
+      return new Response('Forbidden', { status: 403 });
+    }
+  }
+  
+  // レスポンスを処理
+  const response = await resolve(event);
+  
+  // 全てのルートで実行される後処理
+  response.headers.set('X-Frame-Options', 'DENY');
+  
+  return response;
+};
+```
+
+### 動的インポートとコード分割
+
+```svelte
+<!-- src/routes/heavy-component/+page.svelte -->
+<script lang="ts">
+  import { onMount } from 'svelte';
+  
+  let HeavyComponent: any;
+  
+  onMount(async () => {
+    // 必要時のみコンポーネントをロード
+    const module = await import('$lib/components/HeavyComponent.svelte');
+    HeavyComponent = module.default;
+  });
+</script>
+
+{#if HeavyComponent}
+  <svelte:component this={HeavyComponent} />
+{:else}
+  <p>Loading...</p>
+{/if}
+```
+
 ## トラブルシューティング
+
+ルーティング設定でよく遭遇する問題と、その解決方法をまとめました。404エラー、型エラー、リダイレクトループなど、開発中に発生しやすい問題への対処法を具体的に説明します。
 
 ### よくあるエラーと解決方法
 
@@ -500,6 +889,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 - ファイル名が正しいか確認（`+page.svelte`、`+layout.svelte`）
 - 動的パラメータの形式が正しいか（`[id]`、`[[optional]]`）
 - ルートマッチャーが適切に動作しているか
+- ルートグループ`()`が誤ってURLパスに含まれていないか
 :::
 
 :::tip[型エラーの解決]
@@ -517,6 +907,16 @@ npm run check
 if (!session && !url.pathname.startsWith('/login')) {
   throw redirect(303, '/login');
 }
+```
+:::
+
+:::info[ルートグループのデバッグ]
+ルートグループが期待通り動作しない場合
+```bash
+# ビルド結果を確認
+npm run build
+# 生成されたルートを確認
+ls -la .svelte-kit/generated/client/app.js
 ```
 :::
 

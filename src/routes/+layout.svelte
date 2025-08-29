@@ -25,10 +25,11 @@
 {/if}
 
 <!-- Leave this. Or you can add more content for your custom layout -->
-{@render children?.()}
-
-<!-- 自動ページナビゲーション -->
-<AutoPageNavigation />
+<div class="layout-wrapper">
+  {@render children?.()}
+  <!-- 自動ページナビゲーション -->
+  <AutoPageNavigation />
+</div>
 
 <style>
 
@@ -418,5 +419,17 @@
   /* SveltePressの空のpage-switcherを非表示 */
   :global(.page-switcher) {
     display: none !important;
+  }
+  
+  /* レイアウトラッパー */
+  .layout-wrapper {
+    display: contents;
+  }
+  
+  /* コンテンツエリア内のナビゲーション配置 */
+  :global(.content + .auto-page-navigation) {
+    /* コンテンツの直後に配置された場合のスタイル */
+    margin: 0 auto;
+    max-width: var(--vp-layout-max-width, 960px);
   }
 </style>

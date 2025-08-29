@@ -17,25 +17,44 @@
   const showNavigation = $derived(!!(navigation.prev || navigation.next));
   
   // コンテンツエリア内に配置し、空のpage-switcherを隠す
-  onMount(() => {
-    const timer = setTimeout(() => {
-      // 空のpage-switcherを隠す
-      const pageSwitcher = document.querySelector('.page-switcher');
-      if (pageSwitcher) {
-        const hasContent = Array.from(pageSwitcher.querySelectorAll('a')).length > 0;
-        if (!hasContent) {
-          (pageSwitcher as HTMLElement).style.display = 'none';
-        }
+  let retryCount = 0;
+  const maxRetries = 10;
+  
+  function moveToContent() {
+    // 空のpage-switcherを隠す
+    const pageSwitchers = document.querySelectorAll('.page-switcher');
+    pageSwitchers.forEach(pageSwitcher => {
+      const hasContent = pageSwitcher.querySelectorAll('a').length > 0;
+      if (!hasContent) {
+        (pageSwitcher as HTMLElement).style.display = 'none';
       }
-      
-      // コンテンツエリアの最後に移動
-      const contentArea = document.querySelector('.content');
-      if (contentArea && navElement && showNavigation) {
+    });
+    
+    // コンテンツエリアを探す
+    const contentArea = document.querySelector('.content');
+    
+    if (contentArea && navElement && showNavigation) {
+      // 既に移動済みでないかチェック
+      if (!contentArea.contains(navElement)) {
         contentArea.appendChild(navElement);
       }
-    }, 100);
-    
-    return () => clearTimeout(timer);
+      retryCount = 0; // 成功したらリセット
+    } else if (retryCount < maxRetries) {
+      // コンテンツエリアがまだない場合はリトライ
+      retryCount++;
+      setTimeout(moveToContent, 100);
+    }
+  }
+  
+  // pathnameが変更されたら実行
+  $effect(() => {
+    if (pathname && showNavigation) {
+      retryCount = 0;
+      // 少し待ってから実行
+      requestAnimationFrame(() => {
+        setTimeout(moveToContent, 50);
+      });
+    }
   });
 </script>
 

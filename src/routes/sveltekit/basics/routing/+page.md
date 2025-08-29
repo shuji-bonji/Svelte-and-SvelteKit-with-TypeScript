@@ -1,6 +1,6 @@
 ---
-title: ルーティング完全ガイド
-description: SvelteKitのルーティングシステムを完全マスター - 基本から高度な機能まで
+title: ルーティング詳解
+description: SvelteKitのルーティングシステムを詳細に解説 - 基本から高度な機能まで
 ---
 
 SvelteKitのルーティングシステムは、ファイルベースの直感的な設計でありながら、エンタープライズレベルのアプリケーションに必要な高度な機能を全て備えています。このガイドでは、基本的なルーティングから動的ルート、レイアウト、エラーハンドリングまで、実践的なTypeScriptコード例とともに完全解説します。
@@ -26,121 +26,44 @@ SvelteKitでは、`+`プレフィックスを持つ特殊なファイルがル�
 - **`.svelte`** - UI表示用
 :::
 
-## APIルート（+server.ts）
+## ページルーティング編
 
-`+server.ts`ファイルを使用することで、SvelteKitアプリケーション内に直接APIエンドポイントを実装できます。これにより、別途APIサーバーを立てることなく、フロントエンドとバックエンドを統合的に開発できます。HTTPメソッド（GET、POST、PUT、DELETE等）に対応する関数をエクスポートすることで、RESTful APIを簡単に構築できます。
+ページの作成からレイアウト、エラーハンドリングまで、SvelteKitのページルーティングの基本から応用までを学びます。
 
-### 基本的なAPI実装
-
-```typescript
-// src/routes/api/posts/+server.ts
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-
-// GET /api/posts
-export const GET: RequestHandler = async ({ url, locals }) => {
-  const limit = Number(url.searchParams.get('limit')) || 10;
-  const offset = Number(url.searchParams.get('offset')) || 0;
-  
-  const posts = await db.post.findMany({
-    take: limit,
-    skip: offset,
-    orderBy: { createdAt: 'desc' }
-  });
-  
-  return json(posts);
-};
-
-// POST /api/posts
-export const POST: RequestHandler = async ({ request, locals }) => {
-  const session = await locals.getSession();
-  
-  if (!session) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-  
-  const data = await request.json();
-  
-  // バリデーション
-  if (!data.title || !data.content) {
-    return json({ error: 'Missing required fields' }, { status: 400 });
-  }
-  
-  const post = await db.post.create({
-    data: {
-      ...data,
-      authorId: session.userId
-    }
-  });
-  
-  return json(post, { status: 201 });
-};
-```
-
-### 動的APIルート
-
-```typescript
-// src/routes/api/posts/[id]/+server.ts
-import { json, error } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-
-// GET /api/posts/:id
-export const GET: RequestHandler = async ({ params }) => {
-  const post = await db.post.findUnique({
-    where: { id: params.id }
-  });
-  
-  if (!post) {
-    throw error(404, 'Post not found');
-  }
-  
-  return json(post);
-};
-
-// PUT /api/posts/:id
-export const PUT: RequestHandler = async ({ params, request, locals }) => {
-  const session = await locals.getSession();
-  const data = await request.json();
-  
-  const post = await db.post.findUnique({
-    where: { id: params.id }
-  });
-  
-  if (!post) {
-    throw error(404, 'Post not found');
-  }
-  
-  if (post.authorId !== session?.userId) {
-    throw error(403, 'Forbidden');
-  }
-  
-  const updated = await db.post.update({
-    where: { id: params.id },
-    data
-  });
-  
-  return json(updated);
-};
-
-// DELETE /api/posts/:id
-export const DELETE: RequestHandler = async ({ params, locals }) => {
-  const session = await locals.getSession();
-  
-  if (!session?.isAdmin) {
-    throw error(403, 'Admin only');
-  }
-  
-  await db.post.delete({
-    where: { id: params.id }
-  });
-  
-  return new Response(null, { status: 204 });
-};
-```
-
-## 基本的なルーティング
+### 基本的なルーティング
 
 SvelteKitはファイルシステムベースのルーティングを採用しています。`src/routes`ディレクトリ内のファイル構造がそのままURLパスになります。この直感的な仕組みにより、ディレクトリとファイルを作成するだけで新しいページを追加でき、ルーティング設定ファイルを別途管理する必要がありません。
+
+### ディレクトリ構造とURLの対応
+
+```
+src/routes/
+├── +page.svelte              → /
+├── +layout.svelte            → 全ページ共通レイアウト
+├── about/
+│   └── +page.svelte          → /about
+├── blog/
+│   ├── +page.svelte          → /blog
+│   ├── [slug]/
+│   │   └── +page.svelte      → /blog/:slug (動的)
+│   └── new/
+│       └── +page.svelte      → /blog/new
+├── products/
+│   ├── +page.svelte          → /products
+│   ├── +page.ts              → /products (データ取得)
+│   └── [id]/
+│       ├── +page.svelte      → /products/:id
+│       └── +page.ts          → /products/:id (データ取得)
+└── api/
+    └── posts/
+        └── +server.ts        → /api/posts (APIエンドポイント)
+```
+
+:::tip[重要なルール]
+- `+page.svelte` がないディレクトリはルートとして認識されません
+- `+layout.svelte` は子ルートに継承されます
+- `+server.ts` はAPIエンドポイントになります（ページではない）
+:::
 
 ### ページの作成
 
@@ -170,9 +93,41 @@ export const load: PageLoad = async ({ params, url }) => {
 };
 ```
 
-## 動的ルーティング
+### 動的ルーティング
 
 URLの一部を変数として扱い、動的にコンテンツを生成できる機能です。ブログ記事、ユーザープロフィール、商品詳細ページなど、同じレイアウトで異なるデータを表示する場合に活用します。パラメータは自動的に型付けされるため、TypeScriptの恩恵を最大限に受けられます。
+
+
+### 動的ルートパターン一覧
+
+```
+src/routes/
+├── posts/
+│   └── [id]/                 → /posts/123, /posts/abc
+│       └── +page.svelte
+├── users/
+│   └── [username]/           → /users/john, /users/jane
+│       ├── +page.svelte
+│       └── posts/
+│           └── [postId]/     → /users/john/posts/456
+│               └── +page.svelte
+├── docs/
+│   └── [...slug]/            → /docs/guide/intro, /docs/api/ref/auth
+│       └── +page.svelte
+├── products/
+│   └── [[category]]/         → /products, /products/electronics
+│       └── +page.svelte
+└── items/
+    └── [id=integer]/         → /items/123 (数値のみマッチ)
+        └── +page.svelte
+```
+
+:::info[動的ルートの種類]
+- `[param]` - 必須パラメータ
+- `[...param]` - Rest パラメータ（複数セグメント）
+- `[[param]]` - オプショナルパラメータ
+- `[param=matcher]` - マッチャー付きパラメータ
+:::
 
 ### 基本的な動的ルート
 
@@ -598,11 +553,11 @@ export const load: PageLoad = async ({ params, fetch }) => {
 };
 ```
 
-## プログラマティックナビゲーション
+### プログラマティックナビゲーション
 
 JavaScriptコードから直接ページ遷移を制御する機能です。フォーム送信後のリダイレクト、条件に応じた動的な遷移、プリフェッチによる事前読み込みなど、インタラクティブなナビゲーションを実現します。`$app/navigation`モジュールが提供する関数群を使用します。
 
-### goto関数による遷移
+#### goto関数による遷移
 
 ```svelte
 <script lang="ts">
@@ -622,7 +577,7 @@ JavaScriptコードから直接ページ遷移を制御する機能です。フ�
 </script>
 ```
 
-### prefetch による事前読み込み
+#### prefetch による事前読み込み
 
 ```svelte
 <script lang="ts">
@@ -645,11 +600,11 @@ JavaScriptコードから直接ページ遷移を制御する機能です。フ�
 </a>
 ```
 
-## ルートアノテーション
+### ルートアノテーション
 
 ページごとにレンダリング方法やキャッシュ戦略を細かく制御するための設定です。静的生成（プリレンダリング）、サーバーサイドレンダリング、クライアントサイドレンダリングの有効/無効を個別に設定でき、パフォーマンスとSEOの最適化を図れます。
 
-### プリレンダリングの設定
+#### プリレンダリングの設定
 
 ```typescript
 // src/routes/blog/+page.ts
@@ -658,16 +613,281 @@ export const ssr = true;        // サーバーサイドレンダリング有効
 export const csr = true;        // クライアントサイドレンダリング有効
 ```
 
-### トレイリングスラッシュの制御
+#### トレイリングスラッシュの制御
 
 ```typescript
 // src/routes/+layout.ts
 export const trailingSlash = 'always'; // 'never', 'always', 'ignore'
 ```
 
-## 実践的な実装例
+## API編
 
-実際のアプリケーション開発でよく使用されるパターンを、完全なコード例とともに紹介します。ページネーション、認証ガード、並列データ取得など、すぐに活用できる実装パターンを学べます。
+SvelteKitでRESTful APIやWebhookエンドポイントを構築する方法を学びます。`+server.ts`ファイルを使用してHTTPメソッドに対応した処理を実装し、JSONレスポンスを返すAPIサーバーを構築できます。
+
+### APIルートの基本
+
+`+server.ts`ファイルを使用してAPIエンドポイントを作成します。このファイルはサーバーサイドでのみ実行され、HTTPメソッド（GET、POST、PUT、DELETE等）に対応した関数をエクスポートすることで、RESTful APIを実装できます。
+
+#### ページルートとAPIルートの違い
+
+```
+src/routes/
+├── posts/
+│   ├── +page.svelte          → GET /posts (HTMLページ)
+│   ├── +page.ts               → ページ用のデータ取得
+│   └── [id]/
+│       └── +page.svelte       → GET /posts/123 (HTMLページ)
+├── api/
+│   └── posts/
+│       ├── +server.ts         → /api/posts (JSONレスポンス)
+│       │                        GET: 一覧取得
+│       │                        POST: 新規作成
+│       └── [id]/
+│           └── +server.ts     → /api/posts/123 (JSONレスポンス)
+│                                GET: 詳細取得
+│                                PUT: 更新
+│                                DELETE: 削除
+```
+
+:::tip[アクセス方法の違い]
+**ページルート（+page.svelte）**
+- ブラウザで直接アクセス: `https://example.com/posts`
+- HTMLページが返される
+- ナビゲーションで遷移可能
+
+**APIルート（+server.ts）**
+- fetchでアクセス: `fetch('/api/posts')`
+- JSONデータが返される
+- 外部からもアクセス可能（CORS設定次第）
+:::
+
+#### 基本的なAPI実装
+
+```typescript
+// src/routes/api/posts/+server.ts
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+// GET /api/posts
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const limit = Number(url.searchParams.get('limit')) || 10;
+  const offset = Number(url.searchParams.get('offset')) || 0;
+  
+  const posts = await db.post.findMany({
+    take: limit,
+    skip: offset,
+    orderBy: { createdAt: 'desc' }
+  });
+  
+  return json(posts);
+};
+
+// POST /api/posts
+export const POST: RequestHandler = async ({ request, locals }) => {
+  const session = await locals.getSession();
+  
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  
+  const data = await request.json();
+  
+  // バリデーション
+  if (!data.title || !data.content) {
+    return json({ error: 'Missing required fields' }, { status: 400 });
+  }
+  
+  const post = await db.post.create({
+    data: {
+      ...data,
+      authorId: session.userId
+    }
+  });
+  
+  return json(post, { status: 201 });
+};
+```
+
+### APIの使用とクライアント実装
+
+作成したAPIエンドポイントをSvelteコンポーネントから呼び出す方法を示します。fetchを使用してデータの取得、作成、更新、削除を行う実装パターンを学びます。
+
+#### クライアント側での使用例
+
+```svelte
+<!-- src/routes/posts/+page.svelte -->
+<script lang="ts">
+  import { onMount } from 'svelte';
+  
+  let posts = [];
+  let newPostTitle = '';
+  
+  // GET: 投稿一覧を取得
+  async function loadPosts() {
+    const response = await fetch('/api/posts');
+    posts = await response.json();
+  }
+  
+  // POST: 新規投稿を作成
+  async function createPost() {
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: newPostTitle,
+        content: 'New post content'
+      })
+    });
+    
+    if (response.ok) {
+      const newPost = await response.json();
+      posts = [...posts, newPost];
+      newPostTitle = '';
+    }
+  }
+  
+  // DELETE: 投稿を削除
+  async function deletePost(id: string) {
+    const response = await fetch(`/api/posts/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      posts = posts.filter(p => p.id !== id);
+    }
+  }
+  
+  onMount(loadPosts);
+</script>
+
+<ul>
+  {#each posts as post}
+    <li>
+      {post.title}
+      <button onclick={() => deletePost(post.id)}>削除</button>
+    </li>
+  {/each}
+</ul>
+
+<input bind:value={newPostTitle} placeholder="新しい投稿のタイトル" />
+<button onclick={createPost}>投稿を作成</button>
+```
+
+#### 動的APIルート
+
+```typescript
+// src/routes/api/posts/[id]/+server.ts
+import { json, error } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+// GET /api/posts/:id
+export const GET: RequestHandler = async ({ params }) => {
+  const post = await db.post.findUnique({
+    where: { id: params.id }
+  });
+  
+  if (!post) {
+    throw error(404, 'Post not found');
+  }
+  
+  return json(post);
+};
+
+// PUT /api/posts/:id
+export const PUT: RequestHandler = async ({ params, request, locals }) => {
+  const session = await locals.getSession();
+  const data = await request.json();
+  
+  const post = await db.post.findUnique({
+    where: { id: params.id }
+  });
+  
+  if (!post) {
+    throw error(404, 'Post not found');
+  }
+  
+  if (post.authorId !== session?.userId) {
+    throw error(403, 'Forbidden');
+  }
+  
+  const updated = await db.post.update({
+    where: { id: params.id },
+    data
+  });
+  
+  return json(updated);
+};
+
+// DELETE /api/posts/:id
+export const DELETE: RequestHandler = async ({ params, locals }) => {
+  const session = await locals.getSession();
+  
+  if (!session?.isAdmin) {
+    throw error(403, 'Admin only');
+  }
+  
+  await db.post.delete({
+    where: { id: params.id }
+  });
+  
+  return new Response(null, { status: 204 });
+};
+```
+
+### 外部からのアクセスとCORS
+
+外部のクライアントやサービスからAPIを利用する場合の設定方法です。CORS（Cross-Origin Resource Sharing）の設定により、異なるドメインからのアクセスを制御できます。
+
+#### cURLでのAPIアクセス例
+
+```bash
+# GET: 投稿一覧を取得
+curl https://example.com/api/posts
+
+# POST: 新規投稿を作成（認証トークン付き）
+curl -X POST https://example.com/api/posts \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"title":"New Post","content":"Content here"}'
+
+# PUT: 投稿を更新
+curl -X PUT https://example.com/api/posts/123 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated Title"}'
+
+# DELETE: 投稿を削除
+curl -X DELETE https://example.com/api/posts/123
+```
+
+#### CORS設定
+
+```typescript
+// src/hooks.server.ts
+import type { Handle } from '@sveltejs/kit';
+
+export const handle: Handle = async ({ event, resolve }) => {
+  const response = await resolve(event);
+  
+  // APIルートにCORSヘッダーを追加
+  if (event.url.pathname.startsWith('/api')) {
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  
+  return response;
+};
+```
+
+:::warning[セキュリティの考慮]
+プロダクション環境では、`Access-Control-Allow-Origin`に`*`を使用せず、信頼できるドメインのみを指定してください。
+:::
+
+## 実践編
+
+実際のアプリケーション開発でよく使用されるパターンを、完全なコード例とともに紹介します。ページネーション、認証ガード、並列データ取得など、すぐに活用できる実装パターンを学べます。このセクションでは、これまで学んだ技術を組み合わせて実践的なアプリケーションを構築します。
 
 ### ページネーション付きリスト
 

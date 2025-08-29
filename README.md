@@ -10,7 +10,7 @@
 [![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
 
 
-日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。実際に動作するAPI連携例（JSONPlaceholder、GitHub Search API）を含む実践的な内容。
+日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。実際に動作するAPI連携例（JSONPlaceholder、GitHub Search API）を含む実践的な内容。Load関数のデータフローや実行環境別アーキテクチャ（SSR/SSG/SPA）についても詳細に解説。
 
 🌐 **公開サイト**: [https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)
 
@@ -29,12 +29,14 @@
 
 - 🎯 **TypeScript中心** - すべてのコード例でTypeScriptを使用
 - 🚀 **Svelte 5対応** - 最新のRunesシステムを完全網羅（`$derived.by()`など最新構文）
-- 📊 **Mermaidダイアグラム** - 視覚的な図解でわかりやすく解説
+- 📊 **Mermaidダイアグラム** - Load関数のデータフロー、実行順序を視覚的に解説
 - 📖 **日本語** - 日本語による詳細な解説
-- 💡 **実践的** - 実際のプロジェクトで使えるパターンを紹介
+- 💡 **実践的** - Universal LoadとServer Loadの使い分けを具体例で解説
 - 🌙 **ダークモード対応** - テーマ切り替えに完全対応
 - 🔧 **SSR完全対応** - サーバーサイドレンダリングのエラーを回避する実装
 - 🌐 **実API連携** - JSONPlaceholder、GitHub APIを使用した実動作例
+- 🏗️ **アーキテクチャ詳解** - SSR/SSG/SPAの実行環境別の動作を詳細に解説
+- 📈 **アクセスログ分析** - レンダリング戦略がWebサーバーログに与える影響を説明
 
 ## 🗂 コンテンツ構成
 
@@ -74,23 +76,37 @@
 - TypeScriptパターン
 - スクリプトコンテキスト
 
-### 6️⃣ SvelteKit
-- ルーティング
-- Load関数
-- サーバーサイド処理
-- フォーム処理
-- APIルート
-- デプロイメント
+### 6️⃣ SvelteKit基礎編
+- SvelteKit概要とアーキテクチャ
+- プロジェクト構造
+- ルーティング詳解
+- Load関数とデータフェッチング
 
-### 7️⃣ 実装例
+### 7️⃣ SvelteKitアーキテクチャ詳解
+- 実行環境別アーキテクチャ（SSR/SSG/SPA）
+- ファイル構成と実行環境
+- データロードフロー
+- レンダリングパイプライン
+
+### 8️⃣ SvelteKitサーバーサイド編
+- フォーム処理とActions
+- サーバーサイド処理
+- APIルート設計
+- Hooks
+
+### 9️⃣ SvelteKitデプロイ・運用編
+- プラットフォーム別デプロイ
+- セキュリティ
+- モニタリング
+
+### 🔟 実装例
 - TODOアプリ
 - 認証システム
 - データフェッチング
 - WebSocket実装
-- Mermaidダイアグラム
-- 機能デモ
+- Mermaidダイアグラム（SSR対応）
 
-### 8️⃣ ディープダイブ（技術詳細）
+### 1️⃣1️⃣ ディープダイブ（技術詳細）
 Svelte 5の内部実装や高度なトピックを扱います。
 - Proxyオブジェクトの活用
 - リアクティブ状態変数とバインディングの違い
@@ -246,34 +262,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年8月 - SSR対応改善、実API連携例追加、`$derived.by()`構文の正しい使用法を反映、ビルドエラー修正
+**Last Updated**: 2025年8月 - Load関数のデータフロー可視化、実行環境別アーキテクチャ詳解追加、Universal/Server Load使い分けガイド、アクセスログ分析セクション追加
 
-
-```mermaid
-graph LR
-    subgraph Server
-        LayoutServerTS[1.+layout.server.ts]
-        PageServerTS[2.+page.server.ts<br/>サーバーオンリーローダー]
-        LaytouTsS[3.+layout.ts]
-        PageTsS[4.+page.ts<br/>ユニバーサルローダー]
-        LaytouSvelteS[5.+layout.svelte<br>HTML生成]
-        PageSvelteS[6.+page.svelte<br/>UIコンポーネント]
-    end
-
-    LayoutServerTS --> PageServerTS
-    PageServerTS --> LaytouTsS
-    LaytouTsS --> PageTsS
-    PageTsS --> LaytouSvelteS
-    LaytouSvelteS --> PageSvelteS
-    
-    subgraph Client
-        LaytouTS[1.+layout.ts]
-        PageTS[2.+page.ts<br/>ユニバーサルローダー]
-        LaytouSvelte[3.+layout.svelte<br>HTML生成]
-        PageSvelte[4,+page.svelte<br/>UIコンポーネント]
-    end
-
-    LaytouTS --> PageTS
-    PageTS --> LaytouSvelte
-    LaytouSvelte --> PageSvelte
-```

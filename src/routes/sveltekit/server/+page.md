@@ -2,7 +2,9 @@
 title: SvelteKit サーバーサイド編
 description: SvelteKitの強力なサーバーサイド機能をマスターする
 ---
-
+:::caution[タイトル]
+一部、執筆中
+:::
 <script>
   import { base } from '$app/paths';
 </script>

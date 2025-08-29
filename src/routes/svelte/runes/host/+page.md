@@ -10,7 +10,7 @@ description: カスタムエレメント内でホスト要素にアクセスす�
 カスタムエレメント（Web Components）は、再利用可能なカスタムHTML要素を定義するWeb標準技術です。Svelteコンポーネントをカスタムエレメントとしてコンパイルすることで、Svelte以外の環境でも使用できるようになります。
 
 :::info[さらに詳しく学ぶ]
-カスタムエレメント（Web Components）についての詳細は、以下のリソースをご参照ください：
+カスタムエレメント（Web Components）についての詳細は、以下のリソースをご参照ください。
 
 **MDN Web Docs**
 - 📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)
@@ -161,7 +161,7 @@ npm install -D @sveltejs/vite-plugin-svelte
 
 ### プロジェクト構成
 
-初期構成を以下のように変更します：
+初期構成を以下のように変更します。
 
 ```
 my-custom-elements/
@@ -186,7 +186,7 @@ my-custom-elements/
 └── package.json
 ```
 
-まず必要なディレクトリとファイルを作成：
+まず必要なディレクトリとファイルを作成
 
 ```bash
 # componentsディレクトリを作成
@@ -283,7 +283,7 @@ mkdir src/lib/components
 </style>
 ```
 
-もう一つカウンターコンポーネントも作成：
+もう一つカウンターコンポーネントも作成
 
 ```svelte
 <!-- src/lib/components/MyCounter.svelte -->
@@ -367,7 +367,7 @@ mkdir src/lib/components
 
 ### ステップ3: エクスポート設定
 
-コンポーネントをエクスポートするためのエントリーポイントを作成：
+コンポーネントをエクスポートするためのエントリーポイントを作成
 
 ```typescript
 // src/lib/components/index.ts
@@ -383,7 +383,7 @@ export {}; // モジュールとして扱うため
 
 ### ステップ4: ビルド設定
 
-カスタムエレメント専用のビルド設定ファイルを作成します：
+カスタムエレメント専用のビルド設定ファイルを作成します。
 
 ```typescript
 // vite.lib.config.ts (新規作成)
@@ -415,13 +415,13 @@ export default defineConfig({
 ```
 
 :::warning[IDEの警告について]
-VSCodeやWebStormで`<svelte:options customElement="..."`に対して警告が表示される場合があります：
+VSCodeやWebStormで`<svelte:options customElement="..."`に対して警告が表示される場合があります。
 
 - **警告内容**: "The customElement option is used when generating a custom element. Did you forget the customElement: true compile option?"
 - **原因**: IDE用の設定（svelte.config.js）とビルド用の設定（vite.lib.config.ts）が異なるため
 - **対処**: この警告は無視して問題ありません。ビルド時は正常に動作します。
 
-もし警告を消したい場合は、`svelte.config.js`に以下を追加：
+もし警告を消したい場合は、`svelte.config.js`に以下を追加
 
 ```javascript
 // svelte.config.js (オプション)
@@ -434,7 +434,7 @@ export default {
 ```
 :::
 
-package.jsonにビルドスクリプトを追加：
+package.jsonにビルドスクリプトを追加
 
 ```javascript
 // package.json
@@ -460,7 +460,7 @@ npm run build:lib
 
 ### ステップ6: テスト用HTMLファイルの作成
 
-開発用とビルド後で異なるHTMLファイルを作成：
+開発用とビルド後で異なるHTMLファイルを作成
 
 #### 開発用（推奨）
 
@@ -599,7 +599,7 @@ npm run dev
 開発サーバーではTypeScriptファイルが直接読み込まれ、ホットリロードも動作します。
 
 :::tip[動作確認]
-ブラウザのDevToolsで要素を確認すると、カスタムエレメントが正しく登録されているのが確認できます：
+ブラウザのDevToolsで要素を確認すると、カスタムエレメントが正しく登録されているのが確認できます。
 
 ```html
 <my-button label="テストボタン" role="button" tabindex="0" style="display: inline-block;">
@@ -628,12 +628,12 @@ npm run dev
 ```
 
 :::note[npm run buildとpreviewについて]
-**`npm run build`** はSvelteKitアプリケーション用のビルドコマンドです：
+**`npm run build`** はSvelteKitアプリケーション用のビルドコマンドです。
 - `.svelte-kit/output/`にSvelteKitアプリをビルド
 - カスタムエレメントのビルドには使用しません
 - カスタムエレメントには`npm run build:lib`を使用
 
-**`npm run preview`** はSvelteKitアプリのプレビュー用です：
+**`npm run preview`** はSvelteKitアプリのプレビュー用です。
 - `npm run build`後のSvelteKitアプリをプレビュー
 - `http://localhost:4173/`でアクセス
 - カスタムエレメントのテストには使用しません

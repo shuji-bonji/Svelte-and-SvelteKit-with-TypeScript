@@ -85,10 +85,10 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📊</div>
       <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        データ読み込み
+        Load関数とデータフェッチング
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">load関数を使った効率的なデータフェッチング戦略を学びます。</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数による効率的なデータ取得戦略を完全マスターします。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li><strong>+page.ts</strong>: ユニバーサルload</li>
         <li><strong>+page.server.ts</strong>: サーバー専用load</li>
@@ -107,7 +107,7 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 1. **概要とアーキテクチャ** - まずSvelteKitの全体像を理解
 2. **プロジェクト構造** - ディレクトリ構造と命名規約を習得
 3. **ルーティング詳解** - URLとファイルの関係を理解
-4. **データ読み込み** - load関数とデータフローを学習
+4. **Load関数とデータフェッチング** - データ取得戦略を学習
 
 ### 🎯 学習目標
 

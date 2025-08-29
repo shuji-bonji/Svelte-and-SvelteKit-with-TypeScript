@@ -185,7 +185,7 @@ src/routes/
 [レンダリング戦略とアーキテクチャパターン](/deep-dive/rendering-strategies/)で各戦略を深く解説しています。
 :::
 
-## データ読み込み（Load関数）
+## Load関数とデータフェッチング
 
 サーバーとクライアントの両方でデータを取得できる統一されたパターンです。
 
@@ -211,7 +211,7 @@ export async function load() {
 ```
 
 :::info[詳細を学ぶ]
-[データ読み込み](/sveltekit/basics/load-functions/)でLoad関数の使い方を、[データロードフロー](/sveltekit/architecture/data-loading/)で内部動作を解説しています。
+[Load関数とデータフェッチング](/sveltekit/basics/load-functions/)でLoad関数の使い方を、[データロードフロー](/sveltekit/architecture/data-loading/)で内部動作を解説しています。
 :::
 
 ## APIルート
@@ -313,5 +313,5 @@ SvelteKitは、Svelteの優れたパフォーマンスとシンプルさを活�
 
 1. **[プロジェクト構造](/sveltekit/basics/project-structure/)** - ファイル構成と規約を理解する
 2. **[ルーティング詳解](/sveltekit/basics/routing/)** - URL設計とナビゲーション
-3. **[データ読み込み](/sveltekit/basics/load-functions/)** - Load関数の使い方
+3. **[Load関数とデータフェッチング](/sveltekit/basics/load-functions/)** - データ取得戦略
 4. **サーバーサイド編** - フォーム処理とAPIルート（準備中）

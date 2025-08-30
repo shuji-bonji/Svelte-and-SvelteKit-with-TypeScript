@@ -147,3 +147,4 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
 :::tip[エッジ対応]
 SvelteKitはCloudflare Workers、Vercel Edge Functions などのエッジ環境でも動作します。グローバルに分散したアプリケーションの構築が可能です。
 :::
+

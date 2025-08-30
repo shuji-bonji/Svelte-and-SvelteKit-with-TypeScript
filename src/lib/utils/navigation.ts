@@ -13,8 +13,18 @@ export interface NavigationStructure {
 
 // 全ページのナビゲーション構造を定義
 export const navigationStructure: NavigationStructure = {
+  // Svelteトップページ
+  '/svelte/': {
+    next: { title: 'Svelteの基本', href: '/svelte/basics/' }
+  },
+  
   // Svelte基本編
+  '/svelte/basics/': {
+    prev: { title: 'Svelte完全ガイド', href: '/svelte/' },
+    next: { title: 'Hello World', href: '/svelte/basics/hello-world/' }
+  },
   '/svelte/basics/hello-world/': {
+    prev: { title: 'Svelteの基本', href: '/svelte/basics/' },
     next: { title: 'コンポーネントの基本', href: '/svelte/basics/component-basics/' }
   },
   '/svelte/basics/component-basics/': {
@@ -39,12 +49,16 @@ export const navigationStructure: NavigationStructure = {
   },
   '/svelte/basics/typescript-integration/': {
     prev: { title: 'use:アクション', href: '/svelte/basics/actions/' },
-    next: { title: 'Runesシステム入門', href: '/svelte/runes/runes-introduction/' }
+    next: { title: 'Runesシステム', href: '/svelte/runes/' }
   },
 
   // Svelte Runesシステム
-  '/svelte/runes/runes-introduction/': {
+  '/svelte/runes/': {
     prev: { title: 'TypeScript統合', href: '/svelte/basics/typescript-integration/' },
+    next: { title: 'Runesシステム入門', href: '/svelte/runes/runes-introduction/' }
+  },
+  '/svelte/runes/runes-introduction/': {
+    prev: { title: 'Runesシステム', href: '/svelte/runes/' },
     next: { title: '$state - リアクティブな状態', href: '/svelte/runes/state/' }
   },
   '/svelte/runes/state/': {
@@ -114,7 +128,17 @@ export const navigationStructure: NavigationStructure = {
     next: { title: 'SvelteKit完全ガイド', href: '/sveltekit/' }
   },
 
+  // SvelteKitトップページ
+  '/sveltekit/': {
+    prev: { title: 'TypeScriptパターン', href: '/svelte/advanced/typescript-patterns/' },
+    next: { title: 'SvelteKit基礎編', href: '/sveltekit/basics/' }
+  },
+
   // SvelteKit基礎編
+  '/sveltekit/basics/': {
+    prev: { title: 'SvelteKit完全ガイド', href: '/sveltekit/' },
+    next: { title: 'SvelteKit概要', href: '/sveltekit/basics/overview/' }
+  },
   '/sveltekit/basics/overview/': {
     prev: { title: '基礎編概要', href: '/sveltekit/basics/' },
     next: { title: 'プロジェクト構造と規約', href: '/sveltekit/basics/project-structure/' }
@@ -132,7 +156,21 @@ export const navigationStructure: NavigationStructure = {
     next: { title: 'アーキテクチャ概要', href: '/sveltekit/architecture/' }
   },
 
+  // SvelteKitアーキテクチャ詳解
+  '/sveltekit/architecture/': {
+    prev: { title: 'Load関数とデータフェッチング', href: '/sveltekit/basics/load-functions/' },
+    next: { title: '実行環境別アーキテクチャ', href: '/sveltekit/architecture/execution-environments/' }
+  },
+  '/sveltekit/architecture/execution-environments/': {
+    prev: { title: 'アーキテクチャ詳解', href: '/sveltekit/architecture/' },
+    next: { title: 'サーバーサイド編', href: '/sveltekit/server/' }
+  },
+
   // SvelteKitサーバーサイド編
+  '/sveltekit/server/': {
+    prev: { title: '実行環境別アーキテクチャ', href: '/sveltekit/architecture/execution-environments/' },
+    next: { title: 'フォーム処理とActions', href: '/sveltekit/server/forms/' }
+  },
   '/sveltekit/server/forms/': {
     prev: { title: 'サーバーサイド編概要', href: '/sveltekit/server/' },
     next: { title: 'サーバーサイド処理', href: '/sveltekit/server/server-side/' }

@@ -530,7 +530,7 @@ export const handlers = [
 
 ### GitHub Actions設定
 
-以下は`.github/workflows/test.yml`の設定例です：
+以下は`.github/workflows/test.yml`の設定例です。
 
 ```yaml
 name: Test

@@ -212,6 +212,10 @@ const config = defineConfig({
                       title: 'Load関数とデータフェッチング',
                       to: '/sveltekit/basics/load-functions/',
                     },
+                    {
+                      title: '自動型生成システム',
+                      to: '/sveltekit/basics/auto-types/',
+                    },
                   ],
                 },
                 {

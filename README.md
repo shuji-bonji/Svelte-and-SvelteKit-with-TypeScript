@@ -164,6 +164,10 @@ Svelte 5の内部実装や高度なトピックを扱います。
 - **Mermaid** (11.9.0+) - ダイアグラム描画
 - **Rehype-Mermaid** (3.0.0+) - Markdown統合
 
+### カスタム機能
+- **AutoPageNavigation** - ページ間の自動ナビゲーション生成
+- **navigation-from-config** - vite.config.tsから自動的にナビゲーション構造を生成
+
 ### 推奨環境
 - **Node.js** 18.19+ (推奨: 20.x LTS)
 - **pnpm** 9.15.0+ (パッケージマネージャー)
@@ -190,6 +194,21 @@ pnpm dev
 ```
 
 開発サーバーは `http://localhost:5173` で起動します。
+
+### 自動ナビゲーションシステム
+
+本プロジェクトではSveltePressの標準機能に加えて、独自の自動ナビゲーションシステムを実装しています。
+
+#### 特徴
+- **自動生成**: 各ページに前後のページへのナビゲーションリンクが自動的に追加
+- **単一情報源**: `vite.config.ts`のサイドバー構造から自動的に生成（二重管理不要）
+- **メンテナンス性**: 新しいページを追加するだけで自動的にナビゲーションに反映
+
+#### 実装詳細
+- `src/lib/components/AutoPageNavigation.svelte` - ナビゲーション表示コンポーネント
+- `src/lib/utils/navigation-from-config.ts` - vite.config.tsから構造を生成するユーティリティ
+
+詳細は[CLAUDE.md](./CLAUDE.md#自動ナビゲーションシステム)を参照してください。
 
 ### ビルド・デプロイ
 
@@ -262,5 +281,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年8月 - Load関数のデータフロー可視化、実行環境別アーキテクチャ詳解追加、Universal/Server Load使い分けガイド、アクセスログ分析セクション追加
+**Last Updated**: 2025年8月 - 自動ナビゲーションシステム実装、Load関数のデータフロー可視化、実行環境別アーキテクチャ詳解追加、Universal/Server Load使い分けガイド、アクセスログ分析セクション追加
 

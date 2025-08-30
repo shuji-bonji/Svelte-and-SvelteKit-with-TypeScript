@@ -26,7 +26,7 @@ description: 実践的なアプリケーション開発パターンと設計手�
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/sveltekit/authentication/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/application/authentication/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔐</div>
       <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
@@ -44,7 +44,7 @@ description: 実践的なアプリケーション開発パターンと設計手�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/database/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/application/database/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🗄️</div>
       <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
@@ -62,7 +62,7 @@ description: 実践的なアプリケーション開発パターンと設計手�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/environment/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/application/environment/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
@@ -80,7 +80,7 @@ description: 実践的なアプリケーション開発パターンと設計手�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/error-handling/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/application/error-handling/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🚨</div>
       <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
@@ -94,6 +94,42 @@ description: 実践的なアプリケーション開発パターンと設計手�
         <li><strong>ロギング</strong>: Sentry/LogRocket統合</li>
         <li><strong>フォールバック UI</strong>: エラー時の表示</li>
         <li><strong>リトライ戦略</strong>: 自動再試行</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/application/testing/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🧪</div>
+      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+        テスト戦略
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">包括的なテスト戦略で品質を保証します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>単体テスト</strong>: Vitestでのコンポーネントテスト</li>
+        <li><strong>統合テスト</strong>: Load関数とActionのテスト</li>
+        <li><strong>E2Eテスト</strong>: Playwrightでのシナリオテスト</li>
+        <li><strong>モック戦略</strong>: MSWでのAPIモック</li>
+        <li><strong>CI/CD統合</strong>: GitHub Actionsでの自動化</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/application/state-management/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🏛️</div>
+      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+        状態管理パターン
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">アプリケーション規模に応じた状態管理を実装します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>.svelte.ts</strong>: Svelte 5の新しいストア</li>
+        <li><strong>Context API</strong>: コンポーネント間共有</li>
+        <li><strong>ステートマシン</strong>: 複雑な状態管理</li>
+        <li><strong>URL状態</strong>: Queryパラメータ管理</li>
+        <li><strong>パフォーマンス</strong>: メモ化と最適化</li>
       </ul>
     </div>
   </a>
@@ -139,10 +175,12 @@ export const app = new AppState();
 
 ### 📚 推奨学習順序
 
-1. **認証・認可** - セキュリティの基礎を固める
-2. **データベース統合** - データ永続化を実装
-3. **環境変数管理** - 設定とシークレットの管理
-4. **エラーハンドリング** - 堅牢性の向上
+1. **状態管理パターン** - アプリの基礎設計を理解
+2. **認証・認可** - セキュリティの基礎を固める
+3. **データベース統合** - データ永続化を実装
+4. **環境変数管理** - 設定とシークレットの管理
+5. **エラーハンドリング** - 堅牢性の向上
+6. **テスト戦略** - 品質保証の実施
 
 ### 🎯 学習目標
 

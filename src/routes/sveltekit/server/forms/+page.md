@@ -841,5 +841,5 @@ SvelteKitのActions とフォーム処理は、
 
 ## 次のステップ
 
-[APIルート](/sveltekit/api-routes/)で、RESTful APIの構築について学びましょう。
+[APIルート](/sveltekit/server/api-routes/)で、RESTful APIの構築について学びましょう。
 

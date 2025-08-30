@@ -43,18 +43,28 @@ const config = {
 			handleHttpError: ({ path, referrer, message }) => {
 				// 準備中のページへのリンクは警告のみ
 				const pendingPages = [
-					'/sveltekit/hooks/',
-					'/sveltekit/authentication/',
-					'/sveltekit/database/',
-					'/sveltekit/environment/',
-					'/sveltekit/error-handling/',
-					'/sveltekit/performance/',
-					'/sveltekit/caching/',
-					'/sveltekit/seo/',
-					'/sveltekit/security/',
-					'/sveltekit/monitoring/',
-					'/sveltekit/server-side/',
-					'/sveltekit/api-routes/',
+					// アーキテクチャ詳解
+					'/sveltekit/architecture/execution-environments/',
+					'/sveltekit/architecture/file-structure/',
+					'/sveltekit/architecture/data-loading/',
+					'/sveltekit/architecture/rendering-pipeline/',
+					// サーバーサイド編
+					'/sveltekit/server/server-side/',
+					'/sveltekit/server/api-routes/',
+					'/sveltekit/server/hooks/',
+					// アプリケーション構築編
+					'/sveltekit/application/authentication/',
+					'/sveltekit/application/database/',
+					'/sveltekit/application/environment/',
+					'/sveltekit/application/error-handling/',
+					// 最適化編
+					'/sveltekit/optimization/performance/',
+					'/sveltekit/optimization/caching/',
+					'/sveltekit/optimization/seo/',
+					// デプロイ・運用編
+					'/sveltekit/deployment/security/',
+					'/sveltekit/deployment/monitoring/',
+					// その他
 					'/guide'
 				];
 				

@@ -98,6 +98,24 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
       </ul>
     </div>
   </a>
+
+  <a href="{base}/sveltekit/basics/auto-types/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔷</div>
+      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+        自動型生成システム
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">./$typesから自動生成される型の完全ガイド</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>./$types</strong>: 仮想モジュールの仕組み</li>
+        <li><strong>型の一覧</strong>: PageLoad, Actions, RequestHandler等</li>
+        <li><strong>実践例</strong>: 各ファイルタイプでの使用方法</li>
+        <li><strong>app.d.ts連携</strong>: グローバル型定義との統合</li>
+        <li><strong>トラブルシューティング</strong>: よくある問題と解決策</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 ## 学習の進め方
@@ -108,6 +126,7 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 2. **プロジェクト構造** - ディレクトリ構造と命名規約を習得
 3. **ルーティング詳解** - URLとファイルの関係を理解
 4. **Load関数とデータフェッチング** - データ取得戦略を学習
+5. **自動型生成システム** - TypeScriptとの統合を理解
 
 ### 🎯 学習目標
 
@@ -117,6 +136,7 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 - ファイルベースルーティングを活用して複雑なURL構造を実装できる
 - load関数を使って効率的にデータを取得・管理できる
 - SSR/SSG/SPAの違いを理解し、適切に選択できる
+- `./$types`を活用して型安全なアプリケーションを構築できる
 
 ## 次のステップ
 

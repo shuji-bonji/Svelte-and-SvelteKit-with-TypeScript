@@ -36,7 +36,7 @@ description: SvelteKitが ./$types から自動生成される型の完全リス
 +server.ts → RequestHandler
 ```
 
-#### 5. その他の特殊型（3種類）
+### 5. その他の特殊型（3種類）
 ```typescript
 // 静的生成用
 +page.ts/+page.server.ts/+server.ts → EntryGenerator

@@ -324,16 +324,31 @@ export const load: PageServerLoad = async ({ locals, cookies }) => {
 
 SvelteKitの強力な型システムにより、Load関数からコンポーネントまで一貫した型安全性が保証されます。これにより、実行時エラーを未然に防ぎ、開発効率を大幅に向上させます。
 
-### 自動生成される型定義
+### `./$types` - SvelteKitの自動型生成
 
-SvelteKitは`$types`を自動生成し、完全な型安全性を提供
+SvelteKitは各ルートごとに`./$types`モジュールを自動生成し、完全な型安全性を提供します。これは**仮想モジュール**で、実際のファイルは存在しませんが、TypeScriptが認識します。
+
+#### 自動生成される型の一覧
+
+| ファイル | 生成される型 | 用途 |
+|---------|------------|------|
+| `+page.ts` | `PageLoad` | Universal Load関数の型 |
+| `+page.server.ts` | `PageServerLoad` | Server Load関数の型 |
+| | `Actions` | Form Actionsの型 |
+| `+layout.ts` | `LayoutLoad` | Layout Load関数の型 |
+| `+layout.server.ts` | `LayoutServerLoad` | Layout Server Load関数の型 |
+| `+server.ts` | `RequestHandler` | APIエンドポイントの型 |
+| `+page.svelte` | `PageData` | ページコンポーネントのdata型 |
+| `+layout.svelte` | `LayoutData` | レイアウトコンポーネントのdata型 |
+
+#### 実践例：型安全なLoad関数
 
 ```typescript
 // src/routes/products/[id]/+page.ts
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
-  // params.id は自動的に string 型
+  // params.id は自動的に string 型として推論
   const productId = params.id;
   
   // URLSearchParamsも型安全
@@ -348,15 +363,85 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 };
 ```
 
+#### コンポーネントでの型推論
+
 ```svelte
 <!-- src/routes/products/[id]/+page.svelte -->
-
+<script lang="ts">
+  import type { PageData } from './$types';
+  
+  // dataの型は自動的にLoad関数の返り値から推論される
+  export let data: PageData;
+  // data.product と data.variant が型安全にアクセス可能
+</script>
 
 <h1>{data.product.name}</h1>
 {#if data.variant}
   <p>選択中: {data.variant}</p>
 {/if}
 ```
+
+#### Server LoadとForm Actionsの型
+
+```typescript
+// src/routes/contact/+page.server.ts
+import type { PageServerLoad, Actions } from './$types';
+
+// Load関数の型定義
+export const load: PageServerLoad = async ({ cookies, locals }) => {
+  // cookiesやlocalsへの型安全なアクセス
+  const session = cookies.get('session');
+  return {
+    user: locals.user
+  };
+};
+
+// Form Actionsの型定義
+export const actions: Actions = {
+  default: async ({ request, cookies }) => {
+    const formData = await request.formData();
+    const email = formData.get('email');
+    
+    // 処理...
+    
+    return { success: true };
+  },
+  
+  // 名前付きアクション
+  subscribe: async ({ request }) => {
+    // 型安全なForm Action
+  }
+};
+```
+
+#### APIエンドポイントの型
+
+```typescript
+// src/routes/api/posts/+server.ts
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async ({ url, params }) => {
+  // 型安全なAPIハンドラー
+  const page = url.searchParams.get('page') || '1';
+  
+  return new Response(JSON.stringify({ page }), {
+    headers: { 'content-type': 'application/json' }
+  });
+};
+
+export const POST: RequestHandler = async ({ request }) => {
+  const body = await request.json();
+  // 型安全なリクエスト処理
+};
+```
+
+:::tip[型の自動更新]
+ルートパラメータを変更すると（例：`[id]`→`[productId]`）、`./$types`の型定義も自動的に更新されます。IDEの再起動やビルドは不要です。
+:::
+
+:::info[詳細な型定義]
+より詳細な型定義については、[SvelteKitが自動生成する型の完全ガイド](/deep-dive/auto-generated-types/)を参照してください。
+:::
 
 ## 並列データ取得
 

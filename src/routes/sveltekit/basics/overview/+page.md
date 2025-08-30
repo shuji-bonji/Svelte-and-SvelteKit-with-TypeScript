@@ -25,31 +25,46 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     
     style SvelteKit fill:#ff3e00,color:#fff`;
 
-  const basicFlowDiagram = `graph LR
+  const basicFlowDiagram = `graph TB
     Server@{ shape: cyl, label: "     " }
-    Dev["開発者がコードを書く"]
-    Build["SvelteKitがビルド"]
+    Dev["1.開発者がコードを書く"]
+    Build["2.SvelteKitがビルド"]
     Generate["リクエスト時にHTML生成(SSR)"]
     GenerateSSG["ビルド時にHTML生成(SSG)"]
+    GenerateCSR["クライアントでレンダリング(CSR/SPA)"]
     Browser["ブラウザで表示"]
     
-    subgraph "サーバー環境"
-        Server
-        Generate
-        GenerateSSG
+    subgraph "3.実行"
+        direction TB
+        subgraph "サーバー環境"
+            direction LR
+            Server
+            Generate
+            GenerateSSG
+        end
+        
+        subgraph "ブラウザ環境"
+            direction LR
+            GenerateCSR
+            Browser
+        end
     end
+
 
     Dev --> Build
     Build --> Server
     Build --> GenerateSSG
-    GenerateSSG --> Server
+    GenerateSSG ---> Server
     Server --> Generate
     Generate --> Browser
+    GenerateCSR --> Browser
     Server --"事前生成済みHTML(SSG)"-->  Browser
+    Server --"JavaScriptバンドル(CSR)"-->  GenerateCSR
     
     style Dev fill:#ff3e00,color:#fff
     style Build fill:#40b3ff,color:#fff
-    style Browser fill:#FF9800,color:#fff`;
+    style Browser fill:#FF9800,color:#fff
+    style GenerateCSR fill:#9C27B0,color:#fff`;
 
   const progressiveEnhancementDiagram = `graph LR
     HTML[1.HTML<br/>基本機能]
@@ -113,6 +128,39 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     style ServerLoad fill:#4CAF50,color:#fff
     style ClientLoad fill:#2196F3,color:#fff
     style Component fill:#ff3e00,color:#fff`;
+
+  const apiRouteDiagram = `flowchart LR
+    subgraph Client["🌐 クライアント"]
+        FrontEnd[フロントエンド<br/>+page.svelte]
+        FetchAPI["fetch('/api/posts')"]
+    end
+    
+    subgraph SvelteKit["⚡ SvelteKit"]
+        APIRoute[+server.ts<br/>APIルート]
+        GET["GET()"]
+        POST["POST()"]
+        PUT["PUT()"]
+        DELETE["DELETE()"]
+    end
+    
+    subgraph External["🗄️ データソース"]
+        DB[(データベース)]
+        ExtAPI[外部API]
+    end
+    
+    FrontEnd --> FetchAPI
+    FetchAPI --> APIRoute
+    APIRoute --> GET
+    APIRoute --> POST
+    APIRoute --> PUT
+    APIRoute --> DELETE
+    GET --> DB
+    POST --> DB
+    GET --> ExtAPI
+    
+    style APIRoute fill:#4CAF50,color:#fff
+    style FrontEnd fill:#ff3e00,color:#fff
+    style DB fill:#2196F3,color:#fff`;
 </script>
 
 
@@ -148,15 +196,18 @@ SvelteKitがどのように動作するか、開発からデプロイまでの�
 
 <Mermaid diagram={basicFlowDiagram} />
 
-**3つのフェーズ**
+**3つのフェーズとレンダリングモード**
 1. **開発**: Svelteコンポーネントの作成とTypeScriptでの型定義
 2. **ビルド**: コンパイルと最適化、成果物の生成
-3. **実行**: レンダリング方式に応じたHTML生成と配信
+3. **実行**: 
+   - **SSR**: サーバーでリクエスト時にHTML生成
+   - **SSG**: ビルド時に事前にHTML生成
+   - **CSR/SPA**: ブラウザでJavaScriptによりレンダリング
 
 
 ## ファイルベースルーティング
 
-ディレクトリ構造がそのままURLになる直感的なルーティングシステムです。
+SvelteKitでは、ディレクトリ構造がそのままURLになる直感的なルーティングシステムを採用しています。
 
 ```
 src/routes/
@@ -216,27 +267,117 @@ export async function load() {
 
 ## APIルート
 
-同一プロジェクト内でRESTful APIを構築できます。
+同一プロジェクト内でRESTful APIを構築できます。フロントエンドとバックエンドが統合された開発体験を提供します。
+
+<Mermaid diagram={apiRouteDiagram} />
+
+### APIルートの特徴
+
+- **統一されたプロジェクト**: フロントエンドとAPIが同じコードベース
+- **型安全**: TypeScriptで型定義を共有
+- **HTTPメソッド対応**: GET、POST、PUT、DELETE、PATCHをサポート
+- **自動ルーティング**: ファイル名（`+server.ts`）でエンドポイント作成
+
+### 実装例
 
 ```typescript
-// +server.ts
-export async function GET() {
-  return json({ message: 'Hello API' });
-}
+// src/routes/api/hello/+server.ts（最小限のAPI）
+import { json } from '@sveltejs/kit';
+
+export const GET = () => {
+  return json({ message: 'Hello from API' });
+};
+```
+
+```svelte
+<!-- フロントエンドから呼び出し -->
+<script lang="ts">
+  async function callAPI() {
+    const res = await fetch('/api/hello');
+    const data = await res.json();
+    console.log(data.message); // "Hello from API"
+  }
+</script>
 ```
 
 :::info[詳細を学ぶ]
-APIルートの詳細は、サーバーサイド編で解説予定です。
+[APIルート設計](/sveltekit/server/api-routes/)でRESTful APIの構築方法を詳しく解説しています。
 :::
 
 ## プログレッシブエンハンスメント
 
-JavaScriptが無効でも動作する堅牢なアプリケーションを構築できます。
+JavaScriptが無効でも動作する堅牢なアプリケーションを構築できます。SvelteKitは「まずHTMLで動作し、JavaScriptで強化する」という設計思想を採用しています。
 
 <Mermaid diagram={progressiveEnhancementDiagram} />
 
+### 実践的な例
+
+**1. 基本のHTML（JavaScriptなしでも動作）**
+```html
+<form method="POST" action="?/login">
+  <input name="email" type="email" required>
+  <input name="password" type="password" required>
+  <button type="submit">ログイン</button>
+</form>
+```
+
+**2. CSSで見た目と使い勝手を改善**
+```css
+/* HTML5のバリデーション状態に応じたスタイリング */
+input:required {
+  border-left: 3px solid #ff6b6b;
+}
+
+input:valid {
+  border-left: 3px solid #51cf66;
+}
+
+input:invalid:not(:placeholder-shown) {
+  background-color: #ffe3e3;
+}
+
+input:focus:invalid {
+  outline-color: #ff6b6b;
+}
+
+/* 無効な入力時のヒント表示 */
+input:invalid:not(:placeholder-shown) + .hint {
+  display: block;
+  color: #ff6b6b;
+}
+```
+
+**3. JavaScriptで強化（use:enhance）**
+```svelte
+<script>
+  import { enhance } from '$app/forms';
+  let loading = false;
+</script>
+
+<form method="POST" action="?/login" use:enhance={() => {
+  loading = true;
+  return async ({ update }) => {
+    await update();
+    loading = false;
+  };
+}}>
+  <input name="email" type="email" required>
+  <input name="password" type="password" required>
+  <button type="submit" disabled={loading}>
+    {loading ? 'ログイン中...' : 'ログイン'}
+  </button>
+</form>
+```
+
+### プログレッシブエンハンスメントの利点
+
+- **アクセシビリティ向上**: スクリーンリーダーや低速回線でも確実に動作
+- **SEO最適化**: 検索エンジンが内容を正しく理解
+- **信頼性**: JavaScriptエラーが発生しても基本機能は維持
+- **パフォーマンス**: 初期表示が高速で、段階的に機能を追加
+
 :::info[詳細を学ぶ]
-フォーム処理とActionsの詳細は、サーバーサイド編で解説予定です。
+[フォーム処理とActions](/sveltekit/server/forms/)で実装方法を詳しく解説しています。
 :::
 
 ## 型安全性
@@ -256,11 +397,27 @@ export const load: PageLoad = async () => {
 [SvelteKitが自動生成する型](/deep-dive/auto-generated-types/)で型システムの詳細を解説しています。
 :::
 
-## デプロイメント
+## デプロイメント - アダプターシステム
 
-アダプターシステムにより、様々なプラットフォームへ簡単にデプロイできます。
+SvelteKitの**アダプターシステム**により、一つのコードベースから様々なプラットフォームへ最適化されたビルドを生成できます。
 
-```typescript
+### アダプターとは
+
+アダプターは、SvelteKitアプリケーションを**特定のホスティング環境向けに変換**するプラグインです。
+
+<Mermaid diagram={adapterChoiceFlow} />
+
+### 主要なアダプターの例
+
+- **`adapter-static`**: GitHub Pages、S3などの静的ホスティング向け
+- **`adapter-node`**: Node.jsサーバー、Docker、VPS向け  
+- **`adapter-vercel`**: Vercel のEdge/Serverless Functions向け
+- **`adapter-cloudflare`**: Cloudflare Workers/Pages向け
+- **`adapter-auto`**: プラットフォームを自動検出（推奨）
+
+### 基本的な使い方
+
+```javascript
 // svelte.config.js
 import adapter from '@sveltejs/adapter-auto';
 
@@ -271,10 +428,55 @@ export default {
 };
 ```
 
+同じコードベースから、設定を変えるだけで、
+- **静的サイト** (HTML/CSS/JS)
+- **Node.jsアプリ** (Express互換)
+- **エッジ関数** (Cloudflare Workers)
+- **サーバーレス関数** (Vercel、Netlify)
+
+などに変換できます。
+
 :::info[詳細を学ぶ]
-[プラットフォーム別デプロイ](/sveltekit/deployment/platforms/)でアダプターの選択と設定方法を解説しています。
+[プラットフォーム別デプロイ](/sveltekit/deployment/platforms/)で各アダプターの詳細設定とベストプラクティスを解説しています。
 :::
 
+## ゼロコンフィグ - すぐに始められる開発体験
+
+SvelteKitは**設定なしですぐに開発を始められる**ように設計されています。
+
+### デフォルトで含まれる機能
+
+```bash
+npm create svelte@latest my-app
+cd my-app
+npm install
+npm run dev
+```
+
+これだけで以下がすべて設定済み
+
+- ✅ **開発サーバー**: HMR（ホットモジュールリプレースメント）対応
+- ✅ **TypeScript**: 型チェックとインテリセンス
+- ✅ **ルーティング**: ファイルベースの自動ルーティング
+- ✅ **ビルドツール**: Viteによる高速ビルド
+- ✅ **CSS処理**: PostCSS、Sass、Tailwind対応
+- ✅ **テスト環境**: Vitest、Playwright設定済み
+- ✅ **Linter/Formatter**: ESLint、Prettier設定済み
+
+### 必要に応じて追加
+
+ゼロコンフィグでも、必要な時に簡単に拡張可能  
+
+```javascript
+// vite.config.js - 必要な時だけカスタマイズ
+export default defineConfig({
+  // デフォルト設定を上書き
+});
+```
+
+:::tip[開発効率]
+webpack.config.jsのような複雑な設定ファイルは不要。SvelteKitが最適な設定を提供し、必要な時だけオーバーライドできます。
+:::
 
 ## パフォーマンスの優位性
 

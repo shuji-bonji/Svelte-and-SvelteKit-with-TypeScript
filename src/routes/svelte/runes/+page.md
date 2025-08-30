@@ -211,3 +211,4 @@ Runesは型推論が完全に動作し、IDEのサポートも充実していま
 ## 次のステップ
 
 準備ができたら、[Runesシステム入門](/svelte/runes/runes-introduction/)から始めましょう。従来のSvelteとの違いや、なぜRunesが必要なのかを詳しく解説します。
+

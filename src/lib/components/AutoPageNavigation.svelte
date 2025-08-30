@@ -1,19 +1,20 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { page } from '$app/stores';
-  import { getNavigation } from '$lib/utils/navigation';
-  import { onMount } from 'svelte';
+  // navigation-from-configのみを使用
+  import { getNavigationFromSidebar, sidebarConfig } from '$lib/utils/navigation-from-config';
 
   // パスの正規化
   let pathname = $state('');
-  let navElement: HTMLElement;
+  let navElement = $state<HTMLElement>();
   
   $effect(() => {
     const cleanPath = $page.url.pathname.replace(base, '');
     pathname = cleanPath || '/';
   });
 
-  const navigation = $derived(getNavigation(pathname));
+  // vite.config.tsのサイドバー構造からナビゲーションを取得
+  const navigation = $derived(getNavigationFromSidebar(pathname, sidebarConfig));
   const showNavigation = $derived(!!(navigation.prev || navigation.next));
   
   // コンテンツエリア内に配置し、空のpage-switcherを隠す

@@ -26,7 +26,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/sveltekit/performance/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/optimization/performance/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚡</div>
       <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
@@ -44,7 +44,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
-  <a href="{base}/sveltekit/caching/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/optimization/caching/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">💾</div>
       <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
@@ -62,7 +62,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
-  <a href="{base}/sveltekit/seo/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/optimization/seo/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔍</div>
       <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
@@ -76,24 +76,6 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
         <li><strong>サイトマップ</strong>: 自動生成</li>
         <li><strong>OGP設定</strong>: SNSシェア最適化</li>
         <li><strong>i18n対応</strong>: 多言語SEO</li>
-      </ul>
-    </div>
-  </a>
-  
-  <a href="{base}/sveltekit/monitoring/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📊</div>
-      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
-        モニタリング <span class="text-xs">(準備中)</span>
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リアルユーザーメトリクスの測定と改善を行います。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>RUM</strong>: リアルユーザー測定</li>
-        <li><strong>APM</strong>: アプリケーション監視</li>
-        <li><strong>エラー追跡</strong>: Sentry統合</li>
-        <li><strong>分析ダッシュボード</strong>: Grafana</li>
-        <li><strong>アラート設定</strong>: 閾値監視</li>
       </ul>
     </div>
   </a>

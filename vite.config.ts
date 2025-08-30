@@ -253,13 +253,17 @@ const config = defineConfig({
                     },
                     {
                       title: 'サーバーサイド処理 (準備中)',
-                      to: '/sveltekit/server-side/',
+                      to: '/sveltekit/server/server-side/',
                     },
                     {
                       title: 'APIルート設計 (準備中)',
-                      to: '/sveltekit/api-routes/',
+                      to: '/sveltekit/server/api-routes/',
                     },
-                    { title: 'Hooks (準備中)', to: '/sveltekit/hooks/' },
+                    { title: 'Hooks (準備中)', to: '/sveltekit/server/hooks/' },
+                    {
+                      title: 'WebSocket/SSE',
+                      to: '/sveltekit/server/websocket-sse/',
+                    },
                   ],
                 },
                 {
@@ -274,19 +278,27 @@ const config = defineConfig({
                     },
                     {
                       title: '認証・認可 (準備中)',
-                      to: '/sveltekit/authentication/',
+                      to: '/sveltekit/application/authentication/',
                     },
                     {
                       title: 'データベース統合 (準備中)',
-                      to: '/sveltekit/database/',
+                      to: '/sveltekit/application/database/',
                     },
                     {
                       title: '環境変数管理 (準備中)',
-                      to: '/sveltekit/environment/',
+                      to: '/sveltekit/application/environment/',
                     },
                     {
                       title: 'エラーハンドリング (準備中)',
-                      to: '/sveltekit/error-handling/',
+                      to: '/sveltekit/application/error-handling/',
+                    },
+                    {
+                      title: 'テスト戦略',
+                      to: '/sveltekit/application/testing/',
+                    },
+                    {
+                      title: '状態管理パターン',
+                      to: '/sveltekit/application/state-management/',
                     },
                   ],
                 },
@@ -299,13 +311,13 @@ const config = defineConfig({
                     { title: '最適化編概要', to: '/sveltekit/optimization/' },
                     {
                       title: 'パフォーマンス最適化 (準備中)',
-                      to: '/sveltekit/performance/',
+                      to: '/sveltekit/optimization/performance/',
                     },
                     {
                       title: 'キャッシュ戦略 (準備中)',
-                      to: '/sveltekit/caching/',
+                      to: '/sveltekit/optimization/caching/',
                     },
-                    { title: 'SEO最適化 (準備中)', to: '/sveltekit/seo/' },
+                    { title: 'SEO最適化 (準備中)', to: '/sveltekit/optimization/seo/' },
                   ],
                 },
                 {
@@ -324,11 +336,11 @@ const config = defineConfig({
                     },
                     {
                       title: 'セキュリティ (準備中)',
-                      to: '/sveltekit/security/',
+                      to: '/sveltekit/deployment/security/',
                     },
                     {
                       title: 'モニタリング (準備中)',
-                      to: '/sveltekit/monitoring/',
+                      to: '/sveltekit/deployment/monitoring/',
                     },
                   ],
                 },

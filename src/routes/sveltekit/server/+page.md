@@ -44,7 +44,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/server-side/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/server/server-side/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
@@ -62,7 +62,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/api-routes/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/server/api-routes/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔌</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
@@ -80,7 +80,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/hooks/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/server/hooks/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎣</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
@@ -94,6 +94,24 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
         <li><strong>handleError</strong>: エラー処理のカスタマイズ</li>
         <li><strong>認証ミドルウェア</strong>: グローバル認証チェック</li>
         <li><strong>ロギング</strong>: リクエスト/レスポンス記録</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/server/websocket-sse/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔄</div>
+      <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
+        WebSocket/SSE
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リアルタイム通信の実装方法を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>WebSocket</strong>: 双方向リアルタイム通信</li>
+        <li><strong>SSE</strong>: サーバーからのプッシュ通知</li>
+        <li><strong>Socket.IO</strong>: ライブラリ統合</li>
+        <li><strong>スケーラビリティ</strong>: Redis Pub/Sub</li>
+        <li><strong>デプロイ戦略</strong>: プラットフォーム別対応</li>
       </ul>
     </div>
   </a>
@@ -126,6 +144,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
 2. **サーバーサイド処理** - SSRとサーバー専用機能を習得
 3. **APIルート設計** - RESTful APIの構築方法を学習
 4. **Hooks** - 高度なリクエスト処理をマスター
+5. **WebSocket/SSE** - リアルタイム機能の実装
 
 ### 🎯 学習目標
 

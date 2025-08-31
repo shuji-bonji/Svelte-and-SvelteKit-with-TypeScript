@@ -121,15 +121,15 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">ファイル構成と規約</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/routing/" class="text-blue-600 dark:text-blue-400 hover:underline">ルーティング詳解</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/routing/" class="text-blue-600 dark:text-blue-400 hover:underline">ルーティング詳解</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">動的ルート、レイアウト</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/load-functions/" class="text-blue-600 dark:text-blue-400 hover:underline">Load関数とデータフェッチング</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/" class="text-blue-600 dark:text-blue-400 hover:underline">Load関数とデータフェッチング</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">データ取得戦略、ストリーミングSSR</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/auto-types/" class="text-blue-600 dark:text-blue-400 hover:underline">自動型生成システム</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/basics/auto-types/" class="text-blue-600 dark:text-blue-400 hover:underline">TypeScript型の自動生成システム</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">./$typesによる型安全な開発</td>
           </tr>
         </tbody>
@@ -346,7 +346,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 まず[概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/basics/project-structure/)でファイル構成を学びます。
 
 ### Step 2: コア機能をマスター
-[ルーティング](/sveltekit/basics/routing/)と[Load関数によるデータフェッチング](/sveltekit/basics/load-functions/)で、SvelteKitの中核機能を習得します。
+[ルーティング](/sveltekit/routing/)と[Load関数によるデータフェッチング](/sveltekit/data-loading/)で、SvelteKitの中核機能を習得します。
 
 ### Step 3: 実践的な実装
 [フォーム処理](/sveltekit/server/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
@@ -631,7 +631,7 @@ src/
 [概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解
 
 **すぐに実装したい方**:
-[ルーティング詳解](/sveltekit/basics/routing/)で実践的な実装を開始
+[ルーティング詳解](/sveltekit/routing/)で実践的な実装を開始
 
 **特定の機能を学びたい方**:
 上記の学習ロードマップから必要なセクションを選択

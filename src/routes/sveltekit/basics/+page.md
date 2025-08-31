@@ -24,9 +24,9 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 4. **エッジ対応** - Cloudflare Workers等での動作
 5. **開発者体験** - HMR、自動インポート、Viteベース
 
-## このセクションで学ぶこと
+## 基礎編の内容
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 auto-rows-[1fr]">
   <a href="{base}/sveltekit/basics/overview/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎯</div>
@@ -62,51 +62,15 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
       </ul>
     </div>
   </a>
-  
-  <a href="{base}/sveltekit/basics/routing/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🛤️</div>
-      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        ルーティング詳解
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">柔軟で強力なファイルベースルーティングシステムを習得します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>動的ルート</strong>: <code>[param]</code>パラメータ</li>
-        <li><strong>レイアウト</strong>: 共通UI要素の管理</li>
-        <li><strong>エラーページ</strong>: +error.svelte</li>
-        <li><strong>ルートグループ</strong>: (group)ディレクトリ</li>
-        <li><strong>Rest parameters</strong>: [...rest]</li>
-      </ul>
-    </div>
-  </a>
-  
-  <a href="{base}/sveltekit/basics/load-functions/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📊</div>
-      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        Load関数とデータフェッチング
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数による効率的なデータ取得戦略を完全マスターします。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>+page.ts</strong>: ユニバーサルload</li>
-        <li><strong>+page.server.ts</strong>: サーバー専用load</li>
-        <li><strong>並列フェッチ</strong>: Promise.all最適化</li>
-        <li><strong>親子間データ</strong>: 依存関係の管理</li>
-        <li><strong>invalidation</strong>: データの再取得</li>
-      </ul>
-    </div>
-  </a>
 
   <a href="{base}/sveltekit/basics/auto-types/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔷</div>
       <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        自動型生成システム
+        TypeScript型の自動生成システム
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">./$typesから自動生成される型の完全ガイド</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitが提供する./$typesによる型安全な開発</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li><strong>./$types</strong>: 仮想モジュールの仕組み</li>
         <li><strong>型の一覧</strong>: PageLoad, Actions, RequestHandler等</li>
@@ -118,15 +82,28 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
   </a>
 </div>
 
+## 🔗 関連セクション
+
+基礎編を学んだら、次のセクションでSvelteKitのコア機能を習得しましょう：
+
+<div class="related-sections">
+  <div class="section-card">
+    <h3>🛤️ <a href="{base}/sveltekit/routing/">ルーティング</a></h3>
+    <p>ファイルベースルーティングの完全ガイド。動的ルート、レイアウト、ルートグループなどを詳しく解説。</p>
+  </div>
+  <div class="section-card">
+    <h3>📊 <a href="{base}/sveltekit/data-loading/">データ取得</a></h3>
+    <p>Load関数を使った効率的なデータフェッチング。Universal LoadとServer Loadの使い分け、ストリーミングSSRなど。</p>
+  </div>
+</div>
+
 ## 学習の進め方
 
 ### 📚 推奨学習順序
 
 1. **概要とアーキテクチャ** - まずSvelteKitの全体像を理解
 2. **プロジェクト構造** - ディレクトリ構造と命名規約を習得
-3. **ルーティング詳解** - URLとファイルの関係を理解
-4. **Load関数とデータフェッチング** - データ取得戦略を学習
-5. **自動型生成システム** - TypeScriptとの統合を理解
+3. **TypeScript型の自動生成** - `./$types`による型安全な開発
 
 ### 🎯 学習目標
 
@@ -149,4 +126,41 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 :::info[前提知識]
 このセクションは[Svelte 5の基本](/svelte/)を理解していることを前提としています。Svelteの基礎がまだの方は、先にSvelteセクションを学習してください。
 :::
+
+<style>
+  .related-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .section-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: var(--bg-secondary, #f8f9fa);
+  }
+  
+  .section-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .section-card h3 a {
+    color: var(--primary-color, #ff3e00);
+    text-decoration: none;
+  }
+  
+  .section-card h3 a:hover {
+    text-decoration: underline;
+  }
+  
+  .section-card p {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+  }
+</style>
 

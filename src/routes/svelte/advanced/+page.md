@@ -1,6 +1,6 @@
 ---
 title: 実践編
-description: Svelte 5の高度な機能とパターン
+description: Svelte5とTypeScriptの実践編。リアクティブストア、クラスベースのリアクティビティ、Snippets機能、コンポーネントパターンなど高度な実装技術を解説
 ---
 
 <script>

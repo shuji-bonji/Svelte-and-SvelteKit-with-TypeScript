@@ -1,6 +1,6 @@
 ---
 title: use:アクション
-description: DOM要素を直接操作する強力な機能
+description: Svelte5のuse:アクションをTypeScriptで実装。DOM要素の直接操作、サードパーティライブラリ統合、カスタムディレクティブの作成方法を解説
 ---
 
 <style>

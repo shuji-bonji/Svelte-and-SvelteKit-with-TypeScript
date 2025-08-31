@@ -1,6 +1,6 @@
 ---
 title: TypeScriptで学ぶ Svelte 5/SvelteKit
-description: このサイトは、Svelte 5 と SvelteKit を TypeScript で学ぶための包括的な日本語学習ガイドです。最新のRunesシステムを使用した実践的な開発手法を、豊富なコード例と共に解説します。
+description: Svelte5とSvelteKitをTypeScriptで学ぶ日本語完全ガイド。$state/$derived/$effectのRunesシステム、SSR/SSG実装、型安全なコンポーネント開発を実践コードで解説
 heroImage: /svelteAndTypescript.png
 actions:
   - label: 学習を始める

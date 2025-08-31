@@ -1,6 +1,6 @@
 ---
 title: テンプレート構文
-description: Svelteのテンプレート構文と特殊なタグの詳細解説
+description: Svelte5のテンプレート構文をTypeScriptで活用。{#if}/{#each}/{#await}ブロック、@render/@htmlタグ、条件分岐とループ処理の実装パターンを解説
 ---
 
 Svelteのテンプレートは、HTMLをベースに独自の構文を追加したものです。このページでは、Svelteが提供する特殊なタグとテンプレート構文について詳しく解説します。

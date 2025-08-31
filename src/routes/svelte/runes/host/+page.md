@@ -1,6 +1,6 @@
 ---
 title: $host - カスタムエレメント
-description: カスタムエレメント内でホスト要素にアクセスするための$hostルーン
+description: Svelte 5の$hostルーンでWeb Componentsのホスト要素を操作 - カスタムエレメントのスタイリングとイベント処理
 ---
 
 

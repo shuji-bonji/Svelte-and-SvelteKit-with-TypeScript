@@ -1,6 +1,6 @@
 ---
 title: $propsルーン
-description: コンポーネントのプロパティ定義と型安全な受け渡し
+description: Svelte 5の$propsルーンでコンポーネントプロパティを定義 - TypeScript型定義・デフォルト値・Rest Propsの実装方法
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: はじめに
-description: Svelte 5とSvelteKitによる最新のWeb開発
+description: Svelte5とSvelteKitをTypeScriptで始める入門ガイド。コンパイラベースのアプローチ、Runesシステム、環境構築からHello Worldまでを解説
 ---
 
 <script>

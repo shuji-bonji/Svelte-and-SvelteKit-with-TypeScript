@@ -1,6 +1,6 @@
 ---
 title: コンポーネントの基本
-description: Svelteコンポーネントの構造と基本的な機能
+description: Svelte5コンポーネントの基本をTypeScriptで学ぶ。script/markup/styleの3要素、テンプレート構文、イベントハンドリング、プロパティの実装方法を解説
 ---
 
 

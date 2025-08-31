@@ -1,6 +1,6 @@
 ---
 title: Websocket
-description: 準備中
+description: SvelteKitとTypeScriptでWebSocket通信を実装。リアルタイムチャット、ライブ更新、イベントストリーミングのサンプルコードと型安全な実装パターン
 ---
 
 ## 準備中

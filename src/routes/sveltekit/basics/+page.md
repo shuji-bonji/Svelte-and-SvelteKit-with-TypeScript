@@ -1,6 +1,6 @@
 ---
 title: SvelteKit 基礎編
-description: SvelteKitフレームワークの基本概念とアーキテクチャを理解する
+description: SvelteKit基礎編をTypeScriptで学ぶ。プロジェクト構造、ファイルベースルーティング、load関数、サーバー/クライアントの実行環境を解説
 ---
 
 :::caution[タイトル]

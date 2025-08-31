@@ -1,6 +1,6 @@
 ---
 title: 実装例一覧
-description: 実践的なアプリケーション開発例
+description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODOアプリ、認証システム、データフェッチング、WebSocket通信などの完全動作サンプル
 ---
 
 <script>

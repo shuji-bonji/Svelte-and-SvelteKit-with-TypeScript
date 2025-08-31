@@ -1,6 +1,6 @@
 ---
 title: SvelteKit完全ガイド
-description: エンタープライズ対応のフルスタックフレームワークをマスターする
+description: SvelteKitをTypeScriptでマスターする完全ガイド。SSR/SSG/SPAのレンダリング戦略、ファイルベースルーティング、load関数、APIルートの実装方法を解説
 ---
 
 <script>

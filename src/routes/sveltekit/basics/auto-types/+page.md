@@ -1,6 +1,6 @@
 ---
-title: SvelteKitの自動型生成システム
-description: ./$typesから自動生成される型の完全ガイド
+title: TypeScript型の自動生成システム
+description: SvelteKitが提供する./$typesによるTypeScript型の自動生成 - 型安全な開発を実現する仕組みと活用方法
 ---
 :::caution[タイトル]
 執筆中
@@ -361,6 +361,6 @@ export const load: PageLoad = async ({ params }) => {
 
 ## 次のステップ
 
-- [Load関数とデータフェッチング]({base}/sveltekit/basics/load-functions/) - Load関数の詳細
+- [Load関数とデータフェッチング]({base}/sveltekit/data-loading/) - Load関数の詳細
 - [フォーム処理とActions]({base}/sveltekit/server/forms/) - Form Actionsの実装
 - [APIルート設計]({base}/sveltekit/server/api-routes/) - RESTful APIの構築

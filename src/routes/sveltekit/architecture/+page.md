@@ -39,6 +39,23 @@ SvelteKitのアーキテクチャを理解することで、
       </ul>
     </div>
   </a>
+
+  <a href="{base}/sveltekit/architecture/file-system/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📂</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        SvelteKitファイルシステム
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">特殊ファイルの関係性とデータフローを包括的に理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>特殊ファイル一覧</strong>: +page、+layout、+server等</li>
+        <li><strong>実行順序</strong>: ファイル間の実行タイミング</li>
+        <li><strong>データフロー</strong>: 親子間のデータ共有</li>
+        <li><strong>型の連携</strong>: TypeScript型の自動生成</li>
+      </ul>
+    </div>
+  </a>
   
   <a href="{base}/sveltekit/architecture/file-structure/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">

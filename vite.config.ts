@@ -205,16 +205,50 @@ const config = defineConfig({
                       to: '/sveltekit/basics/project-structure/',
                     },
                     {
-                      title: 'ルーティング詳解',
-                      to: '/sveltekit/basics/routing/',
+                      title: 'TypeScript型の自動生成システム',
+                      to: '/sveltekit/basics/auto-types/',
                     },
+                  ],
+                },
+                {
+                  title: 'ルーティング',
+                  to: '/sveltekit/routing/',
+                  collapsible: true,
+                  items: [
+                    {
+                      title: 'ルーティング概要',
+                      to: '/sveltekit/routing/',
+                    },
+                    {
+                      title: '基本ルーティング',
+                      to: '/sveltekit/routing/basic/',
+                    },
+                    {
+                      title: '動的ルーティング',
+                      to: '/sveltekit/routing/dynamic/',
+                    },
+                    {
+                      title: '高度なルーティング',
+                      to: '/sveltekit/routing/advanced/',
+                    },
+                  ],
+                },
+                {
+                  title: 'データ取得',
+                  to: '/sveltekit/data-loading/',
+                  collapsible: true,
+                  items: [
                     {
                       title: 'Load関数とデータフェッチング',
-                      to: '/sveltekit/basics/load-functions/',
+                      to: '/sveltekit/data-loading/',
                     },
                     {
-                      title: '自動型生成システム',
-                      to: '/sveltekit/basics/auto-types/',
+                      title: 'Load関数の基礎',
+                      to: '/sveltekit/data-loading/basic/',
+                    },
+                    {
+                      title: 'データフェッチング戦略',
+                      to: '/sveltekit/data-loading/strategies/',
                     },
                   ],
                 },
@@ -230,6 +264,10 @@ const config = defineConfig({
                     {
                       title: '実行環境別アーキテクチャ',
                       to: '/sveltekit/architecture/execution-environments/',
+                    },
+                    {
+                      title: 'SvelteKitファイルシステム',
+                      to: '/sveltekit/architecture/file-system/',
                     },
                     {
                       title: 'ファイル構成と実行環境',

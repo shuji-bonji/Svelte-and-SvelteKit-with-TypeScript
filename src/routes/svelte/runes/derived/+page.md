@@ -1,6 +1,6 @@
 ---
 title: $derived - 派生値
-description: 他の値から自動的に計算される派生値の作成と活用
+description: Svelte 5の$derivedルーンで計算プロパティを作成 - リアクティブな派生値の定義と$derived.byによる複雑な計算処理
 ---
 
 

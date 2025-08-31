@@ -1,6 +1,6 @@
 ---
 title: $effect - 副作用
-description: リアクティブな値の変更に応じて副作用を実行する
+description: Svelte 5の$effectルーンで副作用を管理 - DOM操作やAPI呼び出し、$effect.preによる事前実行とクリーンアップ処理
 ---
 
 

@@ -1,6 +1,6 @@
 ---
 title: Runesシステム
-description: Svelte 5の新しいリアクティビティシステム
+description: Svelte 5 Runesシステム完全ガイド - リアクティビティプリミティブの使い方とベストプラクティス
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Runesシステム入門
-description: Svelte 5の新しいリアクティビティシステム
+description: Svelte 5 Runesシステム入門 - $state/$derived/$effectによる明示的なリアクティビティ管理とTypeScript統合
 ---
 
 ## Runesとは

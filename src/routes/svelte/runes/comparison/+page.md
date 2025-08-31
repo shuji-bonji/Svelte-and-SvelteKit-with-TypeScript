@@ -1,6 +1,6 @@
 ---
 title: 他フレームワークとの比較
-description: React、Vue、Angularの経験者向けRunesシステム比較ガイド
+description: Svelte 5 RunesとReact/Vue/Angularの比較 - useState/$ref/SignalとRunesの対応関係とマイグレーション
 ---
 
 

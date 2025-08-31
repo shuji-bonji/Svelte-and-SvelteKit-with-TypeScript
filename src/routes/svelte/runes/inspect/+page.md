@@ -1,6 +1,6 @@
 ---
 title: $inspectルーン（デバッグ用）
-description: Svelte 5のデバッグツール
+description: Svelte 5の$inspectルーンでリアクティブ値をデバッグ - 開発時の値変更追跡とカスタムロギング
 ---
 
 

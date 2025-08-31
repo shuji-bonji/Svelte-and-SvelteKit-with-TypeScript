@@ -1,6 +1,6 @@
 ---
 title: $bindableルーン
-description: 親子コンポーネント間の双方向データバインディング
+description: Svelte 5の$bindableルーンで双方向バインディングを実装 - bind:プロパティ構文とTypeScript型定義の統合
 ---
 
 <script>

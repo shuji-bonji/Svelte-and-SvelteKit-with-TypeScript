@@ -1,6 +1,6 @@
 ---
 title: $state - リアクティブな状態
-description: Svelte 5のRunesシステムにおける状態管理の基礎
+description: Svelte 5の$stateルーンでリアクティブな状態管理 - プリミティブ値・オブジェクト・配列の宣言と深いリアクティビティ
 ---
 
 

@@ -357,6 +357,101 @@
     }
   }
 
+  /* ダークモード時のコードブロック背景色統一 */
+  :global(.dark .svp-code-block-wrapper) {
+    background-color: #1e1e1e !important;
+    --shiki-dark-bg: transparent !important;
+  }
+  
+  /* 内部要素の背景を透明に */
+  :global(.dark .svp-code-block-wrapper .svp-code-block) {
+    background-color: transparent !important;
+  }
+  
+  :global(.dark .svp-code-block-wrapper pre.shiki) {
+    background-color: transparent !important;
+    --shiki-dark-bg: transparent !important;
+  }
+  
+  :global(.dark .svp-code-block-wrapper .line) {
+    background-color: transparent !important;
+  }
+  
+  :global(.dark .svp-code-block-wrapper .line span) {
+    background-color: transparent !important;
+  }
+  
+  :global(.dark .svp-code-block-wrapper code) {
+    background-color: transparent !important;
+  }
+
+  /* ダークモードのハイライトされた行 */
+  :global(.dark .svp-code-block-wrapper .line.highlighted) {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* インラインコード（コードブロック外） */
+  :global(.dark p > code),
+  :global(.dark li > code),
+  :global(.dark td > code),
+  :global(.dark h1 > code),
+  :global(.dark h2 > code),
+  :global(.dark h3 > code),
+  :global(.dark h4 > code),
+  :global(.dark h5 > code),
+  :global(.dark h6 > code) {
+    background-color: rgba(110, 118, 129, 0.2) !important;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+
+  /* ライトモード時のコードブロック背景色も統一 */
+  :global(.svp-code-block-wrapper) {
+    background-color: #f6f8fa !important;
+  }
+  
+  /* 内部要素の背景を透明に */
+  :global(.svp-code-block-wrapper .svp-code-block) {
+    background-color: transparent !important;
+  }
+  
+  :global(.svp-code-block-wrapper pre.shiki) {
+    background-color: transparent !important;
+  }
+  
+  :global(.svp-code-block-wrapper .line) {
+    background-color: transparent !important;
+  }
+  
+  :global(.svp-code-block-wrapper .line span) {
+    background-color: transparent !important;
+  }
+  
+  :global(.svp-code-block-wrapper code) {
+    background-color: transparent !important;
+  }
+
+  /* ライトモードのハイライトされた行 */
+  :global(.svp-code-block-wrapper .line.highlighted) {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* インラインコード（コードブロック外） */
+  :global(p > code),
+  :global(li > code),
+  :global(td > code),
+  :global(h1 > code),
+  :global(h2 > code),
+  :global(h3 > code),
+  :global(h4 > code),
+  :global(h5 > code),
+  :global(h6 > code) {
+    background-color: rgba(175, 184, 193, 0.2) !important;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.875em;
+  }
+
   /* ライブコードコンテナも同様に調整 */
   :global(.svp-live-code--container) {
     margin-left: 0 !important;

@@ -31,7 +31,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 };
 ```
 
-**特徴**:
+#### 特徴
 - SSR時はサーバーで実行
 - クライアントサイドナビゲーション時はブラウザで実行
 - 公開APIの呼び出しに適している
@@ -57,7 +57,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 };
 ```
 
-**特徴**:
+#### 特徴
 - 常にサーバーサイドで実行
 - 秘密情報（APIキー、DB認証情報）を安全に扱える
 - データベースに直接アクセス可能

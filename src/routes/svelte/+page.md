@@ -97,7 +97,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -150,7 +150,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -215,7 +215,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -300,11 +300,11 @@ Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、�
     <div class="text-3xl mb-3">🔌</div>
     <h3 class="font-bold text-lg mb-3">推奨拡張機能</h3>
     <ul class="space-y-2 text-sm text-gray-6 dark:text-gray-4">
-      <li>• Svelte for VS Code</li>
-      <li>• Prettier - Code formatter</li>
-      <li>• ESLint</li>
-      <li>• TypeScript Vue Plugin</li>
-      <li>• Tailwind CSS IntelliSense</li>
+      <li>Svelte for VS Code</li>
+      <li>Prettier - Code formatter</li>
+      <li>ESLint</li>
+      <li>TypeScript Vue Plugin</li>
+      <li>Tailwind CSS IntelliSense</li>
     </ul>
   </div>
 

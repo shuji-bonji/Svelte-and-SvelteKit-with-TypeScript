@@ -3,9 +3,6 @@ title: SvelteKit 基礎編
 description: SvelteKit基礎編をTypeScriptで学ぶ。プロジェクト構造、ファイルベースルーティング、load関数、サーバー/クライアントの実行環境を解説
 ---
 
-:::caution[タイトル]
-一部、執筆中
-:::
 <script>
   import { base } from '$app/paths';
 </script>
@@ -84,17 +81,21 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 
 ## 🔗 関連セクション
 
-基礎編を学んだら、次のセクションでSvelteKitのコア機能を習得しましょう：
+基礎編を学んだら、次のセクションでSvelteKitのコア機能を習得しましょう。
 
 <div class="related-sections">
-  <div class="section-card">
-    <h3>🛤️ <a href="{base}/sveltekit/routing/">ルーティング</a></h3>
-    <p>ファイルベースルーティングの完全ガイド。動的ルート、レイアウト、ルートグループなどを詳しく解説。</p>
-  </div>
-  <div class="section-card">
-    <h3>📊 <a href="{base}/sveltekit/data-loading/">データ取得</a></h3>
-    <p>Load関数を使った効率的なデータフェッチング。Universal LoadとServer Loadの使い分け、ストリーミングSSRなど。</p>
-  </div>
+  <a href="{base}/sveltekit/routing/" class="group">
+    <div class="section-card">
+      <h3 class="text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300">🛤️ ルーティング</h3>
+      <p>ファイルベースルーティングの完全ガイド。動的ルート、レイアウト、ルートグループなどを詳しく解説。</p>
+    </div>
+  </a>
+  <a href="{base}/sveltekit/data-loading/" class="group">
+    <div class="section-card">
+       <h3 class="text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300">📊 データ取得</h3>
+      <p>Load関数を使った効率的なデータフェッチング。Universal LoadとServer Loadの使い分け、ストリーミングSSRなど。</p>
+    </div>
+  </a>
 </div>
 
 ## 学習の進め方

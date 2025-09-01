@@ -216,21 +216,97 @@ export const load: PageLoad = async ({ url, fetch }) => {
 };
 ```
 
+## Load関数の選び方
+
+データ取得の要件に応じて、適切なLoad関数を選択します。
+
+### Server Loadを使用すべき場合
+
+1. **秘密情報の取り扱い**
+   - APIキーやデータベースクレデンシャル
+   - サードパーティサービスのシークレット
+   - 環境変数に保存された機密情報
+
+2. **データベース直接アクセス**
+   - Prisma、Drizzle ORMなどのORM使用
+   - SQLクエリの直接実行
+   - RedisやMongoDBへの接続
+
+3. **サーバーサイド専用ライブラリ**
+   - Node.js専用モジュールの使用
+   - ファイルシステムへのアクセス
+   - システムコマンドの実行
+
+```typescript
+// 例：Server Loadが適切なケース
+export const load: PageServerLoad = async ({ locals }) => {
+  // データベースに直接アクセス
+  const posts = await db.post.findMany({
+    where: { userId: locals.session.userId }
+  });
+  
+  // 秘密のAPIキーを使用
+  const analytics = await fetchWithSecret(process.env.ANALYTICS_KEY);
+  
+  return { posts, analytics };
+};
+```
+
+### Universal Loadを使用すべき場合
+
+1. **公開APIの呼び出し**
+   - REST APIエンドポイント
+   - GraphQLクエリ
+   - パブリックAPIのデータ
+
+2. **SEOが重要な場合**
+   - サーバーサイドレンダリングが必要
+   - メタデータの動的生成
+   - Open Graphタグの設定
+
+3. **クライアントサイド再実行**
+   - ナビゲーション時のデータ更新
+   - リアルタイム更新が必要
+   - クライアントサイドキャッシュの活用
+
+```typescript
+// 例：Universal Loadが適切なケース
+export const load: PageLoad = async ({ fetch, params }) => {
+  // 公開APIからデータ取得
+  const response = await fetch(`/api/posts/${params.id}`);
+  const post = await response.json();
+  
+  // クライアントサイドでも再実行可能
+  return { post };
+};
+```
+
+### 選択フローチャート
+
+```mermaid
+flowchart TD
+    Start[データ取得が必要] --> Secret[秘密情報を扱う？]
+    Secret -->|Yes| ServerLoad[Server Loadを使用]
+    Secret -->|No| Database[データベース直接アクセス？]
+    Database -->|Yes| ServerLoad
+    Database -->|No| ClientRerun[クライアントで再実行必要？]
+    ClientRerun -->|Yes| UniversalLoad[Universal Loadを使用]
+    ClientRerun -->|No| BothWork[どちらでもOK]
+```
+
 ## ベストプラクティス
 
-1. **適切なLoad関数を選択**
-   - 公開データ → Universal Load
-   - 秘密情報・DB → Server Load
-
-2. **並列処理を活用**
-   - `Promise.all()`で複数のデータを同時取得
-
-3. **キャッシュを考慮**
-   - `fetch`の`cache`オプションを適切に設定
-
-4. **エラーハンドリング**
+1. **エラーハンドリング**
    - 適切なHTTPステータスコードを返す
    - ユーザーフレンドリーなエラーメッセージ
+
+2. **キャッシュを考慮**
+   - `fetch`の`cache`オプションを適切に設定
+   - 適切なキャッシュヘッダーの設定
+
+3. **パフォーマンス最適化**
+   - 並列処理でデータ取得を高速化
+   - 不要なデータ取得を避ける
 
 ## 次のステップ
 

@@ -89,7 +89,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、Load関数とデータフェッチング
 3. **🏛️ アーキテクチャ詳解** - 実行環境、ファイル構成、データフロー、レンダリングパイプライン
 4. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
-5. **🏗️ アプリ構築編** - 認証・認可、データベース統合、環境変数管理、エラーハンドリング
+5. **🏗️ アプリ構築編** - 認証・認可、セッション管理、データベース統合、環境変数管理、エラーハンドリング
 6. **⚡ 最適化編** - パフォーマンス最適化、キャッシュ戦略、SEO最適化
 7. **🚀 デプロイ・運用編** - プラットフォーム選定、セキュリティ設定、モニタリング
 8. **🎉 本番運用開始**
@@ -325,6 +325,10 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">Lucia Auth、JWT、OAuth</td>
           </tr>
           <tr>
+            <td class="py-2"><a href="{base}/sveltekit/application/session/" class="text-purple-600 dark:text-purple-400 hover:underline">セッション管理と認証戦略</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">クッキーベース、JWT、ルートグループ</td>
+          </tr>
+          <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/database/" class="text-purple-600 dark:text-purple-400 hover:underline">データベース統合</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">Prisma、Drizzle ORM</td>
           </tr>
@@ -448,7 +452,8 @@ npm create svelte@latest my-first-sveltekit-app
 ### Step 3: 実践的な機能（1週間）
 1. **[フォーム処理とActions]({base}/sveltekit/server/forms/)** - TODOアプリのCRUD操作を実装
 2. **[APIルート設計]({base}/sveltekit/server/api-routes/)** - RESTful APIエンドポイントを構築
-3. **[認証システム]({base}/sveltekit/application/authentication/)** - ログイン機能を追加
+3. **[セッション管理と認証戦略]({base}/sveltekit/application/session/)** - 認証パターンを実装
+4. **[認証システム]({base}/sveltekit/application/authentication/)** - 本格的なログイン機能を追加
 
 ### 🚀 クイックスタートプロジェクト
 ```typescript

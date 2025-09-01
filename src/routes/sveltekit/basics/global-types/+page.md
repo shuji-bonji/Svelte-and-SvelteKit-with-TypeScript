@@ -24,9 +24,21 @@ SvelteKitでは`app.d.ts`ファイルを通じて、プロジェクト全体で�
 
 SvelteKitは`App`名前空間に5つの標準インターフェースを提供しています。これらを拡張することで、アプリケーション固有の型定義を追加できます。
 
-### 1. App.Locals - サーバーサイドのリクエスト固有データ
+### 5つの標準インターフェース一覧
 
-リクエストごとにサーバーサイドで保持するデータの型定義です。認証情報、セッションデータ、データベース接続など、リクエストライフサイクル全体で共有したい情報を格納します。
+| インターフェース | 用途 | 主な使用場所 |
+|-----------------|------|------------|
+| **App.Locals** | サーバーサイドのリクエストコンテキスト | hooks.server.ts、Load関数、Actions |
+| **App.PageData** | すべてのページで共通のデータ型 | +layout.server.ts、+page.svelte |
+| **App.Error** | カスタムエラー型 | error()関数、+error.svelte |
+| **App.PageState** | 履歴エントリの状態 | pushState()、replaceState() |
+| **App.Platform** | プラットフォーム固有のAPI | Cloudflare Workers、Vercel等 |
+
+それでは、各インターフェースを詳しく見ていきましょう。
+
+## 1. App.Locals - サーバーサイドのリクエストコンテキスト
+
+サーバーサイドでリクエスト処理中に保持・共有されるデータの型定義です。`hooks.server.ts`で認証情報やセッションを検証・設定し、その後のLoad関数やActionsで利用します。リクエストのライフサイクル全体を通じて、サーバー側の処理間でデータを受け渡すための仕組みです。
 
 ```typescript
 // src/app.d.ts
@@ -47,7 +59,7 @@ declare global {
 }
 ```
 
-`hooks.server.ts`で設定し、Load関数やActionsで使用：
+### `hooks.server.ts`で設定し、Load関数やActionsで使用
 
 ```typescript
 // hooks.server.ts
@@ -74,7 +86,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
-### 2. App.PageData - すべてのページで共通のデータ型
+## 2. App.PageData - すべてのページで共通のデータ型
 
 アプリケーション全体のページで共通して使用されるデータの型を定義します。メタ情報、フラッシュメッセージ、パンくずリストなど、各ページのLoad関数の返り値に含まれる共通プロパティを管理します。
 
@@ -98,7 +110,7 @@ interface PageData {
 }
 ```
 
-使用例：
+### 使用例
 
 ```typescript
 // +layout.server.ts
@@ -114,7 +126,7 @@ export const load: LayoutServerLoad = async () => {
 };
 ```
 
-### 3. App.Error - カスタムエラー型
+## 3. App.Error - カスタムエラー型
 
 アプリケーションで発生するエラーの型をカスタマイズします。エラーコード、詳細情報、ステータスなどを追加して、より詳細なエラーハンドリングが可能になります。
 
@@ -128,7 +140,7 @@ interface Error {
 }
 ```
 
-`error()`関数で使用：
+### `error()`関数で使用
 
 ```typescript
 import { error } from '@sveltejs/kit';
@@ -144,7 +156,7 @@ throw error(404, {
 });
 ```
 
-### 4. App.PageState - 履歴エントリの状態
+## 4. App.PageState - 履歴エントリの状態
 
 ブラウザの履歴スタックに保存される状態の型定義です。スクロール位置、タブ選択状態、フォーム入力値など、ページ遷移時に保持したいUI状態を管理します。
 
@@ -161,7 +173,7 @@ interface PageState {
 }
 ```
 
-`pushState`/`replaceState`で使用：
+### `pushState`/`replaceState`で使用
 
 ```typescript
 import { pushState, replaceState } from '$app/navigation';
@@ -184,7 +196,7 @@ replaceState('', {
 });
 ```
 
-### 5. App.Platform - プラットフォーム固有のAPI
+## 5. App.Platform - プラットフォーム固有のAPI
 
 デプロイ先のプラットフォーム（Cloudflare Workers、Vercel、Netlifyなど）固有のAPIや環境変数の型定義です。各プラットフォームの特殊機能を型安全に利用できるようにします。
 
@@ -205,7 +217,7 @@ interface Platform {
 }
 ```
 
-プラットフォーム固有機能の使用：
+### プラットフォーム固有機能の使用
 
 ```typescript
 // +page.server.ts
@@ -423,7 +435,7 @@ interface Error {
 
 1. **TypeScriptの設定確認**
 
-`tsconfig.json`ファイルの設定を確認：
+#### `tsconfig.json`ファイルの設定を確認
 
 ```typescript
 // tsconfig.json
@@ -459,7 +471,7 @@ export {};
 
 ## まとめ
 
-`app.d.ts`による型定義は、SvelteKitアプリケーションの型安全性の基盤です：
+`app.d.ts`による型定義は、SvelteKitアプリケーションの型安全性の基盤です。
 
 - 🌍 **グローバルな型定義**でプロジェクト全体の一貫性を確保
 - 🛡️ **5つの標準インターフェース**で主要な機能をカバー

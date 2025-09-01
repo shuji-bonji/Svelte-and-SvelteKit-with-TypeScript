@@ -76,7 +76,7 @@ export const load: PageLoad = async () => {
 };
 ```
 
-Load関数から受け取ったデータをページで使用する例です。`PageData`型により、プロパティへの安全なアクセスが保証されます。
+Load関数から受け取ったデータをページで使用する例です。上記のLoad関数で返した`title`と`description`を、このSvelteコンポーネントで受け取り、`<h1>`タグと`<p>`タグに展開して表示しています。`PageData`型により、`data.title`や`data.description`へのアクセスが型安全に保証され、タイプミスや存在しないプロパティへのアクセスを防ぎます。
 
 ```svelte
 <!-- src/routes/about/+page.svelte -->

@@ -3,13 +3,38 @@ title: 動的ルーティング
 description: SvelteKitの動的ルーティングをTypeScriptで実装。動的パラメータ、Rest Parameters、オプショナルパラメータ、ルートマッチャーの使い方を解説
 ---
 
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const requestFlowDiagram = `flowchart TD
+    A[ブラウザ /posts/123] -->|①リクエスト| B[SvelteKit Router]
+    B -->|②ルート解決| C[posts/id/+page.ts]
+    C -->|③API呼び出し| D[api/posts/id/+server.ts]
+    D -->|④データ取得| E[データベース/外部API]
+    E -->|⑤データ返却| D
+    D -->|⑥JSONレスポンス| C
+    C -->|⑦データ渡し| F[posts/id/+page.svelte]
+    F -->|⑧レンダリング| G[HTML生成]
+    G -->|⑨レスポンス| A
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:2px,color:black
+    style D fill:#ffd,stroke:#333,stroke-width:2px,color:black
+    style F fill:#dfd,stroke:#333,stroke-width:2px,color:black`;
+</script>
+
 動的ルーティングを使用することで、URLの一部を変数として扱い、柔軟なルート設計が可能になります。ブログ記事、ユーザープロフィール、商品詳細ページなど、同じレイアウトで異なるデータを表示する場合に活用します。
 
 ## 動的パラメータの基本
 
+URLの一部を変数として扱う基本的な方法を学びます。角括弧`[]`を使ったディレクトリ名が、URLパラメータとしてキャプチャされる仕組みです。
+
 ### [param] - 必須パラメータ
 
-角括弧`[]`を使用して動的セグメントを定義します。
+角括弧`[]`を使用して動的セグメントを定義します。このパラメータはURLに必ず含まれる必要があり、省略できません。
+
+ディレクトリ構造とURLの対応例です。`[id]`や`[username]`ディレクトリが、実際のURLでは具体的な値（123、abc、johnなど）に置き換わります。
 
 ```
 src/routes/
@@ -23,6 +48,8 @@ src/routes/
 
 ### TypeScriptでの実装
 
+Load関数で動的パラメータを取得する例です。`params.id`はSvelteKitが自動的に型付けし、URLから抽出した値（例：`/posts/123`の場合は`"123"`）が格納されます。この値を使ってAPIから該当する投稿データを取得しています。
+
 ```typescript
 // src/routes/posts/[id]/+page.ts
 import type { PageLoad } from './$types';
@@ -31,6 +58,8 @@ export const load: PageLoad = async ({ params }) => {
   // params.id は自動的に型付けされる
   const postId = params.id;
   
+  // SvelteKit内部のAPIルート（src/routes/api/posts/[id]/+server.ts）を呼び出す
+  // 外部APIの場合は完全なURL（例: https://api.example.com/posts/${postId}）を使用
   const response = await fetch(`/api/posts/${postId}`);
   
   if (!response.ok) {
@@ -42,6 +71,8 @@ export const load: PageLoad = async ({ params }) => {
   };
 };
 ```
+
+Load関数で取得した投稿データを表示するコンポーネントです。`data.post`にはAPIから取得した記事情報が含まれ、`title`を`<h1>`タグで、`content`をHTMLとしてレンダリングしています。
 
 ```svelte
 <!-- src/routes/posts/[id]/+page.svelte -->
@@ -57,9 +88,114 @@ export const load: PageLoad = async ({ params }) => {
 </article>
 ```
 
+### SvelteKitのリクエスト処理フロー
+
+`/posts/123`にアクセスした際の、SvelteKit内部での処理の流れを詳しく解説します。
+#### 処理フロー図
+
+<Mermaid diagram={requestFlowDiagram} />
+
+この一連の流れにより、データ取得ロジック（`+server.ts`）、データ整形（`+page.ts`）、表示（`+page.svelte`）が明確に分離され、保守性の高いアーキテクチャが実現されています。
+
+#### 処理の詳細
+
+<div class="flow-grid">
+
+<div class="flow-card">
+
+**①リクエスト → ②ルート解決**
+- ブラウザが `/posts/123` にアクセス
+- SvelteKit Routerがルートを特定
+- 動的パラメータ `id = "123"` を抽出
+
+</div>
+
+<div class="flow-card">
+
+**③API呼び出し（+page.ts）**
+```typescript
+export const load: PageLoad = async ({ params }) => {
+  // params.id = "123"
+  const response = await fetch('/api/posts/123');
+  return { post: await response.json() };
+};
+```
+
+</div>
+
+<div class="flow-card">
+
+**④データ取得 → ⑤データ返却**
+- `+server.ts` の GET関数が実行
+- データベースから記事情報を取得
+- JSON形式で整形して返却
+
+</div>
+
+<div class="flow-card">
+
+**⑥JSONレスポンス → ⑦データ渡し**
+- Load関数がJSONを受け取る
+- `return { post }` でコンポーネントへ
+- TypeScriptで型安全に受け渡し
+
+</div>
+
+<div class="flow-card">
+
+**⑧レンダリング（+page.svelte）**
+- `data` プロパティでデータ受け取り
+- SSR：サーバーでHTML生成
+- CSR：クライアントでDOM構築
+
+</div>
+
+<div class="flow-card">
+
+**⑨レスポンス**
+- 生成されたHTMLを送信
+- ブラウザがページを表示
+- ユーザーに内容が表示される
+
+</div>
+
+</div>
+
+<style>
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .flow-card {
+    padding: 1rem;
+    background: var(--sp-color-bg-secondary, #f9fafb);
+    border-radius: 8px;
+    border: 1px solid var(--sp-color-border, #e5e7eb);
+  }
+  
+  :global(.dark) .flow-card {
+    background: rgba(31, 41, 55, 0.5);
+    border-color: rgba(75, 85, 99, 0.5);
+  }
+  
+  @media (max-width: 768px) {
+    .flow-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+
 ## 複数の動的セグメント
 
+一つのURLパスに複数の動的パラメータを含む方法を学びます。ユーザーの投稿、カテゴリー別の商品など、階層的なデータ構造をURLで表現する際に活用します。
+
 ### ネストされた動的ルート
+
+ユーザーIDと投稿IDを組み合わせたルート構造の例です。`/users/123/posts/456`のような URLで、特定のユーザーの特定の投稿にアクセスできます。
 
 ```
 src/routes/
@@ -70,6 +206,8 @@ src/routes/
                 ├── +page.svelte     → /users/123/posts/456
                 └── +page.ts
 ```
+
+複数の動的パラメータを同時に扱う例です。`params`オブジェクトから`userId`と`postId`を分割代入で取得し、`Promise.all`を使ってユーザー情報と投稿情報を並列で取得しています。これにより、パフォーマンスを最適化しつつ、両方のデータをページに渡しています。
 
 ```typescript
 // src/routes/users/[userId]/posts/[postId]/+page.ts
@@ -93,6 +231,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ## Rest Parameters（可変長パラメータ）
 
+URLの任意の深さのパスを一つのパラメータとしてキャプチャする機能です。ドキュメントサイトの階層構造や、ファイルシステムのような可変長のパスを扱う際に便利です。
+
 ### [...slug] - 複数セグメントのキャプチャ
 
 `[...slug]`を使用して、複数のパスセグメントを一つのパラメータとして取得します。
@@ -108,6 +248,8 @@ src/routes/
 - `/docs/guide` → `slug = 'guide'`
 - `/docs/guide/routing` → `slug = 'guide/routing'`
 - `/docs/api/reference/load` → `slug = 'api/reference/load'`
+
+Rest Parametersを使ったドキュメントサイトの実装例です。`params.slug`にはURLパスがスラッシュ区切りの文字列として渡され（例：`"guide/routing"`）、これを分割してパンくずリストの生成に使用しています。また、パスを使って対応するMarkdownファイルを動的にインポートしています。
 
 ```typescript
 // src/routes/docs/[...slug]/+page.ts
@@ -134,6 +276,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ### 実践例：ドキュメントサイト
 
+ドキュメントページの表示コンポーネントです。`data.segments`配列（例：`["guide", "routing"]`）を使ってパンくずリストを動的に生成し、各セグメントに対応するURLを構築しています。Markdownコンテンツは`{@html}`ディレクティブでHTMLとしてレンダリングされます。
+
 ```svelte
 <!-- src/routes/docs/[...slug]/+page.svelte -->
 <script lang="ts">
@@ -158,6 +302,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ## オプショナルパラメータ
 
+URLパラメータを省略可能にする機能です。同じページコンポーネントで、パラメータの有無によって異なる動作を実現できます。例えば、全商品一覧とカテゴリー別一覧を同じコンポーネントで処理する場合に便利です。
+
 ### [[param]] - 省略可能なパラメータ
 
 二重角括弧`[[]]`で囲むことで、パラメータを省略可能にできます。
@@ -172,6 +318,8 @@ src/routes/
 #### URLマッピング
 - `/products` → `category = undefined`
 - `/products/electronics` → `category = 'electronics'`
+
+オプショナルパラメータの実装例です。`params.category`は`undefined`または文字列値になります。この値の有無をチェックして、全商品を取得するか特定カテゴリーの商品のみを取得するかを切り替えています。ページタイトルも動的に変更して、ユーザーに適切な情報を伝えています。
 
 ```typescript
 // src/routes/products/[[category]]/+page.ts
@@ -214,9 +362,13 @@ src/routes/
 
 ## ルートマッチャー
 
+URLパラメータの形式を検証する機能です。数値のID、UUID、日付形式など、特定のパターンに一致するパラメータのみを受け付けるように制限できます。これにより、不正なURLへのアクセスを事前に防ぎ、エラーハンドリングを簡素化できます。
+
 ### パラメータの検証
 
 カスタムマッチャーを作成して、パラメータのバリデーションを行います。
+
+数値のみを許可する`integer`マッチャーと、UUID形式を検証する`uuid`マッチャーの実装例です。`match`関数はURLパラメータを受け取り、正規表現で検証して`true`または`false`を返します。`false`の場合、そのルートはマッチせず404エラーになります。
 
 ```typescript
 // src/params/integer.ts
@@ -238,6 +390,8 @@ export const match: ParamMatcher = (param) => {
 
 ### マッチャーの使用
 
+ディレクトリ名に`[param=matcher]`形式を使ってマッチャーを適用します。`integer`マッチャーを使ったルートは数値のIDのみを受け付け、`uuid`マッチャーを使ったルートはUUID形式の文字列のみを受け付けます。
+
 ```
 src/routes/
 ├── posts/
@@ -247,6 +401,8 @@ src/routes/
     └── [id=uuid]/           → /users/550e8400-e29b-41d4-a716-446655440000
         └── +page.svelte
 ```
+
+マッチャーを使用したルートのLoad関数です。`integer`マッチャーにより`params.id`が数値文字列であることが保証されているため、安全に`parseInt`で数値に変換できます。文字列のパラメータ（例：`/posts/abc`）はマッチャーで拒否され、このLoad関数は実行されません。
 
 ```typescript
 // src/routes/posts/[id=integer]/+page.ts
@@ -265,6 +421,8 @@ export const load: PageLoad = async ({ params }) => {
 ```
 
 ### 複雑なマッチャーの例
+
+日付形式を検証する高度なマッチャーの例です。まず正規表現で`YYYY-MM-DD`形式をチェックし、その後`Date`コンストラクタで実際に有効な日付かどうかを検証しています。これにより、`2024-02-30`のような存在しない日付を拒否できます。
 
 ```typescript
 // src/params/date.ts
@@ -286,7 +444,11 @@ export const match: ParamMatcher = (param) => {
 
 ## 実践的なパターン
 
+実際のアプリケーションでよく使われる動的ルーティングのパターンを紹介します。これらのパターンを組み合わせることで、複雑なURL構造を持つアプリケーションを構築できます。
+
 ### ブログのアーカイブページ
+
+年月日でフィルタリング可能なブログアーカイブの構造例です。`integer`マッチャーで数値のみを受け付け、記事のslugは`[...slug]`で柔軟に対応しています。
 
 ```
 src/routes/
@@ -301,6 +463,8 @@ src/routes/
     └── [...slug]/
         └── +page.svelte              → /blog/my-first-post
 ```
+
+月別アーカイブページのLoad関数です。URLから年と月を取得し、妥当性チェック（月は1～12の範囲）を行った後、該当月の記事を取得しています。無効な月の場合は404エラーをスローし、正しいエラーページを表示します。
 
 ```typescript
 // src/routes/blog/[year=integer]/[month=integer]/+page.ts
@@ -328,6 +492,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ### 多言語対応ルート
 
+オプショナルパラメータとマッチャーを組み合わせた多言語サイトの構造です。言語コードが省略された場合はデフォルト言語を使用し、すべてのページで言語切り替えが可能になります。
+
 ```
 src/routes/
 └── [[lang=locale]]/
@@ -340,6 +506,8 @@ src/routes/
             └── +page.svelte  → /products/123 or /ja/products/123
 ```
 
+サポートする言語コードのみを受け付ける`locale`マッチャーです。配列に含まれる言語コード（ja、en、zh）のみマッチし、それ以外（例：`/fr/about`）は404エラーになります。
+
 ```typescript
 // src/params/locale.ts
 import type { ParamMatcher } from '@sveltejs/kit';
@@ -350,6 +518,8 @@ export const match: ParamMatcher = (param) => {
   return supportedLocales.includes(param);
 };
 ```
+
+レイアウトLoad関数で言語設定を読み込む実装です。URLに言語コードがない場合はデフォルトで日本語を使用し、対応する翻訳ファイルを動的インポートしています。読み込んだ翻訳データはすべての子ページで利用可能になります。
 
 ```typescript
 // src/routes/[[lang=locale]]/+layout.ts
@@ -370,7 +540,11 @@ export const load: LayoutLoad = async ({ params }) => {
 
 ## 動的インポート
 
+URLパラメータに基づいてコンポーネントやモジュールを動的に読み込む技術です。コード分割を活用して、必要なコンポーネントのみをロードすることで初期バンドルサイズを削減できます。
+
 ### 動的にコンポーネントを読み込む
+
+コンポーネントギャラリーの実装例です。URLパラメータ（`/components/button`など）に基づいて、対応するコンポーネントを動的インポートします。`components`オブジェクトで名前とインポート関数をマッピングし、該当するコンポーネントがない場合は404エラーを返します。
 
 ```typescript
 // src/routes/components/[name]/+page.ts
@@ -401,6 +575,8 @@ export const load: PageLoad = async ({ params }) => {
 ## パフォーマンス最適化
 
 ### 動的ルートのプリレンダリング
+
+動的ルートをビルド時に静的生成する設定です。`entries`関数で生成するすべてのパスを列挙し、`prerender = true`でプリレンダリングを有効化します。この例では、すべてのブログ記事のページがビルド時に静的HTMLとして生成され、CDNから高速に配信できるようになります。
 
 ```typescript
 // src/routes/posts/[slug]/+page.ts

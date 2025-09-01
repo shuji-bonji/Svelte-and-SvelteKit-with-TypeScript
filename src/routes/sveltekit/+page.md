@@ -419,14 +419,53 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 
 ## 🎓 学習の始め方
 
-### Step 1: 基礎を固める
-まず[概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解し、[プロジェクト構造](/sveltekit/basics/project-structure/)でファイル構成を学びます。
+### 前提条件をチェック
+```bash
+# Node.jsバージョン確認（20.x以上推奨）
+node --version
 
-### Step 2: コア機能をマスター
-[ルーティング](/sveltekit/routing/)と[Load関数によるデータフェッチング](/sveltekit/data-loading/)で、SvelteKitの中核機能を習得します。
+# 新規プロジェクト作成
+npm create svelte@latest my-first-sveltekit-app
+# → TypeScriptを選択
+# → ESLint、Prettierを追加
+# → Playwrightテストを含める
+```
 
-### Step 3: 実践的な実装
-[フォーム処理](/sveltekit/server/forms/)やAPIルートで、実際のアプリケーション構築スキルを身につけます。
+### Step 1: 基礎理解（1-2日）
+1. **[概要とアーキテクチャ]({base}/sveltekit/basics/overview/)** - SSR/SSG/SPAの違いとSvelteKitの位置づけを理解
+2. **[プロジェクト構造]({base}/sveltekit/basics/project-structure/)** - `routes/`、`+page.svelte`、`+layout.svelte`の役割を把握
+3. **[TypeScript型の自動生成]({base}/sveltekit/basics/auto-types/)** - `./$types`による型安全な開発を体験
+
+### Step 2: コア機能習得（3-5日）
+1. **[基本ルーティング]({base}/sveltekit/routing/basic/)** - ファイルベースルーティングで最初のページを作成
+2. **[Load関数の基本]({base}/sveltekit/data-loading/basic/)** - サーバーサイドでデータを取得し表示
+3. **[動的ルーティング]({base}/sveltekit/routing/dynamic/)** - `[slug]`パラメータでブログ記事ページを実装
+
+### Step 3: 実践的な機能（1週間）
+1. **[フォーム処理とActions]({base}/sveltekit/server/forms/)** - TODOアプリのCRUD操作を実装
+2. **[APIルート設計]({base}/sveltekit/server/api-routes/)** - RESTful APIエンドポイントを構築
+3. **[認証システム]({base}/sveltekit/application/authentication/)** - ログイン機能を追加
+
+### 🚀 クイックスタートプロジェクト
+```typescript
+// 最小限のTODOアプリで学ぶSvelteKit
+// src/routes/+page.server.ts
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+  const todos = await db.todo.findMany();
+  return { todos };
+};
+
+export const actions: Actions = {
+  create: async ({ request }) => {
+    const data = await request.formData();
+    await db.todo.create({ 
+      data: { title: data.get('title') as string }
+    });
+  }
+};
+```
 
 ## 🛠️ 推奨開発環境
 

@@ -60,20 +60,20 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
     </div>
   </a>
 
-  <a href="{base}/sveltekit/basics/auto-types/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/basics/global-types/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🔷</div>
+      <div class="text-3xl mb-2">🌍</div>
       <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-        TypeScript型の自動生成システム
+        app.d.tsの役割
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitが提供する./$typesによる型安全な開発</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">プロジェクト全体で共有されるグローバルな型定義</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>./$types</strong>: 仮想モジュールの仕組み</li>
-        <li><strong>型の一覧</strong>: PageLoad, Actions, RequestHandler等</li>
-        <li><strong>実践例</strong>: 各ファイルタイプでの使用方法</li>
-        <li><strong>app.d.ts連携</strong>: グローバル型定義との統合</li>
-        <li><strong>トラブルシューティング</strong>: よくある問題と解決策</li>
+        <li><strong>App.Locals</strong>: サーバーサイドのリクエスト固有データ</li>
+        <li><strong>App.PageData</strong>: すべてのページで共通のデータ型</li>
+        <li><strong>App.Error</strong>: カスタムエラー型</li>
+        <li><strong>App.PageState</strong>: 履歴エントリの状態</li>
+        <li><strong>App.Platform</strong>: プラットフォーム固有のAPI</li>
       </ul>
     </div>
   </a>

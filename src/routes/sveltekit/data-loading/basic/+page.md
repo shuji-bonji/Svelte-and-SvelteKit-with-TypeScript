@@ -234,6 +234,6 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
 ## 次のステップ
 
+- [TypeScript型の自動生成システム](../auto-types/) - TypeScript型の自動生成の仕組み
 - [データフェッチング戦略](../strategies/) - 高度なデータ取得テクニック
 - [フォーム処理とActions](../../server/forms/) - データの送信と処理
-- [TypeScript型の自動生成システム](../../basics/auto-types/) - TypeScript型の自動生成の仕組み

@@ -23,7 +23,7 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 
 ## 基礎編の内容
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 auto-rows-[1fr]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
   <a href="{base}/sveltekit/basics/overview/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎯</div>
@@ -83,17 +83,28 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 
 基礎編を学んだら、次のセクションでSvelteKitのコア機能を習得しましょう。
 
-<div class="related-sections">
-  <a href="{base}/sveltekit/routing/" class="group">
-    <div class="section-card">
-      <h3 class="text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300">🛤️ ルーティング</h3>
-      <p>ファイルベースルーティングの完全ガイド。動的ルート、レイアウト、ルートグループなどを詳しく解説。</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <a href="{base}/sveltekit/routing/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">🛤️</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        ルーティング
+      </h3>
+      <p class="text-sm text-gray-6 dark:text-gray-4">
+        ファイルベースルーティングの完全ガイド。動的ルート、レイアウト、ルートグループなどを詳しく解説。
+      </p>
     </div>
   </a>
-  <a href="{base}/sveltekit/data-loading/" class="group">
-    <div class="section-card">
-       <h3 class="text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300">📊 データ取得</h3>
-      <p>Load関数を使った効率的なデータフェッチング。Universal LoadとServer Loadの使い分け、ストリーミングSSRなど。</p>
+  
+  <a href="{base}/sveltekit/data-loading/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">📊</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        データ取得
+      </h3>
+      <p class="text-sm text-gray-6 dark:text-gray-4">
+        Load関数を使った効率的なデータフェッチング。Universal LoadとServer Loadの使い分け、ストリーミングSSRなど。
+      </p>
     </div>
   </a>
 </div>
@@ -128,40 +139,4 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 このセクションは[Svelte 5の基本](/svelte/)を理解していることを前提としています。Svelteの基礎がまだの方は、先にSvelteセクションを学習してください。
 :::
 
-<style>
-  .related-sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-  }
-  
-  .section-card {
-    padding: 1.5rem;
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 8px;
-    background: var(--bg-secondary, #f8f9fa);
-  }
-  
-  .section-card h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  .section-card h3 a {
-    color: var(--primary-color, #ff3e00);
-    text-decoration: none;
-  }
-  
-  .section-card h3 a:hover {
-    text-decoration: underline;
-  }
-  
-  .section-card p {
-    margin: 0.5rem 0 0 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary, #666);
-  }
-</style>
 

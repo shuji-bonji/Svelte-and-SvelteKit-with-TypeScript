@@ -13,38 +13,59 @@ SvelteKitのルーティングシステムは、ファイルベースの直感�
 
 SvelteKitのルーティングを段階的に学習できるよう、3つのセクションに分けて解説します。
 
-<div class="grid">
-  <a href="{base}/sveltekit/routing/basic/" class="card">
-    <h3>📚 基本ルーティング</h3>
-    <p>ファイルベースルーティングの基礎、静的ルート、ページの作成方法を学びます。</p>
-    <ul>
-      <li>ディレクトリ構造とURL</li>
-      <li>ページの作成</li>
-      <li>レイアウトの基本</li>
-      <li>エラーページ</li>
-    </ul>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <a href="{base}/sveltekit/routing/basic/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">📚</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        基本ルーティング
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">
+        ファイルベースルーティングの基礎、静的ルート、ページの作成方法を学びます。
+      </p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+        <li>ディレクトリ構造とURL</li>
+        <li>ページの作成</li>
+        <li>レイアウトの基本</li>
+        <li>エラーページ</li>
+      </ul>
+    </div>
   </a>
 
-  <a href="{base}/sveltekit/routing/dynamic/" class="card">
-    <h3>🔄 動的ルーティング</h3>
-    <p>動的なURLパラメータを扱い、柔軟なルート設計を実現します。</p>
-    <ul>
-      <li>動的パラメータ [id]</li>
-      <li>Rest Parameters [...slug]</li>
-      <li>オプショナルパラメータ [[optional]]</li>
-      <li>ルートマッチャー</li>
-    </ul>
+  <a href="{base}/sveltekit/routing/dynamic/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">🔄</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        動的ルーティング
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">
+        動的なURLパラメータを扱い、柔軟なルート設計を実現します。
+      </p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+        <li>動的パラメータ [id]</li>
+        <li>Rest Parameters [...slug]</li>
+        <li>オプショナルパラメータ [[optional]]</li>
+        <li>ルートマッチャー</li>
+      </ul>
+    </div>
   </a>
 
-  <a href="{base}/sveltekit/routing/advanced/" class="card">
-    <h3>🚀 高度なルーティング</h3>
-    <p>プロダクション環境で必要な高度な機能を習得します。</p>
-    <ul>
-      <li>ルートグループ</li>
-      <li>ネストレイアウト</li>
-      <li>プログラマティックナビゲーション</li>
-      <li>ルートアノテーション</li>
-    </ul>
+  <a href="{base}/sveltekit/routing/advanced/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">🚀</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        高度なルーティング
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">
+        プロダクション環境で必要な高度な機能を習得します。
+      </p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+        <li>ルートグループ</li>
+        <li>ネストレイアウト</li>
+        <li>プログラマティックナビゲーション</li>
+        <li>ルートアノテーション</li>
+      </ul>
+    </div>
   </a>
 </div>
 
@@ -102,37 +123,3 @@ export const load: PageLoad = async ({ params }) => {
 2. **基本を理解した方**: [動的ルーティング](./dynamic/)で柔軟なURL設計を学びましょう
 3. **実践的な開発**: [高度なルーティング](./advanced/)でプロダクション対応の技術を習得しましょう
 
-<style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-  }
-  
-  .card {
-    padding: 1.5rem;
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 8px;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .card h3 {
-    margin-top: 0;
-    color: var(--primary-color, #ff3e00);
-  }
-  
-  .card ul {
-    margin: 0.5rem 0 0 0;
-    padding-left: 1.2rem;
-    font-size: 0.9em;
-    color: var(--text-secondary, #666);
-  }
-</style>

@@ -2,9 +2,7 @@
 title: TypeScript型の自動生成システム
 description: SvelteKitが提供する./$typesによるTypeScript型の自動生成 - 型安全な開発を実現する仕組みと活用方法
 ---
-:::caution[タイトル]
-執筆中
-:::
+
 <script lang="ts">
   import { base } from '$app/paths';
 </script>
@@ -243,40 +241,169 @@ export const load: PageLoad = async ({ params }) => {
 
 ### app.d.tsとの連携
 
+SvelteKitでは`app.d.ts`で定義した型が`./$types`と自動的に統合されます。`App`名前空間に定義できる標準インターフェースは以下の通りです。
+
+#### 1. App.Locals - サーバーサイドのリクエスト固有データ
+
 ```typescript
 // src/app.d.ts
 declare global {
   namespace App {
     interface Locals {
-      user: {
+      user?: {
         id: string;
         email: string;
-        isAdmin: boolean;
-      } | null;
-    }
-    interface PageData {
-      flash?: { type: 'success' | 'error'; message: string };
-    }
-    interface Error {
-      code?: string;
-      id?: string;
+        role: 'admin' | 'user' | 'guest';
+      };
+      session?: {
+        id: string;
+        expiresAt: Date;
+      };
     }
   }
+}
+```
+
+`hooks.server.ts`で設定し、Load関数やActionsで使用
+
+```typescript
+// hooks.server.ts
+export const handle: Handle = async ({ event, resolve }) => {
+  event.locals.user = await getUserFromSession(event.cookies);
+  return resolve(event);
+};
+
+// +page.server.ts
+export const load: PageServerLoad = async ({ locals }) => {
+  if (!locals.user) {
+    throw redirect(303, '/login');
+  }
+  // locals.userが型安全に使える
+};
+```
+
+#### 2. App.PageData - すべてのページで共通のデータ型
+
+```typescript
+interface PageData {
+  // すべてのページで利用可能なデータ
+  meta?: {
+    title: string;
+    description: string;
+  };
+  flash?: {
+    type: 'success' | 'error' | 'info';
+    message: string;
+  };
+}
+```
+
+#### 3. App.Error - カスタムエラー型
+
+```typescript
+interface Error {
+  message: string;
+  code?: 'UNAUTHORIZED' | 'NOT_FOUND' | 'SERVER_ERROR';
+  details?: Record<string, any>;
+}
+```
+
+`error()`関数で使用
+
+```typescript
+import { error } from '@sveltejs/kit';
+
+throw error(404, {
+  message: 'ページが見つかりません',
+  code: 'NOT_FOUND'
+});
+```
+
+#### 4. App.PageState - 履歴エントリの状態
+
+```typescript
+interface PageState {
+  scrollY?: number;
+  selectedTab?: string;
+  formData?: Record<string, any>;
+}
+```
+
+`pushState`/`replaceState`で使用
+
+```typescript
+import { pushState } from '$app/navigation';
+
+pushState('', {
+  scrollY: window.scrollY,
+  selectedTab: 'details'
+});
+```
+
+#### 5. App.Platform - プラットフォーム固有のAPI
+
+```typescript
+interface Platform {
+  // Cloudflare Workers, Vercel等の環境変数
+  env?: {
+    DATABASE_URL: string;
+    API_KEY: string;
+  };
+  context?: {
+    waitUntil(promise: Promise<any>): void;
+  };
+}
+```
+
+### 完全な app.d.ts の例
+
+```typescript
+// src/app.d.ts
+declare global {
+  namespace App {
+    interface Locals {
+      user?: {
+        id: string;
+        email: string;
+        name: string;
+        role: 'admin' | 'user';
+      };
+      session?: string;
+    }
+    
+    interface PageData {
+      flash?: {
+        type: 'success' | 'error' | 'info';
+        message: string;
+      };
+    }
+    
+    interface Error {
+      message: string;
+      code?: string;
+      details?: any;
+    }
+    
+    interface PageState {
+      scrollPosition?: number;
+    }
+    
+    interface Platform {
+      env?: {
+        DATABASE_URL: string;
+        JWT_SECRET: string;
+      };
+    }
+  }
+  
+  // カスタムグローバル型
+  type UUID = `${string}-${string}-${string}-${string}-${string}`;
 }
 
 export {};
 ```
 
-これらの型定義は`./$types`の型と自動的に統合されます。
-
-```typescript
-// Server Load関数で locals.user が型安全に
-export const load: PageServerLoad = async ({ locals }) => {
-  if (locals.user?.isAdmin) {
-    // 管理者のみの処理
-  }
-};
-```
+これらの型定義は`./$types`の型と自動的に統合され、SvelteKit全体で型安全性が保証されます。
 
 ## ベストプラクティス
 

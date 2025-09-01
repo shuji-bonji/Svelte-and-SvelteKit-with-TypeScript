@@ -107,11 +107,15 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/" class="text-blue-600 dark:text-blue-400 hover:underline">基礎編概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitの基本概念</td>
+          </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/basics/overview/" class="text-blue-600 dark:text-blue-400 hover:underline">SvelteKit概要</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">フレームワークの全体像</td>
@@ -121,15 +125,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">ファイル構成と規約</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/routing/" class="text-blue-600 dark:text-blue-400 hover:underline">ルーティング詳解</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">動的ルート、レイアウト</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/data-loading/" class="text-blue-600 dark:text-blue-400 hover:underline">Load関数とデータフェッチング</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">データ取得戦略、ストリーミングSSR</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/auto-types/" class="text-blue-600 dark:text-blue-400 hover:underline">TypeScript型の自動生成システム</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/basics/auto-types/" class="text-blue-600 dark:text-blue-400 hover:underline">TypeScript型の自動生成</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">./$typesによる型安全な開発</td>
           </tr>
         </tbody>
@@ -142,6 +138,84 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
     </div>
   </div>
 
+  <!-- ルーティングカード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">🛤️</span>
+      <h3 class="font-bold text-xl">ルーティング - ファイルベースルーティング</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">ページ</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/routing/" class="text-orange-600 dark:text-orange-400 hover:underline">ルーティング概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ルーティングシステムの全体像</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/routing/basic/" class="text-orange-600 dark:text-orange-400 hover:underline">基本ルーティング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ファイルベースルーティングの基本</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/routing/dynamic/" class="text-orange-600 dark:text-orange-400 hover:underline">動的ルーティング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">パラメータとスラッグの活用</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/routing/advanced/" class="text-orange-600 dark:text-orange-400 hover:underline">高度なルーティング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ルートグループとレイアウト</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/routing/" class="text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- データ取得カード -->
+  <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl">📊</span>
+      <h3 class="font-bold text-xl">データ取得 - Load関数とフェッチング</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-gray-2 dark:border-gray-7">
+          <tr>
+            <th class="text-left py-2">ページ</th>
+            <th class="text-left py-2">内容</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/" class="text-orange-600 dark:text-orange-400 hover:underline">データ取得概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">データロードシステムの全体像</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/basic/" class="text-orange-600 dark:text-orange-400 hover:underline">Load関数の基本</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Universal LoadとServer Load</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/strategies/" class="text-orange-600 dark:text-orange-400 hover:underline">データフェッチング戦略</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ストリーミングSSRとキャッシング</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-2 dark:border-gray-7">
+      <a href="{base}/sveltekit/data-loading/" class="text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+        すべて見る <span class="text-xs">→</span>
+      </a>
+    </div>
+  </div>
+  
   <!-- アーキテクチャ詳解カード -->
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <div class="flex items-center gap-3 mb-4">
@@ -152,18 +226,22 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/" class="text-indigo-600 dark:text-indigo-400 hover:underline">アーキテクチャ概要</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitの内部構造の全体像</td>
+          </tr>
+          <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/execution-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境別アーキテクチャ</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">SSR/SSG/SPAの詳細な動作</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/file-structure/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイル構成と実行環境</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">各ファイルの役割と実行場所</td>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/file-system/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイルシステム完全ガイド</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitのファイル構成</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/data-loading/" class="text-indigo-600 dark:text-indigo-400 hover:underline">データロードフロー</a></td>
@@ -182,7 +260,6 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       </a>
     </div>
   </div>
-
   <!-- サーバーサイド編カード -->
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <div class="flex items-center gap-3 mb-4">
@@ -193,7 +270,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -234,7 +311,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -275,7 +352,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>
@@ -312,7 +389,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
       <table class="w-full text-sm">
         <thead class="border-b border-gray-2 dark:border-gray-7">
           <tr>
-            <th class="text-left py-2">セクション</th>
+            <th class="text-left py-2">ページ</th>
             <th class="text-left py-2">内容</th>
           </tr>
         </thead>

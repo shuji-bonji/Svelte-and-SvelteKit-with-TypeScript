@@ -148,7 +148,7 @@ my-sveltekit-app/
 </html>
 ```
 
-**プレースホルダー**:
+#### プレースホルダー
 - `%lang%` - 言語設定
 - `%sveltekit.assets%` - アセットパス
 - `%sveltekit.head%` - head要素の内容

@@ -3,7 +3,6 @@ title: $effect - 副作用
 description: Svelte 5の$effectルーンで副作用を管理 - DOM操作やAPI呼び出し、$effect.preによる事前実行とクリーンアップ処理
 ---
 
-
 `$effect`ルーンは、リアクティブな値が変更されたときに副作用（side effects）を実行するために使用します。DOM操作、API呼び出し、ロギング、外部ライブラリとの統合などに使用されます。
 
 ## 基本的な使い方

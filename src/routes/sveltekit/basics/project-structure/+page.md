@@ -574,20 +574,29 @@ SvelteKitが自動生成する一時ファイルが格納されるディレク�
 └── tsconfig.json    # TypeScript設定
 ```
 
-### `build/`
+### `dist/` (adapter-static使用時)
 
-`npm run build`実行時に生成されるプロダクションビルドの出力ディレクトリです。クライアントコードとサーバーコードが最適化された状態で出力されます。
+`npm run build`実行時に生成されるプロダクションビルドの出力ディレクトリです。このプロジェクトでは`adapter-static`を使用しているため、`dist/`ディレクトリに静的ファイルが出力されます。
 
 ```bash
-build/               # プロダクションビルド
-├── client/          # クライアント資産
-│   ├── _app/        # JSとCSSバンドル
-│   └── [静的ファイル]
-└── server/          # サーバーコード
-    ├── chunks/      # 共有チャンク
-    ├── entries/     # エントリーポイント
-    └── index.js     # サーバー起動
+dist/                # 静的サイト出力（adapter-static）
+├── _app/            # JSとCSSバンドル
+│   ├── immutable/   # キャッシュ可能なアセット
+│   └── version.json # バージョン情報
+├── *.html           # プリレンダリングされたHTML
+└── [その他の静的ファイル]
 ```
+
+:::note[アダプター別の出力ディレクトリ]
+使用するアダプターによって出力先が異なります。
+- `adapter-static`: `dist/`（静的サイトジェネレーター）
+- `adapter-node`: `build/`（Node.jsサーバー用）
+- `adapter-vercel`: `.vercel/`（Vercelデプロイ用）
+- `adapter-cloudflare`: `.cloudflare/`（Cloudflare Workers用）
+- `adapter-netlify`: `.netlify/`（Netlifyデプロイ用）
+
+設定は`svelte.config.js`の`adapter`オプションで指定します。
+:::
 
 ## ベストプラクティス
 
@@ -652,7 +661,7 @@ npm run sync
 :::caution[静的ファイルが見つからない]
 - `static/`ディレクトリに配置されているか確認
 - URLパスが正しいか確認（`/`から始まる）
-- ビルド後は`build/client/`を確認
+- ビルド後は`dist/`ディレクトリを確認
 :::
 
 ## まとめ

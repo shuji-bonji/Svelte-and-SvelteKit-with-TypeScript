@@ -99,24 +99,6 @@ src/routes/
 特殊ファイルの詳細な関係性とデータフローについては、[SvelteKitファイルシステム](../architecture/file-system/)をご覧ください。
 :::
 
-## TypeScriptとの統合
-
-SvelteKitは自動的に型を生成し、完全な型安全性を提供します。
-
-```typescript
-// 自動生成される型をインポート
-import type { PageLoad } from './$types';
-
-export const load: PageLoad = async ({ params }) => {
-  // params.idは自動的に型付けされる
-  const id = params.id;
-  
-  return {
-    id // 返り値も型チェックされる
-  };
-};
-```
-
 ## 次のステップ
 
 1. **初心者の方**: [基本ルーティング](./basic/)から始めましょう

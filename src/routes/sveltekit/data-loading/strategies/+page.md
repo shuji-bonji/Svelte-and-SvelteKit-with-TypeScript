@@ -365,4 +365,4 @@ export const load: PageLoad = async ({ fetch }) => {
 
 - [フォーム処理とActions](../../server/forms/) - データの送信と処理
 - [WebSocket/SSE](../../server/websocket-sse/) - リアルタイム通信の実装
-- [キャッシュ戦略](../../optimization/caching/) - より高度なキャッシング技術
+- [アーキテクチャ詳解](../../architecture/) - SvelteKitの内部動作を深く理解

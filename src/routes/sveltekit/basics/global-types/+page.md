@@ -482,6 +482,6 @@ export {};
 
 ## 次のステップ
 
-- [Load関数とデータフェッチング]({base}/sveltekit/data-loading/) - Load関数での型活用
-- [TypeScript型の自動生成システム]({base}/sveltekit/data-loading/auto-types/) - `./$types`の詳細
-- [フォーム処理とActions]({base}/sveltekit/server/forms/) - Actionsでの型活用
+- [ルーティング概要]({base}/sveltekit/routing/) - SvelteKitのルーティングシステムを学ぶ
+- [Load関数とデータフェッチング]({base}/sveltekit/data-loading/) - データ取得の基礎を理解
+- [TypeScript型の自動生成システム]({base}/sveltekit/data-loading/auto-types/) - `./$types`との連携を深く理解

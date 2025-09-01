@@ -263,6 +263,88 @@ export const load: PageLoad = async ({ params }) => {
 };
 ```
 
+## TypeScriptとの統合
+
+SvelteKitは自動的に型を生成し、Load関数の引数と返り値を完全に型付けします。この強力な型システムにより、開発時のミスを大幅に削減できます。
+
+### 型の自動補完
+
+`./$types`からインポートした型は、VSCodeなどのIDEで完全な自動補完サポートを受けられます。
+
+```typescript
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ params, url, fetch, parent }) => {
+  // すべての引数が型付けされている
+  // paramsのプロパティも自動補完される
+  // 返り値も自動的に型チェックされる
+  return {
+    data: 'type-safe'
+  };
+};
+```
+
+### 型推論の活用
+
+SvelteKitの型システムは、ルート構造から自動的に型を推論します。
+
+```typescript
+// src/routes/users/[id]/posts/[postId]/+page.ts
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ params }) => {
+  // params.id と params.postId が自動的に推論される
+  console.log(params.id);     // string型
+  console.log(params.postId); // string型
+  
+  return {
+    userId: params.id,
+    postId: params.postId
+  };
+};
+```
+
+### 型安全なデータフロー
+
+Load関数からコンポーネントまで、データフロー全体が型安全に保たれます。
+
+```typescript
+// +page.server.ts
+import type { PageServerLoad } from './$types';
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  author: {
+    name: string;
+    email: string;
+  };
+}
+
+export const load: PageServerLoad = async () => {
+  const post: Post = await getPost();
+  
+  return {
+    post // 型が保持される
+  };
+};
+```
+
+```svelte
+<!-- +page.svelte -->
+<script lang="ts">
+  import type { PageData } from './$types';
+  
+  export let data: PageData;
+  // data.post は Post 型として認識される
+  // data.post.author.name にアクセス可能
+</script>
+
+<h1>{data.post.title}</h1>
+<p>by {data.post.author.name}</p>
+```
+
 ## app.d.tsとの連携
 
 SvelteKitでは`app.d.ts`ファイルを使用して、プロジェクト全体で共有されるグローバルな型定義を宣言できます。これらの型は`./$types`と自動的に統合され、アプリケーション全体で型安全性を保証します。

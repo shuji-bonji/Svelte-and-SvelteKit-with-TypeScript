@@ -61,6 +61,49 @@ export const load: PageServerLoad = async () => {
 {/await}
 ```
 
+## パフォーマンスのヒント
+
+効率的なデータ取得のための重要なテクニックを紹介します。
+
+### 並列データ取得の重要性
+
+複数のデータソースから情報を取得する際は、並列処理を活用することで大幅にパフォーマンスを改善できます。
+
+```typescript
+// ❌ 悪い例：順次実行（遅い）
+const user = await fetch('/api/user').then(r => r.json());
+const posts = await fetch('/api/posts').then(r => r.json());
+const comments = await fetch('/api/comments').then(r => r.json());
+// 合計時間 = user取得時間 + posts取得時間 + comments取得時間
+
+// ✅ 良い例：並列実行（速い）
+const [user, posts, comments] = await Promise.all([
+  fetch('/api/user').then(r => r.json()),
+  fetch('/api/posts').then(r => r.json()),
+  fetch('/api/comments').then(r => r.json())
+]);
+// 合計時間 = 最も遅いリクエストの時間のみ
+```
+
+### ストリーミングSSRによる体感速度向上
+
+重要なデータを先に返し、時間のかかるデータは後から送信することで、ユーザーの体感速度を向上させます。
+
+```typescript
+// +page.server.ts
+export const load: PageServerLoad = async () => {
+  return {
+    // 即座に返すデータ（クリティカルパス）
+    critical: await getCriticalData(),
+    
+    // ストリーミングで後から送信（非クリティカル）
+    streamed: {
+      slow: getSlowData() // Promiseのまま返す
+    }
+  };
+};
+```
+
 ## 並列データ取得パターン
 
 ### Promise.allを使った最適化
@@ -70,12 +113,7 @@ export const load: PageServerLoad = async () => {
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch, params }) => {
-  // ❌ 悪い例：順次実行（遅い）
-  // const user = await fetch(`/api/users/${params.id}`).then(r => r.json());
-  // const posts = await fetch(`/api/users/${params.id}/posts`).then(r => r.json());
-  // const comments = await fetch(`/api/users/${params.id}/comments`).then(r => r.json());
-  
-  // ✅ 良い例：並列実行（速い）
+  // 複数のAPIエンドポイントから並列でデータ取得
   const [user, posts, comments] = await Promise.all([
     fetch(`/api/users/${params.id}`).then(r => r.json()),
     fetch(`/api/users/${params.id}/posts`).then(r => r.json()),

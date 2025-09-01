@@ -94,7 +94,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             { title: '基礎編概要', to: '/sveltekit/basics/' },
             { title: 'SvelteKit概要', to: '/sveltekit/basics/overview/' },
             { title: 'プロジェクト構造', to: '/sveltekit/basics/project-structure/' },
-            { title: 'TypeScript型の自動生成システム', to: '/sveltekit/basics/auto-types/' },
+            { title: 'app.d.tsの役割', to: '/sveltekit/basics/global-types/' },
           ],
         },
         {
@@ -115,6 +115,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           items: [
             { title: 'Load関数とデータフェッチング', to: '/sveltekit/data-loading/' },
             { title: 'Load関数の基礎', to: '/sveltekit/data-loading/basic/' },
+            { title: 'TypeScript型の自動生成システム', to: '/sveltekit/data-loading/auto-types/' },
             { title: 'データフェッチング戦略', to: '/sveltekit/data-loading/strategies/' },
           ],
         },

@@ -125,8 +125,8 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">ファイル構成と規約</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/auto-types/" class="text-blue-600 dark:text-blue-400 hover:underline">TypeScript型の自動生成</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">./$typesによる型安全な開発</td>
+            <td class="py-2"><a href="{base}/sveltekit/basics/global-types/" class="text-blue-600 dark:text-blue-400 hover:underline">app.d.tsの役割</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">グローバルな型定義</td>
           </tr>
         </tbody>
       </table>
@@ -201,6 +201,10 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/data-loading/basic/" class="text-orange-600 dark:text-orange-400 hover:underline">Load関数の基本</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">Universal LoadとServer Load</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/auto-types/" class="text-orange-600 dark:text-orange-400 hover:underline">TypeScript型の自動生成</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">./$typesによる型安全な開発</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/data-loading/strategies/" class="text-orange-600 dark:text-orange-400 hover:underline">データフェッチング戦略</a></td>
@@ -434,7 +438,7 @@ npm create svelte@latest my-first-sveltekit-app
 ### Step 1: 基礎理解（1-2日）
 1. **[概要とアーキテクチャ]({base}/sveltekit/basics/overview/)** - SSR/SSG/SPAの違いとSvelteKitの位置づけを理解
 2. **[プロジェクト構造]({base}/sveltekit/basics/project-structure/)** - `routes/`、`+page.svelte`、`+layout.svelte`の役割を把握
-3. **[TypeScript型の自動生成]({base}/sveltekit/basics/auto-types/)** - `./$types`による型安全な開発を体験
+3. **[app.d.tsの役割]({base}/sveltekit/basics/global-types/)** - グローバルな型定義の設定方法を理解
 
 ### Step 2: コア機能習得（3-5日）
 1. **[基本ルーティング]({base}/sveltekit/routing/basic/)** - ファイルベースルーティングで最初のページを作成

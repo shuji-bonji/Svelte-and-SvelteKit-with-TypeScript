@@ -11,9 +11,9 @@ SvelteKitのLoad関数は、ページやレイアウトに必要なデータを�
 
 ## 学習パス
 
-Load関数とデータフェッチングを段階的に学習できるよう、2つのセクションに分けて解説します。
+Load関数とデータフェッチングを段階的に学習できるよう、3つのセクションに分けて解説します。
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
   <a href="{base}/sveltekit/data-loading/basic/" class="flex no-underline group">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-3">📚</div>
@@ -28,6 +28,24 @@ Load関数とデータフェッチングを段階的に学習できるよう、2
         <li>型安全なデータ取得</li>
         <li>親子間のデータ共有</li>
         <li>エラーハンドリング</li>
+      </ul>
+    </div>
+  </a>
+
+  <a href="{base}/sveltekit/data-loading/auto-types/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">🔷</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        TypeScript型の自動生成
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">
+        ./$typesによる型安全な開発とボイラープレート削減の仕組みを理解します。
+      </p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+        <li>PageLoad、Actions等の型</li>
+        <li>ルートパラメータの型推論</li>
+        <li>app.d.tsとの連携</li>
+        <li>トラブルシューティング</li>
       </ul>
     </div>
   </a>

@@ -78,6 +78,8 @@ RESTful APIエンドポイントを作成するための型定義です。HTTP�
 
 ### 1. Load関数での型定義
 
+動的ルートパラメータを含むページでのデータ取得の例です。`PageLoad`型により、`params.slug`が自動的に`string`型として推論され、タイプミスを防ぎます。
+
 ```typescript
 // src/routes/blog/[slug]/+page.ts
 import type { PageLoad } from './$types';
@@ -96,6 +98,8 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
 ### 2. コンポーネントでのデータ受け取り
 
+Load関数から渡されたデータをSvelteコンポーネントで受け取る例です。`PageData`型により、Load関数の返り値の型が自動的に適用され、プロパティへの安全なアクセスが保証されます。
+
 ```svelte
 <!-- src/routes/blog/[slug]/+page.svelte -->
 <script lang="ts">
@@ -113,6 +117,8 @@ export const load: PageLoad = async ({ params, fetch }) => {
 ```
 
 ### 3. Server LoadとForm Actions
+
+サーバーサイドでのデータ取得とフォーム処理を行う例です。`PageServerLoad`で認証チェックとデータ取得を行い、`Actions`でCRUD操作を型安全に実装します。
 
 ```typescript
 // src/routes/admin/posts/+page.server.ts
@@ -169,6 +175,8 @@ export const actions: Actions = {
 
 ### 4. APIエンドポイント
 
+RESTful APIエンドポイントの実装例です。`RequestHandler`型により、HTTPメソッド（GET、PUT、DELETE）ごとのハンドラーが型安全に定義でき、パラメータやレスポンスの型チェックが行われます。
+
 ```typescript
 // src/routes/api/posts/[id]/+server.ts
 import type { RequestHandler } from './$types';
@@ -209,6 +217,8 @@ export const DELETE: RequestHandler = async ({ params }) => {
 
 ### 5. 動的ルートの静的生成
 
+ビルド時に動的ルートのページを静的生成（プリレンダリング）する例です。`EntryGenerator`で生成するパスのリストを定義し、各パスに対してページが事前生成されます。
+
 ```typescript
 // src/routes/products/[category]/[id]/+page.ts
 import type { PageLoad, EntryGenerator } from './$types';
@@ -231,6 +241,8 @@ export const load: PageLoad = async ({ params }) => {
 
 ### 6. パラメータマッチャー
 
+URLパラメータのバリデーションを行うカスタムマッチャーの例です。`ParamMatcher`を使用して、特定のパターン（この例では整数）に一致するパラメータのみを受け入れるルートを作成できます。
+
 ```typescript
 // src/params/integer.ts
 import type { ParamMatcher } from '@sveltejs/kit';
@@ -251,179 +263,13 @@ export const load: PageLoad = async ({ params }) => {
 };
 ```
 
-## 高度な型定義
+## app.d.tsとの連携
 
-SvelteKitの型システムをさらに活用するための高度な設定方法を解説します。`app.d.ts`での型定義は、プロジェクト全体で共有される重要な設定です。
+SvelteKitでは`app.d.ts`ファイルを使用して、プロジェクト全体で共有されるグローバルな型定義を宣言できます。これらの型は`./$types`と自動的に統合され、アプリケーション全体で型安全性を保証します。
 
-### app.d.tsとの連携
-
-`app.d.ts`ファイルは、アプリケーション全体で使用するグローバルな型定義を宣言する場所です。ここで定義した型は`./$types`と自動的に統合され、SvelteKit全体で利用可能になります。
-
-SvelteKitでは`app.d.ts`で定義した型が`./$types`と自動的に統合されます。`App`名前空間に定義できる標準インターフェースは以下の通りです。
-
-#### 1. App.Locals - サーバーサイドのリクエスト固有データ
-
-```typescript
-// src/app.d.ts
-declare global {
-  namespace App {
-    interface Locals {
-      user?: {
-        id: string;
-        email: string;
-        role: 'admin' | 'user' | 'guest';
-      };
-      session?: {
-        id: string;
-        expiresAt: Date;
-      };
-    }
-  }
-}
-```
-
-`hooks.server.ts`で設定し、Load関数やActionsで使用
-
-```typescript
-// hooks.server.ts
-export const handle: Handle = async ({ event, resolve }) => {
-  event.locals.user = await getUserFromSession(event.cookies);
-  return resolve(event);
-};
-
-// +page.server.ts
-export const load: PageServerLoad = async ({ locals }) => {
-  if (!locals.user) {
-    throw redirect(303, '/login');
-  }
-  // locals.userが型安全に使える
-};
-```
-
-#### 2. App.PageData - すべてのページで共通のデータ型
-
-```typescript
-interface PageData {
-  // すべてのページで利用可能なデータ
-  meta?: {
-    title: string;
-    description: string;
-  };
-  flash?: {
-    type: 'success' | 'error' | 'info';
-    message: string;
-  };
-}
-```
-
-#### 3. App.Error - カスタムエラー型
-
-```typescript
-interface Error {
-  message: string;
-  code?: 'UNAUTHORIZED' | 'NOT_FOUND' | 'SERVER_ERROR';
-  details?: Record<string, any>;
-}
-```
-
-`error()`関数で使用
-
-```typescript
-import { error } from '@sveltejs/kit';
-
-throw error(404, {
-  message: 'ページが見つかりません',
-  code: 'NOT_FOUND'
-});
-```
-
-#### 4. App.PageState - 履歴エントリの状態
-
-```typescript
-interface PageState {
-  scrollY?: number;
-  selectedTab?: string;
-  formData?: Record<string, any>;
-}
-```
-
-`pushState`/`replaceState`で使用
-
-```typescript
-import { pushState } from '$app/navigation';
-
-pushState('', {
-  scrollY: window.scrollY,
-  selectedTab: 'details'
-});
-```
-
-#### 5. App.Platform - プラットフォーム固有のAPI
-
-```typescript
-interface Platform {
-  // Cloudflare Workers, Vercel等の環境変数
-  env?: {
-    DATABASE_URL: string;
-    API_KEY: string;
-  };
-  context?: {
-    waitUntil(promise: Promise<any>): void;
-  };
-}
-```
-
-### 完全な app.d.ts の例
-
-実際のプロジェクトで使用できる、包括的な`app.d.ts`の設定例です。これをベースに、プロジェクトの要件に応じてカスタマイズできます。
-
-```typescript
-// src/app.d.ts
-declare global {
-  namespace App {
-    interface Locals {
-      user?: {
-        id: string;
-        email: string;
-        name: string;
-        role: 'admin' | 'user';
-      };
-      session?: string;
-    }
-    
-    interface PageData {
-      flash?: {
-        type: 'success' | 'error' | 'info';
-        message: string;
-      };
-    }
-    
-    interface Error {
-      message: string;
-      code?: string;
-      details?: any;
-    }
-    
-    interface PageState {
-      scrollPosition?: number;
-    }
-    
-    interface Platform {
-      env?: {
-        DATABASE_URL: string;
-        JWT_SECRET: string;
-      };
-    }
-  }
-  
-  // カスタムグローバル型
-  type UUID = `${string}-${string}-${string}-${string}-${string}`;
-}
-
-export {};
-```
-
-これらの型定義は`./$types`の型と自動的に統合され、SvelteKit全体で型安全性が保証されます。
+:::info[グローバル型定義について]
+`app.d.ts`でのグローバル型定義については、[app.d.tsの役割]({base}/sveltekit/basics/global-types/)で詳しく解説しています。App.Locals、App.PageData、App.Error、App.PageState、App.Platformの5つの標準インターフェースの使い方を学びましょう。
+:::
 
 ## ベストプラクティス
 

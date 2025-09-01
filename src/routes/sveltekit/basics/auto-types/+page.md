@@ -22,37 +22,49 @@ SvelteKitは`./$types`という仮想モジュールを通じて、各ルート�
 
 ## 自動生成される型の一覧
 
+SvelteKitは開発者が作成するファイルの種類に応じて、適切な型を自動的に生成します。これらの型は`./$types`からインポートして使用でき、ルートパラメータやデータの型安全性を保証します。
+
 ### Load関数の型（4種類）
+
+Load関数は、ページやレイアウトのデータ取得を担当する重要な関数です。これらの型は、関数のパラメータと返り値を厳密に定義します。
 
 | ファイル | 生成される型 | 用途 |
 |---------|------------|------|
-| `+page.ts` | `PageLoad` | ページのUniversal Load関数 |
-| `+page.server.ts` | `PageServerLoad` | ページのServer Load関数 |
-| `+layout.ts` | `LayoutLoad` | レイアウトのUniversal Load関数 |
-| `+layout.server.ts` | `LayoutServerLoad` | レイアウトのServer Load関数 |
+| `+page.ts` | `PageLoad` | ページのUniversal Load関数の型定義 |
+| `+page.server.ts` | `PageServerLoad` | ページのServer Load関数の型定義 |
+| `+layout.ts` | `LayoutLoad` | レイアウトのUniversal Load関数の型定義 |
+| `+layout.server.ts` | `LayoutServerLoad` | レイアウトのServer Load関数の型定義 |
 
 ### データ型（4種類）
 
+Svelteコンポーネントが受け取るデータの型定義です。Load関数の返り値が自動的にこれらの型として推論され、コンポーネント内で型安全にアクセスできます。
+
 | コンポーネント | 生成される型 | 用途 |
 |---------------|------------|------|
-| `+page.svelte` | `PageData` | Universal Loadからのデータ |
-| `+page.svelte` | `PageServerData` | Server Loadからのデータ |
-| `+layout.svelte` | `LayoutData` | Layout Loadからのデータ |
-| `+layout.svelte` | `LayoutServerData` | Layout Server Loadからのデータ |
+| `+page.svelte` | `PageData` | Load関数が返すデータの型（コンポーネントのprops） |
+| `+page.svelte` | `PageServerData` | Server Load関数が返すデータの型 |
+| `+layout.svelte` | `LayoutData` | Layout Load関数が返すデータの型 |
+| `+layout.svelte` | `LayoutServerData` | Layout Server Load関数が返すデータの型 |
 
 ### Actions型（1種類）
 
+フォーム処理を行うActions関数の型定義です。POSTリクエストの処理、バリデーション、データベース操作などのサーバーサイド処理を型安全に実装できます。
+
 | ファイル | 生成される型 | 用途 |
 |---------|------------|------|
-| `+page.server.ts` | `Actions` | Form Actions（フォーム処理） |
+| `+page.server.ts` | `Actions` | Form Actionsオブジェクトの型定義 |
 
 ### APIハンドラー型（1種類）
 
+RESTful APIエンドポイントを作成するための型定義です。HTTPメソッド（GET、POST、PUT、DELETE等）に対応したハンドラー関数を型安全に実装できます。
+
 | ファイル | 生成される型 | 用途 |
 |---------|------------|------|
-| `+server.ts` | `RequestHandler` | RESTful APIエンドポイント |
+| `+server.ts` | `RequestHandler` | APIエンドポイント関数の型定義 |
 
 ### その他の特殊型（3種類）
+
+特定の用途に特化した型定義です。静的サイト生成、カスタムパラメータ検証、設定管理などの高度な機能を型安全に実装するために使用します。
 
 | 用途 | 生成される型 | 説明 |
 |-----|------------|------|
@@ -61,6 +73,8 @@ SvelteKitは`./$types`という仮想モジュールを通じて、各ルート�
 | 設定 | `Config` | プリレンダリング設定等 |
 
 ## 実践的な使用例
+
+実際のプロジェクトでよく使用されるパターンを紹介します。これらの例を通じて、`./$types`がどのように型安全性を提供し、開発効率を向上させるかを理解できます。
 
 ### 1. Load関数での型定義
 
@@ -239,7 +253,11 @@ export const load: PageLoad = async ({ params }) => {
 
 ## 高度な型定義
 
+SvelteKitの型システムをさらに活用するための高度な設定方法を解説します。`app.d.ts`での型定義は、プロジェクト全体で共有される重要な設定です。
+
 ### app.d.tsとの連携
+
+`app.d.ts`ファイルは、アプリケーション全体で使用するグローバルな型定義を宣言する場所です。ここで定義した型は`./$types`と自動的に統合され、SvelteKit全体で利用可能になります。
 
 SvelteKitでは`app.d.ts`で定義した型が`./$types`と自動的に統合されます。`App`名前空間に定義できる標準インターフェースは以下の通りです。
 
@@ -357,6 +375,8 @@ interface Platform {
 
 ### 完全な app.d.ts の例
 
+実際のプロジェクトで使用できる、包括的な`app.d.ts`の設定例です。これをベースに、プロジェクトの要件に応じてカスタマイズできます。
+
 ```typescript
 // src/app.d.ts
 declare global {
@@ -407,6 +427,8 @@ export {};
 
 ## ベストプラクティス
 
+型安全性を最大限に活用し、バグを防ぐための実践的なガイドラインです。これらのパターンに従うことで、より堅牢なアプリケーションを構築できます。
+
 ### 1. 常に型を明示的にインポート
 
 ```typescript
@@ -455,13 +477,19 @@ export const actions: Actions = {
 
 ## トラブルシューティング
 
+開発中によく遭遇する型関連の問題と、その解決方法を紹介します。これらの対処法を知っておくことで、スムーズな開発が可能になります。
+
 ### 型が認識されない場合
+
+`./$types`からインポートした型が認識されない場合の対処法です。多くの場合、TypeScript Language Serverの再起動で解決します。
 
 1. **TypeScriptの再起動**: VSCodeでCmd/Ctrl+Shift+P → "TypeScript: Restart TS Server"
 2. **ビルドエラーの確認**: `npm run check`を実行
 3. **ファイル名の確認**: 正確に`+page.ts`等の命名規則に従っているか
 
 ### パラメータの型が`string`にならない
+
+動的ルートパラメータの型に関する注意点です。URLパラメータは常に文字列として扱われるため、数値として使用する場合は明示的な変換が必要です。
 
 動的ルートパラメータは常に`string`型です。数値が必要な場合は変換が必要
 

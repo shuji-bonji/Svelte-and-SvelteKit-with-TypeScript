@@ -44,6 +44,24 @@ description: 実践的なアプリケーション開発パターンと設計手�
     </div>
   </a>
   
+  <a href="{base}/sveltekit/application/session/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🎫</div>
+      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+        セッション管理と認証戦略
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">TypeScriptで実装する様々な認証パターンとセッション管理手法を習得します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>クッキーベース認証</strong>: セッションストア実装</li>
+        <li><strong>JWT認証</strong>: ステートレスな認証</li>
+        <li><strong>リフレッシュトークン</strong>: 自動更新の仕組み</li>
+        <li><strong>ルートグループ戦略</strong>: (auth)/(protected)の使い分け</li>
+        <li><strong>セキュリティ対策</strong>: CSRF/XSS対策</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/sveltekit/application/database/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🗄️</div>
@@ -176,11 +194,12 @@ export const app = new AppState();
 ### 📚 推奨学習順序
 
 1. **状態管理パターン** - アプリの基礎設計を理解
-2. **認証・認可** - セキュリティの基礎を固める
-3. **データベース統合** - データ永続化を実装
-4. **環境変数管理** - 設定とシークレットの管理
-5. **エラーハンドリング** - 堅牢性の向上
-6. **テスト戦略** - 品質保証の実施
+2. **セッション管理と認証戦略** - 認証の基本パターンを習得
+3. **認証・認可** - より高度な認証システムの実装
+4. **データベース統合** - データ永続化を実装
+5. **環境変数管理** - 設定とシークレットの管理
+6. **エラーハンドリング** - 堅牢性の向上
+7. **テスト戦略** - 品質保証の実施
 
 ### 🎯 学習目標
 

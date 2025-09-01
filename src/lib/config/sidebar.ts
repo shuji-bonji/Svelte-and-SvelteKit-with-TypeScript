@@ -153,6 +153,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           items: [
             { title: 'アプリケーション構築編概要', to: '/sveltekit/application/' },
             { title: '認証・認可 (準備中)', to: '/sveltekit/application/authentication/' },
+            { title: 'セッション管理と認証戦略', to: '/sveltekit/application/session/' },
             { title: 'データベース統合 (準備中)', to: '/sveltekit/application/database/' },
             { title: '環境変数管理 (準備中)', to: '/sveltekit/application/environment/' },
             { title: 'エラーハンドリング (準備中)', to: '/sveltekit/application/error-handling/' },

@@ -422,19 +422,19 @@ export const load: PageLoad = async ({ parent }) => {
 
 <Mermaid diagram={practicalExample} />
 
-この例では、以下の処理が行われています：
+この例では、以下の処理が行われています。
 
-1. **レイアウトLoad（+layout.server.ts）**：
+1. **レイアウトLoad（+layout.server.ts）**
    - Redisからセッション情報を取得
    - ユーザー情報とカート情報を管理
 
-2. **ページLoad（+page.server.ts）**：
+2. **ページLoad（+page.server.ts）**
    - parent()で親のユーザー情報を活用
    - PostgreSQLから商品情報を取得
    - AWS S3から署名付きURLを生成
    - レコメンド商品を取得
 
-3. **Form Action**：
+3. **Form Action**
    - カート追加処理
    - 在庫確認とデータベース更新
    - セッション更新

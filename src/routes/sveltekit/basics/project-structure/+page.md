@@ -149,10 +149,19 @@ my-sveltekit-app/
 ```
 
 #### プレースホルダー
-- `%lang%` - 言語設定
-- `%sveltekit.assets%` - アセットパス
-- `%sveltekit.head%` - head要素の内容
-- `%sveltekit.body%` - アプリケーション本体
+
+app.htmlでは以下のプレースホルダーが使用できます。
+
+- `%lang%` - HTML要素の言語属性
+- `%sveltekit.assets%` - 静的アセットへのパス
+- `%sveltekit.head%` - ページ固有のhead要素
+- `%sveltekit.body%` - レンダリングされたアプリケーション
+- `%sveltekit.nonce%` - CSP用のnonce値（セキュリティ）
+- `%sveltekit.env.[NAME]%` - PUBLIC_プレフィックスの環境変数
+
+:::info[詳細解説]
+[SvelteKitプレースホルダー](/deep-dive/sveltekit-placeholders/)で、すべてのプレースホルダーの使用方法と参照元を詳しく解説しています。
+:::
 
 ### `app.d.ts` - 型定義
 

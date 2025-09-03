@@ -122,6 +122,19 @@ Web ComponentsとSvelteの関係、Shadow DOMのパフォーマンス問題、�
 
 </div>
 
+<div class="topic-card">
+
+### [SvelteKitプレースホルダー](/deep-dive/sveltekit-placeholders/)
+
+SvelteKitのHTMLテンプレートで使用できるすべてのプレースホルダー（`%sveltekit.*%`）の詳細な仕様と使用方法を網羅的に解説します。
+
+**学べること：**
+- app.htmlとerror.htmlで使える全プレースホルダー
+- CSP nonce、環境変数、アセットパスの設定方法
+- プレースホルダーの内部動作と参照元
+
+</div>
+
 </div>
 
 <style>

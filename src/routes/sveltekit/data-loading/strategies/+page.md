@@ -7,35 +7,45 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
   import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
-  const streamingSSRDiagram = `sequenceDiagram
+  const svelteKitParallelDiagram = `sequenceDiagram
     participant User as ユーザー
     participant Browser as ブラウザ
-    participant Server as SvelteKitサーバー
-    participant DB1 as 高速DB/Cache
-    participant DB2 as 低速DB/API
+    participant SvelteKit as SvelteKitサーバー
+    participant PageTS as +page.ts
+    participant API1 as ユーザーAPI
+    participant API2 as 投稿API
+    participant API3 as コメントAPI
     
-    User->>Browser: ページアクセス
-    Browser->>Server: HTTPリクエスト
+    User->>Browser: /users/[id] へアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    SvelteKit->>PageTS: load関数実行
     
-    Note over Server: Load関数実行開始
+    Note over PageTS: PageLoad関数<br/>const { fetch, params } = event
     
-    par クリティカルデータ取得
-        Server->>DB1: 重要データ取得
-        DB1-->>Server: 即座に返却
-    and ストリーミングデータ
-        Server->>DB2: 追加データ取得（Promise）
-        Note right of DB2: 処理継続中...
+    PageTS->>PageTS: 3つのfetch呼び出しを準備
+    
+    par Promise.all による並列実行
+        PageTS->>API1: fetch(/api/users/params.id)
+        API1-->>PageTS: ユーザーデータ
+    and
+        PageTS->>API2: fetch(/api/users/params.id/posts)
+        API2-->>PageTS: 投稿データ
+    and
+        PageTS->>API3: fetch(/api/users/params.id/comments)
+        API3-->>PageTS: コメントデータ
     end
     
-    Server-->>Browser: HTML + クリティカルデータ
-    Browser->>User: 初期コンテンツ表示
+    Note over PageTS: await Promise.all([...])で待機
+    PageTS->>PageTS: 全データを統合
     
-    Note over User: ユーザーは既にコンテンツを閲覧可能
+    PageTS-->>SvelteKit: return { user, posts, comments }
+    SvelteKit-->>Browser: HTMLとデータを送信
+    Browser->>Browser: +page.svelteでレンダリング
+    Browser->>User: 完全なページ表示
     
-    DB2-->>Server: 追加データ取得完了
-    Server-->>Browser: ストリーミングデータ送信
-    Browser->>Browser: DOMを更新
-    Browser->>User: 完全なページ表示`;
+    rect rgba(59, 130, 246, 0.1)
+        Note over User,API3: 最も遅いAPIの時間で完了
+    end`;
     
   const parallelFetchingDiagram = `sequenceDiagram
     participant Client as クライアント
@@ -65,6 +75,52 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
     
     rect rgba(34, 197, 94, 0.1)
         Note over Client,API3: 最も遅いAPIの時間で完了
+    end`;
+    
+  const svelteKitCachingDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKitサーバー
+    participant PageServer as +page.server.ts
+    participant CacheUtil as cache.ts
+    participant DB as データベース
+    
+    User->>Browser: /posts/popular へアクセス（初回）
+    Browser->>SvelteKit: HTTPリクエスト
+    SvelteKit->>PageServer: PageServerLoad実行
+    
+    Note over PageServer: load: PageServerLoad関数
+    
+    PageServer->>CacheUtil: getCachedData('popular-posts', fetcher)
+    CacheUtil->>CacheUtil: cache.get('popular-posts')確認
+    Note over CacheUtil: キャッシュなし
+    
+    CacheUtil->>DB: fetcher()実行<br/>db.post.findMany()
+    DB-->>CacheUtil: 投稿データ返却
+    CacheUtil->>CacheUtil: cache.set()でキャッシュ保存<br/>TTL: 5分
+    CacheUtil-->>PageServer: データ返却
+    
+    PageServer-->>SvelteKit: return { posts: data }
+    SvelteKit-->>Browser: HTMLとデータ送信
+    Browser->>User: ページ表示
+    
+    Note over User,DB: --- 3分後（キャッシュ有効期間内）---
+    
+    User->>Browser: /posts/popular へアクセス（2回目）
+    Browser->>SvelteKit: HTTPリクエスト
+    SvelteKit->>PageServer: PageServerLoad実行
+    
+    PageServer->>CacheUtil: getCachedData('popular-posts', fetcher)
+    CacheUtil->>CacheUtil: cache.get('popular-posts')確認
+    Note over CacheUtil: キャッシュヒット！<br/>timestamp確認 → 有効
+    
+    CacheUtil-->>PageServer: キャッシュデータ返却
+    PageServer-->>SvelteKit: return { posts: data }
+    SvelteKit-->>Browser: HTMLとキャッシュデータ送信
+    Browser->>User: ページ表示（高速）
+    
+    rect rgba(34, 197, 94, 0.1)
+        Note over DB: DBアクセスなし → 高速レスポンス
     end`;
     
   const cachingStrategyDiagram = `sequenceDiagram
@@ -97,6 +153,44 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
         Note over DB: DBアクセスなし
     end`;
     
+  const svelteKitRealtimeDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant Component as +page.svelte
+    participant SvelteKit as SvelteKitサーバー
+    participant ServerTS as +server.ts
+    participant EventStream as SSEストリーム
+    
+    User->>Browser: /realtime-data ページ表示
+    Browser->>Component: コンポーネントマウント
+    
+    Note over Component: onMount()フック
+    Component->>Component: new EventSource('/api/stream')
+    Component->>SvelteKit: SSE接続リクエスト
+    SvelteKit->>ServerTS: GET: RequestHandler実行
+    
+    ServerTS->>ServerTS: new ReadableStream()作成
+    ServerTS->>EventStream: ストリーム開始
+    EventStream-->>Component: 接続確立
+    
+    loop setInterval(1000ms)
+        ServerTS->>EventStream: controller.enqueue(data)
+        EventStream-->>Component: data: {timestamp}
+        Component->>Component: data = JSON.parse(event.data)
+        Note over Component: $state変数が更新
+        Component->>Browser: UIリアクティブ更新
+        Browser->>User: 更新表示
+    end
+    
+    User->>Browser: ページ離脱
+    Component->>Component: onDestroy()フック
+    Component->>EventStream: eventSource.close()
+    EventStream-->>ServerTS: ストリーム終了
+    
+    rect rgba(59, 130, 246, 0.1)
+        Note over Component: invalidate()でのLoad関数再実行も可能
+    end`;
+    
   const realtimeUpdateDiagram = `sequenceDiagram
     participant User as ユーザー
     participant Browser as ブラウザ
@@ -118,6 +212,50 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
     User->>Browser: ページ離脱
     Browser->>EventSource: 接続クローズ
     EventSource-->>Server: ストリーム終了`;
+    
+  const svelteKitConditionalDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKitサーバー
+    participant PageServer as +page.server.ts
+    participant Hooks as hooks.server.ts
+    participant PublicDB as 公開DB
+    participant PrivateDB as 個人DB
+    
+    User->>Browser: /dashboard へアクセス
+    Browser->>SvelteKit: HTTPリクエスト（Cookie付き）
+    
+    SvelteKit->>Hooks: handle()フック実行
+    Hooks->>Hooks: cookieからセッション取得
+    Hooks->>Hooks: locals.user = getUserFromSession()
+    Hooks-->>SvelteKit: event.localsにユーザー情報セット
+    
+    SvelteKit->>PageServer: PageServerLoad実行
+    Note over PageServer: load({ locals })
+    
+    PageServer->>PageServer: if (!locals.user)チェック
+    
+    alt 認証済みユーザー（locals.user存在）
+        par 並列データ取得
+            PageServer->>PublicDB: getPublicData()
+            PublicDB-->>PageServer: 公開データ
+        and
+            PageServer->>PrivateDB: getUserProfile(locals.user.id)
+            PrivateDB-->>PageServer: プロフィールデータ
+        and
+            PageServer->>PrivateDB: getUserPreferences(locals.user.id)
+            PrivateDB-->>PageServer: 設定データ
+        end
+        PageServer-->>SvelteKit: return { ...baseData, user, profile, preferences }
+        SvelteKit-->>Browser: 完全なダッシュボード表示
+    else 未認証ユーザー
+        PageServer->>PublicDB: getPublicData()のみ
+        PublicDB-->>PageServer: 公開データ
+        PageServer-->>SvelteKit: return { ...baseData, user: null }
+        SvelteKit-->>Browser: 制限付きビュー or リダイレクト
+    end
+    
+    Browser->>User: ページ表示`;
     
   const conditionalFetchingDiagram = `sequenceDiagram
     participant User as ユーザー
@@ -150,6 +288,187 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
     end
     
     Browser->>User: ページ表示`;
+    
+  const generalStreamingDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant Server as サーバー
+    participant DB1 as 高速DB/Cache
+    participant DB2 as 低速DB/API
+    
+    User->>Browser: ページアクセス
+    Browser->>Server: HTTPリクエスト
+    
+    par クリティカルデータと非クリティカルデータ
+        Server->>DB1: クリティカルデータ取得
+        DB1-->>Server: 即座に返却
+    and
+        Server->>DB2: 非クリティカルデータ（非同期）
+        Note right of DB2: 処理継続中...
+    end
+    
+    Server-->>Browser: 初期HTML + クリティカルデータ
+    Browser->>User: 初期コンテンツ表示
+    
+    Note over User: ユーザーは既に基本コンテンツを閲覧可能
+    
+    DB2-->>Server: 非同期データ準備完了
+    Server-->>Browser: ストリーミングでデータ送信
+    Browser->>Browser: DOMを動的に更新
+    Browser->>User: 完全なページ表示
+    
+    rect rgba(34, 197, 94, 0.1)
+        Note over User,DB2: 段階的なコンテンツ表示により体感速度向上
+    end`;
+    
+  const streamingSSRDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKitサーバー
+    participant PageServer as +page.server.ts
+    participant PageSvelte as +page.svelte
+    participant CriticalAPI as 高速API/Cache
+    participant SlowAPI as 低速API/DB
+    
+    User->>Browser: ページアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    SvelteKit->>PageServer: load関数実行
+    
+    Note over PageServer: PageServerLoad関数
+    
+    par 並列データ取得
+        PageServer->>CriticalAPI: getCriticalData()
+        CriticalAPI-->>PageServer: { title: "ページタイトル" }
+    and
+        PageServer->>SlowAPI: getSlowData() 
+        Note right of SlowAPI: Promise返却（待機しない）
+    end
+    
+    PageServer-->>SvelteKit: { critical, streamed: { slow: Promise } }
+    SvelteKit-->>Browser: 初期HTML生成
+    Browser->>PageSvelte: コンポーネントマウント
+    
+    Note over PageSvelte: export let data: PageData
+    PageSvelte->>PageSvelte: criticalデータ即座に表示
+    Browser->>User: <h1>{data.critical.title}</h1> 表示
+    
+    Note over PageSvelte: await data.streamed.slow (awaitブロック)
+    PageSvelte->>Browser: ローディング表示
+    Browser->>User: "読み込み中..." 表示
+    
+    SlowAPI-->>PageServer: { items: [...] }
+    PageServer-->>SvelteKit: Promiseが解決
+    SvelteKit-->>Browser: ストリーミングデータ送信
+    Browser->>PageSvelte: Promiseが解決
+    
+    Note over PageSvelte: then slowData (thenブロック)
+    PageSvelte->>PageSvelte: slowDataをレンダリング
+    Browser->>User: 完全なコンテンツ表示
+    
+    rect rgba(34, 197, 94, 0.1)
+        Note over User: ユーザーは最初から基本コンテンツを見られる
+    end`;
+    
+  const svelteKitErrorHandlingDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKitサーバー
+    participant PageTS as +page.ts
+    participant MainAPI as メインAPI
+    participant OptAPI as オプションAPI
+    participant RecAPI as レコメンドAPI
+    participant ErrorPage as +error.svelte
+    
+    User->>Browser: /products へアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    SvelteKit->>PageTS: PageLoad実行
+    
+    Note over PageTS: load({ fetch })
+    
+    PageTS->>PageTS: Promise.allSettled()で並列実行
+    
+    par 複数API呼び出し（エラー許容）
+        PageTS->>MainAPI: fetch('/api/products')
+        MainAPI-->>PageTS: ✅ 成功 { status: 'fulfilled', value: products }
+    and
+        PageTS->>OptAPI: fetch('/api/featured')
+        OptAPI--xPageTS: ❌ エラー { status: 'rejected', reason: error }
+    and
+        PageTS->>RecAPI: fetch('/api/recommendations')
+        RecAPI-->>PageTS: ✅ 成功 { status: 'fulfilled', value: recommendations }
+    end
+    
+    PageTS->>PageTS: 結果を処理
+    
+    alt 必須データ（MainAPI）が成功
+        Note over PageTS: 部分的成功として処理
+        PageTS->>PageTS: フォールバックデータを使用
+        PageTS-->>SvelteKit: return {<br/>  mainData: results[0].value,<br/>  optionalData: { fallback: true },<br/>  recommendations: results[2].value<br/>}
+        SvelteKit-->>Browser: 部分的なコンテンツ表示
+        Browser->>User: 利用可能なデータで表示
+    else 必須データ（MainAPI）も失敗
+        PageTS->>PageTS: error(500, 'Failed to load')
+        SvelteKit->>ErrorPage: +error.svelteを表示
+        ErrorPage-->>Browser: エラーページ表示
+        Browser->>User: エラーメッセージ表示
+    end
+    
+    rect rgba(220, 38, 127, 0.1)
+        Note over User: 完全失敗を回避し、可能な限りコンテンツ表示
+    end`;
+    
+  const svelteKitPerformanceDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKitサーバー
+    participant PageTS as +page.ts
+    participant Hooks as hooks.server.ts
+    participant API as データAPI
+    participant Monitoring as モニタリングサービス
+    
+    User->>Browser: /analytics へアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    
+    SvelteKit->>Hooks: handle()フック実行
+    Note over Hooks: const start = performance.now()
+    
+    Hooks->>PageTS: PageLoad実行
+    Note over PageTS: load({ fetch, setHeaders })
+    
+    PageTS->>PageTS: const loadStart = performance.now()
+    
+    par 複数データ取得（測定付き）
+        PageTS->>API: fetch('/api/analytics')
+        Note over PageTS: const apiStart = performance.now()
+        API-->>PageTS: 分析データ
+        PageTS->>PageTS: apiDuration = performance.now() - apiStart
+    and
+        PageTS->>API: fetch('/api/metrics')
+        API-->>PageTS: メトリクスデータ
+    end
+    
+    PageTS->>PageTS: const loadDuration = performance.now() - loadStart
+    
+    alt パフォーマンス閾値チェック
+        Note over PageTS: if (loadDuration > 1000)
+        PageTS->>Monitoring: 遅延レポート送信<br/>{ route: '/analytics', duration: loadDuration }
+        Monitoring-->>PageTS: レポート受信確認
+        PageTS->>PageTS: console.warn('Slow load')
+    end
+    
+    PageTS->>PageTS: setHeaders({ 'Server-Timing': timing })
+    PageTS-->>SvelteKit: return { data, performance: metrics }
+    
+    Hooks->>Hooks: const totalDuration = performance.now() - start
+    Hooks->>Monitoring: リクエスト全体のメトリクス送信
+    
+    SvelteKit-->>Browser: レスポンス（Server-Timingヘッダー付き）
+    Browser->>Browser: DevToolsで測定結果表示
+    Browser->>User: ページ表示
+    
+    rect rgba(59, 130, 246, 0.1)
+        Note over Browser: ブラウザのPerformance APIでも測定可能
+    end`;
     
   const errorHandlingDiagram = `sequenceDiagram
     participant Client as クライアント
@@ -189,6 +508,14 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
 ## ストリーミングSSR
 
 大量のデータを段階的に送信することで、初期表示を高速化します。ストリーミングSSRは、重要なコンテンツを即座に表示し、残りのデータを非同期で送信する技術です。これにより、ユーザーは完全にページが読み込まれるのを待つことなく、コンテンツの閲覧を開始できます。
+
+### 基本的なストリーミングSSR概念
+
+<Mermaid diagram={generalStreamingDiagram} />
+
+### SvelteKitでのストリーミングSSR実装
+
+以下のシーケンス図は、SvelteKitで`+page.server.ts`と`+page.svelte`がどのように連携してストリーミングSSRを実現するかを示しています。
 
 <Mermaid diagram={streamingSSRDiagram} />
 
@@ -244,6 +571,24 @@ export const load: PageServerLoad = async () => {
 {/await}
 ```
 
+### ストリーミングSSRの実装ポイント
+
+上記のシーケンス図で示したように、SvelteKitのストリーミングSSRは`+page.server.ts`と`+page.svelte`の連携により実現されます：
+
+1. **`+page.server.ts`でのデータ取得**
+   - `PageServerLoad`関数内でデータ取得を行う
+   - クリティカルなデータは`await`で即座に取得
+   - 時間のかかるデータはPromiseのまま返す
+
+2. **データの構造化**
+   - `critical`: 即座に表示するデータ
+   - `streamed`: 非同期で送信されるデータ（Promiseを含む）
+
+3. **`+page.svelte`での段階的レンダリング**
+   - `data.critical`は即座に利用可能
+   - `data.streamed.slow`は`{#await}`ブロックで処理
+   - ユーザーは最初のHTMLレンダリング時点でコンテンツを閲覧開始
+
 ## パフォーマンスのヒント
 
 効率的なデータ取得のための重要なテクニックを紹介します。
@@ -291,7 +636,15 @@ export const load: PageServerLoad = async () => {
 
 複数のデータソースから情報を取得する場合、適切な並列処理戦略を選択することで、大幅なパフォーマンス向上を実現できます。このセクションでは、実践的な並列データ取得のパターンを紹介します。
 
+### 基本的な並列処理の概念
+
 <Mermaid diagram={parallelFetchingDiagram} />
+
+### SvelteKitでの並列データ取得実装
+
+以下のシーケンス図は、SvelteKitの`+page.ts`で実際にどのように並列データ取得が行われるかを示しています。
+
+<Mermaid diagram={svelteKitParallelDiagram} />
 
 ### Promise.allを使った最適化
 
@@ -344,7 +697,15 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 適切なキャッシング戦略により、不要なネットワークリクエストを削減し、アプリケーションのパフォーマンスを大幅に向上させることができます。キャッシングは、ブラウザレベル、メモリレベル、そしてCDNレベルで実装できます。
 
+### 基本的なキャッシング概念
+
 <Mermaid diagram={cachingStrategyDiagram} />
+
+### SvelteKitでのキャッシング実装
+
+以下のシーケンス図は、SvelteKitで`+page.server.ts`とキャッシュユーティリティを使用した実際のキャッシング実装を示しています。
+
+<Mermaid diagram={svelteKitCachingDiagram} />
 
 ### ブラウザキャッシュの活用
 
@@ -420,7 +781,15 @@ export const load: PageServerLoad = async () => {
 
 リアルタイムでデータを更新する機能は、現代的なWebアプリケーションに欠かせません。SvelteKitは、invalidate関数やServer-Sent Events（SSE）、WebSocketなど、様々なリアルタイム更新の手法をサポートしています。
 
+### 基本的なリアルタイム更新概念
+
 <Mermaid diagram={realtimeUpdateDiagram} />
+
+### SvelteKitでのリアルタイム更新実装
+
+以下のシーケンス図は、SvelteKitで`+page.svelte`と`+server.ts`を使用してSSEによるリアルタイム更新を実装する方法を示しています。
+
+<Mermaid diagram={svelteKitRealtimeDiagram} />
 
 ### invalidateを使った更新
 
@@ -501,7 +870,15 @@ export const GET: RequestHandler = () => {
 
 条件付きフェッチングは、ユーザーの状態、デバイス、権限などに基づいて、取得するデータを動的に変更する技術です。これにより、必要なデータのみを効率的に取得し、パフォーマンスとユーザー体験を最適化できます。
 
+### 基本的な条件付きフェッチング概念
+
 <Mermaid diagram={conditionalFetchingDiagram} />
+
+### SvelteKitでの条件付きフェッチング実装
+
+以下のシーケンス図は、SvelteKitで`hooks.server.ts`と`+page.server.ts`を使用して認証ベースの条件付きフェッチングを実装する方法を示しています。
+
+<Mermaid diagram={svelteKitConditionalDiagram} />
 
 ### 認証に基づくデータ取得
 
@@ -558,7 +935,15 @@ export const load: PageServerLoad = async ({ request }) => {
 
 堅牢なアプリケーションを構築するには、エラーを適切に処理し、部分的な失敗に対してもユーザーに価値を提供できるようにすることが重要です。SvelteKitは、様々なレベルでエラーを処理する仕組みを提供しています。
 
+### 基本的なエラーハンドリング概念
+
 <Mermaid diagram={errorHandlingDiagram} />
+
+### SvelteKitでのエラーハンドリング実装
+
+以下のシーケンス図は、SvelteKitで`+page.ts`と`+error.svelte`を使用してエラー境界とフォールバックを実装する方法を示しています。
+
+<Mermaid diagram={svelteKitErrorHandlingDiagram} />
 
 ### 部分的エラーの処理
 
@@ -589,6 +974,16 @@ export const load: PageLoad = async ({ fetch }) => {
 ## パフォーマンス監視
 
 パフォーマンスの継続的な監視は、アプリケーションの品質を維持するために不可欠です。問題を早期に発見し、ユーザー体験の劣化を防ぐことができます。
+
+### 基本的なパフォーマンス測定
+
+パフォーマンス測定の基本的な概念と手法を紹介します。
+
+### SvelteKitでのパフォーマンス監視実装
+
+以下のシーケンス図は、SvelteKitでパフォーマンス監視を実装する方法を示しています。
+
+<Mermaid diagram={svelteKitPerformanceDiagram} />
 
 ### タイミング測定
 

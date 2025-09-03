@@ -113,20 +113,23 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
   const dataLoadFlow = `flowchart TB
     subgraph Browser["🌐 ブラウザ（クライアント）"]
         Request[ページリクエスト]
-        ClientLoad["+page.ts<br/>load()"]
+        ClientPageLoad["+page.ts<br/>load()<br/>(クライアント実行)"]
         Component["+page.svelte<br/>data prop"]
     end
     
     subgraph Server["🖥️ サーバー"]
         ServerLoad["+page.server.ts<br/>load()"]
+        ServerPageLoad["+page.ts<br/>load()<br/>(サーバー実行・SSR時)"]
     end
     
     Request --> ServerLoad
-    ServerLoad --> ClientLoad
-    ClientLoad --> Component
+    ServerLoad --> ServerPageLoad
+    ServerPageLoad --> ClientPageLoad
+    ClientPageLoad --> Component
     
     style ServerLoad fill:#4CAF50,color:#fff
-    style ClientLoad fill:#2196F3,color:#fff
+    style ServerPageLoad fill:#9C27B0,color:#fff
+    style ClientPageLoad fill:#2196F3,color:#fff
     style Component fill:#ff3e00,color:#fff`;
 
   const apiRouteDiagram = `flowchart LR

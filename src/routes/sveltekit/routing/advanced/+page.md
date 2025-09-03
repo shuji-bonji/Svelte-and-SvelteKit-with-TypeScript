@@ -3,11 +3,154 @@ title: 高度なルーティング
 description: SvelteKitの高度なルーティング機能をTypeScriptで実装。ルートグループ、ネストレイアウト、プログラマティックナビゲーション、ルートアノテーションを解説
 ---
 
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const nestedLayoutDiagram = `graph TB
+    subgraph "ルートレイアウト /+layout.svelte"
+      Header[Header]
+      subgraph "アプリレイアウト /app/+layout.svelte"
+        Sidebar[Sidebar]
+        subgraph "ダッシュボードレイアウト /app/dashboard/+layout.svelte"
+          DashNav[Dashboard Navigation]
+          Page["+page.svelte<br/>実際のコンテンツ"]
+        end
+      end
+      Footer[Footer]
+    end
+    
+    style Header fill:#e1f5fe
+    style Footer fill:#e1f5fe
+    style Sidebar fill:#fff3e0
+    style DashNav fill:#f3e5f5
+    style Page fill:#e8f5e9`;
+    
+  const routeGroupDiagram = `graph LR
+    subgraph "ファイルシステム構造"
+      A["src/routes/<br/>(app)/dashboard/+page.svelte"]
+      B["src/routes/<br/>(marketing)/+page.svelte"]
+      C["src/routes/<br/>(auth)/login/+page.svelte"]
+    end
+    
+    subgraph "URL構造"
+      D["/dashboard"]
+      E["/"]
+      F["/login"]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#fce4ec
+    
+    classDef urlStyle fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    class D,E,F urlStyle`;
+    
+  const navigationFlowDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Component as Svelteコンポーネント
+    participant BeforeNav as beforeNavigate
+    participant Router as SvelteKitルーター
+    participant AfterNav as afterNavigate
+    participant NewPage as 新しいページ
+    
+    User->>Component: リンククリック/goto()呼び出し
+    Component->>BeforeNav: ナビゲーション開始
+    
+    alt 未保存の変更がある場合
+        BeforeNav->>BeforeNav: confirm()ダイアログ表示
+        alt ユーザーがキャンセル
+            BeforeNav->>Component: cancel()実行
+            Note over Component: ナビゲーション中止
+        else ユーザーが続行
+            BeforeNav->>Router: ナビゲーション続行
+        end
+    else 変更なし
+        BeforeNav->>Router: ナビゲーション続行
+    end
+    
+    Router->>NewPage: 新しいページをロード
+    NewPage->>AfterNav: ページロード完了
+    
+    AfterNav->>AfterNav: スクロール位置リセット
+    AfterNav->>AfterNav: アナリティクス送信
+    AfterNav->>User: 新しいページ表示
+    
+    rect rgba(255, 152, 0, 0.1)
+        Note over BeforeNav,AfterNav: ナビゲーションフック
+    end`;
+    
+  const errorPropagationDiagram = `graph TB
+    subgraph "エラー伝播の階層"
+      PageError["/app/posts/[id]/+page.server.ts<br/>throw error(404)"]
+      PostsError["/app/posts/+error.svelte"]
+      AppError["/app/+error.svelte"]
+      RootError["/+error.svelte"]
+      
+      PageError -.->|"最も近い+error.svelte"| PostsError
+      PostsError -.->|"存在しない場合"| AppError
+      AppError -.->|"存在しない場合"| RootError
+    end
+    
+    style PageError fill:#ffebee,stroke:#f44336
+    style PostsError fill:#e8f5e9,stroke:#4caf50
+    style AppError fill:#fff3e0
+    style RootError fill:#e3f2fd
+    
+    classDef errorHandler fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    class PostsError errorHandler`;
+    
+  const layoutInheritanceDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit
+    participant RootLayout as /+layout.svelte
+    participant AppLayout as /(app)/+layout.svelte
+    participant DashLayout as /(app)/dashboard/+layout.svelte
+    participant Page as /(app)/dashboard/+page.svelte
+    
+    User->>Browser: /dashboard へアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    
+    SvelteKit->>RootLayout: ルートレイアウト実行
+    Note over RootLayout: Header + slot + Footer
+    
+    SvelteKit->>AppLayout: アプリレイアウト実行
+    Note over AppLayout: Sidebar + slot
+    
+    SvelteKit->>DashLayout: ダッシュボードレイアウト実行
+    Note over DashLayout: DashboardNav + slot
+    
+    SvelteKit->>Page: ページコンポーネント実行
+    Note over Page: 実際のコンテンツ
+    
+    Page-->>DashLayout: コンテンツを返す
+    DashLayout-->>AppLayout: ダッシュボードをslotに挿入
+    AppLayout-->>RootLayout: アプリ部分をslotに挿入
+    RootLayout-->>SvelteKit: 完全なHTMLを生成
+    
+    SvelteKit-->>Browser: レンダリング済みHTML
+    Browser->>User: ページ表示
+    
+    rect rgba(34, 197, 94, 0.1)
+        Note over RootLayout,Page: レイアウトは階層的に適用される
+    end`;
+</script>
+
 プロダクションレベルのアプリケーション開発に必要な、SvelteKitの高度なルーティング機能を学びます。ルートグループによる論理的な整理、複雑なレイアウト構造、動的なナビゲーション制御などを習得します。
 
 ## ルートグループ
 
 URLに影響を与えずに、ルートを論理的に整理する機能です。異なるレイアウトや認証要件を持つページをグループ化し、コードの保守性を向上させます。例えば、管理画面、マーケティングサイト、認証ページなどを別々のグループとして管理できます。
+
+### ルートグループの仕組み
+
+以下の図は、括弧で囲まれたディレクトリ名がURLに反映されない仕組みを示しています。
+
+<Mermaid diagram={routeGroupDiagram} />
 
 ### (group) - URLに影響しないグループ化
 
@@ -113,6 +256,18 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
 レイアウトを階層的に組み合わせる機能です。親レイアウトの中に子レイアウトが入れ子になることで、共通部分を再利用しつつ、セクションごとに特別なレイアウトを追加できます。例えば、サイト全体のヘッダー・フッター、アプリケーションのサイドバー、特定セクションのナビゲーションを重ねることができます。
 
+### レイアウトの階層構造
+
+以下の図は、レイアウトがどのように入れ子になって最終的なページを構成するかを示しています。
+
+<Mermaid diagram={nestedLayoutDiagram} />
+
+### レイアウト適用の流れ
+
+SvelteKitがどのようにレイアウトを階層的に適用してページを生成するかを示すシーケンス図です。
+
+<Mermaid diagram={layoutInheritanceDiagram} />
+
 ### レイアウトの継承
 
 レイアウトは階層的に継承され、各レベルで追加の要素を加えることができます。
@@ -165,6 +320,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 ## プログラマティックナビゲーション
 
 JavaScriptコードから直接ページ遷移を制御する機能です。ユーザーの操作に応じた動的なナビゲーション、フォーム送信後の遷移、条件に基づくリダイレクトなど、プログラムロジックでページ遷移を管理できます。
+
+### ナビゲーションフローの全体像
+
+以下の図は、beforeNavigate/afterNavigateフックがどのタイミングで実行されるかを示しています。
+
+<Mermaid diagram={navigationFlowDiagram} />
 
 ### goto関数
 
@@ -319,6 +480,12 @@ export const load: PageLoad = async ({ params }) => {
 ## 高度なエラーハンドリング
 
 エラー発生時の処理をカスタマイズする機能です。HTTPステータスコードに応じた表示の切り替え、エラー情報の伝播制御、開発環境と本番環境での表示の差別化など、きめ細かなエラー処理を実装できます。
+
+### エラー伝播の仕組み
+
+以下の図は、エラーがどのように階層を遡って処理されるかを示しています。
+
+<Mermaid diagram={errorPropagationDiagram} />
 
 ### カスタムエラーページ
 

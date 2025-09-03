@@ -164,6 +164,45 @@ description: SvelteKitの全体像を理解する - フルスタックフレー�
     style APIRoute fill:#4CAF50,color:#fff
     style FrontEnd fill:#ff3e00,color:#fff
     style DB fill:#2196F3,color:#fff`;
+
+  const apiSequenceDiagram = `sequenceDiagram
+    participant C as 📱 クライアント<br/>(+page.svelte)
+    participant S as 🖥️ サーバー<br/>(/api/posts/+server.ts)
+    participant DB as 🗄️ データベース
+    
+    Note over C,DB: 1️⃣ GET: 投稿一覧の取得
+    C->>S: GET /api/posts?limit=5
+    activate S
+    S->>DB: fetchPostsFromDB(5)
+    DB-->>S: 投稿データ配列
+    S-->>C: JSON { posts, timestamp }
+    deactivate S
+    C->>C: posts変数に保存・表示
+    
+    Note over C,DB: 2️⃣ POST: 新規投稿の作成
+    C->>C: フォーム入力
+    C->>S: POST /api/posts<br/>{ title, content }
+    activate S
+    S->>S: バリデーション
+    alt バリデーション成功
+        S->>DB: savePostToDB(data)
+        DB-->>S: 新規投稿データ
+        S-->>C: 201 { post, message }
+        C->>C: 投稿リストに追加
+    else バリデーション失敗
+        S-->>C: 400 { error }
+        C->>C: エラー表示
+    end
+    deactivate S
+    
+    Note over C,DB: 3️⃣ DELETE: 投稿の削除
+    C->>S: DELETE /api/posts?id=123
+    activate S
+    S->>DB: deletePostFromDB(123)
+    DB-->>S: 削除完了
+    S-->>C: JSON { message, deletedAt }
+    deactivate S
+    C->>C: リストから削除`;
 </script>
 
 
@@ -250,23 +289,67 @@ src/routes/
 
 <Mermaid diagram={dataLoadFlow} />
 
+### データフローの実装例
+
+#### +page.server.ts（サーバーのみで実行）
 ```typescript
-// +page.server.ts（サーバー側）
-export async function load() {
-  const posts = await fetchPosts();
-  return { posts };
-}
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+  // 1. サーバー側でのみ実行（DBアクセスや秘密情報を扱える）
+  const secretData = await fetchFromDatabase();
+  
+  console.log('1️⃣ +page.server.ts実行中（サーバー）');
+  
+  return {
+    // このデータは+page.tsのload関数にdataプロパティとして渡される
+    serverMessage: 'サーバーからのデータ',
+    timestamp: new Date().toISOString(),
+    secretData
+  };
+};
 ```
 
+#### +page.ts（サーバー→クライアント両方で実行） 
+```typescript
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ data, fetch }) => {
+  // 2. サーバー側（SSR時）で実行
+  // 3. その後、クライアント側（ハイドレーション時）でも実行
+  
+  console.log('2️⃣ +page.ts実行中');
+  console.log('サーバーから受け取ったデータ:', data);
+  
+  // 追加のデータ取得（公開API等）
+  const publicData = await fetch('/api/public').then(r => r.json());
+  
+  return {
+    // +page.server.tsからのデータを含める
+    ...data,
+    // 追加のデータ
+    publicData,
+    isClient: typeof window !== 'undefined' ? 'クライアント' : 'サーバー'
+  };
+};
+```
+
+####  +page.svelte（コンポーネント）
 ```svelte
-<!-- +page.svelte（コンポーネント） -->
 <script lang="ts">
-  export let data; // Load関数から自動的に渡される
+  import type { PageData } from './$types';
+  
+  // 4. 最終的にコンポーネントがデータを受け取る
+  export let data: PageData;
 </script>
 
-{#each data.posts as post}
-  <article>{post.title}</article>
-{/each}
+<div>
+  <h2>データフローの確認</h2>
+  <p>サーバーメッセージ: {data.serverMessage}</p>
+  <p>タイムスタンプ: {data.timestamp}</p>
+  <p>実行環境: {data.isClient}</p>
+  <p>公開データ: {JSON.stringify(data.publicData)}</p>
+</div>
 ```
 
 :::info[詳細を学ぶ]
@@ -286,26 +369,178 @@ export async function load() {
 - **HTTPメソッド対応**: GET、POST、PUT、DELETE、PATCHをサポート
 - **自動ルーティング**: ファイル名（`+server.ts`）でエンドポイント作成
 
-### 実装例
+### APIルートのデータフロー実装例
 
+以下のシーケンス図は、クライアントとAPIルート間のデータの流れを示しています。
+
+<Mermaid diagram={apiSequenceDiagram} />
+
+#### /api/posts/+server.ts（APIエンドポイント）
 ```typescript
-// src/routes/api/hello/+server.ts（最小限のAPI）
 import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const GET = () => {
-  return json({ message: 'Hello from API' });
+// 1️⃣ GET: 投稿一覧を取得
+export const GET: RequestHandler = async ({ url }) => {
+  console.log('🔵 GET /api/posts - サーバー側で実行');
+  
+  // クエリパラメータを取得
+  const limit = Number(url.searchParams.get('limit')) || 10;
+  
+  // データベースから投稿を取得（例）
+  const posts = await fetchPostsFromDB(limit);
+  
+  return json({
+    posts,
+    timestamp: new Date().toISOString(),
+    method: 'GET'
+  });
+};
+
+// 2️⃣ POST: 新しい投稿を作成
+export const POST: RequestHandler = async ({ request }) => {
+  console.log('🟢 POST /api/posts - サーバー側で実行');
+  
+  // リクエストボディを取得
+  const body = await request.json();
+  
+  // バリデーション
+  if (!body.title || !body.content) {
+    return json(
+      { error: 'タイトルと内容は必須です' },
+      { status: 400 }
+    );
+  }
+  
+  // データベースに保存（例）
+  const newPost = await savePostToDB({
+    title: body.title,
+    content: body.content,
+    createdAt: new Date()
+  });
+  
+  return json({
+    post: newPost,
+    message: '投稿が作成されました'
+  }, { status: 201 });
+};
+
+// 3️⃣ DELETE: 投稿を削除
+export const DELETE: RequestHandler = async ({ url }) => {
+  console.log('🔴 DELETE /api/posts - サーバー側で実行');
+  
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    return json(
+      { error: 'IDが必要です' },
+      { status: 400 }
+    );
+  }
+  
+  await deletePostFromDB(id);
+  
+  return json({
+    message: `投稿 ${id} が削除されました`,
+    deletedAt: new Date().toISOString()
+  });
 };
 ```
 
+#### +page.svelte（フロントエンド）
 ```svelte
-<!-- フロントエンドから呼び出し -->
 <script lang="ts">
-  async function callAPI() {
-    const res = await fetch('/api/hello');
-    const data = await res.json();
-    console.log(data.message); // "Hello from API"
+  import { onMount } from 'svelte';
+  
+  type Post = {
+    id: string;
+    title: string;
+    content: string;
+    createdAt: string;
+  };
+  
+  let posts: Post[] = [];
+  let newPost = { title: '', content: '' };
+  let loading = false;
+  
+  // 4️⃣ ページ読み込み時に投稿を取得
+  onMount(async () => {
+    console.log('📱 クライアント: 投稿一覧を取得');
+    const response = await fetch('/api/posts?limit=5');
+    const data = await response.json();
+    posts = data.posts;
+    console.log(`📱 ${posts.length}件の投稿を受信`);
+  });
+  
+  // 5️⃣ 新しい投稿を作成
+  async function createPost() {
+    loading = true;
+    console.log('📱 クライアント: 新規投稿を送信');
+    
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPost)
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      posts = [...posts, data.post];
+      newPost = { title: '', content: '' };
+      console.log('📱 投稿作成成功:', data.message);
+    }
+    loading = false;
+  }
+  
+  // 6️⃣ 投稿を削除
+  async function deletePost(id: string) {
+    console.log('📱 クライアント: 投稿削除リクエスト');
+    
+    const response = await fetch(`/api/posts?id=${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      posts = posts.filter(p => p.id !== id);
+      console.log('📱 削除成功:', data.message);
+    }
   }
 </script>
+
+<div>
+  <h2>APIルートのデモ</h2>
+  
+  <!-- 投稿作成フォーム -->
+  <form on:submit|preventDefault={createPost}>
+    <input
+      bind:value={newPost.title}
+      placeholder="タイトル"
+      required
+    />
+    <textarea
+      bind:value={newPost.content}
+      placeholder="内容"
+      required
+    />
+    <button type="submit" disabled={loading}>
+      {loading ? '送信中...' : '投稿する'}
+    </button>
+  </form>
+  
+  <!-- 投稿一覧 -->
+  <div class="posts">
+    {#each posts as post}
+      <article>
+        <h3>{post.title}</h3>
+        <p>{post.content}</p>
+        <button on:click={() => deletePost(post.id)}>
+          削除
+        </button>
+      </article>
+    {/each}
+  </div>
+</div>
 ```
 
 :::info[詳細を学ぶ]

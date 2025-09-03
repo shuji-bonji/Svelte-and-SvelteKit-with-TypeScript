@@ -352,6 +352,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: 'Web Components、Svelte、CSS戦略の実践ガイド',
           to: '/deep-dive/webcomponents-svelte-css-strategies/',
         },
+        {
+          title: 'SvelteKitプレースホルダー',
+          to: '/deep-dive/sveltekit-placeholders/',
+        },
       ],
     },
   ],

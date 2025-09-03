@@ -38,12 +38,12 @@ description: SvelteKitの基本ルーティングをTypeScriptで学ぶ。ファ
     BlogNew --> URL4
     Contact --> URL5
     
-    style Layout fill:#ffe0b2,stroke:#ff6f00
-    style Home fill:#e3f2fd,stroke:#1976d2
-    style About fill:#e3f2fd,stroke:#1976d2
-    style Blog fill:#e3f2fd,stroke:#1976d2
-    style BlogNew fill:#e3f2fd,stroke:#1976d2
-    style Contact fill:#e3f2fd,stroke:#1976d2`;
+    style Layout fill:#ffe0b2,stroke:#ff6f00,color:#000
+    style Home fill:#e3f2fd,stroke:#1976d2,color:#000
+    style About fill:#e3f2fd,stroke:#1976d2,color:#000
+    style Blog fill:#e3f2fd,stroke:#1976d2,color:#000
+    style BlogNew fill:#e3f2fd,stroke:#1976d2,color:#000
+    style Contact fill:#e3f2fd,stroke:#1976d2,color:#000`;
     
   const layoutInheritanceDiagram = `graph TB
     subgraph "レイアウト階層"
@@ -57,10 +57,10 @@ description: SvelteKitの基本ルーティングをTypeScriptで学ぶ。ファ
     BlogLayout --> BlogPage
     BlogLayout --> BlogNewPage
     
-    style RootLayout fill:#fff3e0,stroke:#f57c00
-    style BlogLayout fill:#e8f5e9,stroke:#388e3c
-    style BlogPage fill:#e3f2fd,stroke:#1976d2
-    style BlogNewPage fill:#e3f2fd,stroke:#1976d2`;
+    style RootLayout fill:#fff3e0,stroke:#f57c00,color:#000
+    style BlogLayout fill:#e8f5e9,stroke:#388e3c,color:#000
+    style BlogPage fill:#e3f2fd,stroke:#1976d2,color:#000
+    style BlogNewPage fill:#e3f2fd,stroke:#1976d2,color:#000`;
     
   const errorHandlingFlow = `sequenceDiagram
     participant User as ユーザー

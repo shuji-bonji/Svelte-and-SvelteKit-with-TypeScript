@@ -6,6 +6,69 @@ description: SvelteKitの動的ルーティングをTypeScriptで実装。動的
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   
+  const parameterMatchingDiagram = `graph LR
+    subgraph "URLパス"
+      URL1["/posts/123"]
+      URL2["/users/john"]
+      URL3["/products/laptop-pro"]
+    end
+    
+    subgraph "ルート定義"
+      Route1["/posts/[id]"]
+      Route2["/users/[username]"]
+      Route3["/products/[slug]"]
+    end
+    
+    subgraph "パラメータ"
+      Param1["params.id = '123'"]
+      Param2["params.username = 'john'"]
+      Param3["params.slug = 'laptop-pro'"]
+    end
+    
+    URL1 --> Route1
+    URL2 --> Route2
+    URL3 --> Route3
+    
+    Route1 --> Param1
+    Route2 --> Param2
+    Route3 --> Param3
+    
+    style URL1 fill:#e3f2fd,stroke:#1976d2
+    style URL2 fill:#e3f2fd,stroke:#1976d2
+    style URL3 fill:#e3f2fd,stroke:#1976d2
+    style Param1 fill:#e8f5e9,stroke:#388e3c
+    style Param2 fill:#e8f5e9,stroke:#388e3c
+    style Param3 fill:#e8f5e9,stroke:#388e3c`;
+    
+  const restParametersDiagram = `graph TB
+    subgraph "Rest Parameters の動作"
+      URL1["/docs/guide"]
+      URL2["/docs/guide/routing"]
+      URL3["/docs/api/reference/load"]
+      
+      Route["[...slug]"]
+      
+      Param1["slug = 'guide'"]
+      Param2["slug = 'guide/routing'"]
+      Param3["slug = 'api/reference/load'"]
+      
+      URL1 --> Route
+      URL2 --> Route
+      URL3 --> Route
+      
+      Route --> Param1
+      Route --> Param2
+      Route --> Param3
+    end
+    
+    style URL1 fill:#fff3e0,stroke:#f57c00
+    style URL2 fill:#fff3e0,stroke:#f57c00
+    style URL3 fill:#fff3e0,stroke:#f57c00
+    style Route fill:#f3e5f5,stroke:#7b1fa2
+    style Param1 fill:#e8f5e9,stroke:#388e3c
+    style Param2 fill:#e8f5e9,stroke:#388e3c
+    style Param3 fill:#e8f5e9,stroke:#388e3c`;
+    
   const requestFlowDiagram = `flowchart TD
     A[ブラウザ /posts/123] -->|①リクエスト| B[SvelteKit Router]
     B -->|②ルート解決| C[posts/id/+page.ts]
@@ -29,6 +92,12 @@ description: SvelteKitの動的ルーティングをTypeScriptで実装。動的
 ## 動的パラメータの基本
 
 URLの一部を変数として扱う基本的な方法を学びます。角括弧`[]`を使ったディレクトリ名が、URLパラメータとしてキャプチャされる仕組みです。
+
+### パラメータマッチングの仕組み
+
+以下の図は、URLパスがどのように動的パラメータにマッチし、変数として取得されるかを示しています。
+
+<Mermaid diagram={parameterMatchingDiagram} />
 
 ### [param] - 必須パラメータ
 
@@ -232,6 +301,12 @@ export const load: PageLoad = async ({ params }) => {
 ## Rest Parameters（可変長パラメータ）
 
 URLの任意の深さのパスを一つのパラメータとしてキャプチャする機能です。ドキュメントサイトの階層構造や、ファイルシステムのような可変長のパスを扱う際に便利です。
+
+### Rest Parametersの動作
+
+以下の図は、`[...slug]`がどのように複数のパスセグメントを一つのパラメータとしてキャプチャするかを示しています。
+
+<Mermaid diagram={restParametersDiagram} />
 
 ### [...slug] - 複数セグメントのキャプチャ
 

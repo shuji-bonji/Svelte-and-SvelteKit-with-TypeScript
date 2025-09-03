@@ -6,31 +6,27 @@ description: "SPA/MPAアーキテクチャとCSR/SSR/SSG/ISRなどのレンダ�
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
 
-const architectureDiagram = `graph TB
-    subgraph "レンダリング戦略の分類"
-        A[レンダリング戦略]
-        
-        A --> B[アーキテクチャ]
-        A --> C[レンダリング手法]
-        
-        B --> D[SPA<br/>Single Page Application]
-        B --> E[MPA<br/>Multi Page Application]
-        
-        C --> F[CSR<br/>Client Side Rendering]
-        C --> G[SSR<br/>Server Side Rendering]
-        C --> H[SSG<br/>Static Site Generation]
-        C --> I[ISR<br/>Incremental Static<br/>Regeneration]
-        
-        D -.組み合わせ.-> F
-        D -.組み合わせ.-> G
-        D -.組み合わせ.-> H
-        E -.組み合わせ.-> G
-        E -.組み合わせ.-> H
+const architectureDiagram = `graph LR
+
+    subgraph "アーキテクチャ"
+          D[SPA<br/>Single Page Application]
+          E[MPA<br/>Multi Page Application]
     end
+
+    subgraph "レンダリング手法"
+          F[CSR<br/>Client Side Rendering]
+          G[SSR<br/>Server Side Rendering]
+          H[SSG<br/>Static Site Generation]
+          I[ISR<br/>Incremental Static<br/>Regeneration]
+    end
+
+    D ==SPAとの組み合わせ==> F
+    D ==SPAとの組み合わせ==> G
+    D ==SPAとの組み合わせ==> H
+    E --MPAとの組み合わせ--> G
+    E --MPAとの組み合わせ--> H
     
-    style A fill:#ff3e00,color:#fff
-    style B fill:#40b3ff,color:#fff
-    style C fill:#40b3ff,color:#fff
+
     style D fill:#ffd4d4,color:#000
     style E fill:#ffd4d4,color:#000
     style F fill:#d4ffd4,color:#000

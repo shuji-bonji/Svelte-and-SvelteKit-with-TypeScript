@@ -3,11 +3,99 @@ title: 基本ルーティング
 description: SvelteKitの基本ルーティングをTypeScriptで学ぶ。ファイルベースルーティング、静的ルート、レイアウト、エラーハンドリングの実装方法を解説
 ---
 
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+  
+  const urlMappingDiagram = `graph LR
+    subgraph "ファイルシステム"
+      Root["src/routes/"]
+      Layout["+layout.svelte"]
+      Home["+page.svelte"]
+      About["about/+page.svelte"]
+      Blog["blog/+page.svelte"]
+      BlogNew["blog/new/+page.svelte"]
+      Contact["contact/+page.svelte"]
+    end
+
+    subgraph "URL構造"
+      URL1["/"]
+      URL2["/about"]
+      URL3["/blog"]
+      URL4["/blog/new"]
+      URL5["/contact"]
+    end
+
+    Home --> URL1
+        
+    Layout -.->|"全ページに適用"| URL1
+    Layout -.->|"全ページに適用"| URL2
+    Layout -.->|"全ページに適用"| URL3
+    Layout -.->|"全ページに適用"| URL4
+    Layout -.->|"全ページに適用"| URL5
+
+    About --> URL2
+    Blog --> URL3
+    BlogNew --> URL4
+    Contact --> URL5
+    
+    style Layout fill:#ffe0b2,stroke:#ff6f00
+    style Home fill:#e3f2fd,stroke:#1976d2
+    style About fill:#e3f2fd,stroke:#1976d2
+    style Blog fill:#e3f2fd,stroke:#1976d2
+    style BlogNew fill:#e3f2fd,stroke:#1976d2
+    style Contact fill:#e3f2fd,stroke:#1976d2`;
+    
+  const layoutInheritanceDiagram = `graph TB
+    subgraph "レイアウト階層"
+      RootLayout["/+layout.svelte<br/>ヘッダー・フッター"]
+      BlogLayout["/blog/+layout.svelte<br/>サイドバー追加"]
+      BlogPage["/blog/+page.svelte<br/>記事一覧"]
+      BlogNewPage["/blog/new/+page.svelte<br/>新規投稿"]
+    end
+    
+    RootLayout --> BlogLayout
+    BlogLayout --> BlogPage
+    BlogLayout --> BlogNewPage
+    
+    style RootLayout fill:#fff3e0,stroke:#f57c00
+    style BlogLayout fill:#e8f5e9,stroke:#388e3c
+    style BlogPage fill:#e3f2fd,stroke:#1976d2
+    style BlogNewPage fill:#e3f2fd,stroke:#1976d2`;
+    
+  const errorHandlingFlow = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit
+    participant PageLoad as +page.ts
+    participant ErrorPage as +error.svelte
+    
+    User->>Browser: 存在しないページへアクセス
+    Browser->>SvelteKit: /invalid-page リクエスト
+    SvelteKit->>PageLoad: ルート解決を試みる
+    PageLoad--xSvelteKit: 404エラー発生
+    
+    SvelteKit->>ErrorPage: エラーページ表示
+    Note over ErrorPage: 最も近い+error.svelte
+    ErrorPage->>ErrorPage: status: 404<br/>message: "Not Found"
+    ErrorPage-->>Browser: カスタムエラーページ
+    Browser->>User: エラー表示
+    
+    rect rgba(220, 38, 127, 0.1)
+        Note over ErrorPage: エラーは階層を遡って処理される
+    end`;
+</script>
+
 SvelteKitはファイルシステムベースのルーティングを採用しています。`src/routes`ディレクトリ内のファイル構造がそのままURLパスになります。この直感的な仕組みにより、ディレクトリとファイルを作成するだけで新しいページを追加できます。
 
 ## ディレクトリ構造とURLの対応
 
 `src/routes`ディレクトリの構造がそのままWebサイトのURL構造になります。この仕組みにより、URLパスの設計と管理が直感的になり、プロジェクトの構造を見るだけでサイトマップが理解できます。
+
+### ファイルシステムとURLのマッピング
+
+以下の図は、ファイル構造がどのようにURLに変換されるかを視覚的に示しています。
+
+<Mermaid diagram={urlMappingDiagram} />
 
 ### 基本的なマッピング
 
@@ -93,6 +181,12 @@ Load関数から受け取ったデータをページで使用する例です。�
 ## レイアウト
 
 レイアウトファイル（`+layout.svelte`）を使用することで、複数のページで共通のUI要素（ヘッダー、フッター、サイドバーなど）を効率的に管理できます。レイアウトは階層的に継承され、セクション別の設定も可能です。
+
+### レイアウトの継承関係
+
+以下の図は、レイアウトがどのように階層的に継承されるかを示しています。
+
+<Mermaid diagram={layoutInheritanceDiagram} />
 
 ### グローバルレイアウト
 
@@ -182,6 +276,12 @@ export const load: LayoutLoad = async ({ fetch }) => {
 ## エラーハンドリング
 
 SvelteKitは堅牢なエラーハンドリングシステムを提供しています。`+error.svelte`ファイルでカスタムエラーページを定義し、404や500エラーなどの状況に応じた適切なユーザー体験を提供できます。
+
+### エラー処理のフロー
+
+以下の図は、エラーが発生した際のSvelteKitの処理フローを示しています。
+
+<Mermaid diagram={errorHandlingFlow} />
 
 ### カスタムエラーページ
 

@@ -109,6 +109,19 @@ SSR、SSG、CSR、ISRなど、SvelteKitが提供する様々なレンダリン�
 
 </div>
 
+<div class="topic-card">
+
+### [Web Components、Svelte、CSS戦略の実践ガイド](/deep-dive/webcomponents-svelte-css-strategies/)
+
+Web ComponentsとSvelteの関係、Shadow DOMのパフォーマンス問題、各種CSS戦略（Scoped CSS、CSS Modules、TailwindCSS/UnoCSS）の選択指針を実測データと共に解説します。
+
+**学べること：**
+- Shadow DOMの実測パフォーマンスデータ（5倍の遅延）
+- Svelteの3つのスタイル戦略の比較
+- プロジェクトに最適なCSS戦略の選択方法
+
+</div>
+
 </div>
 
 <style>

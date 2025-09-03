@@ -19,11 +19,11 @@ description: SvelteKitの高度なルーティング機能をTypeScriptで実装
       Footer[Footer]
     end
     
-    style Header fill:#e1f5fe
-    style Footer fill:#e1f5fe
-    style Sidebar fill:#fff3e0
-    style DashNav fill:#f3e5f5
-    style Page fill:#e8f5e9`;
+    style Header fill:#e1f5fe,color:#000
+    style Footer fill:#e1f5fe,color:#000
+    style Sidebar fill:#fff3e0,color:#000
+    style DashNav fill:#f3e5f5,color:#000
+    style Page fill:#e8f5e9,color:#000`;
     
   const routeGroupDiagram = `graph LR
     subgraph "ファイルシステム構造"
@@ -42,11 +42,11 @@ description: SvelteKitの高度なルーティング機能をTypeScriptで実装
     B --> E
     C --> F
     
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#fce4ec
+    style A fill:#e3f2fd,color:#000
+    style B fill:#fff3e0,color:#000
+    style C fill:#fce4ec,color:#000
     
-    classDef urlStyle fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    classDef urlStyle fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:#000
     class D,E,F urlStyle`;
     
   const navigationFlowDiagram = `sequenceDiagram
@@ -95,12 +95,12 @@ description: SvelteKitの高度なルーティング機能をTypeScriptで実装
       AppError -.->|"存在しない場合"| RootError
     end
     
-    style PageError fill:#ffebee,stroke:#f44336
-    style PostsError fill:#e8f5e9,stroke:#4caf50
-    style AppError fill:#fff3e0
-    style RootError fill:#e3f2fd
+    style PageError fill:#ffebee,stroke:#f44336,color:#000
+    style PostsError fill:#e8f5e9,stroke:#4caf50,color:#000
+    style AppError fill:#fff3e0,color:#000
+    style RootError fill:#e3f2fd,color:#000
     
-    classDef errorHandler fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    classDef errorHandler fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000
     class PostsError errorHandler`;
     
   const layoutInheritanceDiagram = `sequenceDiagram

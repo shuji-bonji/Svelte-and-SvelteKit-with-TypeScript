@@ -33,12 +33,12 @@ description: SvelteKitの動的ルーティングをTypeScriptで実装。動的
     Route2 --> Param2
     Route3 --> Param3
     
-    style URL1 fill:#e3f2fd,stroke:#1976d2
-    style URL2 fill:#e3f2fd,stroke:#1976d2
-    style URL3 fill:#e3f2fd,stroke:#1976d2
-    style Param1 fill:#e8f5e9,stroke:#388e3c
-    style Param2 fill:#e8f5e9,stroke:#388e3c
-    style Param3 fill:#e8f5e9,stroke:#388e3c`;
+    style URL1 fill:#e3f2fd,stroke:#1976d2,color:#000
+    style URL2 fill:#e3f2fd,stroke:#1976d2,color:#000
+    style URL3 fill:#e3f2fd,stroke:#1976d2,color:#000
+    style Param1 fill:#e8f5e9,stroke:#388e3c,color:#000
+    style Param2 fill:#e8f5e9,stroke:#388e3c,color:#000
+    style Param3 fill:#e8f5e9,stroke:#388e3c,color:#000`;
     
   const restParametersDiagram = `graph TB
     subgraph "Rest Parameters の動作"
@@ -61,13 +61,13 @@ description: SvelteKitの動的ルーティングをTypeScriptで実装。動的
       Route --> Param3
     end
     
-    style URL1 fill:#fff3e0,stroke:#f57c00
-    style URL2 fill:#fff3e0,stroke:#f57c00
-    style URL3 fill:#fff3e0,stroke:#f57c00
-    style Route fill:#f3e5f5,stroke:#7b1fa2
-    style Param1 fill:#e8f5e9,stroke:#388e3c
-    style Param2 fill:#e8f5e9,stroke:#388e3c
-    style Param3 fill:#e8f5e9,stroke:#388e3c`;
+    style URL1 fill:#fff3e0,stroke:#f57c00,color:#000
+    style URL2 fill:#fff3e0,stroke:#f57c00,color:#000
+    style URL3 fill:#fff3e0,stroke:#f57c00,color:#000
+    style Route fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    style Param1 fill:#e8f5e9,stroke:#388e3c,color:#000
+    style Param2 fill:#e8f5e9,stroke:#388e3c,color:#000
+    style Param3 fill:#e8f5e9,stroke:#388e3c,color:#000`;
     
   const requestFlowDiagram = `flowchart TD
     A[ブラウザ /posts/123] -->|①リクエスト| B[SvelteKit Router]
@@ -80,11 +80,11 @@ description: SvelteKitの動的ルーティングをTypeScriptで実装。動的
     F -->|⑧レンダリング| G[HTML生成]
     G -->|⑨レスポンス| A
     
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#dfd,stroke:#333,stroke-width:2px,color:black
-    style D fill:#ffd,stroke:#333,stroke-width:2px,color:black
-    style F fill:#dfd,stroke:#333,stroke-width:2px,color:black`;
+    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#bbf,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#dfd,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#ffd,stroke:#333,stroke-width:2px,color:#000
+    style F fill:#dfd,stroke:#333,stroke-width:2px,color:#000`;
 </script>
 
 動的ルーティングを使用することで、URLの一部を変数として扱い、柔軟なルート設計が可能になります。ブログ記事、ユーザープロフィール、商品詳細ページなど、同じレイアウトで異なるデータを表示する場合に活用します。

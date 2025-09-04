@@ -32,43 +32,43 @@ JavaScriptの組み込みクラスとSvelte 5のリアクティブクラスの�
     <tbody>
       <tr class="available">
         <td><code>Map</code></td>
-        <td><code>SvelteMap</code></td>
+        <td><a href="#SvelteMap"><code>SvelteMap</code></a></td>
         <td>キーと値のペアを管理</td>
         <td>✅ 利用可能</td>
       </tr>
       <tr class="available">
         <td><code>Set</code></td>
-        <td><code>SvelteSet</code></td>
+        <td><a href="#SvelteSet"><code>SvelteSet</code></a></td>
         <td>一意な値のコレクション</td>
         <td>✅ 利用可能</td>
       </tr>
       <tr class="available">
         <td><code>Date</code></td>
-        <td><code>SvelteDate</code></td>
+        <td><a href="#SvelteDate"><code>SvelteDate</code></a></td>
         <td>日時の操作と管理</td>
         <td>✅ 利用可能</td>
       </tr>
       <tr class="available">
         <td><code>URL</code></td>
-        <td><code>SvelteURL</code></td>
+        <td><a href="#SvelteURL"><code>SvelteURL</code></a></td>
         <td>URLの解析と操作</td>
         <td>✅ 利用可能</td>
       </tr>
       <tr class="available">
         <td><code>URLSearchParams</code></td>
-        <td><code>SvelteURLSearchParams</code></td>
+        <td><a href="#SvelteURLSearchParams"><code>SvelteURLSearchParams</code></a></td>
         <td>クエリパラメータの管理</td>
         <td>✅ 利用可能</td>
       </tr>
       <tr class="native">
         <td><code>Array</code></td>
-        <td><code>$state([])</code></td>
+        <td><a href="#ArrayとObject（ネイティブ対応）"><code>$state([])</code></a></td>
         <td>配列データの管理</td>
         <td>🔄 ネイティブ対応</td>
       </tr>
       <tr class="native">
         <td><code>Object</code></td>
-        <td><code>$state(&#123;&#125;)</code></td>
+        <td><a href="#ArrayとObject（ネイティブ対応）"><code>$state(&#123;&#125;)</code></a></td>
         <td>オブジェクトの管理</td>
         <td>🔄 ネイティブ対応</td>
       </tr>
@@ -123,6 +123,18 @@ JavaScriptの組み込みクラスとSvelte 5のリアクティブクラスの�
     font-size: 0.9rem;
   }
   
+  .class-comparison a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+    transition: all 0.2s ease;
+  }
+  
+  .class-comparison a:hover {
+    color: #ff3e00;
+    border-bottom-style: solid;
+  }
+  
   .class-comparison tr.available {
     background: #f0fdf4;
   }
@@ -158,6 +170,10 @@ JavaScriptの組み込みクラスとSvelte 5のリアクティブクラスの�
   :global(.dark) .class-comparison code {
     background: #4b5563;
     color: #f3f4f6;
+  }
+  
+  :global(.dark) .class-comparison a:hover {
+    color: #ff6b3e;
   }
   
   :global(.dark) .class-comparison tr.available {
@@ -336,6 +352,115 @@ Svelte 5で利用可能なリアクティブクラスの詳細な使い方を解
 </style>
 ```
 
+### ArrayとObject（ネイティブ対応）
+
+Svelte 5では、`Array`と`Object`は`$state()`でラップするだけで自動的にディープリアクティブになります。専用のクラスは不要です。
+
+```svelte ln live
+<script lang="ts">
+  // 配列は$stateで自動的にリアクティブ
+  let todos = $state<Array<{id: number; text: string; done: boolean}>>([]);
+  
+  // オブジェクトも同様に自動的にリアクティブ
+  let userProfile = $state({
+    name: '太郎',
+    age: 25,
+    preferences: {
+      theme: 'dark',
+      language: 'ja'
+    }
+  });
+  
+  // 配列のメソッドが自動的にリアクティブ
+  function addTodo(text: string) {
+    todos.push({
+      id: Date.now(),
+      text,
+      done: false
+    });
+    // pushだけでUIが更新される！
+  }
+  
+  function toggleTodo(id: number) {
+    const todo = todos.find(t => t.id === id);
+    if (todo) {
+      todo.done = !todo.done; // 直接変更でOK
+    }
+  }
+  
+  // オブジェクトの深いプロパティも自動追跡
+  function toggleTheme() {
+    userProfile.preferences.theme = 
+      userProfile.preferences.theme === 'dark' ? 'light' : 'dark';
+  }
+  
+  // 派生値
+  let completedCount = $derived(
+    todos.filter(t => t.done).length
+  );
+  
+  let greeting = $derived(
+    `こんにちは、${userProfile.name}さん（${userProfile.age}歳）`
+  );
+</script>
+
+<div class="native-reactive">
+  <h3>ネイティブリアクティブデモ</h3>
+  
+  <div class="user-section">
+    <h4>{greeting}</h4>
+    <button onclick={toggleTheme}>
+      テーマ: {userProfile.preferences.theme}
+    </button>
+    <button onclick={() => userProfile.age++}>
+      年齢を増やす
+    </button>
+  </div>
+  
+  <div class="todo-section">
+    <h4>TODOリスト（完了: {completedCount}/{todos.length}）</h4>
+    <input 
+      placeholder="新しいTODO" 
+      onkeydown={(e) => {
+        if (e.key === 'Enter' && e.currentTarget.value) {
+          addTodo(e.currentTarget.value);
+          e.currentTarget.value = '';
+        }
+      }}
+    />
+    
+    <ul>
+      {#each todos as todo}
+        <li>
+          <label>
+            <input 
+              type="checkbox" 
+              checked={todo.done}
+              onchange={() => toggleTodo(todo.id)}
+            />
+            <span class:done={todo.done}>{todo.text}</span>
+          </label>
+        </li>
+      {/each}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .done {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+</style>
+```
+
+:::tip[ArrayとObjectの重要ポイント]
+- **専用クラス不要**: `SvelteArray`や`SvelteObject`は存在しません
+- **ディープリアクティブ**: ネストしたプロパティも自動的に追跡
+- **標準メソッド対応**: push、pop、splice、sortなど全て使用可能
+- **直接変更OK**: Reactのようなイミュータブル更新は不要
+:::
+
 ### SvelteURL
 
 `URL`のリアクティブ版で、URLの各部分を動的に管理します。
@@ -428,6 +553,272 @@ Svelte 5で利用可能なリアクティブクラスの詳細な使い方を解
   </div>
 </div>
 ```
+
+### SvelteURLSearchParams
+
+`URLSearchParams`のリアクティブ版で、クエリパラメータを効率的に管理します。
+
+```svelte ln live
+<script lang="ts">
+  import { SvelteURLSearchParams } from 'svelte/reactivity';
+  
+  // 初期パラメータ
+  let params = $state(new SvelteURLSearchParams('?category=electronics&sort=price&page=1'));
+  
+  // フィルター設定（個別に$stateで定義）
+  let category = $state('electronics');
+  let minPrice = $state<number | null>(null);
+  let maxPrice = $state<number | null>(null);
+  let inStock = $state(false);
+  let sort = $state('price');
+  
+  // フィルターの変更をURLSearchParamsに反映
+  $effect(() => {
+    params.set('category', category);
+    params.set('sort', sort);
+    
+    if (minPrice !== null) {
+      params.set('min', minPrice.toString());
+    } else {
+      params.delete('min');
+    }
+    
+    if (maxPrice !== null) {
+      params.set('max', maxPrice.toString());
+    } else {
+      params.delete('max');
+    }
+    
+    if (inStock) {
+      params.set('inStock', 'true');
+    } else {
+      params.delete('inStock');
+    }
+  });
+  
+  // クエリ文字列の生成
+  let queryString = $derived(params.toString());
+  
+  // 完全なURL
+  let fullUrl = $derived(`https://shop.example.com/products?${queryString}`);
+  
+  // パラメータのクリア
+  function clearFilters() {
+    category = 'all';
+    minPrice = null;
+    maxPrice = null;
+    inStock = false;
+    sort = 'relevance';
+    params.delete('page'); // ページネーションもリセット
+  }
+  
+  // カテゴリ一覧
+  const categories = ['all', 'electronics', 'clothing', 'books', 'sports'];
+  const sortOptions = ['relevance', 'price', 'rating', 'newest'];
+</script>
+
+<div class="search-params">
+  <h3>商品検索フィルター</h3>
+  
+  <div class="filters">
+    <label>
+      カテゴリ:
+      <select bind:value={category}>
+        {#each categories as cat}
+          <option value={cat}>{cat}</option>
+        {/each}
+      </select>
+    </label>
+    
+    <label>
+      最小価格:
+      <input 
+        type="number" 
+        bind:value={minPrice}
+        placeholder="0"
+      />
+    </label>
+    
+    <label>
+      最大価格:
+      <input 
+        type="number" 
+        bind:value={maxPrice}
+        placeholder="999999"
+      />
+    </label>
+    
+    <label>
+      <input 
+        type="checkbox" 
+        bind:checked={inStock}
+      />
+      在庫あり
+    </label>
+    
+    <label>
+      並び順:
+      <select bind:value={sort}>
+        {#each sortOptions as sort}
+          <option value={sort}>{sort}</option>
+        {/each}
+      </select>
+    </label>
+    
+    <button onclick={clearFilters}>フィルターをクリア</button>
+  </div>
+  
+  <div class="url-output">
+    <h4>生成されたURL:</h4>
+    <code>{fullUrl}</code>
+    
+    <h4>パラメータ一覧:</h4>
+    <ul>
+      {#each params as [key, value]}
+        <li>{key}: {value}</li>
+      {/each}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .search-params {
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  :global(.dark) .search-params {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .search-params h3 {
+    color: #ff3e00;
+    margin-bottom: 1rem;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  
+  .filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #4b5563;
+  }
+  
+  :global(.dark) .filters label {
+    color: #d1d5db;
+  }
+  
+  .filters select,
+  .filters input[type="number"] {
+    padding: 0.375rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    color: #111827;
+    font-size: 0.875rem;
+  }
+  
+  :global(.dark) .filters select,
+  :global(.dark) .filters input[type="number"] {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+  }
+  
+  .filters button {
+    padding: 0.5rem 1rem;
+    background: #ff3e00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+  }
+  
+  .filters button:hover {
+    background: #ff5a00;
+  }
+  
+  .url-output {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+  
+  :global(.dark) .url-output {
+    background: #374151;
+  }
+  
+  .url-output h4 {
+    color: #1f2937;
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  :global(.dark) .url-output h4 {
+    color: #f3f4f6;
+  }
+  
+  .url-output code {
+    display: block;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 4px;
+    word-break: break-all;
+    margin: 0.5rem 0;
+    color: #1f2937;
+    font-size: 0.813rem;
+    border: 1px solid #e5e7eb;
+  }
+  
+  :global(.dark) .url-output code {
+    background: #1f2937;
+    color: #f3f4f6;
+    border-color: #4b5563;
+  }
+  
+  .url-output ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  
+  .url-output li {
+    padding: 0.375rem 0;
+    color: #4b5563;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  :global(.dark) .url-output li {
+    color: #d1d5db;
+    border-bottom-color: #4b5563;
+  }
+  
+  .url-output li:last-child {
+    border-bottom: none;
+  }
+</style>
+```
+
+:::info[SvelteURLSearchParamsの特徴]
+- **自動同期**: パラメータの変更が自動的にUIに反映
+- **標準API準拠**: 通常のURLSearchParamsと同じメソッド
+- **リアクティブイテレーション**: `{#each params}`で直接ループ可能
+- **型安全**: TypeScriptで完全にサポート
+:::
 
 ### SvelteDate
 

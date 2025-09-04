@@ -605,30 +605,31 @@ Runesシステムを使った実際のTODOリストアプリケーションで�
 Runesは特定の場所（ファイルタイプ）でのみ使用可能です。  
 特にSvelteKitプロジェクトでは、ファイルの種類によって使用可否が異なるため注意が必要です。
 
-### Svelteコンポーネント
-| ファイル（場所） | 使用可否 | 理由 |
+### Svelteファイル（Runesが使える）
+| ファイルタイプ | 使用可否 | 説明 |
 |---|:---:|---|
-| `*.svelte` | 使用可能✅ | Svelteコンポーネント内で完全にサポート |
-| `+page.svelte` |使用可能✅ | SvelteKitのページコンポーネント。UI と連動する状態を管理できる |
-| `+layout.svelte` | 使用可能✅ | SvelteKitのレイアウトコンポーネント。グローバルな UI 状態やヘッダー・ナビゲーションなどで有用 |
+| `*.svelte` | ✅ | 通常のSvelteコンポーネント |
+| `+page.svelte` | ✅ | SvelteKitのページコンポーネント |
+| `+layout.svelte` | ✅ | SvelteKitのレイアウトコンポーネント |
+| `+error.svelte` | ✅ | SvelteKitのエラーページコンポーネント |
+| `.svelte.js` / `.svelte.ts` | ✅ | リアクティブモジュール（ストアやユーティリティ） |
 
-### リアクティブモジュール
-| ファイル（場所） | 使用可否 | 理由 |
+### SvelteKitファイル（Runesが使えない）
+| ファイルタイプ | 使用可否 | 説明 |
 |---|:---:|---|
-| `.svelte.js`、<br>`.svelte.ts` | 使用可能✅ | リアクティブなストアやユーティリティを作成できる特別なファイル |
+| `+page.ts` / `+page.js` | ❌ | ユニバーサルload関数（サーバー/クライアント両方で実行） |
+| `+page.server.ts` / `+page.server.js` | ❌ | サーバーサイドload関数 |
+| `+layout.ts` / `+layout.js` | ❌ | レイアウトload関数 |
+| `+layout.server.ts` / `+layout.server.js` | ❌ | サーバーサイドレイアウトload関数 |
+| `+server.ts` / `+server.js` | ❌ | APIエンドポイント（GET、POST等のハンドラー） |
+| `hooks.server.ts` / `hooks.client.ts` | ❌ | フック（リクエスト/レスポンス処理） |
+| `app.d.ts` | ❌ | 型定義ファイル |
 
-### 通常のモジュール
-| ファイル（場所） | 使用可否 | 理由 |
+### 通常のJavaScript/TypeScriptファイル
+| ファイルタイプ | 使用可否 | 説明 |
 |---|:---:|---|
-| 通常の `.ts` / `.js` | 使用不可❌ | Rune は Svelte のコンパイラが処理する特別な構文 |
-
-### SvelteKitファイル
-| ファイル（場所） | 使用可否 | 理由 |
-|---|:---:|---|
-| `+page.ts`、<br>`+layout.ts` | 条件付き⚠️ | `load()` 関数内では使えないが、トップレベルでは使用可能 |
-| `+page.server.ts` | 使用不可❌ | サーバーサイド専用。SSR 実行時に1回限りで状態管理の意味がないため |
-| `+layout.server.ts` | 使用不可❌ | 同上 |
-| `hooks.server.ts` | 使用不可❌ | Rune のリアクティブ性が不要なサーバーロジック専用ファイル |
+| `.ts` / `.js` | ❌ | 通常のモジュール（ユーティリティ、設定ファイル等） |
+| `.mjs` / `.cjs` | ❌ | CommonJS/ESモジュール |
 
 :::tip[重要：`.svelte.js` / `.svelte.ts` ファイル]
 `.svelte.js`と`.svelte.ts`は、Svelte 5で導入された特別な拡張子で、**コンポーネント外でRunesを使用できる唯一の方法**です。これらのファイルでは、

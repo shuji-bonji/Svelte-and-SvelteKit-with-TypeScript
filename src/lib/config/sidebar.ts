@@ -126,6 +126,37 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
           ],
         },
+        // {
+        //   title: 'アーキテクチャ',
+        //   to: '/svelte/architecture/',
+        //   collapsible: true,
+        //   collapsed: true,
+        //   items: [
+        //     { title: 'アーキテクチャ概要', to: '/svelte/architecture/' },
+        //     {
+        //       title: 'SPA + API構成',
+        //       to: '/svelte/architecture/spa-patterns/',
+        //       items: [
+        //         {
+        //           title: 'SPA構築パターン',
+        //           to: '/svelte/architecture/spa-patterns/',
+        //         },
+        //         {
+        //           title: 'Firebase統合',
+        //           to: '/svelte/architecture/spa-patterns/firebase/',
+        //         },
+        //         {
+        //           title: 'Supabase統合',
+        //           to: '/svelte/architecture/spa-patterns/supabase/',
+        //         },
+        //         {
+        //           title: 'GraphQL統合',
+        //           to: '/svelte/architecture/spa-patterns/graphql/',
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
       ],
     },
     {

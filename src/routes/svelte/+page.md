@@ -115,6 +115,10 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
             <td class="py-2 text-gray-6 dark:text-gray-4">条件分岐、ループ、イベント</td>
           </tr>
           <tr>
+            <td class="py-2"><a href="{base}/svelte/basics/special-elements/" class="text-blue-600 dark:text-blue-400 hover:underline">特別な要素</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">svelte:プレフィックス要素</td>
+          </tr>
+          <tr>
             <td class="py-2"><a href="{base}/svelte/basics/component-lifecycle/" class="text-blue-600 dark:text-blue-400 hover:underline">コンポーネントライフサイクル</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">onMount、onDestroy、tick</td>
           </tr>

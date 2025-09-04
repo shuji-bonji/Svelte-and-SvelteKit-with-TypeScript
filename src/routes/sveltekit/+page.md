@@ -295,6 +295,10 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2"><a href="{base}/sveltekit/server/hooks/" class="text-green-600 dark:text-green-400 hover:underline">Hooks</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">ミドルウェア実装</td>
           </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/server/websocket-sse/" class="text-green-600 dark:text-green-400 hover:underline">WebSocket/SSE</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">リアルタイム通信の実装</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -339,6 +343,14 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/error-handling/" class="text-purple-600 dark:text-purple-400 hover:underline">エラーハンドリング</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">エラーページ、ログ戦略</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/application/testing/" class="text-purple-600 dark:text-purple-400 hover:underline">テスト戦略</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Vitest、Playwright、E2Eテスト</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/application/state-management/" class="text-purple-600 dark:text-purple-400 hover:underline">状態管理パターン</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Store、Context API、グローバル状態</td>
           </tr>
         </tbody>
       </table>

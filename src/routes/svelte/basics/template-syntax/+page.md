@@ -635,4 +635,4 @@ Svelteのテンプレート構文は、宣言的で強力な機能を提供し�
 - [トランジション・アニメーション](/svelte/basics/transitions/) - #keyとの組み合わせ
 :::
 
-次は[トランジション・アニメーション](/svelte/basics/transitions/)で、Svelteの美しいアニメーション機能について学びましょう。
+次は[特別な要素](/svelte/basics/special-elements/)で、Svelteの高度な要素について学びましょう。

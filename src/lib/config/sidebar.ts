@@ -49,6 +49,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/svelte/basics/template-syntax/',
             },
             {
+              title: '特別な要素',
+              to: '/svelte/basics/special-elements/',
+            },
+            {
               title: 'コンポーネントライフサイクル',
               to: '/svelte/basics/component-lifecycle/',
             },

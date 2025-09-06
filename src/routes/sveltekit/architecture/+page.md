@@ -40,7 +40,7 @@ SvelteKitのアーキテクチャを理解することで、
     </div>
   </a>
 
-  <a href="{base}/sveltekit/architecture/file-system/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/basics/file-system/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📂</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
@@ -126,6 +126,73 @@ SvelteKitのアーキテクチャを理解することで、
 - ファイルの実行環境を理解し、セキュアなコードを書ける
 - データフローを最適化してパフォーマンスを向上できる
 - 問題発生時に原因を素早く特定し解決できる
+
+## レンダリング戦略とアーキテクチャパターン
+
+レンダリング戦略の選択は、アプリケーション全体のアーキテクチャ設計と密接に関連しています。各戦略は異なるアーキテクチャパターンと相性があり、適切な組み合わせを選ぶことで、より効率的で保守性の高いアプリケーションを構築できます。
+
+### SSRとマイクロサービスアーキテクチャ
+SSRは、バックエンドサービスとの密な連携が必要なため、マイクロサービスアーキテクチャとの相性が良好です。各マイクロサービスからデータを集約し、サーバー側で統合的にレンダリングすることで、クライアントの負荷を軽減できます。
+
+**実装例：**
+- APIゲートウェイパターンの活用
+- サーバー側でのデータ集約とキャッシング
+- GraphQL Federation による複数サービスの統合
+
+### SSGとJamstackアーキテクチャ
+SSGは、Jamstack（JavaScript、API、Markup）アーキテクチャの中核を成す技術です。ビルド時に生成された静的ファイルをCDNから配信し、動的な機能はAPIとJavaScriptで実現することで、スケーラビリティとセキュリティを両立できます。
+
+**実装例：**
+- Headless CMSとの統合
+- Webhookによる自動再ビルド
+- Edge Functionsによる動的処理
+
+### SPAとコンポーネント駆動開発
+SPAは、コンポーネント駆動開発（CDD）やアトミックデザインと相性が良く、再利用可能なUIコンポーネントを組み合わせて複雑なインターフェースを構築できます。状態管理ライブラリと組み合わせることで、大規模なアプリケーションでも管理しやすい構造を実現できます。
+
+**実装例：**
+- Storybookによるコンポーネントカタログ
+- Svelte Storesによる状態管理
+- デザインシステムの実装
+
+### ハイブリッド戦略とドメイン駆動設計
+SvelteKitのハイブリッド戦略は、ドメイン駆動設計（DDD）の概念と相性が良好です。各ドメイン（機能領域）に応じて最適なレンダリング戦略を選択することで、ビジネス要件に最適化されたアーキテクチャを構築できます。
+
+**実装例：**
+```typescript
+// routes/
+// ├── (marketing)/     # SSG: マーケティングページ
+// ├── (app)/          # SPA: アプリケーション
+// └── (api)/          # SSR: APIエンドポイント
+```
+
+### エンタープライズパターンとの統合
+
+#### レイヤードアーキテクチャ
+```typescript
+// プレゼンテーション層: +page.svelte
+// ビジネスロジック層: services/
+// データアクセス層: repositories/
+// ドメインモデル: models/
+```
+
+#### リポジトリパターン
+```typescript
+// repositories/user.repository.ts
+export class UserRepository {
+  async findById(id: string): Promise<User> {
+    // データソースからの取得ロジック
+  }
+}
+```
+
+#### CQRS（Command Query Responsibility Segregation）
+- 読み取り用: SSGで事前生成
+- 書き込み用: SSRでリアルタイム処理
+
+:::info[詳細な実装ガイド]
+各アーキテクチャパターンの具体的な実装方法については、今後のアップデートで詳しく解説予定です。
+:::
 
 ## 次のステップ
 

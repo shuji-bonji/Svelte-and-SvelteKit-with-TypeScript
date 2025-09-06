@@ -138,26 +138,30 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         //   items: [
         //     { title: 'アーキテクチャ概要', to: '/svelte/architecture/' },
         //     {
-        //       title: 'SPA + API構成',
+        //       title: 'SPA + 既存API統合',
         //       to: '/svelte/architecture/spa-patterns/',
+        //     },
+        //     {
+        //       title: 'BaaS統合パターン',
+        //       to: '/svelte/architecture/baas-integration/',
         //       items: [
         //         {
-        //           title: 'SPA構築パターン',
-        //           to: '/svelte/architecture/spa-patterns/',
-        //         },
-        //         {
         //           title: 'Firebase統合',
-        //           to: '/svelte/architecture/spa-patterns/firebase/',
+        //           to: '/svelte/architecture/baas-integration/firebase/',
         //         },
         //         {
         //           title: 'Supabase統合',
-        //           to: '/svelte/architecture/spa-patterns/supabase/',
-        //         },
-        //         {
-        //           title: 'GraphQL統合',
-        //           to: '/svelte/architecture/spa-patterns/graphql/',
+        //           to: '/svelte/architecture/baas-integration/supabase/',
         //         },
         //       ],
+        //     },
+        //     {
+        //       title: 'GraphQL統合',
+        //       to: '/svelte/architecture/graphql/',
+        //     },
+        //     {
+        //       title: 'マイクロフロントエンド',
+        //       to: '/svelte/architecture/micro-frontends/',
         //     },
         //   ],
         // },
@@ -179,6 +183,14 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'プロジェクト構造',
               to: '/sveltekit/basics/project-structure/',
+            },
+            {
+              title: '特殊ファイルシステム',
+              to: '/sveltekit/basics/file-system/',
+            },
+            {
+              title: 'レンダリング戦略',
+              to: '/sveltekit/basics/rendering-strategies/',
             },
             { title: 'app.d.tsの役割', to: '/sveltekit/basics/global-types/' },
           ],
@@ -205,6 +217,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
             { title: 'Load関数の基礎', to: '/sveltekit/data-loading/basic/' },
             {
+              title: 'データフローの詳細',
+              to: '/sveltekit/data-loading/flow/',
+            },
+            {
               title: 'TypeScript型の自動生成システム',
               to: '/sveltekit/data-loading/auto-types/',
             },
@@ -218,27 +234,16 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: 'アーキテクチャ詳解',
           to: '/sveltekit/architecture/',
           collapsible: true,
+          collapsed: true,
           items: [
             { title: 'アーキテクチャ概要', to: '/sveltekit/architecture/' },
             {
-              title: '実行環境別アーキテクチャ',
-              to: '/sveltekit/architecture/execution-environments/',
-            },
-            {
-              title: 'SvelteKitファイルシステム',
-              to: '/sveltekit/architecture/file-system/',
-            },
-            {
-              title: 'ファイル構成と実行環境',
-              to: '/sveltekit/architecture/file-structure/',
-            },
-            {
-              title: 'データロードフロー',
-              to: '/sveltekit/architecture/data-loading/',
-            },
-            {
               title: 'レンダリングパイプライン',
               to: '/sveltekit/architecture/rendering-pipeline/',
+            },
+            {
+              title: 'アクセスログと分析戦略',
+              to: '/sveltekit/architecture/execution-environments/',
             },
           ],
         },
@@ -298,6 +303,42 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
           ],
         },
+        // {
+        //   title: 'エンタープライズ開発',
+        //   to: '/sveltekit/enterprise/',
+        //   collapsible: true,
+        //   collapsed: true,
+        //   items: [
+        //     {
+        //       title: 'エンタープライズ開発概要',
+        //       to: '/sveltekit/enterprise/',
+        //     },
+        //     {
+        //       title: 'レイヤードアーキテクチャ',
+        //       to: '/sveltekit/enterprise/layered-architecture/',
+        //     },
+        //     {
+        //       title: 'ドメイン駆動設計（DDD）',
+        //       to: '/sveltekit/enterprise/domain-driven-design/',
+        //     },
+        //     {
+        //       title: 'リポジトリパターン',
+        //       to: '/sveltekit/enterprise/repository-pattern/',
+        //     },
+        //     {
+        //       title: '依存性注入（DI）',
+        //       to: '/sveltekit/enterprise/dependency-injection/',
+        //     },
+        //     {
+        //       title: 'ユニットテスト戦略',
+        //       to: '/sveltekit/enterprise/testing-strategies/',
+        //     },
+        //     {
+        //       title: 'Clean Architecture実装',
+        //       to: '/sveltekit/enterprise/clean-architecture/',
+        //     },
+        //   ],
+        // },
         {
           title: '最適化編',
           to: '/sveltekit/optimization/',
@@ -378,7 +419,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: '素のJS構文でリアクティビティ',
           to: '/deep-dive/reactivity-with-plain-javascript-syntax/',
         },
-        { title: 'レンダリング戦略', to: '/deep-dive/rendering-strategies/' },
+        {
+          title: 'レンダリング戦略 と アーキテクチャパターン',
+          to: '/deep-dive/rendering-strategies/',
+        },
         {
           title: 'SvelteKitが自動生成する型',
           to: '/deep-dive/auto-generated-types/',

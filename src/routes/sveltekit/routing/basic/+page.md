@@ -552,8 +552,14 @@ SvelteKitの基本ルーティングは、
 - **柔軟**: レイアウトの継承とエラーハンドリング
 - **高速**: 自動的なコード分割とプリフェッチ
 
+:::info[関連情報]
+- **ファイルの実行環境**: 各ファイルがどこで実行されるかは[プロジェクト構造](/sveltekit/basics/project-structure/#レンダリングモード別の実行タイミング)を参照
+- **レンダリング戦略**: SSR/SSG/SPAの選択は[レンダリング戦略](/sveltekit/basics/rendering-strategies/)を参照
+- **特殊ファイルの詳細**: `+page`、`+layout`等の詳細は[特殊ファイルシステム](/sveltekit/basics/file-system/)を参照
+:::
+
 ## 次のステップ
 
 - [動的ルーティング](/sveltekit/routing/dynamic/) - 動的なURLパラメータの扱い方
-- [SvelteKitファイルシステム](/sveltekit/architecture/file-system/) - 特殊ファイルの詳細
+- [特殊ファイルシステム](/sveltekit/basics/file-system/) - 特殊ファイルの詳細
 - [Load関数とデータフェッチング](/sveltekit/data-loading/) - データ取得の詳細

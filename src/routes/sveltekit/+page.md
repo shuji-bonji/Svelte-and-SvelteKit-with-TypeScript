@@ -86,7 +86,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 
 1. **Svelte習得確認** - Svelte 5の基礎知識があるか確認
    - ない場合 → [📚 Svelte基礎へ]({base}/svelte/)
-2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング詳解、Load関数とデータフェッチング
+2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング、Load関数とデータフェッチング
 3. **🏛️ アーキテクチャ詳解** - 実行環境、ファイル構成、データフロー、レンダリングパイプライン
 4. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
 5. **🏗️ アプリ構築編** - 認証・認可、セッション管理、データベース統合、環境変数管理、エラーハンドリング
@@ -244,7 +244,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">SSR/SSG/SPAの詳細な動作</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/file-system/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイルシステム完全ガイド</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/basics/file-system/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイルシステム完全ガイド</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitのファイル構成</td>
           </tr>
           <tr>
@@ -768,7 +768,7 @@ src/
 [概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解
 
 **すぐに実装したい方**:
-[ルーティング詳解](/sveltekit/routing/)で実践的な実装を開始
+[ルーティング](/sveltekit/routing/)で実践的な実装を開始
 
 **特定の機能を学びたい方**:
 上記の学習ロードマップから必要なセクションを選択

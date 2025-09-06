@@ -4,8 +4,14 @@ description: Svelte5とTypeScriptで作るTODOアプリ完全実装ガイド。$
 ---
 <script>
   import { base } from '$app/paths';
+  import { onMount } from 'svelte';
   
-  let isDarkMode = $state(false);
+  // html.darkクラスの存在をチェックして初期値を設定
+  let htmlHasDarkClass = $state(false);
+  
+  onMount(() => {
+    htmlHasDarkClass = document.documentElement.classList.contains('dark');
+  });
 </script>
 
 Svelte 5のRunesシステムとTypeScriptを使用した、フル機能のTODOアプリケーション実装例です。
@@ -23,55 +29,43 @@ Svelte 5のRunesシステムとTypeScriptを使用した、フル機能のTODO�
 ### スクリーンショット
 
 <div class="relative max-w-4xl mx-auto">
-  <!-- モード切り替えボタン -->
-  <div class="flex justify-center gap-2 mb-4">
-    <button 
-      onclick={() => isDarkMode = false}
-      class="px-4 py-2 rounded-lg font-medium transition-all {!isDarkMode ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
-    >
-      ☀️ ライトモード
-    </button>
-    <button 
-      onclick={() => isDarkMode = true}
-      class="px-4 py-2 rounded-lg font-medium transition-all {isDarkMode ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
-    >
-      🌙 ダークモード
-    </button>
-  </div>
-  
   <!-- スクリーンショット表示 -->
   <div class="relative overflow-hidden rounded-xl shadow-2xl">
+    <!-- ライトモード画像（html.darkクラスがない場合に表示） -->
     <img 
       src="{base}/images/examples/todo-app-light.png" 
       alt="TODOアプリ - ライトモード" 
-      class="w-full transition-opacity duration-300 {isDarkMode ? 'opacity-0 absolute' : 'opacity-100'}"
+      class="w-full transition-opacity duration-300 block dark:hidden"
     >
+    <!-- ダークモード画像（html.darkクラスがある場合に表示） -->
     <img 
       src="{base}/images/examples/todo-app-dark.png" 
       alt="TODOアプリ - ダークモード" 
-      class="w-full transition-opacity duration-300 {!isDarkMode ? 'opacity-0' : 'opacity-100'}"
+      class="w-full transition-opacity duration-300 hidden dark:block"
     >
   </div>
   
   <!-- キャプション -->
   <p class="text-center text-gray-600 dark:text-gray-400 mt-3 text-sm">
-    {isDarkMode ? 'ダークモード' : 'ライトモード'}表示 - GitHub風のモダンなデザイン
+    <span class="inline dark:hidden">ライトモード表示</span>
+    <span class="hidden dark:inline">ダークモード表示</span>
+    - GitHub風のモダンなデザイン
   </p>
 </div>
 
 ## 📋 実装機能
 
 ### 基本機能
-- ✅ TODOの追加
-- ✅ TODOの完了/未完了の切り替え
-- ✅ TODOの削除
-- ✅ TODOの編集（ダブルクリックで編集モード）
-- ✅ TODOの一括完了/解除
+- ✅ タスクの追加
+- ✅ タスクの完了/未完了の切り替え
+- ✅ タスクの削除
+- ✅ タスクの編集（ダブルクリックで編集モード）
+- ✅ タスクの一括完了/解除
 
 ### フィルタリング機能
-- All - すべてのTODOを表示
-- Active - アクティブなTODOのみ表示
-- Completed - 完了済みTODOのみ表示
+- All - すべてのタスクを表示
+- Active - アクティブなタスクのみ表示
+- Completed - 完了済みタスクのみ表示
 
 ### データ永続化
 - LocalStorageへの自動保存
@@ -184,7 +178,7 @@ function addTodo(text: string) {
 1. **TodoHeader.svelte**
    - タスクマネージャーのロゴ
    - ダークモード切り替えボタン
-   - 新しいTODOの入力フィールド
+   - 新しいタスクの入力フィールド
    - 「Add task」ボタン
 
 2. **TodoItem.svelte**

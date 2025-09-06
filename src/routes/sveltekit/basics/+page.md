@@ -60,6 +60,42 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
     </div>
   </a>
 
+  <a href="{base}/sveltekit/basics/file-system/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📂</div>
+      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+        特殊ファイルシステム
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitの特殊ファイル（+page、+layout等）の役割と実行環境を詳細に理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><code>+page.svelte</code>: ページコンポーネント</li>
+        <li><code>+page.server.ts</code>: サーバー専用処理</li>
+        <li><code>+layout</code>: レイアウト継承</li>
+        <li><code>+server.ts</code>: APIエンドポイント</li>
+        <li><strong>実行環境</strong>: サーバー/クライアント</li>
+      </ul>
+    </div>
+  </a>
+
+  <a href="{base}/sveltekit/basics/rendering-strategies/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🎨</div>
+      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+        レンダリング戦略
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、SPAの基本的な違いと選択基準を学び、最適な戦略を選択できるようになります。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>SSR</strong>: 動的コンテンツ向け</li>
+        <li><strong>SSG</strong>: 静的サイト生成</li>
+        <li><strong>SPA</strong>: クライアントレンダリング</li>
+        <li><strong>ハイブリッド</strong>: ページごとに選択</li>
+        <li><strong>パフォーマンス</strong>: 各戦略の比較</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/sveltekit/basics/global-types/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🌍</div>
@@ -115,7 +151,9 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 
 1. **概要とアーキテクチャ** - まずSvelteKitの全体像を理解
 2. **プロジェクト構造** - ディレクトリ構造と命名規約を習得
-3. **TypeScript型の自動生成** - `./$types`による型安全な開発
+3. **特殊ファイルシステム** - 各ファイルの役割と実行環境を理解
+4. **レンダリング戦略** - SSR/SSG/SPAの使い分けを習得
+5. **TypeScript型の自動生成** - `./$types`による型安全な開発
 
 ### 🎯 学習目標
 

@@ -261,7 +261,7 @@ src/routes/
 ```
 
 :::info[詳細を学ぶ]
-[プロジェクト構造](/sveltekit/basics/project-structure/)と[ルーティング詳解](/sveltekit/routing/)で詳しく解説しています。
+[プロジェクト構造](/sveltekit/basics/project-structure/)と[ルーティング](/sveltekit/routing/)で詳しく解説しています。
 :::
 
 ## レンダリングモード
@@ -275,14 +275,15 @@ src/routes/
 | **CSR** | インタラクティブアプリ | SPA体験、クライアント処理 |
 
 :::tip[詳細な解説]
-[レンダリング戦略とアーキテクチャパターン](/deep-dive/rendering-strategies/)で各戦略を深く解説しています。
+[レンダリング戦略](/sveltekit/basics/rendering-strategies/)及び、[レンダリング戦略とアーキテクチャパターン](/deep-dive/rendering-strategies/)で各戦略を深く解説しています。
 :::
 
 ## Load関数とデータフェッチング
 
-サーバーとクライアントの両方でデータを取得できる統一されたパターンです。Load関数は、ページのレンダリング前に必要なデータを取得し、コンポーネントに自動的に渡す仕組みを提供します。
+Load関数は、ページのレンダリング前に必要なデータを取得し、コンポーネントに自動的に渡す仕組みを提供します。サーバーとクライアントの両方でデータを取得できる統一されたパターンです。
 
 ### Load関数の主要な特徴
+
 - **Universal Load** (`+page.ts`): サーバーとクライアント両方で実行可能、公開データの取得に最適
 - **Server Load** (`+page.server.ts`): サーバーのみで実行、秘密情報やDB接続を安全に扱える
 - **自動的な型生成**: TypeScriptの型が自動生成され、完全な型安全性を実現
@@ -290,6 +291,8 @@ src/routes/
 <Mermaid diagram={dataLoadFlow} />
 
 ### データフローの実装例
+
+<Expansion title="データフローの実装コードを見る">
 
 #### +page.server.ts（サーバーのみで実行）
 ```typescript
@@ -352,8 +355,10 @@ export const load: PageLoad = async ({ data, fetch }) => {
 </div>
 ```
 
+</Expansion>
+
 :::info[詳細を学ぶ]
-[Load関数とデータフェッチング](/sveltekit/data-loading/)でLoad関数の使い方を、[データロードフロー](/sveltekit/architecture/data-loading/)で内部動作を解説しています。
+[Load関数とデータフェッチング](/sveltekit/data-loading/)でLoad関数の使い方と、内部動作を解説しています。
 :::
 
 ## APIルート
@@ -374,6 +379,8 @@ export const load: PageLoad = async ({ data, fetch }) => {
 以下のシーケンス図は、クライアントとAPIルート間のデータの流れを示しています。
 
 <Mermaid diagram={apiSequenceDiagram} />
+
+<Expansion title="APIルートの実装コードを見る">
 
 #### /api/posts/+server.ts（APIエンドポイント）
 ```typescript
@@ -447,7 +454,12 @@ export const DELETE: RequestHandler = async ({ url }) => {
 };
 ```
 
+</Expansion>
+
 #### +page.svelte（フロントエンド）
+
+<Expansion title="+page.svelte（フロントエンド）のコードを見る">
+
 ```svelte
 <script lang="ts">
   import { onMount } from 'svelte';
@@ -543,6 +555,8 @@ export const DELETE: RequestHandler = async ({ url }) => {
 </div>
 ```
 
+</Expansion>
+
 :::info[詳細を学ぶ]
 [APIルート設計](/sveltekit/server/api-routes/)でRESTful APIの構築方法を詳しく解説しています。
 :::
@@ -555,7 +569,8 @@ JavaScriptが無効でも動作する堅牢なアプリケーションを構築�
 
 ### 実践的な例
 
-**1. 基本のHTML（JavaScriptなしでも動作）**
+<Expansion title="1. 基本のHTML（JavaScriptなしでも動作）">
+
 ```html
 <form method="POST" action="?/login">
   <input name="email" type="email" required>
@@ -564,7 +579,10 @@ JavaScriptが無効でも動作する堅牢なアプリケーションを構築�
 </form>
 ```
 
-**2. CSSで見た目と使い勝手を改善**
+</Expansion>
+
+<Expansion title="2. CSSで見た目と使い勝手を改善">
+
 ```css
 /* HTML5のバリデーション状態に応じたスタイリング */
 input:required {
@@ -590,7 +608,10 @@ input:invalid:not(:placeholder-shown) + .hint {
 }
 ```
 
-**3. JavaScriptで強化（use:enhance）**
+</Expansion>
+
+<Expansion title="3. JavaScriptで強化（use:enhance）">
+
 ```svelte
 <script>
   import { enhance } from '$app/forms';
@@ -611,6 +632,8 @@ input:invalid:not(:placeholder-shown) + .hint {
   </button>
 </form>
 ```
+
+</Expansion>
 
 ### プログレッシブエンハンスメントの利点
 
@@ -757,6 +780,6 @@ SvelteKitは、Svelteの優れたパフォーマンスとシンプルさを活�
 ## 学習の次のステップ
 
 1. **[プロジェクト構造](/sveltekit/basics/project-structure/)** - ファイル構成と規約を理解する
-2. **[ルーティング詳解](/sveltekit/routing/)** - URL設計とナビゲーション
+2. **[ルーティング](/sveltekit/routing/)** - URL設計とナビゲーション
 3. **[Load関数とデータフェッチング](/sveltekit/data-loading/)** - データ取得戦略
 4. **サーバーサイド編** - フォーム処理とAPIルート（準備中）

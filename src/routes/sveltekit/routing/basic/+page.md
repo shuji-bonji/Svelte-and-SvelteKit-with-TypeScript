@@ -47,12 +47,19 @@ description: SvelteKitの基本ルーティングをTypeScriptで学ぶ。ファ
     
   const layoutInheritanceDiagram = `graph TB
     subgraph "レイアウト階層"
+      direction LR
       RootLayout["/+layout.svelte<br/>ヘッダー・フッター"]
+      Header["$lib/components/<br/>Header.svelte<br/>ヘッダー"]
+      Footer["$lib/components/<br/>Footer.svelte<br/>フッター"]
       BlogLayout["/blog/+layout.svelte<br/>サイドバー追加"]
+      Sidebar["$lib/components/<br/>Sidebar.svelte<br/>サイドバー"]
       BlogPage["/blog/+page.svelte<br/>記事一覧"]
       BlogNewPage["/blog/new/+page.svelte<br/>新規投稿"]
     end
     
+    RootLayout <--- Header
+    RootLayout <--- Footer
+    BlogLayout <--- Sidebar
     RootLayout --> BlogLayout
     BlogLayout --> BlogPage
     BlogLayout --> BlogNewPage
@@ -91,12 +98,6 @@ SvelteKitはファイルシステムベースのルーティングを採用し�
 
 `src/routes`ディレクトリの構造がそのままWebサイトのURL構造になります。この仕組みにより、URLパスの設計と管理が直感的になり、プロジェクトの構造を見るだけでサイトマップが理解できます。
 
-### ファイルシステムとURLのマッピング
-
-以下の図は、ファイル構造がどのようにURLに変換されるかを視覚的に示しています。
-
-<Mermaid diagram={urlMappingDiagram} />
-
 ### 基本的なマッピング
 
 ディレクトリ構造とURLパスの対応関係を示します。各ファイルがどのURLにマッピングされるかを理解することで、効率的なルート設計が可能になります。
@@ -120,6 +121,12 @@ src/routes/
 - `+layout.svelte` は子ルートに継承されます
 - ディレクトリ名がそのままURLパスになります
 :::
+
+### ファイルシステムとURLのマッピング
+
+以下の図は、ファイル構造がどのようにURLに変換されるかを視覚的に示しています。
+
+<Mermaid diagram={urlMappingDiagram} />
 
 ## ページの作成
 
@@ -190,7 +197,7 @@ Load関数から受け取ったデータをページで使用する例です。�
 
 ### グローバルレイアウト
 
-すべてのページで共通して使用するレイアウトを定義します。`<slot />`要素に子ページのコンテンツが挿入され、ヘッダーやフッターなどの共通要素を一元管理できます。
+すべてのページで共通して使用するレイアウトを定義します。`{@render children?.()}`で子ページのコンテンツがレンダリングされ、ヘッダーやフッターなどの共通要素を一元管理できます。
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
@@ -198,6 +205,9 @@ Load関数から受け取ったデータをページで使用する例です。�
   import '../app.css';
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
+  import type { Snippet } from 'svelte';
+  
+  let { children }: { children?: Snippet } = $props();
 </script>
 
 <div class="app">
@@ -205,7 +215,7 @@ Load関数から受け取ったデータをページで使用する例です。�
   
   <main>
     <!-- 子ページがここにレンダリングされる -->
-    <slot />
+    {@render children?.()}
   </main>
   
   <Footer />
@@ -233,6 +243,9 @@ Load関数から受け取ったデータをページで使用する例です。�
 <!-- src/routes/blog/+layout.svelte -->
 <script lang="ts">
   import BlogSidebar from '$lib/components/BlogSidebar.svelte';
+  import type { Snippet } from 'svelte';
+  
+  let { children }: { children?: Snippet } = $props();
 </script>
 
 <div class="blog-layout">
@@ -242,7 +255,7 @@ Load関数から受け取ったデータをページで使用する例です。�
   
   <article>
     <!-- blog配下のページがここに表示される -->
-    <slot />
+    {@render children?.()}
   </article>
 </div>
 

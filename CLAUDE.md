@@ -920,6 +920,62 @@ jobs:
 - sitemapには含まれません
 - 新機能のテストや動作確認時に参照してください
 
+## 🤖 LLM向けリファレンス
+
+### 包括的なリファレンスガイド
+
+このプロジェクトには、Svelte 5とSvelteKit 2.xの包括的なリファレンスガイドが用意されています。
+これらは、AIアシスタント（Claude、ChatGPT等）がプロジェクトを理解し、適切なコード生成やアドバイスを提供する際のコンテキストとして最適化されています。
+
+#### 利用可能なリファレンス（2つに統合済み）
+
+1. **Svelte 5 完全リファレンス** (`/src/routes/reference/svelte5/+page.md`)
+   - Runesシステム完全解説（$state、$derived、$effect、$props、$bindable、$inspect、$host）
+   - コンポーネント構造とライフサイクル
+   - テンプレート構文（条件分岐、ループ、イベント、バインディング）
+   - トランジション、アニメーション、Actions
+   - TypeScript完全統合（型定義、ジェネリクス、ユーティリティ型）
+   - スタイリング戦略（CSS-in-JS、CSS Modules、Tailwind）
+   - 組み込みクラス（SvelteMap、SvelteSet、SvelteURL）
+   - パフォーマンス最適化とベストプラクティス
+
+2. **SvelteKit 2.x 完全リファレンス** (`/src/routes/reference/sveltekit2/+page.md`)
+   - ファイルベースルーティングシステム
+   - 特殊ファイル（+page、+layout、+server、+error）
+   - Load関数とデータフェッチング戦略
+   - Form ActionsとProgressive Enhancement
+   - APIルート設計（GET、POST、PUT、DELETE、PATCH）
+   - Hooks（handle、handleFetch、handleError）
+   - SSR/SSG/SPA/ISRレンダリング戦略
+   - アダプターとデプロイメント
+   - 認証・認可パターン
+   - 型安全性（./$types、app.d.ts）
+
+#### AIアシスタントへの指示例
+
+```markdown
+# Svelte 5とSvelteKit 2.xのプロジェクトです
+
+以下の2つのリファレンスをコンテキストとして使用してください。
+
+1. `/src/routes/reference/svelte5/+page.md` - Svelte 5のすべて
+2. `/src/routes/reference/sveltekit2/+page.md` - SvelteKit 2.xのすべて
+
+重要な原則：
+- Svelte 5 Runesシステムを使用（古い文法は使わない）
+- TypeScript必須（型定義を明確に）
+- SvelteKit 2.xのファイルベースルーティング
+- Progressive Enhancement優先
+```
+
+### GitHubディスカッション
+
+詳細な技術情報はGitHubディスカッションでも公開されています。
+
+- [Discussion #59: Svelte 5 Runes](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/59)
+- [Discussion #60: SvelteKit 2.x](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/60)
+- [Discussion #61: 完全ガイド](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/61)
+
 ## ✅ チェックリスト
 
 ### 移行前確認
@@ -942,3 +998,5 @@ jobs:
 ---
 
 **Note**: このドキュメントは生きたドキュメントとして、プロジェクトの進行に応じて更新してください。
+
+**LLM/AI利用時の推奨**: 上記2つのリファレンス（`/src/routes/reference/svelte5/+page.md`と`/src/routes/reference/sveltekit2/+page.md`）を、AIアシスタントのコンテキストとして読み込ませることで、より正確で効果的なコード生成とアドバイスが可能になります。

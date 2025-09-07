@@ -393,6 +393,17 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       ],
     },
     {
+      title: 'リファレンス',
+      to: '/reference/',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { title: '概要', to: '/reference/' },
+        { title: 'Svelte 5 完全リファレンス', to: '/reference/svelte5/' },
+        { title: 'SvelteKit 2.x 完全リファレンス', to: '/reference/sveltekit2/' },
+      ],
+    },
+    {
       title: 'ディープダイブ',
       to: '/deep-dive/',
       collapsible: true,

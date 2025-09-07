@@ -100,7 +100,7 @@ let {
 ```svelte
 <!-- ボタン要素に残りのプロパティを展開 -->
 <button {...restProps} class="btn btn-{variant} btn-{size}">
-  <slot />
+  {@render children?.()}
 </button>
 ```
 
@@ -128,7 +128,7 @@ let {
 }: Props = $props();
 
 // disabled は loading 中も true にする
-$: isDisabled = disabled || loading;
+let isDisabled = $derived(disabled || loading);
 ```
 
 ### ジェネリック型を使用

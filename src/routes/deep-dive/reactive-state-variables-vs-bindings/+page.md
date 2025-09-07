@@ -47,7 +47,7 @@ Svelte開発において、「状態管理」と「バインディング」は�
 
 ```svelte
 <script>
-  let name = '';
+  let name = $state('');
 </script>
 
 <input bind:value={name} />

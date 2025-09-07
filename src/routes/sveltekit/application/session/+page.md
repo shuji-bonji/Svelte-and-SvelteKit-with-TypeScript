@@ -907,8 +907,8 @@ export function rateLimiter(
   import { goto } from '$app/navigation';
   import { applyAction, enhance } from '$app/forms';
   
-  let loading = false;
-  let error: string | null = null;
+  let loading = $state(false);
+  let error = $state<string | null>(null);
 </script>
 
 <form 

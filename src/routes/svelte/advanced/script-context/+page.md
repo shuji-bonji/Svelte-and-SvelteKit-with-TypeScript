@@ -379,14 +379,14 @@ export function useCounter() {
 <script lang="ts">
   import { onMount } from 'svelte';
   
-  export let theme: Theme = 'light';
+  let { theme = 'light' }: { theme?: Theme } = $props();
   
   onMount(() => {
     setTheme(theme);
   });
 </script>
 
-<slot />
+{@render children?.()}
 ```
 
 ### 2. APIクライアントの共有
@@ -597,10 +597,10 @@ APIクライアントのインスタンスを一度だけ作成し、アプリ�
 <script lang="ts">
   // ✅ 通常のscriptに適している
   // - コンポーネントの状態
-  let isOpen = false;
+  let isOpen = $state(false);
   
   // - Props
-  export let title: string;
+  let { title }: { title: string } = $props();
   
   // - イベントハンドラ
   function handleClick(): void {

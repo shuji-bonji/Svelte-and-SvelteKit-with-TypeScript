@@ -142,7 +142,7 @@ src/routes/
   import type { PageData } from './$types';
   
   // Load関数からのデータ（もしあれば）
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <h1>About Page</h1>
@@ -178,7 +178,7 @@ Load関数から受け取ったデータをページで使用する例です。�
 <script lang="ts">
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <h1>{data.title}</h1>
@@ -395,7 +395,7 @@ SvelteKitは高速なクライアントサイドナビゲーションを提供�
   import { page } from '$app/stores';
   
   // 現在のパスを取得
-  $: currentPath = $page.url.pathname;
+  let currentPath = $derived($page.url.pathname);
 </script>
 
 <nav>

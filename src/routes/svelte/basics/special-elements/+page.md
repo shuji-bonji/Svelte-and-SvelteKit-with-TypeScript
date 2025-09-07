@@ -335,7 +335,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </script>
 
 <button class="btn {variant}" {disabled}>
-  <slot />
+  {@render children?.()}
 </button>
 ```
 

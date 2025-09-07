@@ -198,10 +198,12 @@ export const load: LayoutServerLoad = async (event) => {
   import type { PageData } from './$types';
   
   // load関数の戻り値が自動的に型付けされる
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   
   // dataの中身はload関数の返り値の型と一致
-  $: console.log(data.post);  // 型安全にアクセス可能
+  $effect(() => {
+    console.log(data.post);  // 型安全にアクセス可能
+  });
 </script>
 
 // === src/params/integer.ts ===

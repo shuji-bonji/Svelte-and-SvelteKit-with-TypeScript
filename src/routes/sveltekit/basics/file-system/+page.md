@@ -83,7 +83,7 @@ description: SvelteKitの特殊ファイルシステムをTypeScriptで完全理
     PS -->|"ページデータ"| PT
     LT -->|"共通props"| LSV
     PT -->|"ページprops"| PSV
-    LSV -->|"<slot/>"| PSV
+    LSV -->|"children"| PSV
     
     style Server fill:#ffeeee,stroke:#ff6b6b,stroke-width:2px
     style Universal fill:#eeffff,stroke:#4ecdc4,stroke-width:2px
@@ -132,8 +132,7 @@ SvelteKitのファイルシステムは、ファイル名によって機能と�
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
   
-  export let data: PageData;
-  export let form: ActionData;
+  let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
 <h1>{data.title}</h1>
@@ -245,7 +244,9 @@ export const actions: Actions = {
 ```svelte
 <script lang="ts">
   import type { LayoutData } from './$types';
-  export let data: LayoutData;
+  import type { Snippet } from 'svelte';
+  
+  let { data, children }: { data: LayoutData; children?: Snippet } = $props();
 </script>
 
 <header>
@@ -256,7 +257,7 @@ export const actions: Actions = {
 </header>
 
 <main>
-  <slot />  <!-- 子ページがここに挿入される -->
+  {@render children?.()}  <!-- 子ページがここに挿入される -->
 </main>
 
 <footer>© 2024</footer>

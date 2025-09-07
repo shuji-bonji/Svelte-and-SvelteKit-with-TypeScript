@@ -180,9 +180,12 @@ export function getThemeContext(): ThemeContext {
     toggleTheme,
     setTheme
   });
+  
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
 </script>
 
-<slot />
+{@render children?.()}
 ```
 
 ## 複雑な状態管理パターン

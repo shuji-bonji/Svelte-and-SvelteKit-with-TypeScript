@@ -517,7 +517,7 @@ export const load: PageLoad = async ({ fetch }) => {
 <script lang="ts">
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <h1>Blog Posts</h1>

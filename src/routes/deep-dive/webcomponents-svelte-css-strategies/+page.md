@@ -569,6 +569,8 @@ SvelteのScoped CSSを活用した最もシンプルで高性能なアプロー�
 ```svelte
 <!-- Button.svelte - 最高のパフォーマンス -->
 <script lang="ts">
+  import type { Snippet } from 'svelte';
+  
   type Variant = 'primary' | 'secondary' | 'danger';
   type Size = 'sm' | 'md' | 'lg';
   
@@ -576,12 +578,14 @@ SvelteのScoped CSSを活用した最もシンプルで高性能なアプロー�
     variant = 'primary',
     size = 'md',
     disabled = false,
-    onclick
+    onclick,
+    children
   } = $props<{
     variant?: Variant;
     size?: Size;
     disabled?: boolean;
     onclick?: (e: MouseEvent) => void;
+    children?: Snippet;
   }>();
 </script>
 
@@ -591,7 +595,7 @@ SvelteのScoped CSSを活用した最もシンプルで高性能なアプロー�
   {disabled}
   {onclick}
 >
-  <slot />
+  {@render children?.()}
 </button>
 
 <style>
@@ -658,6 +662,7 @@ Web Componentとしても通常のSvelteコンポーネントとしても使用�
 <!-- HybridComponent.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { Snippet } from 'svelte';
   
   // Web Componentとしても、通常のコンポーネントとしても使用可能
   const isWebComponent = typeof customElements !== 'undefined' 
@@ -665,8 +670,13 @@ Web Componentとしても通常のSvelteコンポーネントとしても使用�
   
   let {
     useScoped = true,
-    theme = 'light'
-  } = $props();
+    theme = 'light',
+    children
+  } = $props<{
+    useScoped?: boolean;
+    theme?: 'light' | 'dark';
+    children?: Snippet;
+  }>();
   
   // 条件に応じてスタイル戦略を切り替え
   onMount(() => {
@@ -690,7 +700,7 @@ Web Componentとしても通常のSvelteコンポーネントとしても使用�
 </script>
 
 <div class="component" data-theme={theme}>
-  <slot />
+  {@render children?.()}
 </div>
 
 <style>

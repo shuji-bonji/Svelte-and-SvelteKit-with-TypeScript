@@ -357,7 +357,7 @@ Load関数が返したデータは、コンポーネントの`data`プロップ�
   
   // dataは自動的に型付けされる
   // Load関数の返り値に基づいて型が推論される
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <!-- 型安全にデータにアクセス -->

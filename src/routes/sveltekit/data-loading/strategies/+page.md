@@ -348,7 +348,7 @@ description: SvelteKitの高度なデータ取得戦略 - ストリーミングS
     SvelteKit-->>Browser: 初期HTML生成
     Browser->>PageSvelte: コンポーネントマウント
     
-    Note over PageSvelte: export let data: PageData
+    Note over PageSvelte: let { data }: { data: PageData } = $props()
     PageSvelte->>PageSvelte: criticalデータ即座に表示
     Browser->>User: <h1>{data.critical.title}</h1> 表示
     
@@ -565,7 +565,7 @@ export const load: PageServerLoad = async () => {
 <!-- +page.svelte -->
 <script lang="ts">
   import type { PageData } from './$types';
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <!-- 即座に表示 -->
@@ -814,8 +814,9 @@ export const load: PageServerLoad = async () => {
 <script lang="ts">
   import { invalidate } from '$app/navigation';
   import { onMount } from 'svelte';
+  import type { PageData } from './$types';
   
-  export let data;
+  let { data }: { data: PageData } = $props();
   
   onMount(() => {
     // 30秒ごとにデータを更新

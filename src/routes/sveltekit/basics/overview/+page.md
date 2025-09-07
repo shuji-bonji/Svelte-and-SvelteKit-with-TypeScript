@@ -343,7 +343,7 @@ export const load: PageLoad = async ({ data, fetch }) => {
   import type { PageData } from './$types';
   
   // 4. 最終的にコンポーネントがデータを受け取る
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <div>

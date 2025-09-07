@@ -148,7 +148,7 @@ Load関数で取得した投稿データを表示するコンポーネントで�
 <script lang="ts">
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <article>
@@ -359,13 +359,13 @@ export const load: PageLoad = async ({ params }) => {
   import type { PageData } from './$types';
   import Breadcrumb from '$lib/components/Breadcrumb.svelte';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   
   // パンくずリストの生成
-  $: breadcrumbs = data.segments.map((segment, i) => ({
+  let breadcrumbs = $derived(data.segments.map((segment, i) => ({
     label: segment,
     href: `/docs/${data.segments.slice(0, i + 1).join('/')}`
-  }));
+  })));
 </script>
 
 <Breadcrumb items={breadcrumbs} />

@@ -106,7 +106,7 @@ Load関数から渡されたデータをSvelteコンポーネントで受け取�
   import type { PageData } from './$types';
   
   // Load関数の返り値の型が自動的に適用される
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   // data.post と data.slug が型安全にアクセス可能
 </script>
 
@@ -336,7 +336,7 @@ export const load: PageServerLoad = async () => {
 <script lang="ts">
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   // data.post は Post 型として認識される
   // data.post.author.name にアクセス可能
 </script>
@@ -379,12 +379,12 @@ export const load = async () => {
 <script lang="ts">
   // ✅ 良い例：PageDataを使用
   import type { PageData } from './$types';
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 <!-- ❌ 避けるべき：any型 -->
 <script lang="ts">
-  export let data: any;
+  let { data }: { data: any } = $props();
 </script>
 ```
 

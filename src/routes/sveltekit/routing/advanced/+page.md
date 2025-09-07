@@ -207,8 +207,9 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 <script lang="ts">
   import type { LayoutData } from './$types';
   import UserMenu from '$lib/components/UserMenu.svelte';
+  import type { Snippet } from 'svelte';
   
-  export let data: LayoutData;
+  let { data, children }: { data: LayoutData; children?: Snippet } = $props();
 </script>
 
 <div class="app-layout">
@@ -522,8 +523,8 @@ HTTPステータスコードに応じて異なるエラー画面を表示する�
   import { page } from '$app/stores';
   import { dev } from '$app/environment';
   
-  $: error = $page.error;
-  $: status = $page.status;
+  let error = $derived($page.error);
+  let status = $derived($page.status);
 </script>
 
 {#if status === 404}
@@ -618,7 +619,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   import GuestProfile from './GuestProfile.svelte';
   import UserProfile from './UserProfile.svelte';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
 </script>
 
 {#if data.component === 'authenticated'}

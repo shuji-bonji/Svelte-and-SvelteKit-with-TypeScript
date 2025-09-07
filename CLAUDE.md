@@ -486,6 +486,102 @@ description: ページの説明
 4. **実行可能な完全なコード**
 5. **日本語コメントで説明**
 
+#### Svelte 5構文の使用ルール
+
+**重要**: 必ずSvelte 5の最新構文を使用してください。レガシー構文は使用しないでください。
+
+##### Props受け取り
+```typescript
+// ❌ 悪い例：Svelte 4以前の構文
+export let data: PageData;
+export let form: ActionData;
+
+// ✅ 良い例：Svelte 5の構文
+let { data, form }: { data: PageData; form: ActionData } = $props();
+```
+
+##### リアクティブな値
+```typescript
+// ❌ 悪い例：$: によるリアクティブ文
+$: currentPath = $page.url.pathname;
+$: doubled = count * 2;
+
+// ✅ 良い例：$derivedを使用
+let currentPath = $derived($page.url.pathname);
+let doubled = $derived(count * 2);
+```
+
+##### 子要素のレンダリング（レイアウト）
+```svelte
+<!-- ❌ 悪い例：<slot />を使用 -->
+<main>
+  <slot />
+</main>
+
+<!-- ✅ 良い例：childrenとSnippetを使用 -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
+<main>
+  {@render children?.()}
+</main>
+```
+
+##### SvelteKitのデータ受け取り
+```typescript
+// +page.svelte, +layout.svelte など
+<script lang="ts">
+  import type { PageData } from './$types';
+  
+  // ❌ 悪い例
+  export let data: PageData;
+  
+  // ✅ 良い例
+  let { data }: { data: PageData } = $props();
+</script>
+```
+
+##### 重要な注意事項
+
+1. **ドキュメント内のコード例**：すべてのコード例でSvelte 5構文を使用する
+   - Markdownファイル内のコード例
+   - シーケンス図やMermaidダイアグラム内の注釈
+   - 比較のために意図的にレガシー構文を示す場合は明示的に注記する
+
+2. **`<slot />`から`children`への移行**：
+   ```svelte
+   <!-- ❌ 悪い例：<slot />のみ -->
+   <button>
+     <slot />
+   </button>
+   
+   <!-- ✅ 良い例：childrenをpropsに追加し、@renderを使用 -->
+   <script lang="ts">
+     import type { Snippet } from 'svelte';
+     let { children }: { children?: Snippet } = $props();
+   </script>
+   
+   <button>
+     {@render children?.()}
+   </button>
+   ```
+
+3. **型付きpropsの定義**：
+   ```typescript
+   // ✅ 良い例：型付きprops
+   let { 
+     variant = 'primary',
+     size = 'md',
+     children
+   } = $props<{
+     variant?: 'primary' | 'secondary';
+     size?: 'sm' | 'md' | 'lg';
+     children?: Snippet;
+   }>();
+   ```
+
 ## 🧠 ナレッジベース
 
 ### カスタム機能実装
@@ -683,18 +779,40 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 
 ### 移行時の注意点
 
-#### 避けるべきパターン
+#### 避けるべきパターン（レガシー構文）
 - `let` による暗黙的なリアクティビティ
 - `$:` によるリアクティブステートメント
 - `export let` によるprops定義
-- ストアの`$`プレフィックス
+- `<slot />` による子要素の挿入
+- ストアの`$`プレフィックス（自動サブスクリプション）
 - `$derived(() => {...})` の誤用（`$derived.by()` を使用すべき場合）
 
-#### 推奨パターン
+#### 推奨パターン（Svelte 5）
 - `$state` による明示的なリアクティビティ
 - `$derived` による計算値
 - `$props` によるprops定義
+- `{@render children?.()}` による子要素のレンダリング
 - `.svelte.ts`ファイルでのストア定義
+
+#### 具体的な移行例
+
+```typescript
+// === Props ===
+// 旧: export let prop: Type;
+// 新: let { prop }: { prop: Type } = $props();
+
+// === リアクティブ値 ===
+// 旧: $: value = computation;
+// 新: let value = $derived(computation);
+
+// === レイアウト ===
+// 旧: <slot />
+// 新: {@render children?.()}
+
+// === SvelteKitデータ ===
+// 旧: export let data: PageData;
+// 新: let { data }: { data: PageData } = $props();
+```
 
 ## 🚀 実装手順（Claude Code用）
 

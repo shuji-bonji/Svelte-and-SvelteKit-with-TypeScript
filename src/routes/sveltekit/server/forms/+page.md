@@ -141,8 +141,7 @@ export const actions = {
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
   
-  export let data: PageData;
-  export let form: ActionData;
+  let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
 <!-- 更新フォーム -->
@@ -309,7 +308,7 @@ export const actions = {
 <script lang="ts">
   import type { ActionData } from './$types';
   
-  export let form: ActionData;
+  let { form }: { form: ActionData } = $props();
   
   let uploading = $state(false);
   let progress = $state(0);
@@ -567,7 +566,7 @@ export const actions = {
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   
   let todos = $state([...data.todos]);
   let newTodo = $state('');

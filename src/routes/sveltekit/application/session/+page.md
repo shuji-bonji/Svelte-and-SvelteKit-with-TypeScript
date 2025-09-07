@@ -572,17 +572,22 @@ src/routes/
 // src/routes/(auth)/+layout.svelte
 <script lang="ts">
   import { page } from '$app/stores';
+  import type { Snippet } from 'svelte';
+  
+  let { children }: { children?: Snippet } = $props();
   
   // すでにログイン済みの場合はダッシュボードへリダイレクト
-  $: if ($page.data.user) {
-    goto('/dashboard');
-  }
+  $effect(() => {
+    if ($page.data.user) {
+      goto('/dashboard');
+    }
+  });
 </script>
 
 <div class="auth-layout">
   <div class="auth-container">
     <h1>MyApp</h1>
-    <slot />
+    {@render children?.()}
   </div>
 </div>
 

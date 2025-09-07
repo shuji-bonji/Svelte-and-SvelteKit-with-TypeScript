@@ -222,7 +222,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
   </header>
   
   <main>
-    <slot />
+    {@render children?.()}
   </main>
 </div>
 ```
@@ -274,28 +274,43 @@ SvelteKitがどのようにレイアウトを階層的に適用してページ�
 
 ```svelte
 <!-- src/routes/+layout.svelte (ルートレイアウト) -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
 <div class="root">
   <Header />
-  <slot />
+  {@render children?.()}
   <Footer />
 </div>
 ```
 
 ```svelte
 <!-- src/routes/(app)/+layout.svelte (アプリレイアウト) -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
 <div class="app">
   <Sidebar />
   <main>
-    <slot />
+    {@render children?.()}
   </main>
 </div>
 ```
 
 ```svelte
 <!-- src/routes/(app)/dashboard/+layout.svelte (ダッシュボードレイアウト) -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
 <div class="dashboard">
   <DashboardNav />
-  <slot />
+  {@render children?.()}
 </div>
 ```
 
@@ -306,14 +321,24 @@ SvelteKitがどのようにレイアウトを階層的に適用してページ�
 ```svelte
 <!-- src/routes/fullscreen/+layout@.svelte -->
 <!-- ルートレイアウトまでリセット（ヘッダー・フッターなし） -->
-<slot />
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
+{@render children?.()}
 ```
 
 ```svelte
 <!-- src/routes/(app)/print/+layout@(app).svelte -->
 <!-- (app)レイアウトまでリセット -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
 <div class="print-layout">
-  <slot />
+  {@render children?.()}
 </div>
 ```
 

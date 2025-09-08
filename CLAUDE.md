@@ -976,6 +976,322 @@ jobs:
 - [Discussion #60: SvelteKit 2.x](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/60)
 - [Discussion #61: 完全ガイド](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/61)
 
+## 🚀 実装例プロジェクト
+
+### ブログシステム実装例
+
+#### 1. **基礎版** - `svelte5-blog-example` ✅完成
+```
+github.com/shuji-bonji/svelte5-blog-example
+```
+- **目的**: SvelteKitの基本を学ぶ
+- **実装**: 静的データによるブログ
+- **技術**: Svelte 5 Runes、TypeScript、静的配列データ
+- **デプロイ**: GitHub Pages（adapter-static）
+- **デモ**: https://shuji-bonji.github.io/svelte5-blog-example/
+
+**特徴**：
+- 最小限の依存関係
+- 基本的なルーティング
+- タグフィルタリング（クライアントサイド）
+- レスポンシブデザイン
+
+#### 2. **Markdown版** - `svelte5-blog-markdown` ✅完成
+```
+github.com/shuji-bonji/svelte5-blog-markdown
+```
+- **目的**: 実践的なMarkdownブログ
+- **実装**: Vite glob importによる自動読み込み
+- **技術**: marked、front-matter、MiniSearch、Prism.js
+- **デプロイ**: GitHub Pages
+- **デモ**: https://shuji-bonji.github.io/svelte5-blog-markdown/
+
+**特徴**：
+- Markdownファイルベースの記事管理
+- 全文検索機能（MiniSearch）
+- タグクラウド
+- シンタックスハイライト（Prism.js）
+- 読了時間計算
+
+#### 3. **CMS統合版** - `svelte5-blog-cms`（構想）
+```
+github.com/shuji-bonji/svelte5-blog-cms
+```
+- **目的**: ヘッドレスCMSとの統合
+- **実装**: Contentful/Strapi統合
+- **技術**: GraphQL、ISR（Incremental Static Regeneration）
+- **デプロイ**: Vercel
+
+**特徴**：
+- CMSダッシュボード
+- リアルタイムプレビュー
+- 画像最適化（Cloudinary）
+- 多言語対応
+- Webhook連携
+
+#### 4. **プロダクション版** - `svelte5-blog-production`（構想）
+```
+github.com/shuji-bonji/svelte5-blog-production
+```
+- **目的**: 商用レベルのブログシステム
+- **実装**: 完全な機能を持つブログプラットフォーム
+- **技術**: PostgreSQL、Redis、S3、ElasticSearch
+- **デプロイ**: AWS/GCP/Azure
+
+**特徴**：
+- ユーザー管理と権限制御
+- コメントシステム
+- メール通知
+- RSS/Atom配信
+- Analytics統合
+- SEO最適化
+- CDN配信
+- A/Bテスト機能
+
+### 認証システム実装例
+
+#### 1. **基本認証** - `svelte5-auth-basic` 🚧開発中
+```
+github.com/shuji-bonji/svelte5-auth-basic
+```
+- **目的**: 認証の基礎を学ぶ
+- **実装**: Cookie + Session認証
+- **DB**: SQLite（Prisma）
+- **デプロイ**: Vercel
+
+**特徴**：
+- ユーザー登録/ログイン/ログアウト
+- Form Actionsによるサーバーサイド処理
+- bcryptパスワードハッシュ
+- セッション管理
+- 保護されたルート
+
+#### 2. **JWT認証** - `svelte5-auth-jwt`（構想）
+```
+github.com/shuji-bonji/svelte5-auth-jwt
+```
+- **目的**: モダンな認証パターン
+- **実装**: JWT + リフレッシュトークン
+- **DB**: PostgreSQL（Supabase）
+- **デプロイ**: Vercel + Supabase
+
+**特徴**：
+- JWTトークン発行/検証
+- リフレッシュトークン自動更新
+- ロールベースアクセス制御（RBAC）
+- APIルート保護
+- トークン無効化リスト
+
+#### 3. **OAuth統合** - `svelte5-auth-oauth`（構想）
+```
+github.com/shuji-bonji/svelte5-auth-oauth
+```
+- **目的**: 実践的な認証システム
+- **実装**: Auth.js + OAuth + 2FA
+- **DB**: PostgreSQL（Neon）
+- **デプロイ**: Vercel
+
+**特徴**：
+- Google/GitHub/Twitter OAuth
+- Auth.js（旧NextAuth）統合
+- 2要素認証（TOTP）
+- メール認証
+- パスワードリセット
+- Remember Me機能
+- アカウント連携
+
+#### 4. **エンタープライズ認証** - `svelte5-auth-enterprise`（構想）
+```
+github.com/shuji-bonji/svelte5-auth-enterprise
+```
+- **目的**: 企業向け認証システム
+- **実装**: SAML/LDAP/AD統合
+- **DB**: PostgreSQL + Redis
+- **デプロイ**: オンプレミス/プライベートクラウド
+
+**特徴**：
+- SAML 2.0 SSO
+- Active Directory統合
+- LDAP認証
+- 多要素認証（MFA）
+- セッション管理ダッシュボード
+- 監査ログ
+- IPアドレス制限
+- デバイス管理
+
+### 統合プロジェクト
+
+#### **ブログ + 認証統合** - `svelte5-blog-auth`（構想）
+```
+github.com/shuji-bonji/svelte5-blog-auth
+```
+- **目的**: 実践的な統合例
+- **実装**: Markdownブログ + 認証システム
+- **技術スタック**:
+  - Svelte 5 + SvelteKit 2
+  - PostgreSQL（記事メタデータ + ユーザー）
+  - Markdownファイル（記事本文）
+  - Auth.js（認証）
+  - Prisma（ORM）
+
+**機能一覧**：
+- **公開機能**:
+  - 記事閲覧
+  - 検索/フィルタリング
+  - コメント投稿（認証ユーザーのみ）
+  
+- **認証ユーザー機能**:
+  - プロフィール管理
+  - 記事のお気に入り
+  - コメント管理
+  - 通知設定
+
+- **管理者機能**:
+  - 記事の作成/編集/削除
+  - 下書き/予約投稿
+  - カテゴリー/タグ管理
+  - ユーザー管理
+  - コメントモデレーション
+  - アクセス統計
+
+### 実装優先順位と進捗
+
+1. ✅ **完成**: `svelte5-blog-example`（基礎版ブログ）
+2. ✅ **完成**: `svelte5-blog-markdown`（Markdown版ブログ）
+3. 🚧 **開発中**: `svelte5-auth-basic`（基本認証）
+4. 📋 **計画中**: `svelte5-auth-jwt`（JWT認証）
+5. 📋 **計画中**: `svelte5-blog-auth`（ブログ + 認証統合）
+6. 📋 **構想**: その他の実装例
+
+### 技術選定の指針
+
+**データベース選択**：
+- **開発/学習**: SQLite（ファイルベース、設定不要）
+- **小規模**: PostgreSQL on Supabase/Neon（無料枠あり）
+- **本番**: PostgreSQL/MySQL（専用インスタンス）
+
+**デプロイ先選択**：
+- **静的サイト**: GitHub Pages（無料、簡単）
+- **SSR対応**: Vercel/Netlify（無料枠あり）
+- **フルスタック**: Railway/Render（DB込み）
+- **エンタープライズ**: AWS/GCP/Azure
+
+**認証ライブラリ選択**：
+- **学習用**: 自前実装（理解を深める）
+- **実用**: Auth.js（多機能、実績あり）
+- **シンプル**: Lucia Auth（軽量、TypeScript）
+- **エンタープライズ**: Auth0/Okta（SaaS）
+
+## 📚 今後の実装予定セクション
+
+### `/svelte/architecture/` - Svelteアーキテクチャ（計画中）
+
+現在`sidebar.ts`でコメントアウト中。以下の内容を実装予定：
+
+#### 予定コンテンツ
+1. **アーキテクチャ概要** (`/svelte/architecture/`)
+   - Svelteを使った設計パターン
+   - 既存システムへの統合方法
+
+2. **SPA + 既存API統合** (`/svelte/architecture/spa-patterns/`)
+   - REST API統合
+   - GraphQL統合
+   - 認証付きAPI呼び出し
+   - エラーハンドリング
+
+3. **BaaS統合パターン** (`/svelte/architecture/baas-integration/`)
+   - **Firebase統合** (`/firebase/`)
+     - Firestore リアルタイムDB
+     - Firebase Auth
+     - Cloud Functions
+   - **Supabase統合** (`/supabase/`)
+     - PostgreSQL + リアルタイム
+     - Row Level Security
+     - Edge Functions
+
+4. **GraphQL統合** (`/svelte/architecture/graphql/`)
+   - Apollo Client
+   - urql
+   - graphql-request
+
+5. **マイクロフロントエンド** (`/svelte/architecture/micro-frontends/`)
+   - Module Federation
+   - Web Components
+   - iframe統合
+
+### `/sveltekit/enterprise/` - SvelteKitエンタープライズ開発（計画中）
+
+現在`sidebar.ts`でコメントアウト中。以下の内容を実装予定：
+
+#### 予定コンテンツ
+1. **エンタープライズ開発概要** (`/sveltekit/enterprise/`)
+   - 大規模システム設計
+   - チーム開発のベストプラクティス
+
+2. **レイヤードアーキテクチャ** (`/sveltekit/enterprise/layered-architecture/`)
+   - プレゼンテーション層
+   - ビジネスロジック層
+   - データアクセス層
+   - 実装例とディレクトリ構造
+
+3. **ドメイン駆動設計（DDD）** (`/sveltekit/enterprise/domain-driven-design/`)
+   - エンティティとバリューオブジェクト
+   - リポジトリパターン
+   - アグリゲート
+   - TypeScriptでの実装
+
+4. **リポジトリパターン** (`/sveltekit/enterprise/repository-pattern/`)
+   - インターフェース定義
+   - 具象実装の切り替え
+   - テスタビリティの向上
+
+5. **依存性注入（DI）** (`/sveltekit/enterprise/dependency-injection/`)
+   - DIコンテナの実装
+   - SvelteKitでのDIパターン
+   - テストでのモック注入
+
+6. **ユニットテスト戦略** (`/sveltekit/enterprise/testing-strategies/`)
+   - Vitest設定
+   - コンポーネントテスト
+   - E2Eテスト（Playwright）
+   - カバレッジ戦略
+
+7. **Clean Architecture実装** (`/sveltekit/enterprise/clean-architecture/`)
+   - 同心円アーキテクチャ
+   - 依存性の方向
+   - 実装例（完全なサンプルアプリ）
+
+### 実装時の重点事項
+
+**Svelteアーキテクチャセクション**：
+- 実際に動作するコード例を多数掲載
+- 各BaaSの無料枠での実装方法
+- TypeScriptの型定義を完備
+- セキュリティベストプラクティス
+
+**SvelteKitエンタープライズセクション**：
+- Spring Boot、ASP.NET Core経験者向けの説明
+- 実務で使えるプロダクションレベルのコード
+- パフォーマンス計測と最適化
+- CI/CDパイプラインの構築例
+- モノレポ構成の実例
+
+### 実装優先順位
+
+1. **最優先**: BaaS統合パターン（Firebase/Supabase）
+   - 需要が高く、実践的
+   - 無料で試せる
+
+2. **次点**: Clean Architecture実装
+   - エンタープライズ開発の基礎
+   - 多くの開発者が求めている
+
+3. **将来**: マイクロフロントエンド
+   - 先進的なアーキテクチャ
+   - 大規模チーム向け
+
+これらのセクションは、実装例プロジェクトと連動して、実際に動作するコードとともに提供予定。
+
 ## ✅ チェックリスト
 
 ### 移行前確認

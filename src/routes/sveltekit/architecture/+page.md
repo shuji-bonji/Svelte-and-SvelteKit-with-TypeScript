@@ -1,24 +1,26 @@
 ---
 title: SvelteKit アーキテクチャ詳解
-description: SvelteKitの内部動作とアーキテクチャを深く理解する
+description: SvelteKit 2.xの内部動作とアーキテクチャをTypeScriptで深く理解。SSR/SSG/SPAの実行環境、データフロー、レンダリングパイプラインの完全解説
 ---
-:::caution[タイトル]
-一部、執筆中
-:::
+
 <script>
   import { base } from '$app/paths';
 </script>
 
 SvelteKitのアーキテクチャを深く理解することで、より効果的なアプリケーション開発が可能になります。このセクションでは、実行環境、ファイル構成、データフローの詳細を解説します。
 
+:::info[執筆状況]
+このセクションは現在拡充中です。一部のサブページは準備中ですが、基本的なアーキテクチャ概念は完全にカバーされています。
+:::
+
 ## アーキテクチャの重要性
 
-SvelteKitのアーキテクチャを理解することで、
+SvelteKitのアーキテクチャを理解することで、以下のような利点が得られます。
 
-- **最適なレンダリング方式の選択** - SSR/SSG/SPAを適切に使い分け
-- **パフォーマンスの最大化** - ボトルネックを理解し改善
-- **セキュアな実装** - サーバー/クライアントの境界を正しく理解
-- **効率的なデバッグ** - 問題の原因を素早く特定
+- **最適なレンダリング方式の選択** - SSR/SSG/SPAを適切に使い分け、パフォーマンスとUXを最適化
+- **パフォーマンスの最大化** - ボトルネックを理解し、コード分割やプリロードを効果的に活用
+- **セキュアな実装** - サーバー/クライアントの境界を正しく理解し、機密情報を保護
+- **効率的なデバッグ** - 問題の原因を素早く特定し、解決時間を短縮
 
 ## このセクションで学ぶこと
 
@@ -28,7 +30,7 @@ SvelteKitのアーキテクチャを理解することで、
       <div class="text-3xl mb-2">🌐</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         実行環境別アーキテクチャ
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、SPAそれぞれの動作原理を詳細に理解します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -62,7 +64,7 @@ SvelteKitのアーキテクチャを理解することで、
       <div class="text-3xl mb-2">📁</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         ファイル構成と実行環境
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">各ファイルがどの環境で動作し、どのような役割を持つかを解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -79,7 +81,7 @@ SvelteKitのアーキテクチャを理解することで、
       <div class="text-3xl mb-2">📊</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         データロードフロー
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数の実行順序とデータの流れを完全に理解します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -96,7 +98,7 @@ SvelteKitのアーキテクチャを理解することで、
       <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         レンダリングパイプライン
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">コンパイルから実行までの詳細なプロセスを解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -111,21 +113,23 @@ SvelteKitのアーキテクチャを理解することで、
 
 ## アーキテクチャ理解の流れ
 
-### 📚 推奨学習順序
+### 推奨学習順序
 
-1. **実行環境別アーキテクチャ** - まずSSR/SSG/SPAの違いを理解
-2. **ファイル構成と実行環境** - 各ファイルの役割を把握
-3. **データロードフロー** - データの流れを理解
-4. **レンダリングパイプライン** - 内部動作の詳細を学習
+1. **基礎編を理解** - まず[SvelteKit基礎編]({base}/sveltekit/basics/)で基本を把握
+2. **実行環境別アーキテクチャ** - SSR/SSG/SPAの違いを深く理解
+3. **ファイル構成と実行環境** - 各ファイルの役割と実行環境を把握
+4. **データロードフロー** - データの流れと最適化を理解
+5. **レンダリングパイプライン** - 内部動作の詳細を学習
 
-### 🎯 学習目標
+### 学習目標
 
 このセクションを完了すると、以下ができるようになります。
 
-- SSR/SSG/SPAを使い分けて最適なアーキテクチャを選択できる
-- ファイルの実行環境を理解し、セキュアなコードを書ける
-- データフローを最適化してパフォーマンスを向上できる
-- 問題発生時に原因を素早く特定し解決できる
+- **最適なレンダリング戦略の選択** - SSR/SSG/SPAを使い分けて最適なアーキテクチャを設計
+- **セキュアな実装** - ファイルの実行環境を理解し、機密情報を適切に保護
+- **パフォーマンス最適化** - データフローを最適化し、UXを向上
+- **効率的なデバッグ** - 問題発生時に原因を素早く特定し解決
+- **エンタープライズパターンの適用** - 大規模アプリケーションに適した設計
 
 ## レンダリング戦略とアーキテクチャパターン
 
@@ -196,10 +200,16 @@ export class UserRepository {
 
 ## 次のステップ
 
-アーキテクチャを理解したら、[サーバーサイド編]({base}/sveltekit/server/)で実践的な実装方法を学びましょう。
+アーキテクチャを理解したら、以下のセクションで実践的な実装方法を学びましょう。
 
-:::tip[アーキテクチャの重要性]
+- [サーバーサイド編]({base}/sveltekit/server/) - Form Actions、API Routes、Hooksの実装
+- [アプリケーション構築編]({base}/sveltekit/application/) - 認証、データベース、環境変数の管理
+- [実装例]({base}/examples/) - 実際に動作するサンプルコード
+
+:::tip[アーキテクチャ理解のメリット]
 SvelteKitのアーキテクチャを深く理解することは、単に動くコードを書くだけでなく、パフォーマンスが高く、セキュアで、保守しやすいアプリケーションを構築するために不可欠です。
+
+特に、エンタープライズアプリケーションでは、これらの知識がプロジェクトの成功を左右します。
 :::
 
 :::info[参考ナレッジ]

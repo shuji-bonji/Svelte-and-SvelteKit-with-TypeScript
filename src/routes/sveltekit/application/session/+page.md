@@ -1030,6 +1030,7 @@ SvelteKitでのセッション管理は、アプリケーションの要件に�
 
 認証システムの実装後は、以下のトピックについても検討してください。これらは認証システムと密接に関連しており、完全なアプリケーションを構築する上で重要な要素です。
 
+- [認証ベストプラクティス](/sveltekit/application/auth-best-practices/) - 認証・認可パターンのベストプラクティス
 - [データベース統合](/sveltekit/application/database/) - ユーザー情報の永続化
 - [環境変数管理](/sveltekit/application/environment/) - シークレットの安全な管理
 - [エラーハンドリング](/sveltekit/application/error-handling/) - 認証エラーの適切な処理

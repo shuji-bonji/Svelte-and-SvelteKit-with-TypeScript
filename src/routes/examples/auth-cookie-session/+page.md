@@ -118,7 +118,7 @@ sequenceDiagram
 
 このページでは、SvelteKitを使用したCookie/Sessionベースの認証システムの実装方法を詳しく解説します。サーバーサイドレンダリング（SSR）の利点を最大限に活かし、セキュアで信頼性の高い認証システムを構築する方法を、実際に動作するコード例とシーケンス図を交えながら説明します。
 
-## 🎯 概要
+## 概要
 
 Cookie/Sessionベース認証は、サーバーサイドでセッション情報を管理し、クライアントにはセッションIDのみをHTTPOnlyクッキーとして保存する伝統的かつ安全な認証方式です。この方式は、Web開発の初期から使われており、最も枯れた技術であるため、信頼性が高く、セキュリティ上の問題も十分に理解されています。
 
@@ -133,7 +133,7 @@ Cookie/Session認証を選択する最大の理由は、そのセキュリティ
 | スケーラビリティ | セッションストア必要 | ステートレスで優れる |
 | 実装の複雑さ | シンプル | やや複雑 |
 
-## 🔐 認証フローのシーケンス図
+## 認証フローのシーケンス図
 
 認証システムの動作を理解するために、以下の3つの主要なフローをシーケンス図で示します。各図は、ブラウザ、SvelteKit、Form Actions、データベース間の通信の流れを詳細に表現しています。
 
@@ -174,7 +174,7 @@ Cookie/Session認証を選択する最大の理由は、そのセキュリティ
 - 各ページのload関数で認証状態をチェック
 - 未認証の場合は、現在のURLをfromパラメータとして保存してログインページへリダイレクト
 
-## 🛠 実装詳細
+## 実装詳細
 
 以下では、実際に動作する認証システムをステップバイステップで実装していきます。各コードブロックには詳細な説明を追加し、なぜその実装が必要なのか、どのように動作するのかを明確にします。
 
@@ -471,7 +471,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
-## 🔑 セキュリティのベストプラクティス
+## セキュリティのベストプラクティス
 
 Cookie/Session認証を安全に実装するためには、以下のセキュリティ対策を実施することが重要です。これらの対策は、OWASP（Open Web Application Security Project）のガイドラインに基づいています。
 
@@ -517,7 +517,7 @@ async function cleanupExpiredSessions() {
 
 SvelteKitのForm Actionsは自動的にCSRF保護を提供します。これは、SvelteKitが内部的にOriginヘッダーを確認し、不正なリクエストを拒否することで実現されています。追加の設定は不要で、Form Actionsを使用するだけでCSRF攻撃から保護されます。
 
-## 📊 パフォーマンス最適化
+## パフォーマンス最適化
 
 認証システムのパフォーマンスを最適化することで、ユーザー体験を向上させ、サーバーの負荷を軽減できます。以下の最適化手法を実装することを推奨します。
 
@@ -565,7 +565,7 @@ export async function validateSessionCached(token: string) {
 // }
 ```
 
-## 🚀 実装例
+## 実装例
 
 この記事で解説した認証システムの完全な実装例が以下のリポジトリで公開されています。実際に動作するコードを確認し、自分のプロジェクトに適用してみてください。
 
@@ -573,7 +573,7 @@ export async function validateSessionCached(token: string) {
 - **GitHub**: [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic)
 - **デモ**: [https://svelte5-auth-basic.vercel.app](https://svelte5-auth-basic.vercel.app)
 
-## 📚 関連リソース
+## 関連リソース
 
 Cookie/Session認証の理解を深めるための追加リソースです。公式ドキュメントや外部リソースを参照して、さらに高度な実装を目指しましょう。
 
@@ -581,7 +581,7 @@ Cookie/Session認証の理解を深めるための追加リソースです。公
 - [SvelteKit Hooks](https://kit.svelte.dev/docs/hooks)
 - [Prisma Documentation](https://www.prisma.io/docs)
 
-## 🔄 他の認証方式との比較
+## 他の認証方式との比較
 
 各認証方式にはそれぞれ適した使用場面があります。以下の表は、Cookie/Session認証と他の認証方式を比較し、それぞれの特徴と推奨用途を示しています。
 

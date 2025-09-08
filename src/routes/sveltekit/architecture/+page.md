@@ -41,40 +41,6 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
       </ul>
     </div>
   </a>
-
-  <a href="{base}/sveltekit/basics/file-system/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📂</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        SvelteKitファイルシステム
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">特殊ファイルの関係性とデータフローを包括的に理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>特殊ファイル一覧</strong>: +page、+layout、+server等</li>
-        <li><strong>実行順序</strong>: ファイル間の実行タイミング</li>
-        <li><strong>データフロー</strong>: 親子間のデータ共有</li>
-        <li><strong>型の連携</strong>: TypeScript型の自動生成</li>
-      </ul>
-    </div>
-  </a>
-  
-  <a href="{base}/sveltekit/architecture/file-structure/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📁</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        ファイル構成と実行環境
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">各ファイルがどの環境で動作し、どのような役割を持つかを解説します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>サーバー専用</strong>: .server.tsファイル</li>
-        <li><strong>ユニバーサル</strong>: .tsファイル</li>
-        <li><strong>クライアント</strong>: .svelteファイル</li>
-        <li><strong>特殊ファイル</strong>: hooks、app.html</li>
-      </ul>
-    </div>
-  </a>
   
   <a href="{base}/sveltekit/architecture/data-loading/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
@@ -110,6 +76,12 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
     </div>
   </a>
 </div>
+
+:::info[基礎編で学習済みの内容]
+以下の内容は基礎編で詳しく解説しています：
+- **プロジェクト構造**: [基礎編 - プロジェクト構造]({base}/sveltekit/basics/project-structure/) - ディレクトリ構成と設定ファイル
+- **特殊ファイルシステム**: [基礎編 - 特殊ファイルシステム]({base}/sveltekit/basics/file-system/) - +page、+layout、+serverファイルの役割と実行環境
+:::
 
 ## アーキテクチャ理解の流れ
 

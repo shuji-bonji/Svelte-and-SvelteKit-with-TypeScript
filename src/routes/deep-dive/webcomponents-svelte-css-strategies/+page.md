@@ -188,7 +188,7 @@ description: Web ComponentsのShadow DOMとSvelte5のパフォーマンス比較
 
 ここでは、Web Components、Svelte、そしてCSSフレームワーク（TailwindCSS/UnoCSS）の関係と、パフォーマンスとトレードオフを考慮した選択について、**理想論ではなく実践的な観点**から解説します。
 
-## ⚠️ 重要な考慮事項
+## 重要な考慮事項
 
 | 技術 | 理想 | 現実 | 推奨度 |
 |-----|------|------|--------|

@@ -7,7 +7,7 @@ description: SvelteKit 2.xの包括的リファレンス - ファイルベース
   import { base } from '$app/paths';
 </script>
 
-## 🚀 SvelteKit 2.xとは
+## SvelteKit 2.xとは
 
 SvelteKitは、Svelteを使用したモダンなWebアプリケーション構築のためのフルスタックフレームワークです。
 
@@ -18,7 +18,7 @@ SvelteKitは、Svelteを使用したモダンなWebアプリケーション構�
 - **Progressive Enhancement**: JavaScript無効環境でも動作
 - **デフォルトSSR**: SEOとパフォーマンスの最適化
 
-## 📁 プロジェクト構造
+## プロジェクト構造
 
 ### 基本構造
 
@@ -115,7 +115,7 @@ export const match: ParamMatcher = (param) => {
 };
 ```
 
-## 📊 データローディング
+## データローディング
 
 ### Universal Load関数（+page.ts）
 
@@ -227,7 +227,7 @@ export const load: PageServerLoad = async () => {
 {/await}
 ```
 
-## 📝 Form Actions
+## Form Actions
 
 ### 基本的なActions
 
@@ -588,7 +588,7 @@ export const handleError: HandleClientError = ({ error, event }) => {
 };
 ```
 
-## 🎨 レイアウト
+## レイアウト
 
 ### ネストレイアウト
 
@@ -646,7 +646,7 @@ export const handleError: HandleClientError = ({ error, event }) => {
 <!-- @ でルートレイアウトにリセット -->
 ```
 
-## 🔒 認証と認可
+## 認証と認可
 
 ### 認証フロー実装
 
@@ -716,7 +716,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 };
 ```
 
-## 🔧 型定義
+## 型定義
 
 ### app.d.ts
 
@@ -773,7 +773,7 @@ import type {
 } from './$types';
 ```
 
-## 🌐 環境変数
+## 環境変数
 
 ### 静的環境変数
 
@@ -802,7 +802,7 @@ const port = env.PORT || '3000';
 const apiUrl = publicEnv.PUBLIC_API_URL;
 ```
 
-## 🚀 デプロイメント
+## デプロイメント
 
 ### アダプター設定
 
@@ -860,7 +860,7 @@ export const entries = () => {
 export const trailingSlash = 'always'; // 'never' | 'always' | 'ignore'
 ```
 
-## ⚡ パフォーマンス最適化
+## パフォーマンス最適化
 
 ### プリフェッチ戦略
 
@@ -926,7 +926,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 };
 ```
 
-## 🔧 高度な機能
+## 高度な機能
 
 ### Service Worker
 
@@ -996,7 +996,7 @@ export default defineConfig({
 });
 ```
 
-## 🧪 テスト
+## テスト
 
 ### 統合テスト
 
@@ -1031,7 +1031,7 @@ describe('API Routes', () => {
 });
 ```
 
-## 🎯 ベストプラクティス
+## ベストプラクティス
 
 ### 1. 型安全性の確保
 
@@ -1095,7 +1095,7 @@ export const load: PageServerLoad = async ({ params }) => {
 </div>
 ```
 
-## 📚 関連リソース
+## 関連リソース
 
 - [Svelte 5 完全リファレンス]({base}/reference/svelte5/) - Svelte 5の詳細
 - [SvelteKit基礎編]({base}/sveltekit/basics/) - 基礎から学ぶ

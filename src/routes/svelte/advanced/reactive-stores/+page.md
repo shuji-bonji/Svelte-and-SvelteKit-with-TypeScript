@@ -920,7 +920,7 @@ export function createWebSocketStore(url: string) {
   </div>
 </div>
 
-### 💡 具体的な実装判断基準
+### 具体的な実装判断基準
 
 以下の条件に当てはまる場合、リアクティブストアの使用を検討すべきです。
 

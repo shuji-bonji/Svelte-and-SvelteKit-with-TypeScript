@@ -662,7 +662,7 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 
 <aside class="aside-box">
 
-## 📚 関連リソース
+## 関連リソース
 
 ### 関連ページ
 - [コンポーネントの基本](/svelte/basics/component-basics/) - イベントハンドリングの基礎

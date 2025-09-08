@@ -9,7 +9,7 @@ description: Svelte 5とSvelteKit 2.xの完全リファレンス - TypeScript完
 
 Svelte 5とSvelteKit 2.xの開発に必要なすべての情報を2つの包括的なリファレンスにまとめました。TypeScriptとの完全統合、実践的なコード例、詳細なAPI仕様を網羅し、効率的な開発をサポートします。
 
-## 📚 完全リファレンス
+## 完全リファレンス
 
 <div class="grid">
   <article class="card">
@@ -47,7 +47,7 @@ Svelte 5とSvelteKit 2.xの開発に必要なすべての情報を2つの包括�
   </article>
 </div>
 
-## 🎯 このリファレンスの特徴
+## このリファレンスの特徴
 
 ### TypeScript完全対応
 すべてのコード例でTypeScriptを使用し、型安全な開発を実現します。
@@ -61,7 +61,7 @@ Svelte 5とSvelteKit 2.xの最新機能に対応し、常に最新の情報を�
 ### 包括的な内容
 基本から応用まで、開発に必要なすべての情報を網羅しています。
 
-## 🤖 LLM/AI向け利用方法
+## LLM/AI向け利用方法
 
 これらのリファレンスは、開発者だけでなくLLM（大規模言語モデル）やAIアシスタントのコンテキストとしても最適化されています。各リファレンスには以下が含まれます。
 
@@ -70,7 +70,7 @@ Svelte 5とSvelteKit 2.xの最新機能に対応し、常に最新の情報を�
 - **詳細な説明**: 各機能の動作原理と使用方法
 - **ベストプラクティス**: 推奨される実装方法とアンチパターン
 
-## 💬 フィードバック
+## フィードバック
 
 これらのリファレンスについての質問やフィードバックは、GitHubのDiscussionでお待ちしています。
 
@@ -78,7 +78,7 @@ Svelte 5とSvelteKit 2.xの最新機能に対応し、常に最新の情報を�
 - [SvelteKit 2.x Discussion #60](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/60)
 - [完全ガイド Discussion #61](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/discussions/61)
 
-## 🔗 関連リソース
+## 関連リソース
 
 - [Svelte完全ガイド]({base}/svelte/) - Svelteの基礎から応用まで
 - [SvelteKit完全ガイド]({base}/sveltekit/) - SvelteKitの詳細解説

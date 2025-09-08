@@ -110,7 +110,7 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
   </a>
 </div>
 
-## 🎯 認証システム実装例
+## 認証システム実装例
 
 認証システムは、現代のWebアプリケーションにおいて最も重要な機能の一つです。以下の3つの実装パターンを詳細に解説しています。
 
@@ -188,7 +188,7 @@ src/
 ├── app.html            # HTMLテンプレート
 └── hooks.server.ts     # サーバーフック
 
-## 📚 前提知識
+## 前提知識
 
 実装例を最大限活用するために、以下の内容を理解しておくことをお勧めします。
 
@@ -201,7 +201,7 @@ src/
 - <a href="{base}/sveltekit/basics/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">SvelteKit基礎</a> - ルーティングとSSR
 - <a href="{base}/svelte/advanced/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">実践編</a> - 高度なパターン
 
-## 🚀 学習の進め方
+## 学習の進め方
 
 ### 初心者向けパス
 1. **基礎を固める** - <a href="{base}/examples/todo-app/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">TODOアプリ</a>でSvelte 5の基本を習得
@@ -213,7 +213,7 @@ src/
 2. **リアルタイム機能** - <a href="{base}/examples/websocket/" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 underline decoration-pink-300 dark:decoration-pink-600 decoration-2 underline-offset-2 transition-colors">WebSocket実装</a>でリアルタイム通信
 3. **高度な認証** - JWT認証やルートグループ認証（準備中）
 
-## 💡 実装のヒント
+## 実装のヒント
 
 :::tip[成功のポイント]
 - **段階的に学習** - 簡単な例から始めて徐々に複雑な実装へ
@@ -222,7 +222,7 @@ src/
 - **公式ドキュメント参照** - 最新の情報は公式ドキュメントで確認
 :::
 
-## 🔗 外部リソース
+## 外部リソース
 
 ### GitHubリポジトリ
 実装例の完全なソースコードは以下で公開しています。

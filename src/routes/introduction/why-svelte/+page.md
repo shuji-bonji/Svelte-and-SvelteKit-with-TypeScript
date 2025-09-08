@@ -431,7 +431,7 @@ Svelteは「シンプルさ」のまま、より高い性能を実現します�
 
 ### あなたがSvelteを選ぶべき具体的な状況
 
-#### ✅ 今すぐSvelteを採用すべきケース
+#### 今すぐSvelteを採用すべきケース
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -461,7 +461,7 @@ Svelteは「シンプルさ」のまま、より高い性能を実現します�
 </div>
 
 
-#### ⚠️ Svelteの採用を慎重に検討すべきケース
+#### Svelteの採用を慎重に検討すべきケース
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">

@@ -39,7 +39,7 @@ description: コンパイラベースの革新的UIフレームワークをマ�
 
 Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生成する**革新的なUIフレームワークです。Virtual DOMを使わず、直接DOMを操作する効率的なコードを生成することで、React、Vue、Angularを凌駕するパフォーマンスと開発者体験を実現します。
 
-## 🚀 なぜSvelteが選ばれるのか
+## なぜSvelteが選ばれるのか
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -71,7 +71,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
   </div>
 </div>
 
-## 📚 学習ロードマップ
+## 学習ロードマップ
 
 <Mermaid diagram={learningFlow} />
 
@@ -84,7 +84,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
    - **フルスタック開発** → [SvelteKit学習へ]({base}/sveltekit/)
    - **プロジェクト実践** → 実プロジェクトでの開発
 
-## 🎯 学習コンテンツ
+## 学習コンテンツ
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
   <!-- 基本編カード -->
@@ -267,7 +267,7 @@ Svelteは、**コンパイル時に最適化された Vanilla JavaScriptを生�
   </div>
 </div>
 
-## 🎓 学習の始め方
+## 学習の始め方
 
 ### Step 1: 基礎を固める
 まず[Svelteの基本概要]({base}/svelte/basics/)で基本概念を理解し、[コンポーネントの基本]({base}/svelte/basics/component-basics/)で実際にコンポーネントを作成します。
@@ -278,7 +278,7 @@ Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、�
 ### Step 3: 実践的な実装
 [実践編]({base}/svelte/advanced/)で、プロダクションレベルのアプリケーション開発に必要な高度な機能を学びます。
 
-## 🛠️ 推奨開発環境
+## 推奨開発環境
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
@@ -326,7 +326,7 @@ Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、�
   </div>
 </div>
 
-## 📊 他フレームワークとの比較
+## 他フレームワークとの比較
 
 | 特徴 | Svelte 5 | React 18 | Vue 3 | Angular 17 |
 |-----|----------|----------|-------|------------|
@@ -385,7 +385,7 @@ Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、�
   </div>
 </div>
 
-## 🎯 実際のプロジェクト例
+## 実際のプロジェクト例
 
 ### 企業での採用事例
 - **The New York Times**: インタラクティブなデータビジュアライゼーション
@@ -528,7 +528,7 @@ Svelte 5の核心である[Runesシステム]({base}/svelte/runes/)を学び、�
   </div>
 </div>
 
-## 🎯 次のステップ
+## 次のステップ
 
 **完全初心者の方**:
 [Svelteの基本概要]({base}/svelte/basics/)から始めて、基礎をしっかり学習

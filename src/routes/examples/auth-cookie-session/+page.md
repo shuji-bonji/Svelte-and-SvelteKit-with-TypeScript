@@ -4,6 +4,7 @@ description: SvelteKit 2.xとTypeScriptで実装するCookie/Sessionベースの
 ---
 
 <script>
+  import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
   // Mermaidチャート定義
@@ -116,67 +117,140 @@ sequenceDiagram
 `;
 </script>
 
-このページでは、SvelteKitを使用したCookie/Sessionベースの認証システムの実装方法を詳しく解説します。サーバーサイドレンダリング（SSR）の利点を最大限に活かし、セキュアで信頼性の高い認証システムを構築する方法を、実際に動作するコード例とシーケンス図を交えながら説明します。
+SvelteKit 2.xとTypeScriptを使用した、実践的なCookie/Sessionベース認証システムの実装例です。HTTPOnlyクッキーとサーバーサイドセッション管理により、セキュアで信頼性の高い認証システムを構築しています。
 
-## 概要
+## 実装プロジェクト
 
-Cookie/Sessionベース認証は、サーバーサイドでセッション情報を管理し、クライアントにはセッションIDのみをHTTPOnlyクッキーとして保存する伝統的かつ安全な認証方式です。この方式は、Web開発の初期から使われており、最も枯れた技術であるため、信頼性が高く、セキュリティ上の問題も十分に理解されています。
+この認証システムの完全な実装例が実際に動作しているデモサイトで確認できます。
 
-### なぜCookie/Session認証を選ぶか
+- **デモサイト**: [https://svelte5-auth-basic.vercel.app](https://svelte5-auth-basic.vercel.app)
+- **ソースコード**: [https://github.com/shuji-bonji/svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic)
 
-Cookie/Session認証を選択する最大の理由は、そのセキュリティの高さと実装のシンプルさです。以下の比較表は、JWT認証との主要な違いを示しています。特にセキュリティ重視のアプリケーションでは、Cookie/Session認証が優れた選択肢となります。
+:::info[実装プロジェクトの特徴]
+- Prismaを使用したデータベース管理
+- bcryptによる安全なパスワードハッシュ化
+- HTTPOnlyクッキーによるセッション管理
+- Form Actionsによるサーバーサイド処理
+- TypeScriptによる型安全な実装
+- 本番環境対応のセキュリティ設定
+:::
 
-| 特徴 | Cookie/Session | JWT |
-|------|---------------|-----|
-| セキュリティ | HTTPOnlyで高い | XSS攻撃のリスク |
-| セッション管理 | サーバー側で完全制御 | トークンの無効化が困難 |
-| スケーラビリティ | セッションストア必要 | ステートレスで優れる |
-| 実装の複雑さ | シンプル | やや複雑 |
+### スクリーンショット
 
-## 認証フローのシーケンス図
+<div class="relative max-w-4xl mx-auto">
+  <!-- スクリーンショット表示 -->
+  <div class="relative overflow-hidden rounded-xl shadow-2xl">
+    <!-- ライトモード画像（html.darkクラスがない場合に表示） -->
+    <img 
+      src="{base}/images/examples/auth-basic.vercel.app-light.png" 
+      alt="認証システム - ライトモード" 
+      class="w-full transition-opacity duration-300 block dark:hidden"
+    >
+    <!-- ダークモード画像（html.darkクラスがある場合に表示） -->
+    <img 
+      src="{base}/images/examples/auth-basic.vercel.app-dark.png" 
+      alt="認証システム - ダークモード" 
+      class="w-full transition-opacity duration-300 hidden dark:block"
+    >
+  </div>
+  
+  <!-- キャプション -->
+  <p class="text-center text-gray-600 dark:text-gray-400 mt-3 text-sm">
+    <span class="inline dark:hidden">ライトモード表示</span>
+    <span class="hidden dark:inline">ダークモード表示</span>
+  </p>
+</div>
 
-認証システムの動作を理解するために、以下の3つの主要なフローをシーケンス図で示します。各図は、ブラウザ、SvelteKit、Form Actions、データベース間の通信の流れを詳細に表現しています。
+### プロジェクト構成
 
-### ユーザー登録フロー
+認証システムの実装に必要なファイル構成です。
 
-新規ユーザーがアカウントを作成する際のフローです。バリデーション、パスワードのハッシュ化、セッションの作成、Cookieの設定までの一連の処理を示しています。
+```
+src/
+├── lib/
+│   └── server/
+│       ├── auth.ts                 # 認証ユーティリティ
+│       ├── database.ts             # Prismaクライアント
+│       └── session.ts              # セッション管理
+├── routes/
+│   ├── +layout.server.ts           # 認証状態の共有
+│   ├── (public)/                   # 公開ルート
+│   │   ├── login/
+│   │   │   ├── +page.svelte        # ログインフォーム
+│   │   │   └── +page.server.ts     # ログイン処理
+│   │   └── register/
+│   │       ├── +page.svelte        # 登録フォーム
+│   │       └── +page.server.ts     # 登録処理
+│   └── (protected)/                # 保護ルート
+│       ├── +layout.server.ts       # 認証チェック
+│       └── dashboard/
+│           └── +page.svelte        # ダッシュボード
+├── hooks.server.ts                 # グローバル認証フック
+└── app.d.ts                        # 型定義
+```
+
+## この実装の特徴
+
+このプロジェクトでは、SvelteKitの標準機能を最大限に活用して、セキュアで実用的な認証システムを実装しています。
+
+### 技術スタック
+
+- **SvelteKit 2.x** - フルスタックフレームワーク
+- **Prisma** - TypeScript対応のORM
+- **bcryptjs** - パスワードハッシュ化
+- **Vercel** - デプロイプラットフォーム
+- **PostgreSQL** - データベース（Vercel Postgres）
+
+### 実装のポイント
+
+1. **HTTPOnlyクッキー** - XSS攻撃から保護
+2. **サーバーサイドセッション管理** - セッションの即座な無効化が可能
+3. **Form Actions** - Progressive Enhancementを活用
+4. **型安全性** - TypeScriptによる完全な型定義
+
+## 実装の詳細
+
+この実装では、SvelteKitのForm ActionsとHooksを組み合わせて、サーバーサイドで完結する認証システムを構築しています。
+
+### ユーザー登録の実装フロー
+
+このプロジェクトでの新規ユーザー登録の実装を、シーケンス図で示します。Prismaによるデータベース操作とbcryptによるパスワードハッシュ化の流れに注目してください。
 
 <Mermaid chart={registrationFlow} />
 
-#### ポイント解説
-- Form Actionsでサーバーサイドバリデーションを実行
-- bcryptによる安全なパスワードハッシュ化
-- セッション作成と同時にHTTPOnly Cookieを設定
-- 成功時は自動的にダッシュボードへリダイレクト
+#### 実装のポイント
+- `/register/+page.server.ts`でForm Actionsを定義
+- Prismaを使用してユーザーの重複チェック
+- bcryptのハッシュコストは10を使用（本番環境推奨値）
+- セッションは7日間有効に設定
 
-### ログインフロー
+### ログインの実装フロー
 
-既存ユーザーがログインする際のフローです。メールアドレスとパスワードの検証、セッションの作成、リダイレクト処理の流れを詳細に説明しています。
+このプロジェクトでのログイン処理の実装です。Prismaによるユーザー検索とbcrypt.compare()によるパスワード検証の流れを示しています。
 
 <Mermaid chart={loginFlow} />
 
-#### ポイント解説
-- データベースからユーザー情報を取得
-- bcrypt.compare()でパスワードを安全に検証
-- セキュリティのため、「ユーザーが存在しない」と「パスワードが間違っている」を区別しないエラーメッセージ
-- ログイン後は元のページ（from パラメータ）へリダイレクト
+#### 実装のポイント
+- `/login/+page.server.ts`でForm Actionsを定義
+- セキュリティのため、エラーメッセージは「メールアドレスまたはパスワードが正しくありません」で統一
+- ログイン成功後、URLのfromパラメータで指定されたページへリダイレクト
+- fromパラメータがない場合は`/dashboard`へリダイレクト
 
-### 認証保護されたページアクセス
+### 保護されたページへのアクセス実装
 
-認証が必要なページにアクセスする際のフローです。hooks.server.tsでのセッション検証から、+page.server.tsでの認証チェック、未認証ユーザーのリダイレクトまでの流れを示しています。
+このプロジェクトでの認証保護の実装方法です。`hooks.server.ts`と`(protected)/+layout.server.ts`の連携による認証チェックの流れを示しています。
 
 <Mermaid chart={protectedPageFlow} />
 
-#### ポイント解説
-- すべてのリクエストはhooks.server.tsを通過
-- Cookieからセッショントークンを自動取得
-- セッション検証結果をlocals.userに保存
-- 各ページのload関数で認証状態をチェック
-- 未認証の場合は、現在のURLをfromパラメータとして保存してログインページへリダイレクト
+#### 実装のポイント
+- `hooks.server.ts`ですべてのリクエストに対してセッション検証を実行
+- 検証結果を`event.locals.user`に保存してアプリ全体で共有
+- `(protected)/+layout.server.ts`で認証必須ページの保護を実装
+- リダイレクト時に元のURLを`from`パラメータとして保持
 
-## 実装詳細
+## コード実装
 
-以下では、実際に動作する認証システムをステップバイステップで実装していきます。各コードブロックには詳細な説明を追加し、なぜその実装が必要なのか、どのように動作するのかを明確にします。
+このプロジェクトの主要なコード実装を、ステップバイステップで解説します。実際のソースコードはGitHubリポジトリで確認できます。
 
 ### 1. プロジェクトセットアップ
 
@@ -564,14 +638,6 @@ export async function validateSessionCached(token: string) {
 //   expiresAt DateTime @db.Index          // 期限切れセッションのクリーンアップを高速化
 // }
 ```
-
-## 実装例
-
-この記事で解説した認証システムの完全な実装例が以下のリポジトリで公開されています。実際に動作するコードを確認し、自分のプロジェクトに適用してみてください。
-
-#### 完全に動作する実装例
-- **GitHub**: [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic)
-- **デモ**: [https://svelte5-auth-basic.vercel.app](https://svelte5-auth-basic.vercel.app)
 
 ## 関連リソース
 

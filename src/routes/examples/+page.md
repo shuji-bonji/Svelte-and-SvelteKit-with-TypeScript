@@ -14,6 +14,28 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
 ## プロジェクト一覧
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <a href="{base}/examples/blog-system/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📖</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        ブログシステム
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">最小構成のブログシステム実装</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>ファイルベースルーティング</li>
+        <li>動的ルート（[slug]）</li>
+        <li>レイアウトシステム</li>
+        <li>ナビゲーションコンポーネント</li>
+      </ul>
+      <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+        <code class="text-xs">
+          /blog/[slug] → 個別記事ページ
+        </code>
+      </div>
+    </div>
+  </a>
+  
   <a href="{base}/examples/todo-app/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📝</div>

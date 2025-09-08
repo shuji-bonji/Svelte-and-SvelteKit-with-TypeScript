@@ -961,7 +961,7 @@ jobs:
 1. `/src/routes/reference/svelte5/+page.md` - Svelte 5のすべて
 2. `/src/routes/reference/sveltekit2/+page.md` - SvelteKit 2.xのすべて
 
-重要な原則：
+### 重要な原則
 - Svelte 5 Runesシステムを使用（古い文法は使わない）
 - TypeScript必須（型定義を明確に）
 - SvelteKit 2.xのファイルベースルーティング

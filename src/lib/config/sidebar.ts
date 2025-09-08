@@ -386,6 +386,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       collapsible: true,
       items: [
         { title: '実装例一覧', to: '/examples/' },
+        { title: 'ブログシステム', to: '/examples/blog-system/' },
         { title: 'TODOアプリ', to: '/examples/todo-app/' },
         { title: '認証システム', to: '/examples/auth-system/' },
         { title: 'データフェッチング', to: '/examples/data-fetching/' },

@@ -14,6 +14,49 @@
 
   onMount(() => {
     mounted = true;
+    
+    // サイドバーの自動スクロール機能
+    function scrollToActiveSection() {
+      setTimeout(() => {
+        // SveltePressのサイドバー要素を探す
+        const sidebar = document.querySelector('.theme-default-sidebar');
+        if (!sidebar) return;
+        
+        // アクティブなリンクを探す（現在のページ）
+        const currentLink = sidebar.querySelector('.link.active');
+        if (!currentLink) return;
+        
+        // アクティブなリンクの位置を取得
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const linkRect = currentLink.getBoundingClientRect();
+        
+        // サイドバーの表示領域内にあるかチェック
+        const isInView = linkRect.top >= sidebarRect.top && 
+                        linkRect.bottom <= sidebarRect.bottom;
+        
+        if (!isInView) {
+          // リンクが見える位置までスクロール（中央寄せ）
+          const scrollTop = linkRect.top - sidebarRect.top - sidebarRect.height / 2 + linkRect.height / 2;
+          
+          sidebar.scrollTo({
+            top: sidebar.scrollTop + scrollTop,
+            behavior: 'smooth'
+          });
+        }
+      }, 200); // DOMの更新を待つ
+    }
+    
+    // 初回実行
+    scrollToActiveSection();
+    
+    // ページ遷移時にも実行
+    const unsubscribe = page.subscribe(() => {
+      scrollToActiveSection();
+    });
+    
+    return () => {
+      unsubscribe();
+    };
   });
 </script>
 
@@ -72,6 +115,28 @@
   /* サイドバーのパディング調整 */
   :global(.theme-default-sidebar) {
     padding-left: 1rem !important;
+    /* スクロール領域の改善 */
+    overflow-y: auto !important;
+    scroll-behavior: smooth !important;
+    max-height: calc(100vh - 64px) !important; /* ヘッダーの高さを引く */
+  }
+  
+  /* アクティブなリンクをハイライト */
+  :global(.theme-default-sidebar .link.active) {
+    background-color: rgba(251, 113, 133, 0.1) !important;
+    font-weight: 600 !important;
+    position: relative !important;
+  }
+  
+  /* アクティブなリンクに左ボーダーを追加 */
+  :global(.theme-default-sidebar .link.active::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: rgb(251, 113, 133);
   }
 
   /* サイドバーのフォントサイズ調整（セクションタイトル以外） */

@@ -24,6 +24,33 @@ Svelte 5とSvelteKitを使用した、実践的なブログシステムの最小
 - ナビゲーションコンポーネントの実装
 :::
 
+### スクリーンショット
+
+<div class="relative max-w-4xl mx-auto">
+  <!-- スクリーンショット表示 -->
+  <div class="relative overflow-hidden rounded-xl shadow-2xl">
+    <!-- ライトモード画像（html.darkクラスがない場合に表示） -->
+    <img 
+      src="{base}/images/examples/blog-example-light.png" 
+      alt="Blog - ライトモード" 
+      class="w-full transition-opacity duration-300 block dark:hidden"
+    >
+    <!-- ダークモード画像（html.darkクラスがある場合に表示） -->
+    <img 
+      src="{base}/images/examples/blog-example-dark.png" 
+      alt="Blog - ダークモード" 
+      class="w-full transition-opacity duration-300 hidden dark:block"
+    >
+  </div>
+  
+  <!-- キャプション -->
+  <p class="text-center text-gray-600 dark:text-gray-400 mt-3 text-sm">
+    <span class="inline dark:hidden">ライトモード表示</span>
+    <span class="hidden dark:inline">ダークモード表示</span>
+  </p>
+</div>
+
+
 ## プロジェクト構成
 
 最小構成のブログシステムに必要なファイル構成です。

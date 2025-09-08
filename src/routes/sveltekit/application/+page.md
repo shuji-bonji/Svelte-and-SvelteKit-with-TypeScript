@@ -62,6 +62,24 @@ description: 実践的なアプリケーション開発パターンと設計手�
     </div>
   </a>
   
+  <a href="{base}/sveltekit/application/auth-best-practices/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📘</div>
+      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+        認証ベストプラクティス
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitの認証・認可パターンのベストプラクティスを実装例とともに解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>3層認証アーキテクチャ</strong>: hooks→groups→pages</li>
+        <li><strong>ヘルパー関数</strong>: DRY原則の実践</li>
+        <li><strong>他フレームワーク比較</strong>: Angular/NestJS/Vue</li>
+        <li><strong>プロジェクト規模別</strong>: 最適なパターン選択</li>
+        <li><strong>アンチパターン</strong>: 避けるべき実装</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/sveltekit/application/database/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🗄️</div>

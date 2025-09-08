@@ -285,6 +285,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/application/session/',
             },
             {
+              title: '認証ベストプラクティス',
+              to: '/sveltekit/application/auth-best-practices/',
+            },
+            {
               title: 'データベース統合 (準備中)',
               to: '/sveltekit/application/database/',
             },

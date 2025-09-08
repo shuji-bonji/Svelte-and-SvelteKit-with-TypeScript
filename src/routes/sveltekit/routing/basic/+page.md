@@ -416,6 +416,88 @@ SvelteKitは高速なクライアントサイドナビゲーションを提供�
   }
 </style>
 ```
+<Expansion title="ナビゲーションコンポーネントの実装例">
+
+  ### ナビゲーションコンポーネントの実装
+
+  再利用可能なナビゲーションコンポーネントとして実装する場合の、具体的なファイル構成例です。
+
+  ```
+  src/
+  ├── lib/
+  │   └── components/
+  │       └── Navigation.svelte   # ナビゲーションコンポーネント
+  └── routes/
+      ├── +layout.svelte          # ルートレイアウトで使用
+      ├── +page.svelte            # ホームページ
+      ├── about/
+      │   └── +page.svelte        # About ページ
+      └── blog/
+          ├── +page.svelte        # ブログ一覧
+          └── [slug]/
+              └── +page.svelte    # 個別記事
+  ```
+
+  #### Navigation.svelte の実装
+  ```svelte
+  <!-- src/lib/components/Navigation.svelte -->
+  <script lang="ts">
+    import { page } from '$app/stores';
+    
+    type NavItem = {
+      href: string;
+      label: string;
+      matchPath?: string; // パスマッチング用（オプション）
+    };
+    
+    const navItems: NavItem[] = [
+      { href: '/', label: 'Home' },
+      { href: '/about', label: 'About' },
+      { href: '/blog', label: 'Blog', matchPath: '/blog' }
+    ];
+    
+    let currentPath = $derived($page.url.pathname);
+    
+    function isActive(item: NavItem): boolean {
+      if (item.href === '/') {
+        return currentPath === '/';
+      }
+      return currentPath.startsWith(item.matchPath || item.href);
+    }
+  </script>
+
+  <nav>
+    {#each navItems as item}
+      <a 
+        href={item.href} 
+        class:active={isActive(item)}
+        aria-current={isActive(item) ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    {/each}
+  </nav>
+  ```
+
+  #### レイアウトでの使用
+  ```svelte
+  <!-- src/routes/+layout.svelte -->
+  <script lang="ts">
+    import Navigation from '$lib/components/Navigation.svelte';
+    import type { Snippet } from 'svelte';
+    
+    let { children }: { children?: Snippet } = $props();
+  </script>
+
+  <header>
+    <Navigation />
+  </header>
+
+  <main>
+    {@render children?.()}
+  </main>
+  ```
+</Expansion>
 
 ### プリフェッチ
 
@@ -460,6 +542,24 @@ export const load: PageLoad = async () => {
   // データ取得
 };
 ```
+
+:::tip[サイト全体に設定を適用する方法]
+ページ設定をサイト全体に適用したい場合は、**ルートレイアウト**で設定します。
+
+```typescript
+// src/routes/+layout.ts または +layout.server.ts
+export const prerender = true;         // 全ページをプリレンダリング
+export const ssr = true;                // 全ページでSSR有効（デフォルト）
+export const csr = true;                // 全ページでCSR有効（デフォルト）
+export const trailingSlash = 'never';   // 全ページで末尾スラッシュなし（デフォルト）
+```
+
+- **継承の仕組み**: 子のレイアウトやページは親の設定を継承します
+- **上書き可能**: 個別のページで異なる設定を指定すれば上書きできます
+- **設定の優先順位**: ページ > 直近のレイアウト > 親レイアウト > ルートレイアウト
+
+詳しくは [レンダリング戦略](/sveltekit/basics/rendering-strategies/) のページで、SSR/SSG/SPAの使い分けと設定方法を解説しています。
+:::
 
 ## 実践例：ブログサイトの構築
 

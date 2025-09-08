@@ -46,7 +46,7 @@ description: SvelteKitをTypeScriptでマスターする完全ガイド。SSR/SS
 
 SvelteKitは、Svelteをベースにした**モダンなフルスタックWebアプリケーションフレームワーク**です。Next.js（React）やNuxt（Vue）と同等以上の機能を持ちながら、より軽量で高速、そして優れた開発者体験を提供します。
 
-## 🎯 なぜSvelteKitを学ぶべきか
+## なぜSvelteKitを学ぶべきか
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -78,7 +78,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
   </div>
 </div>
 
-## 📚 学習ロードマップ
+## 学習ロードマップ
 
 <Mermaid diagram={learningFlow} />
 
@@ -437,7 +437,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
   </div>
 </div>
 
-## 🎓 学習の始め方
+## 学習の始め方
 
 ### 前提条件をチェック
 ```bash
@@ -467,7 +467,7 @@ npm create svelte@latest my-first-sveltekit-app
 3. **[セッション管理と認証戦略]({base}/sveltekit/application/session/)** - 認証パターンを実装
 4. **[認証システム]({base}/sveltekit/application/authentication/)** - 本格的なログイン機能を追加
 
-### 🚀 クイックスタートプロジェクト
+### クイックスタートプロジェクト
 ```typescript
 // 最小限のTODOアプリで学ぶSvelteKit
 // src/routes/+page.server.ts
@@ -488,7 +488,7 @@ export const actions: Actions = {
 };
 ```
 
-## 🛠️ 推奨開発環境
+## 推奨開発環境
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
   <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-sm hover:shadow-md transition-shadow">
@@ -584,7 +584,7 @@ export const actions: Actions = {
   </div>
 </div>
 
-## 🏆 実際のプロジェクト例
+## 実際のプロジェクト例
 
 ### SvelteKitで構築されたサービス
 - **Vercel Dashboard**: デプロイ管理ダッシュボード
@@ -741,7 +741,7 @@ export const load: PageServerLoad = async () => {
   </div>
 </div>
 
-## 🔧 開発のベストプラクティス
+## 開発のベストプラクティス
 
 ### プロジェクト構成
 ```
@@ -762,7 +762,7 @@ src/
 - [ ] キャッシュヘッダーの設定
 - [ ] Critical CSSのインライン化
 
-## 🎯 次のステップ
+## 次のステップ
 
 **基礎から始める方**:
 [概要とアーキテクチャ](/sveltekit/basics/overview/)でSvelteKitの全体像を理解

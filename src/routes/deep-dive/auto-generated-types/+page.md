@@ -5,7 +5,7 @@ description: SvelteKitが ./$types から自動生成される型の完全リス
 
 **SvelteKitが自動生成する型は決まっていて、ファイル名に応じて特定の型が生成されます**。
 
-## 📋　`./$types`から自動生成される型一覧
+## `./$types`から自動生成される型一覧
 
 SvelteKitは、ルートディレクトリ内のファイル名に基づいて、適切な型定義を自動的に生成します。これにより、手動で型定義を書く必要がなく、型安全なアプリケーション開発が可能になります。
 
@@ -65,7 +65,7 @@ src/params/*.ts → ParamMatcher
 任意のファイル → Config
 ```
 
-## 🎯　各型に含まれるプロパティ
+## 各型に含まれるプロパティ
 
 Load関数に渡されるイベントオブジェクトのプロパティは、クライアントサイドとサーバーサイドで異なります。これらのプロパティを使用することで、リクエスト情報の取得や応答の制御が可能になります。
 
@@ -90,7 +90,7 @@ interface LoadEvent {
 }
 ```
 
-## 📊　型生成の完全マッピング表
+## 型生成の完全マッピング表
 
 | ファイル | 生成される型 | 用途 |
 |---------|------------|------|
@@ -104,7 +104,7 @@ interface LoadEvent {
 | `+error.svelte` | `PageData` | エラーページのprops |
 | `src/params/*.ts` | `ParamMatcher` | 動的ルートのパラメータ検証 |
 
-## 🔧　自動生成される型の使用例
+## 自動生成される型の使用例
 
 実際のコードでどのように型が使用されるかを、ファイル種別ごとに詳しく見ていきます。
 
@@ -232,7 +232,7 @@ export const entries: EntryGenerator = () => {
 export const prerender = true;  // このページをプリレンダリング
 ```
 
-## 🔍 型生成の内部動作
+## 型生成の内部動作
 
 SvelteKitがどのように型を自動生成し、管理しているかを詳しく解説します。この仕組みを理解することで、型エラーのデバッグが容易になります。
 
@@ -406,7 +406,7 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 ```
 
-## 🛠 高度なカスタマイズ
+## 高度なカスタマイズ
 
 SvelteKitの型システムは、プロジェクト固有の要件に合わせて拡張可能です。`app.d.ts`ファイルを使用して、グローバルな型定義をカスタマイズできます。
 
@@ -529,7 +529,7 @@ export const load: PageLoad = async ({ params }) => {
 };
 ```
 
-## 🔧 トラブルシューティング
+## トラブルシューティング
 
 型生成に関する一般的な問題と、その解決方法を詳しく解説します。
 
@@ -595,7 +595,7 @@ cat .svelte-kit/types/src/routes/$types.d.ts
 | `Type 'Actions' is not assignable...` | Actionsの構造が不正 | defaultまたは名前付きアクションが正しく定義されているか確認 |
 | `Cannot find name 'PageData'` | インポート漏れ | `import type { PageData } from './$types'`を追加 |
 
-## 💡 まとめ
+## まとめ
 
 SvelteKitの自動型生成システムは、以下の利点を提供します。
 

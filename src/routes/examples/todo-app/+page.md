@@ -16,7 +16,7 @@ description: Svelte5とTypeScriptで作るTODOアプリ完全実装ガイド。$
 
 Svelte 5のRunesシステムとTypeScriptを使用した、フル機能のTODOアプリケーション実装例です。
 
-## 🎯 プロジェクト概要
+## プロジェクト概要
 
 このTODOアプリケーションは、**Svelte 5のRunesシステム学習**に特化した実装例です。あえてSvelteKitを使用せず、純粋なSvelte 5アプリケーションとして構築することで、Runesシステムの理解に集中できるよう設計しています。
 
@@ -53,7 +53,7 @@ Svelte 5のRunesシステムとTypeScriptを使用した、フル機能のTODO�
   </p>
 </div>
 
-## 📋 実装機能
+## 実装機能
 
 ### 基本機能
 - ✅ タスクの追加
@@ -71,7 +71,7 @@ Svelte 5のRunesシステムとTypeScriptを使用した、フル機能のTODO�
 - LocalStorageへの自動保存
 - ページリロード時の自動復元
 
-## 🛠 技術的な実装ポイント
+## 技術的な実装ポイント
 
 ### 1. Svelte 5 Runesによる状態管理
 
@@ -162,7 +162,7 @@ function addTodo(text: string) {
 }
 ```
 
-## 🎨 デザインシステム
+## デザインシステム
 
 ### GitHub風モダンデザイン
 
@@ -235,7 +235,7 @@ function addTodo(text: string) {
 {/if}
 ```
 
-## 📚 学習のポイント
+## 学習のポイント
 
 ### Svelte 5 Runesの活用
 
@@ -258,7 +258,7 @@ function addTodo(text: string) {
 - 不変性を保つ更新パターン
 - リアクティビティの最適化
 
-## 🚀 実行方法
+## 実行方法
 
 ```bash
 # リポジトリのクローン
@@ -281,7 +281,7 @@ npm run dev
 - [リアクティブストア](/svelte/advanced/reactive-stores/)
 - [コンポーネントパターン](/svelte/advanced/component-patterns/)
 
-## 🚀 次のステップ：応用編
+## 次のステップ：応用編
 
 このベースとなるTODOアプリを発展させる2つの方向性を紹介します。
 

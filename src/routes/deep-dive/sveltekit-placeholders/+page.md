@@ -286,14 +286,14 @@ PRIVATE_SECRET=secret123  # これは使用不可
 
 ## 使用可能な場所と制限
 
-### ✅ 使用可能な場所
+### 使用可能な場所
 
 | ファイル | 使用可能なプレースホルダー |
 |---------|------------------------|
 | **app.html** | `%lang%`, `%sveltekit.assets%`, `%sveltekit.head%`, `%sveltekit.body%`, `%sveltekit.nonce%`, `%sveltekit.env.*%` |
 | **error.html** | `%sveltekit.status%`, `%sveltekit.error.message%` |
 
-### ❌ 使用できない場所
+### 使用できない場所
 
 - **JavaScriptファイル** (`+page.js`, `+server.js`, `hooks.server.js`)
 - **Svelteコンポーネント** (`+page.svelte`, `+layout.svelte`)
@@ -386,10 +386,10 @@ const nonce = '%sveltekit.nonce%'; // 文字列として扱われる
 **解決**: 環境変数名を`PUBLIC_MY_VAR`に変更
 
 ```bash
-# ❌ 間違い
+# 間違い
 MY_VAR=value
 
-# ✅ 正解
+# 正解
 PUBLIC_MY_VAR=value
 ```
 

@@ -389,7 +389,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         { title: 'ブログシステム（基礎）', to: '/examples/blog-system/' },
         { title: 'Markdownブログ（発展）', to: '/examples/markdown-blog/' },
         { title: 'TODOアプリ', to: '/examples/todo-app/' },
-        { title: '認証システム', to: '/examples/auth-system/' },
+        { title: '認証システム概要', to: '/examples/auth-system/' },
+        { title: 'Cookie/Session認証', to: '/examples/auth-cookie-session/' },
+        { title: 'JWT認証（準備中）', to: '/examples/auth-jwt/' },
+        { title: 'ルートグループ認証（計画中）', to: '/examples/auth-route-groups/' },
         { title: 'データフェッチング', to: '/examples/data-fetching/' },
         { title: 'WebSocket実装', to: '/examples/websocket/' },
       ],
@@ -402,7 +405,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       items: [
         { title: '概要', to: '/reference/' },
         { title: 'Svelte 5 完全リファレンス', to: '/reference/svelte5/' },
-        { title: 'SvelteKit 2.x 完全リファレンス', to: '/reference/sveltekit2/' },
+        {
+          title: 'SvelteKit 2.x 完全リファレンス',
+          to: '/reference/sveltekit2/',
+        },
       ],
     },
     {

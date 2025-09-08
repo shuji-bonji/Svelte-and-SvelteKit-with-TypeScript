@@ -2,11 +2,14 @@
   import { onMount } from 'svelte';
   
   type Props = {
-    diagram: string;
+    chart?: string;  // 互換性のため
+    diagram?: string; // 後方互換性
     class?: string;
   };
   
-  let { diagram, class: className = '' }: Props = $props();
+  let { chart, diagram: diagramProp, class: className = '' }: Props = $props();
+  // chartが優先、なければdiagramを使用
+  const diagram = chart || diagramProp || '';
   
   let container: HTMLDivElement;
   let mermaidLoaded = $state(false);

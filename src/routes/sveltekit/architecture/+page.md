@@ -78,7 +78,7 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 </div>
 
 :::info[基礎編で学習済みの内容]
-以下の内容は基礎編で詳しく解説しています：
+以下の内容は基礎編で詳しく解説しています。
 - **プロジェクト構造**: [基礎編 - プロジェクト構造]({base}/sveltekit/basics/project-structure/) - ディレクトリ構成と設定ファイル
 - **特殊ファイルシステム**: [基礎編 - 特殊ファイルシステム]({base}/sveltekit/basics/file-system/) - +page、+layout、+serverファイルの役割と実行環境
 :::

@@ -307,6 +307,39 @@ JavaScriptコードから直接ページ遷移を制御する機能です。ユ�
 </form>
 ```
 
+:::info[SPA出身者向け：SvelteKitのナビゲーション動作]
+SvelteKitのプログラマティックナビゲーション（`goto()`, `replaceState()`, `pushState()`）は、**すべてSPA的なクライアントサイドルーティング**として動作します。
+
+**重要なポイント：**
+- ページ全体のリロードは発生しません
+- ブラウザのURLは変化します
+- 必要な部分のみが更新されます（仮想DOMではなく、Svelteのコンパイラによる効率的な更新）
+
+**初回アクセスとナビゲーションの違い：**
+```typescript
+// ブラウザで直接アクセス（またはF5リロード）
+GET /about → SSR/SSGされた完全なHTMLが返される
+
+// goto()でのナビゲーション（SvelteKitアプリ起動後）
+await goto('/about');
+→ GET /about/__data.json （JSONデータのみ取得）
+→ クライアントサイドでレンダリング
+→ 必要なJSチャンクを動的にロード（初めてのページの場合）
+```
+
+**3つのナビゲーション関数の動作：**
+```typescript
+// すべて同じSPA的な動作（違いは履歴管理のみ）
+await goto('/about');           // 新しい履歴エントリを追加
+await replaceState('/about', {}); // 現在の履歴を置き換え
+await pushState('/about', {});    // 明示的に履歴を追加（goto()と同じ）
+```
+
+これはSvelteKitの**ハイブリッドアプローチ**の核心です。
+- **初回アクセス**: SEOとパフォーマンスのためにSSR/SSG
+- **その後のナビゲーション**: SPAのような高速な遷移
+:::
+
 ### beforeNavigate / afterNavigate
 
 ページ遷移の前後にフック処理を実行する関数です。`beforeNavigate`は遷移前の確認やキャンセル、`afterNavigate`は遷移後のスクロール位置リセットやアナリティクス送信などに使用します。

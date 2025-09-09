@@ -330,7 +330,11 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/session/" class="text-purple-600 dark:text-purple-400 hover:underline">セッション管理と認証戦略</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">クッキーベース、JWT、ルートグループ</td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Cookie/Session、JWT、ルートグループ</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/examples/auth-jwt/" class="text-purple-600 dark:text-purple-400 hover:underline">JWT認証実装</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">トークンベース認証、RBAC、ルートグループ活用</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/database/" class="text-purple-600 dark:text-purple-400 hover:underline">データベース統合</a></td>

@@ -64,8 +64,8 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">3つの認証パターンの完全ガイド</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li>Cookie/Session認証（✅完成）</li>
-        <li>JWT認証（⏳準備中）</li>
+        <li>Cookie/Session認証（✅実装済）</li>
+        <li>JWT認証（📖設計済）</li>
         <li>ルートグループ認証（📝計画中）</li>
         <li>認証方式の比較と選択</li>
       </ul>

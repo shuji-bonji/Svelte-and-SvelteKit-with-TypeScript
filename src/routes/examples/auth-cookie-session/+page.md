@@ -101,7 +101,7 @@ sequenceDiagram
         DB->>Hooks: null
         Hooks->>SK: event.locals.user = null
     else セッション有効
-        DB->>Hooks: {user, session}
+        DB->>Hooks: user
         Hooks->>SK: event.locals.user = user
     end
     
@@ -247,6 +247,7 @@ src/
 - 検証結果を`event.locals.user`に保存してアプリ全体で共有
 - `(protected)/+layout.server.ts`で認証必須ページの保護を実装
 - リダイレクト時に元のURLを`from`パラメータとして保持
+- セッション有効期限は7日間（セキュリティと利便性のバランス）
 
 ## コード実装
 
@@ -325,7 +326,7 @@ const prisma = new PrismaClient();
 // セッションCookieの名前と有効期間を定数として定義
 // これらの値を変更することで、システム全体の設定を一括変更できます
 const SESSION_COOKIE_NAME = 'session';
-const SESSION_EXPIRY_DAYS = 7;
+const SESSION_EXPIRY_DAYS = 7;  // 7日間が一般的な推奨値
 
 // パスワードハッシュ化関数
 // bcryptを使用してパスワードを安全にハッシュ化します
@@ -371,25 +372,33 @@ export async function createSession(userId: string): Promise<string> {
 // セッション検証関数
 // セッショントークンを検証し、有効な場合はユーザー情報を返します
 // 期限切れのセッションは自動的に削除されます
-export async function validateSession(token: string) {
+export async function validateSession(token: string): Promise<User | null> {
   // トークンでセッションを検索し、関連するユーザー情報も取得
   const session = await prisma.session.findUnique({
     where: { token },
     include: { user: true }  // ユーザー情報をJOINして取得
   });
   
-  // セッションが存在しない、または期限切れの場合
-  if (!session || session.expiresAt < new Date()) {
-    if (session) {
-      // 期限切れのセッションをデータベースから削除（クリーンアップ）
-      await prisma.session.delete({ where: { id: session.id } });
-    }
-    // 認証失敗を示すnullを返す
-    return { user: null, session: null };
+  // セッションが存在しない場合
+  if (!session) {
+    return null;
   }
   
-  // 有効なセッションの場合、ユーザー情報とセッションを返す
-  return { user: session.user, session };
+  // セッションの有効期限チェック
+  if (session.expiresAt < new Date()) {
+    // 期限切れのセッションをデータベースから削除（クリーンアップ）
+    await prisma.session.delete({
+      where: { id: session.id }
+    });
+    return null;
+  }
+  
+  // 有効なセッションの場合、ユーザー情報を返す
+  return {
+    id: session.user.id,
+    email: session.user.email,
+    name: session.user.name
+  };
 }
 
 // Cookie設定関数
@@ -400,9 +409,15 @@ export function setSessionCookie(cookies: Cookies, token: string): void {
     path: '/',                                      // サイト全体でCookieを有効化
     httpOnly: true,                                 // JavaScriptからのアクセスを禁止（XSS対策）
     secure: process.env.NODE_ENV === 'production',  // 本番環境ではHTTPSでのみ送信
-    sameSite: 'lax',                               // CSRF攻撃を防ぐための設定
+    sameSite: 'strict',                            // より厳格なCSRF保護
     maxAge: 60 * 60 * 24 * SESSION_EXPIRY_DAYS     // Cookieの有効期間（秒単位）
   });
+}
+
+// Cookie削除関数
+// ログアウト時にセッションCookieを削除します
+export function deleteSessionCookie(cookies: Cookies): void {
+  cookies.delete('session', { path: '/' });
 }
 ```
 
@@ -423,12 +438,11 @@ export const handle: Handle = async ({ event, resolve }) => {
   
   if (sessionToken) {
     // セッショントークンが存在する場合、検証を実行
-    const { user, session } = await validateSession(sessionToken);
+    const user = await validateSession(sessionToken);
     if (user) {
       // 有効なセッションの場合、localsにユーザー情報を保存
       // localsはリクエスト全体でアクセス可能なオブジェクトです
       event.locals.user = user;
-      event.locals.session = session;
     }
   }
   
@@ -555,9 +569,9 @@ HTTPOnly属性を設定することで、JavaScriptからCookieにアクセス�
 ```typescript
 // セキュアなCookie設定の例
 cookies.set('session', token, {
-  httpOnly: true,  // document.cookieやその他のJavaScript APIからアクセス不可
-  secure: true,     // HTTPS接続でのみCookieを送信（中間者攻撃対策）
-  sameSite: 'lax'   // クロスサイトリクエストでのCookie送信を制限（CSRF対策）
+  httpOnly: true,     // document.cookieやその他のJavaScript APIからアクセス不可
+  secure: true,        // HTTPS接続でのみCookieを送信（中間者攻撃対策）
+  sameSite: 'strict'   // 最も厳格なクロスサイトリクエスト制限（CSRF対策）
 });
 ```
 

@@ -296,5 +296,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年8月 - 自動ナビゲーションシステム実装、Load関数のデータフロー可視化、実行環境別アーキテクチャ詳解追加、Universal/Server Load使い分けガイド、アクセスログ分析セクション追加
+**Last Updated**: 2025年9月10日 - サイドバー自動スクロール機能実装、ネストされたレイアウトセクション移動・改善、Cookie/Session認証システムドキュメント更新（実装との整合性確保）
 

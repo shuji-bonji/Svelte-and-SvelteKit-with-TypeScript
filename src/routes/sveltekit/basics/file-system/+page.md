@@ -62,6 +62,72 @@ description: SvelteKitの特殊ファイルシステムをTypeScriptで完全理
     style N3 fill:#ccc,color:#666
     style F2 fill:#ff6b6b,color:#fff`;
     
+  // ネストされたレイアウトの図
+  const nestedLayoutDiagram = `graph TD
+    subgraph root["ルートレイアウト"]
+      RL["+layout.svelte<br/>（全ページ共通）"]
+      
+      subgraph blog["ブログセクション"]
+        BL["+layout.svelte<br/>（ブログ共通）"]
+        BP["+page.svelte<br/>（ブログトップ）"]
+        BA["[slug]/+page.svelte<br/>（記事ページ）"]
+      end
+      
+      subgraph admin["管理画面"]
+        AL["+layout.svelte<br/>（管理画面共通）"]
+        AD["dashboard/+page.svelte<br/>（ダッシュボード）"]
+        AU["users/+page.svelte<br/>（ユーザー管理）"]
+      end
+    end
+    
+    RL --> BL
+    RL --> AL
+    BL --> BP
+    BL --> BA
+    AL --> AD
+    AL --> AU
+    
+    style RL fill:#ff6b6b,color:#fff
+    style BL fill:#4ecdc4,color:#fff
+    style AL fill:#45b7d1,color:#fff`;
+    
+  // レイアウト適用の流れ
+  const layoutApplicationDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit
+    participant RootLayout as /+layout.svelte
+    participant BlogLayout as /blog/+layout.svelte
+    participant PostLayout as /blog/[id]/+layout.svelte
+    participant Page as /blog/[id]/+page.svelte
+    
+    User->>Browser: /blog/123 へアクセス
+    Browser->>SvelteKit: HTTPリクエスト
+    
+    SvelteKit->>RootLayout: ルートレイアウト実行
+    Note over RootLayout: ヘッダー + children + フッター
+    
+    SvelteKit->>BlogLayout: ブログレイアウト実行
+    Note over BlogLayout: サイドバー + children
+    
+    SvelteKit->>PostLayout: 記事レイアウト実行
+    Note over PostLayout: パンくず + children
+    
+    SvelteKit->>Page: ページコンポーネント実行
+    Note over Page: 記事コンテンツ
+    
+    Page-->>PostLayout: コンテンツを返す
+    PostLayout-->>BlogLayout: 記事部分をchildrenに挿入
+    BlogLayout-->>RootLayout: ブログ部分をchildrenに挿入
+    RootLayout-->>SvelteKit: 完全なHTMLを生成
+    
+    SvelteKit-->>Browser: レンダリング済みHTML
+    Browser->>User: ページ表示
+    
+    rect rgba(34, 197, 94, 0.1)
+        Note over RootLayout,Page: レイアウトは階層的に適用される
+    end`;
+    
   // データフローの図
   const dataFlowDiagram = `flowchart LR
     subgraph Server["サーバー環境"]
@@ -435,6 +501,82 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 ##### この場合
 - `+layout.server.ts`：`/admin`以下のすべてのページで管理者チェック
 - `+page.server.ts`：各ページ固有の処理のみ
+
+## ネストされたレイアウト
+
+SvelteKitのレイアウトは階層的に構成でき、ディレクトリ構造に応じて自動的にネストされます。
+
+### レイアウトの継承
+
+親ディレクトリの`+layout.svelte`は、子ディレクトリのページやレイアウトを自動的にラップします。
+
+```
+src/routes/
+├── +layout.svelte        # ルートレイアウト（全ページに適用）
+├── blog/
+│   ├── +layout.svelte   # ブログレイアウト（ブログセクションのみ）
+│   ├── +page.svelte     # ブログトップページ
+│   └── [slug]/
+│       └── +page.svelte # 個別記事ページ
+```
+
+### Mermaidで見る継承構造
+
+<Mermaid diagram={nestedLayoutDiagram} />
+
+
+### レイアウトのデータフロー
+
+各レイアウトは親のデータを継承し、追加のデータを提供できます。
+
+```typescript
+// src/routes/+layout.ts
+export const load = async () => {
+  return {
+    user: await getUser(),
+    theme: 'dark'
+  };
+};
+
+// src/routes/blog/+layout.ts
+export const load = async ({ parent }) => {
+  const parentData = await parent(); // 親のデータを取得
+  return {
+    ...parentData,
+    categories: await getCategories()
+  };
+};
+```
+
+### レイアウトのリセット
+
+レイアウトの継承をリセットしたい場合は、ルートグループのディレクトリ名に`@`記号を使用します。
+
+```
+src/routes/
+├── +layout.svelte           # ルートレイアウト
+├── (marketing)/             # マーケティンググループ
+│   ├── +layout.svelte      # マーケティング用レイアウト
+│   └── about/+page.svelte
+└── (app)@/                  # @でルートレイアウトに戻る
+    ├── +layout.svelte      # アプリ用の新しいレイアウト
+    └── dashboard/+page.svelte
+```
+
+上記の例では、`(app)@`グループ内のページは、`(marketing)`のレイアウトを継承せず、ルートレイアウトから直接継承します。これにより、異なるデザインや構造を持つセクションを同じアプリケーション内で実現できます。
+
+### レイアウト適用の流れ
+
+以下の図は、レイアウトがどのように階層的に適用されるかを示しています。
+
+<Mermaid diagram={layoutApplicationDiagram} />
+
+### ネスト制御のベストプラクティス
+
+1. **共通要素の抽出**: ヘッダーやフッターなど、複数ページで共有する要素はレイアウトに配置
+2. **段階的な構築**: ルートレイアウトは最小限に、セクション固有の要素は子レイアウトに
+3. **データの継承**: `parent()`を使って親のデータを継承し、重複を避ける
+4. **リセットの活用**: 異なるデザインが必要な場合は`@`記号でレイアウトをリセット
 
 ## 実行タイミングの違い
 

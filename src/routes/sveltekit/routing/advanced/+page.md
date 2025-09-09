@@ -152,6 +152,13 @@ URLに影響を与えずに、ルートを論理的に整理する機能です�
 
 <Mermaid diagram={routeGroupDiagram} />
 
+:::tip[レイアウトのリセット]
+ルートグループで`@`記号を使用すると、レイアウトの継承をリセットできます。
+例：`(app)@/`は親レイアウトを無視して、ルートレイアウトから直接継承します。
+
+詳しくは[特殊ファイルシステム - レイアウトのリセット](/sveltekit/basics/file-system/#レイアウトのリセット)を参照してください。
+:::
+
 ### (group) - URLに影響しないグループ化
 
 括弧`()`で囲まれたディレクトリは、URLパスに影響を与えずにルートを論理的にグループ化できます。
@@ -253,95 +260,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 };
 ```
 
-## ネストされたレイアウト
-
-レイアウトを階層的に組み合わせる機能です。親レイアウトの中に子レイアウトが入れ子になることで、共通部分を再利用しつつ、セクションごとに特別なレイアウトを追加できます。例えば、サイト全体のヘッダー・フッター、アプリケーションのサイドバー、特定セクションのナビゲーションを重ねることができます。
-
-### レイアウトの階層構造
-
-以下の図は、レイアウトがどのように入れ子になって最終的なページを構成するかを示しています。
-
-<Mermaid diagram={nestedLayoutDiagram} />
-
-### レイアウト適用の流れ
-
-SvelteKitがどのようにレイアウトを階層的に適用してページを生成するかを示すシーケンス図です。
-
-<Mermaid diagram={layoutInheritanceDiagram} />
-
-### レイアウトの継承
-
-レイアウトは階層的に継承され、各レベルで追加の要素を加えることができます。
-
-```svelte
-<!-- src/routes/+layout.svelte (ルートレイアウト) -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  let { children }: { children?: Snippet } = $props();
-</script>
-
-<div class="root">
-  <Header />
-  {@render children?.()}
-  <Footer />
-</div>
-```
-
-```svelte
-<!-- src/routes/(app)/+layout.svelte (アプリレイアウト) -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  let { children }: { children?: Snippet } = $props();
-</script>
-
-<div class="app">
-  <Sidebar />
-  <main>
-    {@render children?.()}
-  </main>
-</div>
-```
-
-```svelte
-<!-- src/routes/(app)/dashboard/+layout.svelte (ダッシュボードレイアウト) -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  let { children }: { children?: Snippet } = $props();
-</script>
-
-<div class="dashboard">
-  <DashboardNav />
-  {@render children?.()}
-</div>
-```
-
-### レイアウトのリセット
-
-`@`記号を使用して、特定のレイアウトまでリセットできます。
-
-```svelte
-<!-- src/routes/fullscreen/+layout@.svelte -->
-<!-- ルートレイアウトまでリセット（ヘッダー・フッターなし） -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  let { children }: { children?: Snippet } = $props();
-</script>
-
-{@render children?.()}
-```
-
-```svelte
-<!-- src/routes/(app)/print/+layout@(app).svelte -->
-<!-- (app)レイアウトまでリセット -->
-<script lang="ts">
-  import type { Snippet } from 'svelte';
-  let { children }: { children?: Snippet } = $props();
-</script>
-
-<div class="print-layout">
-  {@render children?.()}
-</div>
-```
 
 ## プログラマティックナビゲーション
 

@@ -85,6 +85,7 @@ description: SvelteKitの高度なルーティング機能をTypeScriptで実装
     
   const errorPropagationDiagram = `graph TB
     subgraph "エラー伝播の階層"
+      direction TB
       PageError["/app/posts/[id]/+page.server.ts<br/>throw error(404)"]
       PostsError["/app/posts/+error.svelte"]
       AppError["/app/+error.svelte"]
@@ -568,11 +569,15 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 };
 ```
 
-## 並列ルート
+## 条件付きコンポーネント表示
 
-同じURLパスで条件に応じて異なるコンポーネントを表示する手法です。認証状態やユーザーの権限、デバイスタイプなどに基づいて、適切なUIを提供できます。
+同じURLパスで、サーバーサイドのデータに基づいて異なるコンポーネントを表示する手法です。認証状態やユーザーの権限、デバイスタイプなどに応じて、適切なUIを動的に選択できます。
 
-### 条件に応じた異なるコンポーネント表示
+:::note[「並列ルート」ではない理由]
+このパターンは複数のルートが並列に存在するわけではなく、単一のルートで条件に応じてコンポーネントを切り替えているだけです。Next.jsの「Parallel Routes」のような機能とは異なります。
+:::
+
+### サーバーサイドでのコンポーネント選択
 
 プロフィールページで認証状態に応じて異なるコンポーネントを表示する実装例です。Load関数でユーザーの認証状態を確認し、認証済みなら`'authenticated'`、未認証なら`'guest'`をcomponentプロパティに設定します。ページコンポーネントではこの値に基づいて、認証済みユーザーには`UserProfile`を、未認証ユーザーには`GuestProfile`を表示します。
 

@@ -32,6 +32,24 @@ Load関数とデータフェッチングを段階的に学習できるよう、3
     </div>
   </a>
 
+  <a href="{base}/sveltekit/data-loading/flow/" class="flex no-underline group">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-3">🔄</div>
+      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        データフローの詳細
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">
+        Load関数の実行順序とデータの流れを完全に理解します。
+      </p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1">
+        <li>SSR/CSRのデータフロー</li>
+        <li>並列実行の仕組み</li>
+        <li>データ無効化と再取得</li>
+        <li>ストリーミングSSR</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/sveltekit/data-loading/auto-types/" class="flex no-underline group">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-3">🔷</div>
@@ -72,7 +90,7 @@ Load関数とデータフェッチングを段階的に学習できるよう、3
 :::info[関連情報]
 - **ファイルの役割と実行環境**: [特殊ファイルシステム](../basics/file-system/)で各ファイルの基本的な役割を解説
 - **Load関数の詳細な実装**: [Load関数の基礎](./basic/)で具体的な使い方を解説
-- **データフローの詳細**: [アーキテクチャ詳解](../architecture/)でシステム全体のデータの流れを解説
+- **システム全体のアーキテクチャ**: [アーキテクチャ詳解](../architecture/)でレンダリングパイプラインを解説
 :::
 
 ## 次のステップ

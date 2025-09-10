@@ -1,6 +1,6 @@
 ---
 title: Load関数の基礎
-description: SvelteKitのLoad関数の基本を理解 - Universal LoadとServer Loadの違い、TypeScriptによる型安全なデータ取得、親子間のデータ共有パターン
+description: SvelteKitのLoad関数の基本を理解 - Universal LoadとServer Loadの違い、TypeScriptによる型安全なデータ取得、レイアウトとページ間のデータ共有パターン
 ---
 
 <script>
@@ -202,10 +202,34 @@ Load関数は、SvelteKitにおける**データフェッチングの中心的�
 
 ### 主な特徴
 
-1. **自動実行**: ルートにアクセスした時点で自動的に実行される
+1. **自動実行**: SvelteKitがページ遷移時に自動的にload関数を呼び出し、結果をコンポーネントに渡す（開発者が手動で呼び出す必要がない）
 2. **非同期処理**: `async/await`を使った非同期データ取得が可能
 3. **型安全**: TypeScriptとの完全な統合により型安全性を保証
 4. **最適化**: SvelteKitが自動的にキャッシュやプリフェッチを最適化
+
+:::info[「自動実行」の意味]
+**自動実行とは「開発者が明示的に呼び出さなくても良い」という意味です。**
+
+React等では：
+```javascript
+// React - useEffectで手動実行
+useEffect(() => {
+  fetchData(); // 開発者が明示的に呼び出す
+}, []);
+```
+
+SvelteKitでは：
+```typescript
+// +page.ts に定義するだけ
+export const load: PageLoad = async ({ params, fetch }) => {
+  // paramsやfetchの型が自動推論される
+  return {
+    post: await fetch(`/api/posts/${params.id}`).then(r => r.json())
+  };
+};
+// コンポーネント側でload()を呼ぶ必要はない！
+```
+:::
 
 ### なぜLoad関数が必要か？
 
@@ -365,15 +389,15 @@ Load関数が返したデータは、コンポーネントの`data`プロップ�
 <p>Query: {data.query ?? 'なし'}</p>
 ```
 
-## 親子間のデータ共有
+## レイアウトとページ間のデータ共有
 
-レイアウトとページ間でデータを共有する方法です。SvelteKitはレイアウトのLoad関数を先に実行し、そのデータを子ページで利用できるようにします。これにより、共通データの重複取得を避け、効率的なデータフローを実現します。
+レイアウトとページ間でデータを共有する方法です。SvelteKitはレイアウトのLoad関数を先に実行し、そのデータをページのLoad関数で利用できるようにします。これにより、共通データの重複取得を避け、効率的なデータフローを実現します。
 
 <Mermaid diagram={parentChildDataFlow} />
 
-### 親レイアウトのデータ
+### レイアウトのLoad関数でのデータ取得
 
-レイアウトのLoad関数で取得したデータは、すべての子ページで共有されます。一般的にユーザー情報や設定など、アプリケーション全体で必要なデータをここで取得します。
+レイアウトのLoad関数で取得したデータは、そのレイアウトに属するすべてのページで共有されます。一般的にユーザー情報や設定など、アプリケーション全体で必要なデータをここで取得します。
 
 ```typescript
 // +layout.server.ts
@@ -385,22 +409,22 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   const user = await getUserFromSession(locals.session);
   
   return {
-    user  // このユーザー情報は自動的に子ページに伝搬される
+    user  // このユーザー情報はこのレイアウトに属するすべてのページで利用可能
   };
 };
 ```
 
-### 子ページでの使用
+### ページのLoad関数でのデータ取得
 
-子ページの`parent()`関数を使って、親レイアウトのデータにアクセスします。これにより、親で取得したデータを基に、追加のデータを取得できます。
+ページのLoad関数で`parent()`関数を使って、上位レイアウトのデータにアクセスします。これにより、レイアウトで取得したデータを基に、追加のデータを取得できます。
 
 ```typescript
 // +page.ts
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent }) => {
-  // 親のデータを取得
-  // parent()は親のLoad関数の完了を待つ
+  // 上位レイアウトのデータを取得
+  // parent()は上位のLoad関数の完了を待つ
   const { user } = await parent();
   
   // ユーザー固有のデータを取得
@@ -484,11 +508,11 @@ export const load: PageLoad = async ({ params }) => {
 <p>{$page.error?.message}</p>
 ```
 
-## 実践的な例
+## よく使われるパターン
 
 実際のアプリケーションでよく使われるLoad関数のパターンを紹介します。これらの例を参考に、効率的なデータ取得を実装できます。
 
-### 並列データ取得
+### 複数データの同時取得
 
 複数のデータソースから同時にデータを取得することで、パフォーマンスを大幅に改善できます。Promise.allを使って並列処理を実現します。
 
@@ -510,7 +534,7 @@ export const load: PageLoad = async ({ fetch }) => {
 };
 ```
 
-### 条件付きデータ取得
+### 動的なデータ取得
 
 URLパラメータやユーザーの状態に応じて、異なるデータを取得するパターンです。動的なコンテンツ表示に役立ちます。
 

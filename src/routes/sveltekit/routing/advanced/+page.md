@@ -402,25 +402,52 @@ await pushState('/about', {});    // 明示的に履歴を追加（goto()と同�
 </a>
 ```
 
-## ルートアノテーション
+## ルートアノテーション（ページオプション詳細）
 
-ページやレイアウトファイルでエクスポートする特別な変数により、レンダリング方法やキャッシュ戦略を制御する機能です。プリレンダリング、SSR/CSRの有効化、トレイリングスラッシュの処理など、ルートごとに細かな動作をカスタマイズできます。
+ページやレイアウトファイルでエクスポートする特別な変数により、レンダリング方法やキャッシュ戦略を制御する高度な機能です。基本的な設定に加えて、条件付きプリレンダリング、エッジランタイム設定、継承の仕組みなど、より詳細な制御が可能です。
 
-### ページごとの設定
+### 設定の継承と優先順位
 
-ブログページの設定例です。`prerender = true`でビルド時に静的HTMLを生成し、`ssr = true`でサーバーサイドレンダリングを有効化、`csr = true`でクライアントサイドレンダリングも有効にしています。`trailingSlash = 'always'`により、URLの末尾に必ずスラッシュが付くように統一されます（`/blog`→`/blog/`）。
+ルートアノテーションは**レイアウトツリーを通じて継承**されます。
+
+```typescript
+// src/routes/+layout.ts（ルートレイアウト）
+export const ssr = true;
+export const csr = true;
+export const prerender = false;
+
+// src/routes/blog/+layout.ts（ブログセクション）
+export const prerender = true;  // ブログセクション全体を静的生成
+
+// src/routes/blog/admin/+page.ts（管理画面）
+export const prerender = false; // 管理画面は動的に
+export const ssr = false;       // SPAとして動作
+```
+
+**優先順位**: ページ > 直近のレイアウト > 親レイアウト > ルートレイアウト
+
+### 全設定オプション一覧
 
 ```typescript
 // src/routes/blog/+page.ts
 import type { PageLoad } from './$types';
 
-// プリレンダリング設定
+// レンダリング設定
 export const prerender = true;      // ビルド時に静的生成
 export const ssr = true;            // SSR有効
 export const csr = true;            // CSR有効
 
-// トレイリングスラッシュ設定
+// URL設定
 export const trailingSlash = 'always'; // 'never' | 'always' | 'ignore'
+
+// プラットフォーム設定（+page.server.tsのみ）
+export const config = {
+  runtime: 'edge',              // エッジランタイムで実行
+  regions: ['us-east-1'],       // デプロイリージョン
+  isr: {                        // Incremental Static Regeneration
+    expiration: 60              // キャッシュ有効期限（秒）
+  }
+};
 
 export const load: PageLoad = async () => {
   // データ取得

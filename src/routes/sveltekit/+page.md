@@ -237,23 +237,23 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/" class="text-indigo-600 dark:text-indigo-400 hover:underline">アーキテクチャ概要</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitの内部構造の全体像</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/execution-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境別アーキテクチャ</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">SSR/SSG/SPAの詳細な動作</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/basics/file-system/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ファイルシステム完全ガイド</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">SvelteKitのファイル構成</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/data-loading/" class="text-indigo-600 dark:text-indigo-400 hover:underline">データロードフロー</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Load関数の実行順序とデータの流れ</td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">内部動作メカニズムの全体像</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/rendering-pipeline/" class="text-indigo-600 dark:text-indigo-400 hover:underline">レンダリングパイプライン</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">コンパイルから実行までの詳細</td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">コンパイルから実行まで</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/runtime-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境とランタイム</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Node.js、Edge、Workers</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/routing-internals/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ルーティング内部動作</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">ファイルベースルーティング</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/build-optimization/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ビルド最適化</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">コード分割とアセット最適化</td>
           </tr>
         </tbody>
       </table>

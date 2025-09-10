@@ -1,64 +1,36 @@
 ---
 title: SvelteKit アーキテクチャ詳解
-description: SvelteKit 2.xの内部動作とアーキテクチャをTypeScriptで深く理解。SSR/SSG/SPAの実行環境、データフロー、レンダリングパイプラインの完全解説
+description: SvelteKit 2.xの内部動作とアーキテクチャをTypeScriptで深く理解。レンダリングパイプライン、実行環境、ルーティング内部動作、ビルド最適化の完全解説
 ---
 
 <script>
   import { base } from '$app/paths';
 </script>
 
-SvelteKitのアーキテクチャを深く理解することで、より効果的なアプリケーション開発が可能になります。このセクションでは、実行環境、ファイル構成、データフローの詳細を解説します。
+## アーキテクチャ詳解の目的
 
-:::caution[執筆状況]
-現在拡充中です。
-:::
+**「SvelteKit アーキテクチャ詳解」は、SvelteKitの内部動作メカニズムを深く理解するためのディープダイブセクション**です。
 
-## アーキテクチャの重要性
+### なぜアーキテクチャを理解すべきか？
 
-SvelteKitのアーキテクチャを理解することで、以下のような利点が得られます。
+SvelteKitのアーキテクチャを理解することで、以下のような利点が得られます：
 
-- **最適なレンダリング方式の選択** - SSR/SSG/SPAを適切に使い分け、パフォーマンスとUXを最適化
-- **パフォーマンスの最大化** - ボトルネックを理解し、コード分割やプリロードを効果的に活用
-- **セキュアな実装** - サーバー/クライアントの境界を正しく理解し、機密情報を保護
-- **効率的なデバッグ** - 問題の原因を素早く特定し、解決時間を短縮
+- **最適な設計判断** - なぜそう動くのかを理解し、適切なアーキテクチャを選択
+- **パフォーマンス最適化** - ボトルネックの原因を理解し、根本的な改善を実施
+- **トラブルシューティング** - 問題の本質を理解し、迅速に解決
+- **高度な実装** - フレームワークの限界を理解し、創造的な解決策を実現
 
-## このセクションで学ぶこと
+### 他セクションとの違い
+
+| セクション | 焦点 | 学習内容 |
+|----------|------|---------|
+| **基礎編** | How to use | 機能の使い方、実装方法 |
+| **データローディング** | 実装戦略 | データ取得の方法と最適化 |
+| **アーキテクチャ詳解** | How it works | 内部動作原理、設計思想 |
+
+## このセクションの構成
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-  <a href="{base}/sveltekit/architecture/execution-environments/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🌐</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        実行環境別アーキテクチャ
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、SPAそれぞれの動作原理を詳細に理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>SSRの詳細</strong>: サーバーサイドレンダリングの流れ</li>
-        <li><strong>SSGの詳細</strong>: 静的生成のプロセス</li>
-        <li><strong>SPAモード</strong>: クライアントサイドルーティング</li>
-        <li><strong>ハイブリッド</strong>: 複数モードの組み合わせ</li>
-      </ul>
-    </div>
-  </a>
-  
-  <a href="{base}/sveltekit/architecture/data-loading/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📊</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        データロードフロー
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数の実行順序とデータの流れを完全に理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>初回ロード</strong>: SSRでのデータ取得</li>
-        <li><strong>ナビゲーション</strong>: クライアントサイド遷移</li>
-        <li><strong>並列処理</strong>: 効率的なデータ取得</li>
-        <li><strong>キャッシュ戦略</strong>: データの再利用</li>
-      </ul>
-    </div>
-  </a>
-  
   <a href="{base}/sveltekit/architecture/rendering-pipeline/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
@@ -66,38 +38,89 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
         レンダリングパイプライン
         <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">コンパイルから実行までの詳細なプロセスを解説します。</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">コンパイルから実行まで、SvelteKitがコードをどう処理するかを解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>コンパイル</strong>: Svelteコンパイラの動作</li>
-        <li><strong>バンドル</strong>: Viteによる最適化</li>
-        <li><strong>ハイドレーション</strong>: クライアント側の初期化</li>
-        <li><strong>最適化</strong>: コード分割とプリロード</li>
+        <li><strong>コンパイルフェーズ</strong>: Svelteコンパイラによる変換</li>
+        <li><strong>ビルドフェーズ</strong>: Viteによるバンドリング</li>
+        <li><strong>実行フェーズ</strong>: サーバー/クライアント実行</li>
+        <li><strong>ハイドレーション</strong>: SSRからクライアントへの引き継ぎ</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/architecture/runtime-environments/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🌐</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        実行環境とランタイム
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">様々な実行環境でSvelteKitがどう動作するかを理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>サーバーランタイム</strong>: Node.js、Edge、Workers</li>
+        <li><strong>クライアントランタイム</strong>: ブラウザ環境</li>
+        <li><strong>アダプターの仕組み</strong>: プラットフォーム最適化</li>
+        <li><strong>環境変数</strong>: PUBLIC_/PRIVATE_の処理</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/architecture/routing-internals/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🛤️</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        ルーティング内部動作
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">ファイルベースルーティングの内部メカニズムを解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>ルート生成</strong>: ディレクトリからルート生成</li>
+        <li><strong>マッチング</strong>: 動的ルートの解決</li>
+        <li><strong>プリフェッチ</strong>: data-sveltekit-preload</li>
+        <li><strong>History API</strong>: ブラウザ統合</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/architecture/build-optimization/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🚀</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        ビルド最適化
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">ビルドプロセスの最適化とパフォーマンス改善を理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>静的解析</strong>: プリレンダリング対象の検出</li>
+        <li><strong>コード分割</strong>: チャンク生成戦略</li>
+        <li><strong>アセット最適化</strong>: 画像、CSS、JS処理</li>
+        <li><strong>Service Worker</strong>: オフライン対応</li>
       </ul>
     </div>
   </a>
 </div>
 
-:::info[基礎編で学習済みの内容]
-以下の内容は基礎編で詳しく解説しています。
-- **プロジェクト構造**: [基礎編 - プロジェクト構造]({base}/sveltekit/basics/project-structure/) - ディレクトリ構成と設定ファイル
-- **特殊ファイルシステム**: [基礎編 - 特殊ファイルシステム]({base}/sveltekit/basics/file-system/) - +page、+layout、+serverファイルの役割と実行環境
+:::info[関連セクション]
+- **データフロー**: [データフローの詳細]({base}/sveltekit/data-loading/flow/) - Load関数の実行順序とデータの流れ
+- **基礎編**: [プロジェクト構造]({base}/sveltekit/basics/project-structure/) - ディレクトリ構成と設定ファイル
+- **レンダリング戦略**: [レンダリング戦略]({base}/sveltekit/basics/rendering-strategies/) - SSR/SSG/SPAの基本的な違い
 :::
 
-## アーキテクチャ理解の流れ
+## 学習の進め方
 
 ### 推奨学習順序
 
-1. **基礎編を理解** - まず[SvelteKit基礎編]({base}/sveltekit/basics/)で基本を把握
-2. **実行環境別アーキテクチャ** - SSR/SSG/SPAの違いを深く理解
-3. **ファイル構成と実行環境** - 各ファイルの役割と実行環境を把握
-4. **データロードフロー** - データの流れと最適化を理解
-5. **レンダリングパイプライン** - 内部動作の詳細を学習
+1. **レンダリングパイプライン** - コンパイルから実行までの流れを理解
+2. **実行環境とランタイム** - 様々な環境での動作を把握
+3. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
+4. **ビルド最適化** - パフォーマンス改善の仕組みを学習
 
-### 学習目標
+### このセクションの対象者
 
-このセクションを完了すると、以下ができるようになります。
-
-- **最適なレンダリング戦略の選択** - SSR/SSG/SPAを使い分けて最適なアーキテクチャを設計
+- **中級者以上** - 基本的な使い方を理解している方
+- **パフォーマンス重視** - 最適化を追求したい方
+- **トラブルシューティング** - 問題の根本原因を理解したい方
+- **アーキテクト** - システム設計を行う方
 - **セキュアな実装** - ファイルの実行環境を理解し、機密情報を適切に保護
 - **パフォーマンス最適化** - データフローを最適化し、UXを向上
 - **効率的なデバッグ** - 問題発生時に原因を素早く特定し解決

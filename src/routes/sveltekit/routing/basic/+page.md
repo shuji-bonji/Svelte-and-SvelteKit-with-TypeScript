@@ -514,51 +514,29 @@ SvelteKitは高速なクライアントサイドナビゲーションを提供�
 <a href="/contact" data-sveltekit-preload-data="tap">Contact</a>
 ```
 
-## ページ設定
+## ページオプション（基本）
 
-各ページの動作を細かく制御するための設定オプションが用意されています。プリレンダリング、SSR/CSRの有効化、URLの形式など、ページごとに最適な設定を行うことができます。
-
-### ページごとの設定
-
-各ページのレンダリング動作をカスタマイズできます。静的生成、SSR/CSRの制御、URL形式の指定など、ページの特性に応じて最適な設定を選択しましょう。
+各ページの動作を制御するための基本的な設定オプションを紹介します。
 
 ```typescript
 // src/routes/about/+page.ts
-import type { PageLoad } from './$types';
-
-// プリレンダリング設定
-export const prerender = true;  // ビルド時に静的生成
-
-// SSR設定
-export const ssr = true;         // サーバーサイドレンダリング有効
-
-// CSR設定
-export const csr = true;         // クライアントサイドレンダリング有効
-
-// トレイリングスラッシュ
+export const prerender = true;         // ビルド時に静的生成
+export const ssr = true;                // SSR有効（デフォルト）
+export const csr = true;                // CSR有効（デフォルト）
 export const trailingSlash = 'always'; // URLの末尾に/を付ける
-
-export const load: PageLoad = async () => {
-  // データ取得
-};
 ```
 
-:::tip[サイト全体に設定を適用する方法]
-ページ設定をサイト全体に適用したい場合は、**ルートレイアウト**で設定します。
+### よく使う設定
 
-```typescript
-// src/routes/+layout.ts または +layout.server.ts
-export const prerender = true;         // 全ページをプリレンダリング
-export const ssr = true;                // 全ページでSSR有効（デフォルト）
-export const csr = true;                // 全ページでCSR有効（デフォルト）
-export const trailingSlash = 'never';   // 全ページで末尾スラッシュなし（デフォルト）
-```
+| 設定 | 説明 | デフォルト値 |
+|------|------|------------|
+| `prerender` | ビルド時に静的HTMLを生成 | `false` |
+| `ssr` | サーバーサイドレンダリング | `true` |
+| `csr` | クライアントサイドレンダリング | `true` |
+| `trailingSlash` | URL末尾のスラッシュ処理 | `'never'` |
 
-- **継承の仕組み**: 子のレイアウトやページは親の設定を継承します
-- **上書き可能**: 個別のページで異なる設定を指定すれば上書きできます
-- **設定の優先順位**: ページ > 直近のレイアウト > 親レイアウト > ルートレイアウト
-
-詳しくは [レンダリング戦略](/sveltekit/basics/rendering-strategies/) のページで、SSR/SSG/SPAの使い分けと設定方法を解説しています。
+:::info[詳細な設定について]
+条件付きプリレンダリング、エッジランタイム設定、キャッシュ制御などの高度な設定については、[高度なルーティング - ルートアノテーション](/sveltekit/routing/advanced/#ルートアノテーション)で詳しく解説しています。
 :::
 
 ## 実践例：ブログサイトの構築

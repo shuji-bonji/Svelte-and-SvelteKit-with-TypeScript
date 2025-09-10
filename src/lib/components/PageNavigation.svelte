@@ -1,8 +1,15 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  // import { page } from '$app/stores';
 
-  export let prev: { text: string; link: string } | undefined = undefined;
-  export let next: { text: string; link: string } | undefined = undefined;
+  type NavLink = { text: string; link: string } | undefined;
+
+  let {
+    prev = undefined,
+    next = undefined,
+  }: {
+    prev?: NavLink;
+    next?: NavLink;
+  } = $props();
 </script>
 
 <nav class="page-navigation">

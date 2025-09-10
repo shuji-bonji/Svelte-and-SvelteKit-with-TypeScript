@@ -210,7 +210,7 @@ Load関数は、SvelteKitにおける**データフェッチングの中心的�
 :::info[「自動実行」の意味]
 **自動実行とは「開発者が明示的に呼び出さなくても良い」という意味です。**
 
-React等では：
+React等では、
 ```javascript
 // React - useEffectで手動実行
 useEffect(() => {
@@ -218,7 +218,7 @@ useEffect(() => {
 }, []);
 ```
 
-SvelteKitでは：
+SvelteKitでは、
 ```typescript
 // +page.ts に定義するだけ
 export const load: PageLoad = async ({ params, fetch }) => {

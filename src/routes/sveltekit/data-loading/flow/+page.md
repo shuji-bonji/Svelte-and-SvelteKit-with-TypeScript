@@ -6,14 +6,67 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
   
+  // SPAモードのデータフロー図
+  const spaDataFlowDiagram = `sequenceDiagram
+    participant Browser as ブラウザ
+    participant Server as サーバー
+    participant Layout.ts as +layout.ts
+    participant Page.ts as +page.ts
+    participant Layout.svelte as +layout.svelte
+    participant Page.svelte as +page.svelte
+    
+    Browser->>Server: ページリクエスト
+    Server-->>Browser: 空のHTML + JSバンドル
+    
+    Note over Browser: JavaScriptが実行開始
+    
+    Browser->>Layout.ts: load関数実行（クライアント）
+    Layout.ts->>Browser: レイアウトデータ
+    
+    Browser->>Page.ts: load関数実行（クライアント）
+    Page.ts->>Browser: ページデータ
+    
+    Browser->>Layout.svelte: レンダリング
+    Browser->>Page.svelte: レンダリング
+    
+    Note over Browser: DOM更新・表示完了`;
+
+  // SPAモードのナビゲーション図
+  const spaNavigationDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant API as 外部API
+    
+    rect rgba(100, 180, 255, 0.2)
+        Note over User,API: 初回アクセス
+        User->>Browser: /dashboard アクセス
+        Browser->>Browser: 空のHTMLを表示
+        Browser->>Browser: JSバンドルをロード
+        Browser->>Browser: layout.ts → page.ts 実行
+        Browser->>API: fetch('/api/dashboard')
+        API-->>Browser: JSONデータ
+        Browser->>Browser: layout.svelte → page.svelte レンダリング
+        Browser->>User: 画面表示
+    end
+    
+    rect rgba(255, 150, 100, 0.2)
+        Note over User,API: クライアントサイドナビゲーション
+        User->>Browser: /settings リンククリック
+        Browser->>Browser: settings/+page.ts 実行
+        Browser->>API: fetch('/api/settings')
+        API-->>Browser: JSONデータ
+        Browser->>Browser: settings/+page.svelte レンダリング
+        Browser->>User: 画面更新（ページリロードなし）
+    end`;
+  
   const ssrDataFlowDiagram = `sequenceDiagram
     participant Browser as ブラウザ
+    participant Component as コンポーネント
     participant Server as SvelteKitサーバー
     participant LayoutServer as +layout.server.ts
     participant PageServer as +page.server.ts
     participant Layout as +layout.ts
     participant Page as +page.ts
-    participant Component as コンポーネント
     
     Browser->>Server: GET /posts/123
     
@@ -48,12 +101,12 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
     
   const clientNavigationDiagram = `sequenceDiagram
     participant User as ユーザー
+    participant Component as コンポーネント
     participant Router as SvelteKitルーター
     participant Cache as キャッシュ
-    participant API as APIサーバー
     participant Layout as +layout.ts
     participant Page as +page.ts
-    participant Component as コンポーネント
+    participant API as APIサーバー
     
     User->>Router: リンククリック/goto()
     
@@ -91,6 +144,7 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
     
   const parallelLoadDiagram = `graph TB
     subgraph "Load関数の並列実行"
+        direction TB
         Start[ナビゲーション開始]
         
         Start --> Parallel{並列実行}
@@ -253,6 +307,81 @@ import { invalidateAll } from '$app/navigation';
 await invalidateAll();
 // 画面全体のデータをリフレッシュ
 ```
+
+## CSR/SPAモードのデータフロー
+
+`ssr = false`を設定すると、SvelteKitは完全にクライアントサイドで動作するSPAモードになります。この場合、データフローが根本的に変わり、すべての処理がブラウザ上で実行されます。
+
+### SPAモードの設定
+
+```typescript
+// +layout.ts または +page.ts
+export const ssr = false;    // サーバーサイドレンダリングを無効化
+export const csr = true;      // クライアントサイドレンダリングは有効（デフォルト）
+export const prerender = false; // プリレンダリングも無効化
+
+// この設定により：
+// 1. Server Load（+page.server.ts）は実行されない
+// 2. Universal Load（+page.ts）はクライアントでのみ実行
+// 3. 初回アクセスでも空のHTMLシェルのみ返される
+```
+
+### SPAモードの動作フロー
+
+CSR/SPAモードでは、初回アクセスも含めてすべてのデータ取得がクライアントサイドで行われます。サーバーは最小限のHTMLとJavaScriptバンドルを返すだけで、実際のコンテンツはブラウザ上で構築されます。
+
+```typescript
+// SPAモードのデータフロー
+// 1. ブラウザがページにアクセス
+// 2. サーバーから空のHTMLシェル + JSバンドル
+// 3. JavaScriptが実行される
+// 4. クライアントでLoad関数実行
+// 5. APIからデータ取得
+// 6. DOMを構築・表示
+
+// +page.ts（クライアントでのみ実行）
+export const load: PageLoad = async ({ fetch }) => {
+  // このコードはブラウザでのみ実行される
+  const response = await fetch('/api/posts');
+  const posts = await response.json();
+  
+  // Server Loadは存在しないため、dataパラメータは空
+  return { posts };
+};
+```
+
+### 通常モードとSPAモードの比較
+
+| 項目 | 通常モード（SSR有効） | SPAモード（`ssr = false`） |
+|------|---------------------|--------------------------|
+| **初回表示速度** | 高速（完成したHTML） | 遅い（JS実行後に表示） |
+| **SEO** | 優れている | 弱い（コンテンツが空） |
+| **Server Load** | 実行される | **実行されない** |
+| **Universal Load初回** | サーバーで実行 | クライアントで実行 |
+| **データ取得タイミング** | サーバーで事前取得 | クライアントで後から取得 |
+| **認証チェック** | サーバーで可能 | クライアントのみ |
+
+### SPAモードが適している場面
+
+```typescript
+// 管理画面やダッシュボード（SEO不要、インタラクティブ）
+// src/routes/(admin)/+layout.ts
+export const ssr = false;
+export const prerender = false;
+
+// この設定により：
+// - 管理画面全体がSPAとして動作
+// - 高度なインタラクションが可能
+// - しかしSEOは犠牲になる
+```
+
+:::warning[SPAモードの注意点]
+SPAモードでは以下の制限があります。
+- Server Load関数（`+page.server.ts`）は一切実行されない
+- 初回表示が遅くなる（JavaScriptのダウンロード・実行を待つ必要）
+- SEOに大きな影響（検索エンジンはコンテンツを認識できない）
+- 機密情報の扱いに注意（すべてがクライアントコードに含まれる）
+:::
 
 ## 並列データ取得の仕組み
 
@@ -530,6 +659,244 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 };
 ```
 
+## CSR/SPAモードでのデータフロー
+
+SvelteKitは`ssr = false`を設定することで、CSR（Client-Side Rendering）またはSPA（Single Page Application）モードで動作します。このモードでは、データフローが根本的に異なります。
+
+### CSR/SPAモードの設定
+
+```typescript
+// +layout.ts または +page.ts
+export const ssr = false;    // サーバーサイドレンダリングを無効化
+export const csr = true;      // クライアントサイドレンダリングは有効（デフォルト）
+export const prerender = false; // プリレンダリングも無効化
+```
+
+### SPAモードでのデータフローの違い
+
+SPAモードでは、すべてのレンダリングとデータ取得がクライアント側で行われます。
+
+<Mermaid diagram={spaDataFlowDiagram} />
+
+### SPAモードでのファイル実行順序
+
+```typescript
+// src/routes/
+// ├── +layout.ts         ← 1. アプリ全体の設定
+// ├── +layout.svelte     ← 3. レイアウトコンポーネント
+// └── dashboard/
+//     ├── +page.ts       ← 2. ページデータ取得
+//     └── +page.svelte   ← 4. ページコンポーネント
+
+// 1. +layout.ts - アプリ全体をSPAモードに設定
+export const ssr = false;
+export const prerender = false;
+
+import type { LayoutLoad } from './$types';
+
+export const load: LayoutLoad = async () => {
+  // ブラウザでのみ実行される
+  const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+  
+  return {
+    settings,
+    timestamp: Date.now() // クライアント時刻
+  };
+};
+
+// 2. dashboard/+page.ts - ページ固有のデータ取得
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ fetch, parent }) => {
+  // 親のload関数の結果を待つ
+  const parentData = await parent();
+  console.log('Settings from layout:', parentData.settings);
+  
+  // クライアントから直接API呼び出し
+  const response = await fetch('/api/dashboard');
+  const dashboard = await response.json();
+  
+  return {
+    dashboard,
+    // 親のデータも利用可能
+    userPreference: parentData.settings.theme
+  };
+};
+
+// 3. +layout.svelte - レイアウトコンポーネント
+<script lang="ts">
+  import type { LayoutData } from './$types';
+  import type { Snippet } from 'svelte';
+  
+  let { data, children }: { data: LayoutData; children?: Snippet } = $props();
+  
+  // クライアント側でのみ実行される
+  $effect(() => {
+    console.log('Layout mounted in browser');
+    document.body.className = data.settings.theme || 'light';
+  });
+</script>
+
+<div class="app-container">
+  <header>
+    <h1>Dashboard</h1>
+    <p>Last updated: {new Date(data.timestamp).toLocaleTimeString()}</p>
+  </header>
+  
+  <main>
+    {@render children?.()}
+  </main>
+</div>
+
+// 4. dashboard/+page.svelte - ページコンポーネント
+<script lang="ts">
+  import type { PageData } from './$types';
+  
+  let { data }: { data: PageData } = $props();
+  
+  // すべてクライアント側で処理
+  let isLoading = $state(false);
+  
+  async function refreshData() {
+    isLoading = true;
+    const response = await fetch('/api/dashboard');
+    data.dashboard = await response.json();
+    isLoading = false;
+  }
+</script>
+
+<div class="dashboard">
+  <h2>ダッシュボード（{data.userPreference}テーマ）</h2>
+  
+  {#if isLoading}
+    <p>更新中...</p>
+  {:else}
+    <div class="stats">
+      {#each data.dashboard.stats as stat}
+        <div class="stat-card">{stat.label}: {stat.value}</div>
+      {/each}
+    </div>
+  {/if}
+  
+  <button onclick={refreshData}>データを更新</button>
+</div>
+```
+
+### SPAモードでの初回アクセスとナビゲーション
+
+SPAモードでは、初回アクセスとクライアントサイドナビゲーションで同じ処理が行われます。
+
+<Mermaid diagram={spaNavigationDiagram} />
+
+### SPAモードとSSRモードの実行場所の違い
+
+```typescript
+// ファイル構造と実行場所の対応
+// src/routes/
+// ├── +layout.server.ts    ❌ SPAモードでは無視される
+// ├── +layout.ts           ✅ ブラウザで実行
+// ├── +layout.svelte       ✅ ブラウザでレンダリング
+// └── dashboard/
+//     ├── +page.server.ts  ❌ SPAモードでは無視される  
+//     ├── +page.ts         ✅ ブラウザで実行
+//     └── +page.svelte     ✅ ブラウザでレンダリング
+
+// +page.server.ts（SPAモードでは実行されない）
+import type { PageServerLoad } from './$types';
+import { db } from '$lib/server/database';
+
+export const load: PageServerLoad = async () => {
+  // ❌ このコードはSPAモードでは一切実行されない
+  const users = await db.user.findMany();
+  return { users };
+};
+
+// +page.ts（SPAモードで実行される）
+import type { PageLoad } from './$types';
+
+export const ssr = false; // SPAモードを有効化
+
+export const load: PageLoad = async ({ fetch }) => {
+  // ✅ ブラウザで実行される
+  // 公開APIエンドポイントを呼び出す必要がある
+  const response = await fetch('/api/users');
+  const users = await response.json();
+  return { users };
+};
+```
+
+:::warning[Server Load関数は実行されない]
+SPAモードでは`+page.server.ts`や`+layout.server.ts`のLoad関数は**一切実行されません**。
+サーバー側でのみアクセス可能なリソース（データベース、プライベートAPI等）には直接アクセスできません。
+:::
+
+### 通常モードとSPAモードの比較
+
+| 機能 | 通常モード（SSR） | SPAモード |
+|-----|----------------|-----------|
+| 初回レンダリング | サーバー側 | クライアント側 |
+| Server Load関数 | 実行される | **実行されない** |
+| Universal Load関数 | サーバー→クライアント | クライアントのみ |
+| SEO | 優れている | 追加対策が必要 |
+| 初期表示速度 | 速い | 遅い（JSダウンロード必要） |
+| APIアクセス | サーバー経由可能 | 直接アクセスのみ |
+| 機密情報の扱い | サーバーで保護可能 | 公開APIのみ |
+
+### SPAモードでの実装パターン
+
+```typescript
+// +layout.ts - アプリ全体をSPAモードに
+export const ssr = false;
+export const prerender = false;
+
+// stores/auth.svelte.ts - クライアント側の認証状態管理
+class AuthStore {
+  private token = $state<string | null>(null);
+  
+  constructor() {
+    // ブラウザでのみ実行
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('token');
+    }
+  }
+  
+  async login(credentials: Credentials) {
+    // 公開APIエンドポイントを直接呼び出し
+    const response = await fetch('https://api.example.com/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+    
+    const { token } = await response.json();
+    this.token = token;
+    localStorage.setItem('token', token);
+  }
+}
+
+export const auth = new AuthStore();
+```
+
+### SPAモードの利点と欠点
+
+**利点**:
+- 高度にインタラクティブなUI
+- オフライン対応が可能（Service Worker併用）
+- クライアント側での状態管理が簡単
+- 既存のSPA向けライブラリとの互換性
+
+**欠点**:
+- SEOに不利（追加対策が必要）
+- 初期ロードが遅い
+- JavaScriptが必須
+- サーバーサイドの機能が使えない
+
+### SPAモードが適している場合
+
+1. **管理画面・ダッシュボード** - SEO不要でインタラクティブ性重視
+2. **認証後のアプリケーション** - ログイン後の画面
+3. **PWA（Progressive Web App）** - オフライン対応が必要
+4. **既存APIとの統合** - 既にAPIサーバーが存在する場合
+
 ## まとめ
 
 SvelteKitのデータフローは以下の特徴を持ちます。
@@ -538,6 +905,7 @@ SvelteKitのデータフローは以下の特徴を持ちます。
 - **型安全**: TypeScriptによる完全な型推論
 - **柔軟な無効化**: 細かい粒度でのデータ更新制御
 - **ストリーミング対応**: 大量データの段階的配信
+- **レンダリングモードの選択**: SSRとCSR/SPAを柔軟に切り替え可能
 
 これらの仕組みを理解することで、高速でユーザー体験の良いアプリケーションを構築できます。
 

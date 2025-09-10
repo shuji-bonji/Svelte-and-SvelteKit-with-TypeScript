@@ -12,39 +12,35 @@ Svelte 5とSvelteKit 2.xの開発に必要なすべての情報を2つの包括�
 ## 完全リファレンス
 
 <div class="grid">
-  <article class="card">
-    <h3>
-      <a href="{base}/reference/svelte5/">
-        ⚡ Svelte 5 完全リファレンス
-      </a>
-    </h3>
-    <p>
-      Svelte 5のすべてを網羅した包括的なリファレンス。Runesシステム、コンポーネント、テンプレート構文、トランジション、TypeScript統合まで、必要な情報がすべてここに。
-    </p>
-    <ul>
-      <li>🎯 Runesシステム完全解説（$state、$derived、$effect）</li>
-      <li>📦 コンポーネント設計とライフサイクル</li>
-      <li>🎨 スタイリングとアニメーション</li>
-      <li>💎 TypeScript完全対応の型定義</li>
-    </ul>
-  </article>
+  <a href="{base}/reference/svelte5/" class="card-link">
+    <article class="card">
+      <h3>⚡ Svelte 5 完全リファレンス</h3>
+      <p>
+        Svelte 5のすべてを網羅した包括的なリファレンス。Runesシステム、コンポーネント、テンプレート構文、トランジション、TypeScript統合まで、必要な情報がすべてここに。
+      </p>
+      <ul>
+        <li>🎯 Runesシステム完全解説（$state、$derived、$effect）</li>
+        <li>📦 コンポーネント設計とライフサイクル</li>
+        <li>🎨 スタイリングとアニメーション</li>
+        <li>💎 TypeScript完全対応の型定義</li>
+      </ul>
+    </article>
+  </a>
 
-  <article class="card">
-    <h3>
-      <a href="{base}/reference/sveltekit2/">
-        🚀 SvelteKit 2.x 完全リファレンス
-      </a>
-    </h3>
-    <p>
-      SvelteKit 2.xでフルスタックWebアプリケーションを構築するための完全リファレンス。ルーティング、データロード、フォーム処理、APIルート、Hooksまですべてを網羅。
-    </p>
-    <ul>
-      <li>📁 ファイルベースルーティングシステム</li>
-      <li>🔄 SSR/SSG/SPA完全対応</li>
-      <li>🔐 型安全なデータフローと認証</li>
-      <li>🌍 デプロイメントとアダプター</li>
-    </ul>
-  </article>
+  <a href="{base}/reference/sveltekit2/" class="card-link">
+    <article class="card">
+      <h3>🚀 SvelteKit 2.x 完全リファレンス</h3>
+      <p>
+        SvelteKit 2.xでフルスタックWebアプリケーションを構築するための完全リファレンス。ルーティング、データロード、フォーム処理、APIルート、Hooksまですべてを網羅。
+      </p>
+      <ul>
+        <li>📁 ファイルベースルーティングシステム</li>
+        <li>🔄 SSR/SSG/SPA完全対応</li>
+        <li>🔐 型安全なデータフローと認証</li>
+        <li>🌍 デプロイメントとアダプター</li>
+      </ul>
+    </article>
+  </a>
 </div>
 
 ## このリファレンスの特徴
@@ -93,20 +89,34 @@ Svelte 5とSvelteKit 2.xの最新機能に対応し、常に最新の情報を�
     margin: 2rem 0;
   }
 
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s;
+  }
+
+  .card-link:hover {
+    transform: translateY(-2px);
+  }
+
   .card {
     padding: 1.5rem;
     border: 1px solid var(--sl-color-gray-5);
     border-radius: 0.5rem;
     background: var(--sl-color-bg-nav);
+    height: 100%;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .card-link:hover .card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--sl-color-accent);
   }
 
   .card h3 {
     margin-top: 0;
     margin-bottom: 1rem;
-  }
-
-  .card h3 a {
-    text-decoration: none;
     color: var(--sl-color-text);
   }
 

@@ -38,22 +38,12 @@ const config = defineConfig({
     sveltepress({
       theme: defaultTheme({
         navbar: [
-          {
-            title: 'ホーム',
-            to: '/',
-          },
-          {
-            title: 'はじめに',
-            to: '/introduction/',
-          },
-          {
-            title: 'Svelte',
-            to: '/svelte/',
-          },
-          {
-            title: 'SvelteKit',
-            to: '/sveltekit/',
-          },
+          { title: 'ホーム', to: '/' },
+          { title: 'Svelte', to: '/svelte/' },
+          { title: 'SvelteKit', to: '/sveltekit/' },
+          { title: '実装例', to: '/examples/' },
+          { title: 'リファレンス', to: '/reference/' },
+          { title: 'ディープダイブ', to: '/deep-dive/' },
         ],
         sidebar: sidebarConfig,
         github:

@@ -3,15 +3,32 @@ title: TypeScriptで学ぶ Svelte 5/SvelteKit
 description: Svelte5とSvelteKitをTypeScriptで学ぶ日本語完全ガイド。$state/$derived/$effectのRunesシステム、SSR/SSG実装、型安全なコンポーネント開発を実践コードで解説
 heroImage: /svelteAndTypescript.png
 actions:
+  # メインアクション
   - label: 学習を始める
     type: primary
     to: ./introduction
+  # 学習コンテンツ（特別なタイプを追加）
   - label: Svelte
     type: secondary
     to: ./svelte
+    class: learning-content
   - label: SvelteKit
     type: secondary
     to: ./sveltekit
+    class: learning-content
+  # 補助コンテンツ
+  - label: 実装例
+    type: secondary
+    to: ./examples
+    class: auxiliary-content
+  - label: リファレンス
+    type: secondary
+    to: ./reference
+    class: auxiliary-content
+  - label: ディープダイブ
+    type: secondary
+    to: ./deep-dive
+    class: auxiliary-content
 features:
   - title: Svelte 5 Runes
     description: 最新のRunesシステム（$state, $derived, $effect）を完全解説

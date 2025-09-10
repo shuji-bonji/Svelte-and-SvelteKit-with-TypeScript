@@ -592,4 +592,93 @@
     margin: 0 auto;
     max-width: var(--vp-layout-max-width, 960px);
   }
+
+  /* ホームページのアクションボタンのカスタマイズ */
+  /* 学習コンテンツボタン（Svelte, SvelteKit）をTypeScript青で強調 */
+  :global(.home .svp-action[href="./svelte"]),
+  :global(.home .svp-action[href="./sveltekit"]),
+  :global(.svp-action.svp-action--secondary[href="./svelte"]),
+  :global(.svp-action.svp-action--secondary[href="./sveltekit"]) {
+    background-image: linear-gradient(to bottom right, #2196F3 0%, #1976D2 50%, #0D47A1 100%) !important;
+    background-color: transparent !important;
+    background-size: 200% 200% !important;
+    background-position: 0% 0% !important;
+    color: white !important;
+    border: 1px solid rgba(25, 118, 210, 0.5) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px 0 rgba(13, 71, 161, 0.3) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  :global(.home .svp-action[href="./svelte"]:hover),
+  :global(.home .svp-action[href="./sveltekit"]:hover),
+  :global(.svp-action.svp-action--secondary[href="./svelte"]:hover),
+  :global(.svp-action.svp-action--secondary[href="./sveltekit"]:hover) {
+    background-position: 100% 100% !important;
+    border-color: rgba(13, 71, 161, 0.7) !important;
+    box-shadow: 0 6px 20px 0 rgba(13, 71, 161, 0.4) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* 補助コンテンツボタン（実装例、リファレンス、ディープダイブ）をグレーで控えめに */
+  :global(.svp-action[href="./examples"]),
+  :global(.svp-action[href="./reference"]),
+  :global(.svp-action[href="./deep-dive"]) {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--sp-color-text-secondary, #64748b) !important;
+    border: 1px solid var(--sp-color-border, #e2e8f0) !important;
+    font-weight: 500 !important;
+  }
+
+  :global(.svp-action[href="./examples"]:hover),
+  :global(.svp-action[href="./reference"]:hover),
+  :global(.svp-action[href="./deep-dive"]:hover) {
+    background: var(--sp-color-bg-soft, #f8fafc) !important;
+    background-color: var(--sp-color-bg-soft, #f8fafc) !important;
+    border-color: var(--sp-color-text-secondary, #64748b) !important;
+    color: var(--sp-color-text, #0f172a) !important;
+  }
+
+  /* ダークモードでの調整 */
+  :global(.dark .home .svp-action[href="./svelte"]),
+  :global(.dark .home .svp-action[href="./sveltekit"]),
+  :global(.dark .svp-action.svp-action--secondary[href="./svelte"]),
+  :global(.dark .svp-action.svp-action--secondary[href="./sveltekit"]) {
+    background-image: linear-gradient(to bottom right, #42A5F5 0%, #2196F3 50%, #1976D2 100%) !important;
+    background-color: transparent !important;
+    background-size: 200% 200% !important;
+    background-position: 0% 0% !important;
+    border-color: rgba(66, 165, 245, 0.5) !important;
+    box-shadow: 0 4px 14px 0 rgba(33, 150, 243, 0.4) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  :global(.dark .home .svp-action[href="./svelte"]:hover),
+  :global(.dark .home .svp-action[href="./sveltekit"]:hover),
+  :global(.dark .svp-action.svp-action--secondary[href="./svelte"]:hover),
+  :global(.dark .svp-action.svp-action--secondary[href="./sveltekit"]:hover) {
+    background-position: 100% 100% !important;
+    border-color: rgba(25, 118, 210, 0.7) !important;
+    box-shadow: 0 6px 20px 0 rgba(33, 150, 243, 0.5) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  :global(.dark .svp-action[href="./examples"]),
+  :global(.dark .svp-action[href="./reference"]),
+  :global(.dark .svp-action[href="./deep-dive"]) {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--sp-color-text-secondary, #94a3b8) !important;
+    border: 1px solid var(--sp-color-border, #334155) !important;
+  }
+
+  :global(.dark .svp-action[href="./examples"]:hover),
+  :global(.dark .svp-action[href="./reference"]:hover),
+  :global(.dark .svp-action[href="./deep-dive"]:hover) {
+    background: var(--sp-color-bg-soft, #1e293b) !important;
+    background-color: var(--sp-color-bg-soft, #1e293b) !important;
+    border-color: var(--sp-color-text-secondary, #94a3b8) !important;
+    color: var(--sp-color-text, #f1f5f9) !important;
+  }
 </style>

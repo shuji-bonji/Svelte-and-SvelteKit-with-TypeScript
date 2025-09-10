@@ -9,7 +9,7 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
 
 このセクションでは、実際のアプリケーション開発を通じて、Svelte 5とSvelteKitの実践的な使い方を学びます。各実装例は完全に動作するコードと詳細な解説を含み、実際のプロジェクトに適用できる実践的な知識を提供します。
 
-## プロジェクト一覧
+## 基本プロジェクト
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
   <a href="{base}/examples/blog-system/" class="flex no-underline group h-full">
@@ -54,65 +54,37 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
       </div>
     </div>
   </a>
-  
+</div>
+
+## 認証システム実装
+
+認証システムは、現代のWebアプリケーションにおいて最も重要な機能の一つです。包括的なガイドと3つの実装パターンを提供しています。
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
   <a href="{base}/examples/auth-system/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+    <div class="p-4 border-2 border-purple-500 dark:border-purple-400 rounded-lg shadow-md hover:shadow-lg hover:border-purple-600 dark:hover:border-purple-300 transition-all cursor-pointer flex flex-col w-full bg-purple-50 dark:bg-purple-900/20">
       <div class="text-3xl mb-2">🔐</div>
-      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
-        認証システム実装ガイド
+      <h3 class="font-bold text-lg mb-2 text-purple-700 dark:text-purple-300">
+        認証システム完全ガイド
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">3つの認証パターンの完全ガイド</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">3つの認証パターンの包括的な解説</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li>Cookie/Session認証（✅実装済）</li>
-        <li>JWT認証（📖設計済）</li>
-        <li>ルートグループ認証（📝計画中）</li>
         <li>認証方式の比較と選択</li>
+        <li>セキュリティベストプラクティス</li>
+        <li>実装パターンの詳細</li>
+        <li>パフォーマンス考慮事項</li>
       </ul>
-      <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+      <div class="mt-3 p-2 bg-purple-100 dark:bg-purple-900/30 rounded">
         <code class="text-xs">
-          hooks.server.ts + Form Actions
+          包括的な認証戦略ガイド
         </code>
       </div>
     </div>
   </a>
-  
-  <a href="{base}/examples/data-fetching/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📊</div>
-      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
-        データフェッチング
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">効率的なデータ取得パターン</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li>Load関数の活用</li>
-        <li>ストリーミングSSR</li>
-        <li>エラーハンドリング</li>
-      </ul>
-    </div>
-  </a>
-  
-  <a href="{base}/examples/websocket/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🔌</div>
-      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
-        WebSocket実装
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リアルタイム通信の実装</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li>WebSocket接続管理</li>
-        <li>リアルタイムアップデート</li>
-        <li>再接続ロジック</li>
-      </ul>
-    </div>
-  </a>
 </div>
 
-## 認証システム実装例
-
-認証システムは、現代のWebアプリケーションにおいて最も重要な機能の一つです。以下の3つの実装パターンを詳細に解説しています。
+### 実装パターン
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
   <a href="{base}/examples/auth-cookie-session/" class="flex no-underline group">
@@ -155,6 +127,54 @@ description: Svelte5とSvelteKitをTypeScriptで実装する実践例集。TODO�
   </a>
 </div>
 
+## データ処理・通信
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <a href="{base}/examples/data-fetching/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📊</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        データフェッチング
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">効率的なデータ取得パターン</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>Load関数の活用</li>
+        <li>ストリーミングSSR</li>
+        <li>エラーハンドリング</li>
+        <li>キャッシュ戦略</li>
+      </ul>
+      <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+        <code class="text-xs">
+          load: PageLoad/LayoutLoad
+        </code>
+      </div>
+    </div>
+  </a>
+  
+  <a href="{base}/examples/websocket/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-pink-400 dark:hover:border-pink-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🔌</div>
+      <h3 class="font-bold text-lg mb-2 text-pink-600 dark:text-pink-400 group-hover:text-pink-700 dark:group-hover:text-pink-300 transition-colors">
+        WebSocket実装
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リアルタイム通信の実装</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>WebSocket接続管理</li>
+        <li>リアルタイムアップデート</li>
+        <li>再接続ロジック</li>
+        <li>メッセージキューイング</li>
+      </ul>
+      <div class="mt-3 p-2 bg-gray-1 dark:bg-gray-8 rounded">
+        <code class="text-xs">
+          ws://localhost:3000/ws
+        </code>
+      </div>
+    </div>
+  </a>
+</div>
+
 ## 各実装例で学べること
 
 ### 共通して学べる内容
@@ -187,6 +207,7 @@ src/
 ├── app.d.ts            # グローバル型定義
 ├── app.html            # HTMLテンプレート
 └── hooks.server.ts     # サーバーフック
+```
 
 ## 前提知識
 

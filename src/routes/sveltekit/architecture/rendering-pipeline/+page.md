@@ -8,6 +8,7 @@ description: SvelteKitのレンダリングパイプラインを完全理解。�
   
   const renderingPipelineDiagram = `graph TB
     subgraph "開発時 (dev)"
+      direction TB
       DevSvelte[".svelte ファイル"]
       DevCompiler["Svelte Compiler<br/>（リアルタイム変換）"]
       DevVite["Vite Dev Server<br/>（HMR対応）"]
@@ -19,6 +20,7 @@ description: SvelteKitのレンダリングパイプラインを完全理解。�
     end
     
     subgraph "ビルド時 (build)"
+      direction TB
       BuildSvelte[".svelte ファイル"]
       BuildCompiler["Svelte Compiler<br/>（最適化変換）"]
       BuildVite["Vite Build<br/>（バンドリング）"]
@@ -31,6 +33,7 @@ description: SvelteKitのレンダリングパイプラインを完全理解。�
     
     subgraph "実行時 (runtime)"
       Request["リクエスト"]
+      direction TB
       SSR["SSR実行<br/>（サーバー）"]
       HTML["HTML生成"]
       Hydration["ハイドレーション<br/>（クライアント）"]
@@ -98,9 +101,16 @@ Svelteの最大の特徴は、**コンパイル時の最適化**です。React�
 
 ### コンパイルプロセスの詳細
 
+Svelteコンパイラは、.svelteファイルを解析し、最適化されたJavaScriptコードを生成します。このプロセスは、パース、AST生成、解析、コード生成の4つの主要なステップで構成されています。
+
 <Mermaid diagram={compilationPhaseDiagram} />
 
 ### Svelteコンパイラの動作
+
+以下の例では、シンプルなButtonコンポーネントがどのようにコンパイルされ、最適化されたJavaScriptコードに変換されるかを示します。
+
+#### 入力：Svelteコンポーネント
+コンパイラに渡される元の.svelteファイルです。Svelte 5のRunesシステムを使用したモダンな構文で記述されています。
 
 ```typescript
 // 入力: Button.svelte
@@ -123,6 +133,9 @@ Svelteの最大の特徴は、**コンパイル時の最適化**です。React�
   }
 </style>
 ```
+
+#### 出力：コンパイル済みJavaScript
+コンパイラが生成する最適化されたJavaScriptコードです。create_fragment関数がコンポーネントのライフサイクルを管理し、効率的なDOM操作を実現します。
 
 ```javascript
 // 出力: Button.js（簡略化）
@@ -168,6 +181,8 @@ function create_fragment(ctx) {
 
 ### コンパイル時の最適化
 
+Svelteコンパイラは、以下のような様々な最適化を自動的に適用し、パフォーマンスを最大化します。
+
 1. **デッドコード削除**: 使用されていないコードを削除
 2. **インライン化**: 小さな関数をインライン展開
 3. **リアクティビティの静的解析**: 変更検知コードの最小化
@@ -178,6 +193,8 @@ function create_fragment(ctx) {
 ViteによるビルドプロセスでSvelteKitアプリケーションが本番用に最適化されます。
 
 ### Viteビルドの設定
+
+SvelteKitはViteをビルドツールとして使用します。以下の設定例では、コード分割、ツリーシェイキング、最小化などの最適化を構成しています。
 
 ```typescript
 // vite.config.ts
@@ -214,6 +231,8 @@ export default defineConfig({
 
 ### ビルド成果物の構造
 
+ビルド後に生成されるファイル構造です。clientディレクトリにはブラウザ用のアセット、serverディレクトリにはSSR用のコードが配置されます。
+
 ```bash
 # ビルド後のディレクトリ構造
 .svelte-kit/
@@ -236,6 +255,11 @@ export default defineConfig({
 
 ### SSR実行の流れ
 
+サーバーサイドレンダリングでは、サーバー上でデータを取得し、HTMLを生成してクライアントに送信します。以下の例では、load関数でデータを取得し、それをHTMLに埋め込むプロセスを示しています。
+
+#### サーバーサイドのデータ取得
+load関数でAPIからデータを取得し、コンポーネントに渡します。このデータはHTMLにシリアライズされて埋め込まれます。
+
 ```typescript
 // +page.server.ts
 import type { PageServerLoad } from './$types';
@@ -252,6 +276,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   };
 };
 ```
+
+#### 生成されるHTML
+サーバーが生成する完全なHTMLです。data-sveltekit-data属性にシリアライズされたデータが含まれ、data-svelte-h属性でハイドレーション用のマーカーが付与されています。
 
 ```html
 <!-- 生成されるHTML -->
@@ -284,6 +311,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 <Mermaid diagram={hydrationProcessDiagram} />
 
 ### ハイドレーションの実装
+
+クライアント側でサーバー生成のHTMLをインタラクティブにするためのコードです。既存のDOM要素を再利用し、イベントリスナーとリアクティビティを追加します。
 
 ```typescript
 // クライアント側の初期化コード
@@ -322,6 +351,8 @@ function hydrateComponent(component: SvelteComponent, target: Element) {
 
 ### 動的インポートによるコード分割
 
+大きなライブラリやコンポーネントを必要な時にのみロードすることで、初期バンドルサイズを削減できます。以下の例では、チャートコンポーネントを遅延ロードしています。
+
 ```typescript
 // +page.svelte
 <script lang="ts">
@@ -345,6 +376,8 @@ function hydrateComponent(component: SvelteComponent, target: Element) {
 
 ### ルートベースの自動分割
 
+SvelteKitはルートごとに自動的にコードを分割します。各ページが別々のJavaScriptチャンクになり、必要なコードのみがロードされます。
+
 ```typescript
 // SvelteKitは自動的にルートごとにコードを分割
 // routes/
@@ -356,6 +389,8 @@ function hydrateComponent(component: SvelteComponent, target: Element) {
 ```
 
 ## パフォーマンス測定
+
+レンダリングパイプラインのパフォーマンスを測定し、ボトルネックを特定するための実装例です。Server-Timingヘッダーを使用して、ブラウザの開発者ツールで測定結果を確認できます。
 
 ```typescript
 // hooks.server.ts

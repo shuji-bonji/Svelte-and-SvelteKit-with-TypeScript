@@ -1,6 +1,6 @@
 ---
-title: レンダリング戦略
-description: SvelteKitのSSR、SSG、SPAの基本的な違いと選択基準をTypeScriptで理解。各戦略のメリット・デメリットと実装方法を解説
+title: レンダリング戦略（基礎）
+description: SvelteKitのSSR、SSG、SPAの基本的な実装方法をTypeScriptで解説。各戦略の設定方法と使い分けを実践的なコード例で学習
 ---
 
 <script>
@@ -30,7 +30,11 @@ description: SvelteKitのSSR、SSG、SPAの基本的な違いと選択基準をT
     style SPA fill:#45b7d1,color:#fff`;
 </script>
 
-SvelteKitは複数のレンダリング戦略をサポートし、ページごとに最適な方法を選択できます。このページでは、各戦略の基本的な違いと選択基準を解説します。
+SvelteKitは複数のレンダリング戦略をサポートし、ページごとに最適な方法を選択できます。このページでは、SvelteKitで利用できる**SSR、SSG、SPA**の3つの基本的なレンダリング戦略の実装方法を解説します。
+
+:::info[さらに詳しく学ぶ]
+レンダリング戦略の理論的背景、SPA/MPAアーキテクチャ、ISRなどの高度な手法、パフォーマンス指標の詳細については、[レンダリング戦略とアーキテクチャパターン](/sveltekit/architecture/rendering-strategies/)で包括的に解説しています。
+:::
 
 ## レンダリング戦略の概要
 

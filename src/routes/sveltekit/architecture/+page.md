@@ -79,18 +79,36 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/architecture/execution-environments/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/architecture/data-loading/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🌐</div>
+      <div class="text-3xl mb-2">📥</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        実行環境とランタイム
+        データロードフロー
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">様々な実行環境でSvelteKitがどう動作するかを理解します。</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数の実行順序とデータの流れを詳しく解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>サーバーランタイム</strong>: Node.js、Edge、Workers</li>
-        <li><strong>クライアントランタイム</strong>: ブラウザ環境</li>
-        <li><strong>アダプターの仕組み</strong>: プラットフォーム最適化</li>
-        <li><strong>環境変数</strong>: PUBLIC_/PRIVATE_の処理</li>
+        <li><strong>実行順序</strong>: Layout → Page の階層処理</li>
+        <li><strong>並列化</strong>: Promise.allによる最適化</li>
+        <li><strong>キャッシュ戦略</strong>: invalidateとdepends</li>
+        <li><strong>エラー処理</strong>: Error Boundary</li>
+      </ul>
+    </div>
+  </a>
+  
+  <a href="{base}/sveltekit/architecture/file-structure/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📁</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        ファイル構成と実行環境
+        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">各ファイルの役割と実行環境の対応を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>ファイル種別</strong>: +page、+layout、+server</li>
+        <li><strong>実行環境</strong>: サーバー/クライアント/両方</li>
+        <li><strong>ビルド時処理</strong>: プリレンダリング</li>
+        <li><strong>ランタイム処理</strong>: SSR/CSR切り替え</li>
       </ul>
     </div>
   </a>
@@ -111,23 +129,6 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
       </ul>
     </div>
   </a>
-  
-  <a href="{base}/sveltekit/architecture/build-optimization/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🚀</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        ビルド最適化
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">ビルドプロセスの最適化とパフォーマンス改善を理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>静的解析</strong>: プリレンダリング対象の検出</li>
-        <li><strong>コード分割</strong>: チャンク生成戦略</li>
-        <li><strong>アセット最適化</strong>: 画像、CSS、JS処理</li>
-        <li><strong>Service Worker</strong>: オフライン対応</li>
-      </ul>
-    </div>
-  </a>
 </div>
 
 :::info[関連セクション]
@@ -143,9 +144,15 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 1. **レンダリング戦略（詳解）** - アーキテクチャの基礎概念を理解
 2. **レンダリングパイプライン** - コンパイルから実行までの処理フローを理解
 3. **アクセスログと分析戦略** - レンダリング戦略とログの関係を把握
-4. **実行環境とランタイム** - 様々な環境での動作を理解
-5. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
-6. **ビルド最適化** - パフォーマンス改善の仕組みを学習
+4. **データロードフロー** - Load関数の実行メカニズムを理解
+5. **ファイル構成と実行環境** - ファイルと実行環境の対応を把握
+6. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
+
+:::note[関連する実装内容]
+より実践的な内容は以下のセクションで学習できます：
+- **実行環境とランタイム** → [デプロイ・運用編]({base}/sveltekit/deployment/execution-environments/)
+- **ビルド最適化** → [最適化編]({base}/sveltekit/optimization/build-optimization/)
+:::
 
 ### このセクションの対象者
 

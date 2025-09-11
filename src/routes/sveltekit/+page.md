@@ -87,7 +87,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
 1. **Svelte習得確認** - Svelte 5の基礎知識があるか確認
    - ない場合 → [📚 Svelte基礎へ]({base}/svelte/)
 2. **🔰 基礎編** - 概要とアーキテクチャ、プロジェクト構造、ルーティング、Load関数とデータフェッチング
-3. **🏛️ アーキテクチャ詳解** - 実行環境、ファイル構成、データフロー、レンダリングパイプライン
+3. **🏛️ アーキテクチャ詳解** - レンダリング戦略、パイプライン、実行環境、ルーティング内部動作、ビルド最適化
 4. **⚙️ サーバーサイド編** - SSR処理、フォーム処理/Actions、APIルート設計、Hooks
 5. **🏗️ アプリ構築編** - 認証・認可、セッション管理、データベース統合、環境変数管理、エラーハンドリング
 6. **⚡ 最適化編** - パフォーマンス最適化、キャッシュ戦略、SEO最適化
@@ -250,6 +250,10 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/routing-internals/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ルーティング内部動作</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">ファイルベースルーティング</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/architecture/rendering-strategies/" class="text-indigo-600 dark:text-indigo-400 hover:underline">レンダリング戦略（詳解）</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">SPA/MPA、CSR/SSR/SSG/ISR</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/architecture/build-optimization/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ビルド最適化</a></td>

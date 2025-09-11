@@ -246,6 +246,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/architecture/rendering-pipeline/',
             },
             {
+              title: 'アクセスログと分析戦略',
+              to: '/sveltekit/architecture/access-logs/',
+            },
+            {
               title: '実行環境とランタイム',
               to: '/sveltekit/architecture/execution-environments/',
             },

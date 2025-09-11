@@ -63,12 +63,27 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
     </div>
   </a>
   
+  <a href="{base}/sveltekit/architecture/access-logs/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📊</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        アクセスログと分析戦略
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">レンダリング戦略がアクセスログと分析に与える影響を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>ログ記録パターン</strong>: SSR/SSG/SPAでの違い</li>
+        <li><strong>ユーザー行動追跡</strong>: 分析ツールの活用</li>
+        <li><strong>セキュリティ監査</strong>: 不正アクセスの検知</li>
+        <li><strong>パフォーマンス測定</strong>: Core Web Vitals</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/sveltekit/architecture/execution-environments/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🌐</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         実行環境とランタイム
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">様々な実行環境でSvelteKitがどう動作するかを理解します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -125,11 +140,12 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 
 ### 推奨学習順序
 
-1. **レンダリング戦略とアーキテクチャパターン** - アーキテクチャの基礎概念を理解
+1. **レンダリング戦略（詳解）** - アーキテクチャの基礎概念を理解
 2. **レンダリングパイプライン** - コンパイルから実行までの処理フローを理解
-3. **実行環境とランタイム** - 様々な環境での動作を把握
-4. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
-5. **ビルド最適化** - パフォーマンス改善の仕組みを学習
+3. **アクセスログと分析戦略** - レンダリング戦略とログの関係を把握
+4. **実行環境とランタイム** - 様々な環境での動作を理解
+5. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
+6. **ビルド最適化** - パフォーマンス改善の仕組みを学習
 
 ### このセクションの対象者
 

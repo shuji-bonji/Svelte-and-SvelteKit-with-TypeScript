@@ -3,6 +3,10 @@ title: ディープダイブ - 技術詳解
 description: Svelte/SvelteKitの内部実装と高度な技術トピックを深く理解する
 ---
 
+<script>
+  import { base } from '$app/paths';
+</script>
+
 このセクションでは、Svelte 5とSvelteKitの内部実装や動作原理について、より深く技術的な視点から解説します。日常的な開発では必須ではないものの、フレームワークをより深く理解し、パフォーマンスを最大限に引き出すために重要な概念を扱います。
 
 ## なぜディープダイブが重要か
@@ -18,7 +22,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
 
 <div class="topic-cards">
 
-<a href="/deep-dive/compile-time-optimization/" class="topic-card-link">
+<a href="{base}/deep-dive/compile-time-optimization/" class="topic-card-link">
   <div class="topic-card">
     <h3>コンパイル時最適化</h3>
     <p>Svelteがコンパイル時にどのような最適化を行い、Virtual DOMなしで高速な動作を実現しているのかを解説します。</p>
@@ -31,7 +35,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/reactive-state-variables-vs-bindings/" class="topic-card-link">
+<a href="{base}/deep-dive/reactive-state-variables-vs-bindings/" class="topic-card-link">
   <div class="topic-card">
     <h3>リアクティブ状態変数とバインディング</h3>
     <p><code>$state</code>による状態管理と<code>bind:</code>ディレクティブによるバインディングの違いと、それぞれの内部実装を詳しく解説します。</p>
@@ -44,7 +48,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/derived-vs-effect-vs-derived-by/" class="topic-card-link">
+<a href="{base}/deep-dive/derived-vs-effect-vs-derived-by/" class="topic-card-link">
   <div class="topic-card">
     <h3>$derived vs $effect vs $derived.by</h3>
     <p>3つの異なるリアクティブパターンの使い分けと、それぞれの実行タイミング、メモリ管理、パフォーマンス特性を比較します。</p>
@@ -57,7 +61,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/html-templates-and-snippets/" class="topic-card-link">
+<a href="{base}/deep-dive/html-templates-and-snippets/" class="topic-card-link">
   <div class="topic-card">
     <h3>HTMLテンプレートとSnippets</h3>
     <p>Svelte 5のSnippets機能と、テンプレートの再利用パターンについて、内部実装を含めて解説します。</p>
@@ -70,7 +74,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/reactivity-with-plain-javascript-syntax/" class="topic-card-link">
+<a href="{base}/deep-dive/reactivity-with-plain-javascript-syntax/" class="topic-card-link">
   <div class="topic-card">
     <h3>素のJavaScript構文でのリアクティビティ</h3>
     <p>Svelteが通常のJavaScript構文（代入、メソッド呼び出し等）でどのようにリアクティビティを実現しているかを解説します。</p>
@@ -83,7 +87,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/auto-generated-types/" class="topic-card-link">
+<a href="{base}/deep-dive/auto-generated-types/" class="topic-card-link">
   <div class="topic-card">
     <h3>SvelteKitが自動生成する型</h3>
     <p>SvelteKitの<code>./$types</code>による型生成の仕組みと、TypeScriptとの統合について詳しく解説します。</p>
@@ -96,20 +100,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/sveltekit/architecture/rendering-strategies/" class="topic-card-link">
-  <div class="topic-card">
-    <h3>レンダリング戦略 と アーキテクチャパターン</h3>
-    <p>SSR、SSG、CSR、ISRなど、SvelteKitが提供する様々なレンダリング戦略の詳細と、それぞれの実装方法を解説します。</p>
-    <strong>学べること：</strong>
-    <ul>
-      <li>各戦略の内部動作</li>
-      <li>パフォーマンス特性の比較</li>
-      <li>最適な戦略の選択基準</li>
-    </ul>
-  </div>
-</a>
-
-<a href="/deep-dive/webcomponents-svelte-css-strategies/" class="topic-card-link">
+<a href="{base}/deep-dive/webcomponents-svelte-css-strategies/" class="topic-card-link">
   <div class="topic-card">
     <h3>Web Components、Svelte、CSS戦略の実践ガイド</h3>
     <p>Web ComponentsとSvelteの関係、Shadow DOMのパフォーマンス問題、各種CSS戦略（Scoped CSS、CSS Modules、TailwindCSS/UnoCSS）の選択指針を実測データと共に解説します。</p>
@@ -122,7 +113,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/sveltekit-placeholders/" class="topic-card-link">
+<a href="{base}/deep-dive/sveltekit-placeholders/" class="topic-card-link">
   <div class="topic-card">
     <h3>SvelteKitプレースホルダー</h3>
     <p>SvelteKitのHTMLテンプレートで使用できるすべてのプレースホルダー（<code>%sveltekit.*%</code>）の詳細な仕様と使用方法を網羅的に解説します。</p>
@@ -222,8 +213,8 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
 
 :::note[前提知識]
 このセクションは、Svelte 5の基本（Runesシステム）とSvelteKitの基礎を理解していることを前提としています。まだ学習していない場合は、以下のセクションを先に学習することをお勧めします。
-- [Svelte 5 完全ガイド](/svelte/)
-- [SvelteKit 完全ガイド](/sveltekit/)
+- [Svelte 5 完全ガイド]({base}/svelte/)
+- [SvelteKit 完全ガイド]({base}/sveltekit/)
 :::
 
 ## 関連リソース

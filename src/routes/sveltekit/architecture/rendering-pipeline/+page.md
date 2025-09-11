@@ -380,7 +380,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 ## まとめ
 
-SvelteKitのレンダリングパイプラインは以下の特徴を持ちます：
+SvelteKitのレンダリングパイプラインは以下の特徴を持ちます。
 
 - **コンパイル時最適化**: 実行時オーバーヘッドの最小化
 - **効率的なハイドレーション**: 既存DOMの再利用

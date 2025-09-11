@@ -31,12 +31,27 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 ## このセクションの構成
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <a href="{base}/sveltekit/architecture/rendering-strategies/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🎯</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        レンダリング戦略（詳解）
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、CSR、ISRなど各レンダリング戦略の詳細と選択基準を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>SPA/MPA</strong>: アーキテクチャパターンの比較</li>
+        <li><strong>レンダリング手法</strong>: CSR/SSR/SSG/ISRの動作フロー</li>
+        <li><strong>パフォーマンス指標</strong>: Core Web Vitalsの比較</li>
+        <li><strong>選択ガイドライン</strong>: 最適な戦略の選び方</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/sveltekit/architecture/rendering-pipeline/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         レンダリングパイプライン
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">コンパイルから実行まで、SvelteKitがコードをどう処理するかを解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
@@ -98,22 +113,6 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
       </ul>
     </div>
   </a>
-  
-  <a href="{base}/sveltekit/architecture/rendering-strategies/" class="flex no-underline group h-full">
-    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">🎯</div>
-      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        レンダリング戦略とアーキテクチャパターン
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、CSR、ISRなど各レンダリング戦略の詳細と選択基準を解説します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>SPA/MPA</strong>: アーキテクチャパターンの比較</li>
-        <li><strong>レンダリング手法</strong>: CSR/SSR/SSG/ISRの動作フロー</li>
-        <li><strong>パフォーマンス指標</strong>: Core Web Vitalsの比較</li>
-        <li><strong>選択ガイドライン</strong>: 最適な戦略の選び方</li>
-      </ul>
-    </div>
-  </a>
 </div>
 
 :::info[関連セクション]
@@ -126,10 +125,11 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 
 ### 推奨学習順序
 
-1. **レンダリングパイプライン** - コンパイルから実行までの流れを理解
-2. **実行環境とランタイム** - 様々な環境での動作を把握
-3. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
-4. **ビルド最適化** - パフォーマンス改善の仕組みを学習
+1. **レンダリング戦略とアーキテクチャパターン** - アーキテクチャの基礎概念を理解
+2. **レンダリングパイプライン** - コンパイルから実行までの処理フローを理解
+3. **実行環境とランタイム** - 様々な環境での動作を把握
+4. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
+5. **ビルド最適化** - パフォーマンス改善の仕組みを学習
 
 ### このセクションの対象者
 

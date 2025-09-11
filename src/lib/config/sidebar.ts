@@ -189,7 +189,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/basics/file-system/',
             },
             {
-              title: 'レンダリング戦略',
+              title: 'レンダリング戦略（基礎）',
               to: '/sveltekit/basics/rendering-strategies/',
             },
             { title: 'app.d.tsの役割', to: '/sveltekit/basics/global-types/' },
@@ -238,6 +238,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           items: [
             { title: 'アーキテクチャ概要', to: '/sveltekit/architecture/' },
             {
+              title: 'レンダリング戦略（詳解）',
+              to: '/sveltekit/architecture/rendering-strategies/',
+            },
+            {
               title: 'レンダリングパイプライン',
               to: '/sveltekit/architecture/rendering-pipeline/',
             },
@@ -252,10 +256,6 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'ビルド最適化',
               to: '/sveltekit/architecture/build-optimization/',
-            },
-            {
-              title: 'レンダリング戦略 と アーキテクチャパターン',
-              to: '/sveltekit/architecture/rendering-strategies/',
             },
           ],
         },

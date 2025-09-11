@@ -244,7 +244,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">コンパイルから実行まで</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/execution-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境とランタイム</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/deployment/execution-environments/" class="text-indigo-600 dark:text-indigo-400 hover:underline">実行環境とランタイム</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">Node.js、Edge、Workers</td>
           </tr>
           <tr>
@@ -256,7 +256,7 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">SPA/MPA、CSR/SSR/SSG/ISR</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/architecture/build-optimization/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ビルド最適化</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/optimization/build-optimization/" class="text-indigo-600 dark:text-indigo-400 hover:underline">ビルド最適化</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">コード分割とアセット最適化</td>
           </tr>
         </tbody>

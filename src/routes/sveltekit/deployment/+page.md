@@ -47,6 +47,24 @@ SvelteKitアプリケーションを**本番環境で安定稼働**させるた�
     </div>
   </a>
   
+  <a href="{base}/sveltekit/deployment/execution-environments/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-teal-400 dark:hover:border-teal-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🌐</div>
+      <h3 class="font-bold text-lg mb-2 text-teal-600 dark:text-teal-400 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">
+        実行環境とランタイム
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">様々な実行環境でSvelteKitがどう動作するかを理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>Node.js</strong>: 標準的なサーバー環境</li>
+        <li><strong>Edge Runtime</strong>: エッジでの実行</li>
+        <li><strong>Cloudflare Workers</strong>: サーバーレス</li>
+        <li><strong>アダプター</strong>: プラットフォーム最適化</li>
+        <li><strong>環境変数</strong>: 設定管理</li>
+      </ul>
+    </div>
+  </a>
+  
   <a href="{base}/sveltekit/deployment/security/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-teal-400 dark:hover:border-teal-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔒</div>

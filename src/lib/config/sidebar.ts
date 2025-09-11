@@ -250,16 +250,16 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/architecture/access-logs/',
             },
             {
-              title: '実行環境とランタイム',
-              to: '/sveltekit/architecture/execution-environments/',
+              title: 'データロードフロー (準備中)',
+              to: '/sveltekit/architecture/data-loading/',
+            },
+            {
+              title: 'ファイル構成と実行環境 (準備中)',
+              to: '/sveltekit/architecture/file-structure/',
             },
             {
               title: 'ルーティング内部動作',
               to: '/sveltekit/architecture/routing-internals/',
-            },
-            {
-              title: 'ビルド最適化',
-              to: '/sveltekit/architecture/build-optimization/',
             },
           ],
         },
@@ -371,6 +371,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/optimization/performance/',
             },
             {
+              title: 'ビルド最適化',
+              to: '/sveltekit/optimization/build-optimization/',
+            },
+            {
               title: 'キャッシュ戦略 (準備中)',
               to: '/sveltekit/optimization/caching/',
             },
@@ -387,6 +391,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'プラットフォーム別デプロイ',
               to: '/sveltekit/deployment/platforms/',
+            },
+            {
+              title: '実行環境とランタイム',
+              to: '/sveltekit/deployment/execution-environments/',
             },
             {
               title: 'セキュリティ (準備中)',

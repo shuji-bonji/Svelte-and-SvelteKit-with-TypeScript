@@ -247,7 +247,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
             {
               title: '実行環境とランタイム',
-              to: '/sveltekit/architecture/runtime-environments/',
+              to: '/sveltekit/architecture/execution-environments/',
             },
             {
               title: 'ルーティング内部動作',

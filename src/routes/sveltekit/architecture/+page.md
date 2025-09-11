@@ -63,7 +63,7 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/architecture/runtime-environments/" class="flex no-underline group h-full">
+  <a href="{base}/sveltekit/architecture/execution-environments/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🌐</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">

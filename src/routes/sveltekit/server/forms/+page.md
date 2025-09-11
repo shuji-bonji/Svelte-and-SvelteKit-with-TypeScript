@@ -8,15 +8,19 @@ SvelteKitのActionsは、プログレッシブエンハンスメントに対応�
 
 ## Actions の基本概念
 
+SvelteKitのActionsは、サーバーサイドでフォーム送信を処理する仕組みです。従来のWebアプリケーションと同じようにHTMLフォームを使いながら、モダンなユーザー体験を提供できます。
+
 ### Progressive Enhancement とは
 
-SvelteKitのフォームは、JavaScript無効でも動作する**プログレッシブエンハンスメント**を実現
+Progressive Enhancement（プログレッシブエンハンスメント）は、基本的なHTML機能から始めて、段階的に機能を強化していく開発アプローチです。SvelteKitのフォームは、JavaScript無効でも動作する**プログレッシブエンハンスメント**を実現
 
 - **JavaScript無効時**: 通常のHTMLフォーム送信
 - **JavaScript有効時**: ページリロードなしでフォーム処理
 - **自動的な切り替え**: use:enhance で自動最適化
 
 ### 基本的なAction実装
+
+最もシンプルなActionの実装例です。`+page.server.ts`ファイルで`actions`オブジェクトをエクスポートすることで、フォーム送信を処理できます。
 
 ```typescript
 // src/routes/contact/+page.server.ts
@@ -52,7 +56,12 @@ export const actions = {
 
 ```svelte
 <!-- src/routes/contact/+page.svelte -->
-
+<script lang="ts">
+  import { enhance } from '$app/forms';
+  import type { ActionData } from './$types';
+  
+  let { form }: { form: ActionData } = $props();
+</script>
 
 <form method="POST" use:enhance>
   {#if form?.error}
@@ -90,6 +99,8 @@ export const actions = {
 ```
 
 ## 複数のActions
+
+一つのページで複数の異なるアクションを処理する必要がある場合、Named Actions（名前付きアクション）を使用します。これにより、更新、削除、公開など、異なる操作を同じページで実装できます。
 
 ### Named Actions の実装
 
@@ -164,7 +175,11 @@ export const actions = {
 
 ## 高度なバリデーション
 
+フォームデータの検証は、アプリケーションのセキュリティと信頼性にとって極めて重要です。ここでは、型安全性を保ちながら強力なバリデーションを実装する方法を紹介します。
+
 ### Zodを使った型安全なバリデーション
+
+Zodは、TypeScriptファーストのスキーマ検証ライブラリです。スキーマ定義から型を自動生成でき、実行時とコンパイル時の両方で型安全性を保証します。
 
 ```typescript
 // src/routes/register/+page.server.ts
@@ -220,6 +235,8 @@ export const actions = {
 
 ### カスタムバリデーション関数
 
+Zodを使わずに、独自のバリデーションロジックを実装することも可能です。以下は、汎用的なバリデーション関数の実装例です。
+
 ```typescript
 // src/lib/validators.ts
 export interface ValidationError {
@@ -255,7 +272,11 @@ export function validateForm<T extends Record<string, any>>(
 
 ## ファイルアップロード
 
+SvelteKitでファイルアップロードを実装する方法を解説します。セキュリティを考慮しながら、画像やドキュメントなどのファイルを安全に処理します。
+
 ### 基本的なファイルアップロード
+
+FormDataを使用してファイルを受け取り、サーバーに保存する基本的な実装です。
 
 ```typescript
 // src/routes/upload/+page.server.ts
@@ -302,6 +323,8 @@ export const actions = {
 ```
 
 ### プログレス表示付きアップロード
+
+XMLHttpRequestを使用することで、アップロードの進捗状況をリアルタイムで表示できます。大きなファイルをアップロードする際のユーザー体験を向上させます。
 
 ```svelte
 <!-- src/routes/upload/+page.svelte -->
@@ -377,7 +400,11 @@ export const actions = {
 
 ## CSRFプロテクション
 
+CSRF（Cross-Site Request Forgery）攻撃から保護するため、トークンベースの検証を実装します。これにより、悪意のあるサイトからの不正なフォーム送信を防ぐことができます。
+
 ### トークンベースのCSRF対策
+
+Hooksを使用してCSRFトークンを生成し、フォーム送信時に検証する実装です。
 
 ```typescript
 // src/hooks.server.ts
@@ -429,7 +456,11 @@ export const actions = {
 
 ## リアルタイムバリデーション
 
+ユーザーが入力中にリアルタイムでバリデーションを行うことで、エラーを早期に発見し、より良いユーザー体験を提供できます。
+
 ### デバウンス付きリアルタイム検証
+
+デバウンス処理により、入力が完了してから一定時間後にバリデーションを実行します。これにより、サーバーへの不要なリクエストを削減できます。
 
 ```svelte
 <script lang="ts">
@@ -497,7 +528,11 @@ export const actions = {
 
 ## 高度なuse:enhance
 
+`use:enhance`ディレクティブをカスタマイズすることで、フォーム送信の前後に独自の処理を追加できます。ローディング状態の管理やエラーハンドリングなど、きめ細かい制御が可能になります。
+
 ### カスタムエンハンス関数
+
+送信前後の処理をカスタマイズし、ローディング状態やエラー表示を制御する実装例です。
 
 ```svelte
 <script lang="ts">
@@ -561,6 +596,8 @@ export const actions = {
 
 ### オプティミスティックUI
 
+オプティミスティックUIは、サーバーレスポンスを待たずに、成功を前提としてUIを即座に更新する手法です。これにより、アプリケーションがより高速に感じられます。エラーが発生した場合は、変更をロールバックします。
+
 ```svelte
 <script lang="ts">
   import { enhance } from '$app/forms';
@@ -622,7 +659,11 @@ export const actions = {
 
 ## フォームの状態管理
 
+複雑なフォームでは、状態管理が重要になります。Svelte 5のルーンを活用したフォームストアパターンで、再利用可能な状態管理ロジックを実装します。
+
 ### フォームストアパターン
+
+汎用的なフォームストアを作成し、バリデーション、タッチ状態、送信状態などを一元管理する実装です。
 
 ```typescript
 // src/lib/stores/form.svelte.ts
@@ -674,7 +715,11 @@ export function createFormStore<T extends Record<string, any>>(
 
 ## 実践的な実装例
 
+実際のアプリケーションでよく使われる、複雑なフォームパターンの実装例を紹介します。
+
 ### 複雑なフォームウィザード
+
+ステップバイステップでユーザーを導くウィザード形式のフォームです。各ステップでの入力を保持しながら、最後にまとめて送信します。
 
 ```svelte
 <!-- src/routes/wizard/+page.svelte -->

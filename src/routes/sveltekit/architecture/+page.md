@@ -149,7 +149,7 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 6. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
 
 :::note[関連する実装内容]
-より実践的な内容は以下のセクションで学習できます：
+より実践的な内容は以下のセクションで学習できます。
 - **実行環境とランタイム** → [デプロイ・運用編]({base}/sveltekit/deployment/execution-environments/)
 - **ビルド最適化** → [最適化編]({base}/sveltekit/optimization/build-optimization/)
 :::

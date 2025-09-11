@@ -96,7 +96,7 @@ Svelteの表面的な使い方を理解するだけでも十分な開発は可�
   </div>
 </a>
 
-<a href="/deep-dive/rendering-strategies/" class="topic-card-link">
+<a href="/sveltekit/architecture/rendering-strategies/" class="topic-card-link">
   <div class="topic-card">
     <h3>レンダリング戦略 と アーキテクチャパターン</h3>
     <p>SSR、SSG、CSR、ISRなど、SvelteKitが提供する様々なレンダリング戦略の詳細と、それぞれの実装方法を解説します。</p>

@@ -33,7 +33,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       to: '/svelte/',
       collapsible: true,
       items: [
-        { title: 'Svelte概要', to: '/svelte/' },
+        { title: 'Svelte 5完全ガイド', to: '/svelte/' },
         {
           title: '基本',
           to: '/svelte/basics/',
@@ -172,7 +172,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       to: '/sveltekit/',
       collapsible: true,
       items: [
-        { title: 'SvelteKit概要', to: '/sveltekit/' },
+        { title: 'SvelteKit完全ガイド', to: '/sveltekit/' },
         {
           title: '基礎編',
           to: '/sveltekit/basics/',
@@ -252,6 +252,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'ビルド最適化',
               to: '/sveltekit/architecture/build-optimization/',
+            },
+            {
+              title: 'レンダリング戦略 と アーキテクチャパターン',
+              to: '/sveltekit/architecture/rendering-strategies/',
             },
           ],
         },
@@ -449,10 +453,6 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         {
           title: '素のJS構文でリアクティビティ',
           to: '/deep-dive/reactivity-with-plain-javascript-syntax/',
-        },
-        {
-          title: 'レンダリング戦略 と アーキテクチャパターン',
-          to: '/deep-dive/rendering-strategies/',
         },
         {
           title: 'SvelteKitが自動生成する型',

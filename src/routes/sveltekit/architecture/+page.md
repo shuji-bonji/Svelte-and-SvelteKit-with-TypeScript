@@ -13,12 +13,12 @@ description: SvelteKit 2.xの内部動作とアーキテクチャをTypeScript�
 
 ### なぜアーキテクチャを理解すべきか？
 
-SvelteKitのアーキテクチャを理解することで、以下のような利点が得られます：
+SvelteKitのアーキテクチャを理解することで、以下のような利点が得られます。
 
-- **最適な設計判断** - なぜそう動くのかを理解し、適切なアーキテクチャを選択
-- **パフォーマンス最適化** - ボトルネックの原因を理解し、根本的な改善を実施
-- **トラブルシューティング** - 問題の本質を理解し、迅速に解決
-- **高度な実装** - フレームワークの限界を理解し、創造的な解決策を実現
+- **最適な設計判断** : なぜそう動くのかを理解し、適切なアーキテクチャを選択
+- **パフォーマンス最適化** : ボトルネックの原因を理解し、根本的な改善を実施
+- **トラブルシューティング** : 問題の本質を理解し、迅速に解決
+- **高度な実装** : フレームワークの限界を理解し、創造的な解決策を実現
 
 ### 他セクションとの違い
 
@@ -98,6 +98,22 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
       </ul>
     </div>
   </a>
+  
+  <a href="{base}/sveltekit/architecture/rendering-strategies/" class="flex no-underline group h-full">
+    <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🎯</div>
+      <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+        レンダリング戦略とアーキテクチャパターン
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSR、SSG、CSR、ISRなど各レンダリング戦略の詳細と選択基準を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>SPA/MPA</strong>: アーキテクチャパターンの比較</li>
+        <li><strong>レンダリング手法</strong>: CSR/SSR/SSG/ISRの動作フロー</li>
+        <li><strong>パフォーマンス指標</strong>: Core Web Vitalsの比較</li>
+        <li><strong>選択ガイドライン</strong>: 最適な戦略の選び方</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 :::info[関連セクション]
@@ -125,73 +141,6 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 - **パフォーマンス最適化** - データフローを最適化し、UXを向上
 - **効率的なデバッグ** - 問題発生時に原因を素早く特定し解決
 - **エンタープライズパターンの適用** - 大規模アプリケーションに適した設計
-
-## レンダリング戦略とアーキテクチャパターン
-
-レンダリング戦略の選択は、アプリケーション全体のアーキテクチャ設計と密接に関連しています。各戦略は異なるアーキテクチャパターンと相性があり、適切な組み合わせを選ぶことで、より効率的で保守性の高いアプリケーションを構築できます。
-
-### SSRとマイクロサービスアーキテクチャ
-SSRは、バックエンドサービスとの密な連携が必要なため、マイクロサービスアーキテクチャとの相性が良好です。各マイクロサービスからデータを集約し、サーバー側で統合的にレンダリングすることで、クライアントの負荷を軽減できます。
-
-**実装例：**
-- APIゲートウェイパターンの活用
-- サーバー側でのデータ集約とキャッシング
-- GraphQL Federation による複数サービスの統合
-
-### SSGとJamstackアーキテクチャ
-SSGは、Jamstack（JavaScript、API、Markup）アーキテクチャの中核を成す技術です。ビルド時に生成された静的ファイルをCDNから配信し、動的な機能はAPIとJavaScriptで実現することで、スケーラビリティとセキュリティを両立できます。
-
-**実装例：**
-- Headless CMSとの統合
-- Webhookによる自動再ビルド
-- Edge Functionsによる動的処理
-
-### SPAとコンポーネント駆動開発
-SPAは、コンポーネント駆動開発（CDD）やアトミックデザインと相性が良く、再利用可能なUIコンポーネントを組み合わせて複雑なインターフェースを構築できます。状態管理ライブラリと組み合わせることで、大規模なアプリケーションでも管理しやすい構造を実現できます。
-
-**実装例：**
-- Storybookによるコンポーネントカタログ
-- Svelte Storesによる状態管理
-- デザインシステムの実装
-
-### ハイブリッド戦略とドメイン駆動設計
-SvelteKitのハイブリッド戦略は、ドメイン駆動設計（DDD）の概念と相性が良好です。各ドメイン（機能領域）に応じて最適なレンダリング戦略を選択することで、ビジネス要件に最適化されたアーキテクチャを構築できます。
-
-**実装例：**
-```typescript
-// routes/
-// ├── (marketing)/     # SSG: マーケティングページ
-// ├── (app)/          # SPA: アプリケーション
-// └── (api)/          # SSR: APIエンドポイント
-```
-
-### エンタープライズパターンとの統合
-
-#### レイヤードアーキテクチャ
-```typescript
-// プレゼンテーション層: +page.svelte
-// ビジネスロジック層: services/
-// データアクセス層: repositories/
-// ドメインモデル: models/
-```
-
-#### リポジトリパターン
-```typescript
-// repositories/user.repository.ts
-export class UserRepository {
-  async findById(id: string): Promise<User> {
-    // データソースからの取得ロジック
-  }
-}
-```
-
-#### CQRS（Command Query Responsibility Segregation）
-- 読み取り用: SSGで事前生成
-- 書き込み用: SSRでリアルタイム処理
-
-:::info[詳細な実装ガイド]
-各アーキテクチャパターンの具体的な実装方法については、今後のアップデートで詳しく解説予定です。
-:::
 
 ## 次のステップ
 

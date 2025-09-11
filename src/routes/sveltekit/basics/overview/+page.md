@@ -275,7 +275,7 @@ src/routes/
 | **CSR** | インタラクティブアプリ | SPA体験、クライアント処理 |
 
 :::tip[詳細な解説]
-[レンダリング戦略](/sveltekit/basics/rendering-strategies/)及び、[レンダリング戦略とアーキテクチャパターン](/deep-dive/rendering-strategies/)で各戦略を深く解説しています。
+[レンダリング戦略](/sveltekit/basics/rendering-strategies/)及び、[レンダリング戦略とアーキテクチャパターン](/sveltekit/architecture/rendering-strategies/)で各戦略を深く解説しています。
 :::
 
 ## Load関数とデータフェッチング

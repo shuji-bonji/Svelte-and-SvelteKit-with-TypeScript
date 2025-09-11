@@ -320,7 +320,7 @@ export const ssr = false;    // サーバーサイドレンダリングを無効
 export const csr = true;      // クライアントサイドレンダリングは有効（デフォルト）
 export const prerender = false; // プリレンダリングも無効化
 
-// この設定により：
+// この設定により
 // 1. Server Load（+page.server.ts）は実行されない
 // 2. Universal Load（+page.ts）はクライアントでのみ実行
 // 3. 初回アクセスでも空のHTMLシェルのみ返される
@@ -369,7 +369,7 @@ export const load: PageLoad = async ({ fetch }) => {
 export const ssr = false;
 export const prerender = false;
 
-// この設定により：
+// この設定により
 // - 管理画面全体がSPAとして動作
 // - 高度なインタラクションが可能
 // - しかしSEOは犠牲になる

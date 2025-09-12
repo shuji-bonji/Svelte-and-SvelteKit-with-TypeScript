@@ -1,10 +1,21 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
   import Search from '$lib/components/Search.svelte';
   import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
   import { onMount } from 'svelte';
 
   const { children } = $props();
+  
+  // 現在のURLから正規URLを生成（末尾スラッシュを統一）
+  const canonicalUrl = $derived(() => {
+    const pathname = $page.url.pathname;
+    // 末尾スラッシュを統一（ホームページ以外は末尾スラッシュを追加）
+    const normalizedPath = pathname === base || pathname === `${base}/` 
+      ? base || '/'
+      : pathname.endsWith('/') ? pathname : `${pathname}/`;
+    return `https://shuji-bonji.github.io${normalizedPath}`;
+  });
 
   // ページの状態を判定
   const routeId = $derived($page.route.id);
@@ -59,6 +70,14 @@
     };
   });
 </script>
+
+<svelte:head>
+  <!-- Canonical URL の設定 -->
+  <link rel="canonical" href={canonicalUrl()} />
+  
+  <!-- ページごとのメタタグ（OGP） -->
+  <meta property="og:url" content={canonicalUrl()} />
+</svelte:head>
 
 <!-- カスタム検索コンポーネント -->
 {#if mounted && showSearch}

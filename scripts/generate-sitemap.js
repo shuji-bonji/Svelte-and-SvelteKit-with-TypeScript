@@ -102,14 +102,17 @@ async function generateSitemap() {
       }
     }
     
-    // URLを構築
+    // URLを構築（末尾スラッシュを統一）
     const urlPath = htmlPath
       .replace('Svelte-and-SvelteKit-with-TypeScript/', '')
       .replace('/index.html', '')
       .replace('index.html', '');
     
+    // 末尾スラッシュを追加（ルート以外）
+    const finalPath = urlPath && !urlPath.endsWith('/') ? `${urlPath}/` : urlPath;
+    
     const url = {
-      loc: urlPath ? `${domain}/${urlPath}` : domain,
+      loc: urlPath ? `${domain}/${finalPath}` : domain,
       lastmod
     };
     

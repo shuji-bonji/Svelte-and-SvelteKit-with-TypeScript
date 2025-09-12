@@ -1,10 +1,15 @@
 # Netlify形式のリダイレクト（GitHub Pagesでは効かないが、将来の移行に備えて）
 /introduction/index.html /introduction 301
-/runes/index.html /runes 301
 /svelte-basics/index.html /svelte-basics 301
 /sveltekit/index.html /sveltekit 301
 /advanced/index.html /advanced 301
 /examples/index.html /examples 301
+
+# 旧URLから新URLへのリダイレクト（構成変更対応）
+/runes/* /svelte/runes/:splat 301
+/runes /svelte/runes/ 301
+/basics/* /svelte/basics/:splat 301
+/basics /svelte/basics/ 301
 
 # 404ハンドリング
 /* /404.html 404

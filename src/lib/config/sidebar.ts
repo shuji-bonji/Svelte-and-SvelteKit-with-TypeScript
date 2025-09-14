@@ -250,7 +250,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/architecture/access-logs/',
             },
             {
-              title: 'データロードフロー (準備中)',
+              title: 'データロードアーキテクチャ',
               to: '/sveltekit/architecture/data-loading/',
             },
             {
@@ -420,7 +420,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         { title: '認証システム概要', to: '/examples/auth-system/' },
         { title: 'Cookie/Session認証', to: '/examples/auth-cookie-session/' },
         { title: 'JWT認証', to: '/examples/auth-jwt/' },
-        { title: 'ルートグループ認証（計画中）', to: '/examples/auth-route-groups/' },
+        {
+          title: 'ルートグループ認証（計画中）',
+          to: '/examples/auth-route-groups/',
+        },
         { title: 'データフェッチング', to: '/examples/data-fetching/' },
         { title: 'WebSocket実装', to: '/examples/websocket/' },
       ],

@@ -22,11 +22,19 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 
 ### 他セクションとの違い
 
-| セクション | 焦点 | 学習内容 |
-|----------|------|---------|
-| **基礎編** | How to use | 機能の使い方、実装方法 |
-| **データローディング** | 実装戦略 | データ取得の方法と最適化 |
-| **アーキテクチャ詳解** | How it works | 内部動作原理、設計思想 |
+| セクション | 焦点 | 学習内容 | 対象者 |
+|----------|------|---------|-------|
+| **基礎編** | How to use | 機能の使い方、実装方法 | 初心者〜中級者 |
+| **ルーティング/データ取得** | 実装パターン | 具体的な実装方法 | 全レベル |
+| **アーキテクチャ詳解** | How it works | 内部動作原理、設計思想 | 中級者〜上級者 |
+| **サーバーサイド編** | 実践的な実装 | APIやフォーム処理 | 中級者 |
+| **アプリケーション構築編** | 実用的な構築 | 認証やDB統合 | 中級者〜上級者 |
+
+:::tip[学習パスの選択]
+- **実装を急ぐ場合**：このセクションを飛ばしてサーバーサイド編へ進んでもOK
+- **深い理解を求める場合**：このセクションで内部動作を理解してから実装編へ
+- **トラブルシューティング時**：必要に応じて参照する辞書的な使い方も可能
+:::
 
 ## このセクションの構成
 
@@ -81,17 +89,16 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
   
   <a href="{base}/sveltekit/architecture/data-loading/" class="flex no-underline group h-full">
     <div class="p-6 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">📥</div>
+      <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-        データロードフロー
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
+        データロードアーキテクチャ
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数の実行順序とデータの流れを詳しく解説します。</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Load関数の内部実装とデータ処理の仕組みを解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>実行順序</strong>: Layout → Page の階層処理</li>
-        <li><strong>並列化</strong>: Promise.allによる最適化</li>
-        <li><strong>キャッシュ戦略</strong>: invalidateとdepends</li>
-        <li><strong>エラー処理</strong>: Error Boundary</li>
+        <li><strong>内部メカニズム</strong>: Load関数の実装詳細</li>
+        <li><strong>Request/Response</strong>: ライフサイクル管理</li>
+        <li><strong>キャッシュ層</strong>: 内部キャッシュ機構</li>
+        <li><strong>ミドルウェア統合</strong>: Hooksとの連携</li>
       </ul>
     </div>
   </a>
@@ -144,7 +151,7 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
 1. **レンダリング戦略（詳解）** - アーキテクチャの基礎概念を理解
 2. **レンダリングパイプライン** - コンパイルから実行までの処理フローを理解
 3. **アクセスログと分析戦略** - レンダリング戦略とログの関係を把握
-4. **データロードフロー** - Load関数の実行メカニズムを理解
+4. **データロードアーキテクチャ** - Load関数の内部実装を理解
 5. **ファイル構成と実行環境** - ファイルと実行環境の対応を把握
 6. **ルーティング内部動作** - URLとファイルの対応メカニズムを理解
 

@@ -541,7 +541,7 @@ SvelteKitのデータフェッチング戦略は、大きく「**基本戦略**�
 
 | 戦略 | 説明 | 使用場面 |
 |------|------|----------|
-| [ストリーミングSSR](#ストリーミングssr) | 段階的にコンテンツを送信し、初期表示を高速化 | 大量データのページ、遅いAPIの呼び出し |
+| [ストリーミングSSR](../streaming/) | 段階的にコンテンツを送信し、初期表示を高速化 | 大量データのページ、遅いAPIの呼び出し |
 | [並列データ取得](#並列データ取得パターン) | Promise.allで複数のデータを同時取得 | 複数の独立したAPIからのデータ取得 |
 | [キャッシング戦略](#キャッシング戦略) | メモリやブラウザキャッシュでパフォーマンス向上 | 頻繁にアクセスされる静的データ |
 | [リアルタイム更新](#リアルタイム更新) | SSEやinvalidateで動的にデータ更新 | ライブデータ、チャット、通知 |
@@ -553,93 +553,7 @@ SvelteKitのデータフェッチング戦略は、大きく「**基本戦略**�
 まず[Load関数の基礎](../basic/)で基本戦略を理解してから、このページの高度な戦略に進むことをおすすめします。
 :::
 
-## ストリーミングSSR
-
-大量のデータを段階的に送信することで、初期表示を高速化します。ストリーミングSSRは、重要なコンテンツを即座に表示し、残りのデータを非同期で送信する技術です。これにより、ユーザーは完全にページが読み込まれるのを待つことなく、コンテンツの閲覧を開始できます。
-
-:::info[データフローの詳細]
-ストリーミングSSRがデータフロー全体でどのように動作するかについては、[データフローの詳細 - ストリーミングSSR](../flow/#ストリーミングssr)も参照してください。
-:::
-
-### 基本的なストリーミングSSR概念
-
-<Mermaid diagram={generalStreamingDiagram} />
-
-### SvelteKitでのストリーミングSSR実装
-
-以下のシーケンス図は、SvelteKitで`+page.server.ts`と`+page.svelte`がどのように連携してストリーミングSSRを実現するかを示しています。
-
-<Mermaid diagram={streamingSSRDiagram} />
-
-### 基本的なストリーミング
-
-SvelteKitでは、Load関数からPromiseを返すことで自動的にストリーミングが有効になります。クリティカルなデータは即座に返し、時間のかかるデータはPromiseとして返すことで、段階的なレンダリングを実現します。
-
-```typescript
-// +page.server.ts
-import type { PageServerLoad } from './$types';
-
-export const load: PageServerLoad = async () => {
-  // 即座に返すデータ
-  const criticalData = await getCriticalData();
-  
-  // ストリーミングで後から送信
-  const slowDataPromise = getSlowData();
-  
-  return {
-    critical: criticalData,
-    streamed: {
-      slow: slowDataPromise // Promiseのまま返す
-    }
-  };
-};
-```
-
-### コンポーネントでの使用
-
-ストリーミングされたデータは、Svelteの`{#await}`ブロックを使って扱います。これにより、データの読み込み状態に応じて、ローディング表示、成功時の表示、エラー時の表示を簡単に切り替えることができます。
-
-```svelte
-<!-- +page.svelte -->
-<script lang="ts">
-  import type { PageData } from './$types';
-  let { data }: { data: PageData } = $props();
-</script>
-
-<!-- 即座に表示 -->
-<h1>{data.critical.title}</h1>
-
-<!-- ストリーミングデータの表示 -->
-{#await data.streamed.slow}
-  <p>読み込み中...</p>
-{:then slowData}
-  <div>
-    {#each slowData.items as item}
-      <p>{item.name}</p>
-    {/each}
-  </div>
-{:catch error}
-  <p>エラー: {error.message}</p>
-{/await}
-```
-
-### ストリーミングSSRの実装ポイント
-
-上記のシーケンス図で示したように、SvelteKitのストリーミングSSRは`+page.server.ts`と`+page.svelte`の連携により実現されます。
-
-1. **`+page.server.ts`でのデータ取得**
-   - `PageServerLoad`関数内でデータ取得を行う
-   - クリティカルなデータは`await`で即座に取得
-   - 時間のかかるデータはPromiseのまま返す
-
-2. **データの構造化**
-   - `critical`: 即座に表示するデータ
-   - `streamed`: 非同期で送信されるデータ（Promiseを含む）
-
-3. **`+page.svelte`での段階的レンダリング**
-   - `data.critical`は即座に利用可能
-   - `data.streamed.slow`は`{#await}`ブロックで処理
-   - ユーザーは最初のHTMLレンダリング時点でコンテンツを閲覧開始
+ストリーミングSSRの詳細は[ストリーミングSSR](../streaming/)の専用ページで解説しています。
 
 ## パフォーマンスのヒント
 
@@ -665,24 +579,6 @@ const [user, posts, comments] = await Promise.all([
 // 合計時間 = 最も遅いリクエストの時間のみ
 ```
 
-### ストリーミングSSRによる体感速度向上
-
-重要なデータを先に返し、時間のかかるデータは後から送信することで、ユーザーの体感速度を向上させます。
-
-```typescript
-// +page.server.ts
-export const load: PageServerLoad = async () => {
-  return {
-    // 即座に返すデータ（クリティカルパス）
-    critical: await getCriticalData(),
-    
-    // ストリーミングで後から送信（非クリティカル）
-    streamed: {
-      slow: getSlowData() // Promiseのまま返す
-    }
-  };
-};
-```
 
 ## 並列データ取得パターン
 
@@ -1078,6 +974,6 @@ export const load: PageLoad = async ({ fetch }) => {
 
 ## 次のステップ
 
+- [SPAモードとデータ無効化](../spa-invalidation/) - SPAモードとデータ更新の詳細
+- [ストリーミングSSR](../streaming/) - 段階的なコンテンツ配信
 - [フォーム処理とActions](../../server/forms/) - データの送信と処理
-- [WebSocket/SSE](../../server/websocket-sse/) - リアルタイム通信の実装
-- [アーキテクチャ詳解](../../architecture/) - SvelteKitの内部動作を深く理解

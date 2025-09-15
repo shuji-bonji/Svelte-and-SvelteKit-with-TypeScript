@@ -195,20 +195,20 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/data-loading/" class="text-orange-600 dark:text-orange-400 hover:underline">データ取得概要</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">データロードシステムの全体像</td>
-          </tr>
-          <tr>
-            <td class="py-2"><a href="{base}/sveltekit/data-loading/basic/" class="text-orange-600 dark:text-orange-400 hover:underline">Load関数の基本</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/basic/" class="text-orange-600 dark:text-orange-400 hover:underline">Load関数の基礎</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">Universal LoadとServer Load</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/data-loading/auto-types/" class="text-orange-600 dark:text-orange-400 hover:underline">TypeScript型の自動生成</a></td>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/typescript-types/" class="text-orange-600 dark:text-orange-400 hover:underline">TypeScript型システム</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">./$typesによる型安全な開発</td>
           </tr>
           <tr>
-            <td class="py-2"><a href="{base}/sveltekit/data-loading/strategies/" class="text-orange-600 dark:text-orange-400 hover:underline">データフェッチング戦略</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">ストリーミングSSRとキャッシング</td>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/streaming/" class="text-orange-600 dark:text-orange-400 hover:underline">ストリーミングSSR</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">段階的データ送信で高速化</td>
+          </tr>
+          <tr>
+            <td class="py-2"><a href="{base}/sveltekit/data-loading/spa-invalidation/" class="text-orange-600 dark:text-orange-400 hover:underline">SPAモードと無効化</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">CSRとデータ更新の制御</td>
           </tr>
         </tbody>
       </table>

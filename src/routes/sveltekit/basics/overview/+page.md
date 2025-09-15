@@ -777,9 +777,10 @@ SvelteKitはコンパイル時最適化により、他フレームワークよ�
 
 SvelteKitは、Svelteの優れたパフォーマンスとシンプルさを活かしたフルスタックフレームワークです。ファイルベースルーティング、柔軟なレンダリングモード、プログレッシブエンハンスメントなど、モダンなWebアプリケーション開発に必要な機能をすべて備えています。
 
-## 学習の次のステップ
+## 次のステップ
 
 1. **[プロジェクト構造](/sveltekit/basics/project-structure/)** - ファイル構成と規約を理解する
-2. **[ルーティング](/sveltekit/routing/)** - URL設計とナビゲーション
-3. **[Load関数とデータフェッチング](/sveltekit/data-loading/)** - データ取得戦略
-4. **サーバーサイド編** - フォーム処理とAPIルート（準備中）
+2. **[特殊ファイルシステム](/sveltekit/basics/file-system/)** - 各ファイルの役割と実行環境
+3. **[レンダリング戦略](/sveltekit/basics/rendering-strategies/)** - SSR・SSG・SPAの選択と実装
+4. **[ルーティング](/sveltekit/routing/)** - URL設計とナビゲーション
+5. **[Load関数とデータフェッチング](/sveltekit/data-loading/)** - データ取得戦略

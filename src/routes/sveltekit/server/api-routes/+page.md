@@ -477,4 +477,5 @@ SvelteKitのAPIルートは、
 
 ## 次のステップ
 
-[Hooks](/sveltekit/server/hooks/)で、リクエスト/レスポンスのインターセプトとカスタマイズを学びましょう。
+- [WebSocket・SSE通信](/sveltekit/server/websocket-sse/)で、リアルタイム通信の実装を学びましょう
+- [アプリケーション構築編](/sveltekit/application/)で、実践的な開発パターンを習得しましょう

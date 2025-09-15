@@ -615,159 +615,13 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 <Mermaid diagram={selectionFlowchart} />
 
-## async/awaitの実行タイミング
+## async/awaitの実行タイミングと並列処理
 
-Load関数内で`async/await`を使用する際の実行タイミングと並列処理について理解することは、パフォーマンス最適化において重要です。
+Load関数内でのasync/awaitの実行タイミングと並列処理による最適化の詳細については、[データフローの詳細](../flow/)ページで解説しています。
 
-### 基本的な実行タイミング
+## TypeScript型の自動生成システム
 
-```typescript
-// +page.ts
-export const load: PageLoad = async ({ fetch }) => {
-  // 1. Load関数が呼ばれた時点で実行開始
-  console.log('Load開始');
-  
-  // 2. awaitで非同期処理の完了を待つ
-  const data1 = await fetch('/api/data1').then(r => r.json());
-  console.log('data1取得完了');
-  
-  // 3. 前の処理が完了してから次の処理
-  const data2 = await fetch('/api/data2').then(r => r.json());
-  console.log('data2取得完了');
-  
-  // 4. すべてのデータが揃ってからreturn
-  return { data1, data2 };
-  // → コンポーネントは全データが揃うまで待機
-};
-```
-
-### 並列処理による最適化
-
-複数の独立したデータを取得する場合、`Promise.all`を使用して並列処理を行うことで、大幅にパフォーマンスを改善できます。
-
-```typescript
-// ❌ 悪い例：直列処理（遅い）
-export const load: PageLoad = async ({ fetch }) => {
-  // 各リクエストを順番に待つ（合計時間 = 各リクエストの合計）
-  const user = await fetch('/api/user').then(r => r.json());     // 200ms
-  const posts = await fetch('/api/posts').then(r => r.json());   // 300ms  
-  const tags = await fetch('/api/tags').then(r => r.json());     // 100ms
-  // 合計: 600ms
-  
-  return { user, posts, tags };
-};
-
-// ✅ 良い例：並列処理（速い）
-export const load: PageLoad = async ({ fetch }) => {
-  // すべてのリクエストを同時に開始
-  const [user, posts, tags] = await Promise.all([
-    fetch('/api/user').then(r => r.json()),   // 200ms
-    fetch('/api/posts').then(r => r.json()),  // 300ms
-    fetch('/api/tags').then(r => r.json())    // 100ms
-  ]);
-  // 合計: 300ms（最も遅いリクエストの時間）
-  
-  return { user, posts, tags };
-};
-```
-
-### ストリーミングSSRの活用
-
-SvelteKitはストリーミングSSRをサポートしており、`await`を使わずにPromiseを返すことで、一部のデータを先に表示できます。
-
-:::info[より詳しい実装方法]
-ストリーミングSSRの高度な実装パターンについては、[データフェッチング戦略 - ストリーミングSSR](../strategies/#ストリーミングssr)を参照してください。
-:::
-
-```typescript
-// +page.server.ts - ストリーミング対応
-export const load: PageServerLoad = async ({ fetch }) => {
-  // 即座に返されるデータ
-  const criticalData = await fetch('/api/critical').then(r => r.json());
-  
-  // ストリーミングされるデータ（Promiseのまま返す）
-  return {
-    critical: criticalData,  // すぐに表示
-    
-    // 以下は非同期でストリーミング
-    streamed: {
-      slow: fetch('/api/slow').then(r => r.json()),  // awaitしない
-      optional: fetch('/api/optional').then(r => r.json())
-    }
-  };
-};
-```
-
-```svelte
-<!-- +page.svelte -->
-<script lang="ts">
-  import type { PageData } from './$types';
-  let { data }: { data: PageData } = $props();
-</script>
-
-<!-- criticalDataは即座に表示 -->
-<h1>{data.critical.title}</h1>
-
-<!-- ストリーミングデータは準備でき次第表示 -->
-{#await data.streamed.slow}
-  <p>読み込み中...</p>
-{:then slowData}
-  <p>{slowData.content}</p>
-{/await}
-```
-
-### 実行環境による違い
-
-| 環境 | 実行タイミング | 特徴 |
-|------|--------------|------|
-| **SSR (初回アクセス)** | サーバーサイドでHTML生成前 | すべての`await`が完了してからHTML送信 |
-| **CSR (クライアント遷移)** | ブラウザでナビゲーション時 | 画面遷移前にデータ取得、完了後に画面更新 |
-| **ストリーミングSSR** | サーバーサイドで段階的 | 一部のデータを先に送信、残りは後から |
-
-## 型安全なデータ取得
-
-SvelteKitは自動的に型を生成し、完全な型安全性を提供します。`./$types`からインポートされる型は、ルート構造に基づいて自動生成され、パラメータや返り値の型チェックを行います。
-
-### 自動生成される型
-
-SvelteKitはファイル名とルート構造から適切な型を推論し、`./$types`モジュールとして提供します。
-
-```typescript
-// ./$types から型をインポート
-import type { PageLoad } from './$types';
-
-export const load: PageLoad = async ({ params, url }) => {
-  // paramsとurlは自動的に型付けされる
-  const id = params.id; // string型として推論
-  const query = url.searchParams.get('q'); // string | null
-  
-  return {
-    id,
-    query
-    // 返り値も型チェックされる
-    // TypeScriptが返り値の型を検証し、エラーを防ぐ
-  };
-};
-```
-
-### ページコンポーネントでの使用
-
-Load関数が返したデータは、コンポーネントの`data`プロップとして受け取ります。PageData型を使うことで、型安全にデータにアクセスできます。
-
-```svelte
-<!-- +page.svelte -->
-<script lang="ts">
-  import type { PageData } from './$types';
-  
-  // dataは自動的に型付けされる
-  // Load関数の返り値に基づいて型が推論される
-  let { data }: { data: PageData } = $props();
-</script>
-
-<!-- 型安全にデータにアクセス -->
-<h1>ID: {data.id}</h1>
-<p>Query: {data.query ?? 'なし'}</p>
-```
+SvelteKitの型安全なデータ取得と`./$types`の自動生成システムの詳細は、[TypeScript型の自動生成システム](../typescript-types/)の専用ページで解説しています。
 
 ## レイアウトとページ間のデータ共有
 
@@ -953,6 +807,6 @@ Load関数を使う際の推奨事項です。これらのベストプラクテ�
 
 ## 次のステップ
 
-- [TypeScript型の自動生成システム](../auto-types/) - TypeScript型の自動生成の仕組み
+- [TypeScript型の自動生成システム](../typescript-types/) - TypeScript型の自動生成の仕組み
+- [データフローの詳細](../flow/) - Load関数の実行順序とデータの流れ
 - [データフェッチング戦略](../strategies/) - 高度なデータ取得テクニック
-- [フォーム処理とActions](../../server/forms/) - データの送信と処理

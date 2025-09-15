@@ -217,12 +217,20 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
             { title: 'Load関数の基礎', to: '/sveltekit/data-loading/basic/' },
             {
+              title: 'TypeScript型の自動生成システム',
+              to: '/sveltekit/data-loading/typescript-types/',
+            },
+            {
               title: 'データフローの詳細',
               to: '/sveltekit/data-loading/flow/',
             },
             {
-              title: 'TypeScript型の自動生成システム',
-              to: '/sveltekit/data-loading/auto-types/',
+              title: 'SPAモードとデータ無効化',
+              to: '/sveltekit/data-loading/spa-invalidation/',
+            },
+            {
+              title: 'ストリーミングSSR',
+              to: '/sveltekit/data-loading/streaming/',
             },
             {
               title: 'データフェッチング戦略',

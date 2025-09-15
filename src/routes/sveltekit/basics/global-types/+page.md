@@ -484,4 +484,4 @@ export {};
 
 - [ルーティング概要]({base}/sveltekit/routing/) - SvelteKitのルーティングシステムを学ぶ
 - [Load関数とデータフェッチング]({base}/sveltekit/data-loading/) - データ取得の基礎を理解
-- [TypeScript型の自動生成システム]({base}/sveltekit/data-loading/auto-types/) - `./$types`との連携を深く理解
+- [TypeScript型の自動生成システム]({base}/sveltekit/data-loading/typescript-types/) - `./$types`との連携を深く理解

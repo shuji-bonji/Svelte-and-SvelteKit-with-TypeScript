@@ -726,4 +726,5 @@ export const load: LayoutServerLoad = async ({ params, locals }) => {
 
 - [Load関数とデータフェッチング](/sveltekit/data-loading/) - データ取得戦略
 - [フォーム処理とActions](/sveltekit/server/forms/) - サーバーサイド処理
-- [認証と認可](/sveltekit/application/authentication/) - セキュアなアプリケーション構築
+- [セッション管理](/sveltekit/application/session/) - セッションとCookieの管理
+- [認証のベストプラクティス](/sveltekit/application/auth-best-practices/) - セキュアな認証実装

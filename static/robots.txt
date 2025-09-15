@@ -4,10 +4,8 @@ Disallow: /*.html$
 Disallow: /404.html
 
 # 旧URLを明示的にDisallow（クロール防止）
-Disallow: /Svelte-and-SvelteKit-with-TypeScript/runes/
-Disallow: /Svelte-and-SvelteKit-with-TypeScript/basics/
-Disallow: /Svelte-and-SvelteKit-with-TypeScript/runes$
-Disallow: /Svelte-and-SvelteKit-with-TypeScript/basics$
+Disallow: /runes/
+Disallow: /basics/
 
 # 推奨URL形式
 # Good: /introduction/

@@ -675,6 +675,10 @@ export const load: PageLoad = async ({ fetch }) => {
 
 SvelteKitはストリーミングSSRをサポートしており、`await`を使わずにPromiseを返すことで、一部のデータを先に表示できます。
 
+:::info[より詳しい実装方法]
+ストリーミングSSRの高度な実装パターンについては、[データフェッチング戦略 - ストリーミングSSR](../strategies/#ストリーミングssr)を参照してください。
+:::
+
 ```typescript
 // +page.server.ts - ストリーミング対応
 export const load: PageServerLoad = async ({ fetch }) => {

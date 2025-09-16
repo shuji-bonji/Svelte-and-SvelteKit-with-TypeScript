@@ -18,6 +18,27 @@
 
 このドキュメントは、TypeScriptを使用してSvelte 5とSvelteKitを学習するための包括的なガイドです。最新のSvelte 5 Runesシステムを中心に、実践的なコード例と共に解説しています。
 
+## 🚀 実装例プロジェクト
+
+学習内容を実際のコードで確認できる実装例プロジェクトを提供しています：
+
+### ブログシステム実装例
+1. **基礎版** - [svelte5-blog-example](https://github.com/shuji-bonji/svelte5-blog-example) ✅完成
+   - 静的データによる基本的なブログサイト
+   - [デモサイト](https://shuji-bonji.github.io/svelte5-blog-example/)
+
+2. **Markdown版** - [svelte5-blog-markdown](https://github.com/shuji-bonji/svelte5-blog-markdown) ✅完成
+   - Markdownファイルベースの実践的なブログシステム
+   - 全文検索、タグクラウド、読了時間計算機能付き
+   - [デモサイト](https://shuji-bonji.github.io/svelte5-blog-markdown/)
+
+### 認証システム実装例
+1. **基本認証** - [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic) 🚧開発中
+   - Cookie + Session認証の基礎
+   - SQLite（Prisma）を使用したユーザー管理
+
+これらのプロジェクトは本ドキュメントの学習内容と連動し、実際に動作するコードとして提供されています。
+
 ### 対象読者
 
 - TypeScript/JavaScriptでのWeb開発経験がある方
@@ -87,41 +108,81 @@
 ### 7️⃣ SvelteKit基礎編
 - SvelteKit概要とアーキテクチャ
 - プロジェクト構造
-- ルーティング
-- Load関数とデータフェッチング
+- 特殊ファイルシステム
+- レンダリング戦略（基礎）
+- app.d.tsの役割
 
-### 8️⃣ SvelteKitアーキテクチャ詳解
-- 実行環境別アーキテクチャ（SSR/SSG/SPA）
-- ファイル構成と実行環境
-- データロードフロー
+### 8️⃣ SvelteKitルーティング
+- 基本ルーティング
+- 動的ルーティング
+- 高度なルーティング
+
+### 9️⃣ SvelteKitデータ取得
+- Load関数の基礎
+- TypeScript型の自動生成システム
+- データフローの詳細
+- SPAモードとデータ無効化
+- ストリーミングSSR
+- データフェッチング戦略
+- 高度なデータフェッチング戦略
+
+### 🔟 SvelteKitアーキテクチャ詳解
+- レンダリング戦略（詳解）
 - レンダリングパイプライン
+- アクセスログと分析戦略
+- データロードアーキテクチャ
+- ルーティング内部動作
 
-### 9️⃣ SvelteKitサーバーサイド編
+### 1️⃣1️⃣ SvelteKitサーバーサイド編
 - フォーム処理とActions
-- サーバーサイド処理
-- APIルート設計
-- Hooks
+- WebSocket/SSE
+- サーバーサイド処理（準備中）
+- APIルート設計（準備中）
+- Hooks（準備中）
 
-### 🔟 SvelteKitエンタープライズ開発（計画中）
+### 1️⃣2️⃣ SvelteKitアプリケーション構築編
+- セッション管理と認証戦略
+- 認証ベストプラクティス
+- テスト戦略
+- 状態管理パターン
+- 認証・認可（準備中）
+- データベース統合（準備中）
+- 環境変数管理（準備中）
+- エラーハンドリング（準備中）
+
+### 1️⃣3️⃣ SvelteKitエンタープライズ開発（計画中）
 - レイヤードアーキテクチャ
 - ドメイン駆動設計（DDD）
 - リポジトリパターン
 - 依存性注入（DI）
 - Clean Architecture実装
 
-### 1️⃣1️⃣ SvelteKitデプロイ・運用編
-- プラットフォーム別デプロイ
-- セキュリティ
-- モニタリング
+### 1️⃣4️⃣ SvelteKit最適化編
+- ビルド最適化
+- キャッシュ戦略
+- パフォーマンス最適化（準備中）
+- SEO最適化（準備中）
 
-### 1️⃣2️⃣ 実装例
+### 1️⃣5️⃣ SvelteKitデプロイ・運用編
+- プラットフォーム別デプロイ
+- 実行環境とランタイム
+- セキュリティ（準備中）
+- モニタリング（準備中）
+
+### 1️⃣6️⃣ 実装例
+- ブログシステム（基礎・発展）
+- Cookie/Session認証
+- JWT認証
 - TODOアプリ
-- 認証システム
 - データフェッチング
 - WebSocket実装
 - Mermaidダイアグラム（SSR対応）
 
-### 1️⃣3️⃣ ディープダイブ（技術詳細）
+### 1️⃣7️⃣ リファレンス
+- Svelte 5 完全リファレンス
+- SvelteKit 2.x 完全リファレンス
+
+### 1️⃣8️⃣ ディープダイブ（技術詳細）
 Svelte 5の内部実装や高度なトピックを扱います。
 - Proxyオブジェクトの活用
 - リアクティブ状態変数とバインディングの違い
@@ -216,12 +277,13 @@ pnpm dev
 
 #### 特徴
 - **自動生成**: 各ページに前後のページへのナビゲーションリンクが自動的に追加
-- **単一情報源**: `vite.config.ts`のサイドバー構造から自動的に生成（二重管理不要）
+- **単一情報源**: `src/lib/config/sidebar.ts`のサイドバー構造から自動的に生成（二重管理不要）
 - **メンテナンス性**: 新しいページを追加するだけで自動的にナビゲーションに反映
 
 #### 実装詳細
 - `src/lib/components/AutoPageNavigation.svelte` - ナビゲーション表示コンポーネント
-- `src/lib/utils/navigation-from-config.ts` - vite.config.tsから構造を生成するユーティリティ
+- `src/lib/utils/navigation-from-config.ts` - sidebar.tsから構造を生成するユーティリティ
+- `src/lib/config/sidebar.ts` - サイドバー構造の単一情報源（Single Source of Truth）
 
 詳細は[CLAUDE.md](./CLAUDE.md#自動ナビゲーションシステム)を参照してください。
 
@@ -296,5 +358,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年9月10日 - サイドバー自動スクロール機能実装、ネストされたレイアウトセクション移動・改善、Cookie/Session認証システムドキュメント更新（実装との整合性確保）
+**Last Updated**: 2025年9月16日 - README.md構成を最新のサイドバー構造に同期、実装例プロジェクト（ブログ・認証システム）の追加、単一情報源管理（sidebar.ts）への移行を反映
 

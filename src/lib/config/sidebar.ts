@@ -262,7 +262,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/architecture/data-loading/',
             },
             {
-              title: 'ファイル構成と実行環境 (準備中)',
+              title: 'ファイル構成と実行環境',
               to: '/sveltekit/architecture/file-structure/',
             },
             {

@@ -5,6 +5,7 @@ description: SvelteKitのLoad関数の内部実装とデータ処理メカニズ
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { base } from '$app/paths';
   
   // Load関数の内部処理フロー
   const internalFlowDiagram = `flowchart LR
@@ -288,6 +289,16 @@ description: SvelteKitのLoad関数の内部実装とデータ処理メカニズ
         Note over Browser: 段階的に内容が充実
     end`;
 </script>
+
+:::info[関連ページ]
+このページは**SvelteKitの内部実装とデータ処理メカニズム**を解説しています。
+
+- 📊 [データフローの詳細]({base}/sveltekit/data-loading/flow/) - Load関数の基本的な実行順序（初級〜中級）
+- ⚡ [データフェッチング戦略]({base}/sveltekit/data-loading/strategies/) - 実践的なパターンとベストプラクティス（中級〜上級）
+- 🏗️ **現在のページ**: データロードアーキテクチャ（上級）
+
+**学習パス**: 基本的な流れを理解 → 実践パターンを学ぶ → 内部実装を理解
+:::
 
 SvelteKitのデータロードシステムは、高度に最適化された内部メカニズムによって動作しています。このページでは、Load関数がどのように実装され、データがどのように処理されるかを内部実装の観点から詳しく解説します。
 

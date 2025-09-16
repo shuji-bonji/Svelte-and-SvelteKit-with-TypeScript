@@ -1,6 +1,6 @@
 ---
 title: ファイル構成と実行環境
-description: SvelteKitの特殊ファイルの役割と実行環境をTypeScriptで完全理解 - +page、+layout、+serverファイルの動作、サーバー/クライアント実行環境の詳細解説
+description: SvelteKitファイル構成と実行環境の完全ガイド - TypeScriptで+page、+layout、+serverの動作を詳解
 ---
 
 <script>

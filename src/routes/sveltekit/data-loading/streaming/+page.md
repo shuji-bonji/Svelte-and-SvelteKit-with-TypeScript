@@ -150,30 +150,36 @@ description: SvelteKitのストリーミングSSRで段階的データ送信を�
 
 ### 従来のSSRとの違い
 
+#### 従来のSSR：すべてのデータを待つ必要がある
 ```typescript
-// ❌ 従来のSSR：すべてのデータを待つ
+// ❌ Traditional SSR: Wait for all data
 export const load: PageServerLoad = async () => {
-  // 全て完了するまで画面は真っ白
-  const critical = await getCriticalData();  // 100ms
-  const slow = await getSlowData();          // 3000ms
-  return { critical, slow };
-  // 合計 3100ms 後にページが表示される
-};
-
-// ✅ ストリーミングSSR：段階的に表示
-export const load: PageServerLoad = async () => {
-  const critical = await getCriticalData();  // 100ms
-
-  return {
-    critical,  // 即座にレンダリング
-    streamed: {
-      slow: getSlowData()  // Promiseのまま返す（awaitしない）
-    }
-  };
-  // 100ms 後に基本コンテンツが表示され、
-  // 3000ms 後に完全なコンテンツが表示される
+  // Screen is blank until everything is ready
+  const criticalData = await getCriticalData();  // 100ms
+  const slowData = await getSlowData();          // 3000ms
+  return { criticalData, slowData };
+  // Total: 3100ms until page displays
 };
 ```
+
+#### ストリーミングSSR：段階的にコンテンツを表示
+```typescript
+// ✅ Streaming SSR: Progressive display
+export const load: PageServerLoad = async () => {
+  const criticalData = await getCriticalData();  // 100ms
+
+  return {
+    critical: criticalData,  // Render immediately
+    streamed: {
+      slow: getSlowData()  // Return Promise (no await)
+    }
+  };
+  // Basic content shows after 100ms,
+  // Full content shows after 3000ms
+};
+```
+
+**効果**: 初期表示が100msで開始（3100ms → 100ms）、体感速度が大幅に向上
 
 ### ストリーミングSSRの仕組み
 
@@ -191,68 +197,61 @@ export const load: PageServerLoad = async () => {
 
 ### サーバーサイドの実装
 
-SvelteKitでストリーミングSSRを実装するには、Load関数からPromiseを直接返します。
+Load関数からPromiseを直接返すことで、ストリーミングSSRを実現します。
+
+#### データの分類と返却方法
+- **クリティカルデータ**: `await`で待機して即座に表示（タイトル、価格、在庫状況など）
+- **ストリーミングデータ**: Promiseのまま返して後から表示（レビュー、関連商品など）
 
 ```typescript
 // +page.server.ts
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
-  // 即座に表示すべき重要なデータ
-  // ページのタイトル、価格、在庫状況など、ユーザーが最初に見る必要がある情報
+  // クリティカルデータ：awaitで待機して即座に表示
   const criticalData = await fetch('/api/critical').then(r => r.json());
 
-  // 時間のかかるデータ（Promiseのまま返す）
-  // awaitを使わないことで、SvelteKitはこれらを非同期でストリーミング
   return {
-    // 即座にレンダリングされるデータ
-    // HTMLの初期レスポンスに含まれ、すぐに表示される
+    // 初期HTMLに含めて即座にレンダリング
     critical: criticalData,
 
-    // ストリーミングされるデータ
-    // これらのPromiseは並列で実行され、解決され次第クライアントに送信
+    // ストリーミングデータ：Promiseのまま返す
     streamed: {
-      slow: fetch('/api/slow').then(r => r.json()),        // レビューや詳細情報など
-      optional: fetch('/api/optional').then(r => r.json()) // 関連商品やおすすめなど
+      slow: fetch('/api/slow').then(r => r.json()),        // レビュー、詳細情報
+      optional: fetch('/api/optional').then(r => r.json()) // 関連商品
     }
   };
 };
 ```
 
-### 実装のポイント
-
-1. **クリティカルデータ**: `await`を使って即座に取得・返却
-2. **ストリーミングデータ**: `await`を使わずPromiseとして返却
-3. **データ構造**: `streamed`オブジェクトにPromiseをまとめる
-
 ### コンポーネントでの表示
 
 Svelteの`{#await}`ブロックを使用して、ストリーミングデータを段階的に表示します。
+
+#### 表示の3つの状態
+1. **即座表示**: クリティカルデータ（既に解決済み）
+2. **ローディング中**: Promiseが解決されるまで
+3. **完全表示**: すべてのデータが揃った状態
 
 ```svelte
 <!-- +page.svelte -->
 <script lang="ts">
   import type { PageData } from './$types';
 
-  // Load関数から返されたデータを受け取る
-  // criticalは既に解決済み、streamedはPromiseを含むオブジェクト
+  // Load関数からデータを受け取る
   let { data }: { data: PageData } = $props();
 </script>
 
-<!-- criticalDataは即座に表示 -->
-<!-- サーバーサイドで既に取得済みなので、初回レンダリングに含まれる -->
+<!-- クリティカルデータ：即座に表示 -->
 <header>
   <h1>{data.critical.title}</h1>
   <p class="subtitle">{data.critical.subtitle}</p>
 </header>
 
-<!-- ストリーミングデータは準備でき次第表示 -->
+<!-- ストリーミングデータ：準備でき次第表示 -->
 <main>
-  <!-- 時間のかかるメインコンテンツ -->
   {#await data.streamed.slow}
-    <!-- ローディング状態 -->
-    <!-- Promiseが解決されるまでこのブロックが表示される -->
-    <!-- スケルトンスクリーンでユーザーに読み込み中であることを視覚的に伝える -->
+    <!-- ローディング状態：スケルトンスクリーン表示 -->
     <div class="loading">
       <div class="skeleton">
         <div class="skeleton-line"></div>
@@ -261,9 +260,7 @@ Svelteの`{#await}`ブロックを使用して、ストリーミングデータ�
       </div>
     </div>
   {:then slowData}
-    <!-- データ取得完了後 -->
-    <!-- Promiseが解決されると、このブロックが表示される -->
-    <!-- SvelteKitが自動的にDOMを更新し、スムーズに切り替わる -->
+    <!-- データ読み込み完了：コンテンツ表示 -->
     <article>
       <p>{slowData.content}</p>
       <ul>
@@ -273,9 +270,7 @@ Svelteの`{#await}`ブロックを使用して、ストリーミングデータ�
       </ul>
     </article>
   {:catch error}
-    <!-- エラー時のフォールバック -->
-    <!-- APIエラーや通信エラーが発生した場合の処理 -->
-    <!-- ユーザーに分かりやすいエラーメッセージと回復手段を提供 -->
+    <!-- エラー時のフォールバック：エラーメッセージ表示 -->
     <div class="error">
       <p>コンテンツの読み込みに失敗しました</p>
       <button onclick={() => location.reload()}>再試行</button>
@@ -283,24 +278,21 @@ Svelteの`{#await}`ブロックを使用して、ストリーミングデータ�
   {/await}
 </main>
 
-<!-- サイドバーのオプショナルデータ -->
+<!-- サイドバー：オプショナルデータ -->
 <aside>
   <h2>関連情報</h2>
   {#await data.streamed.optional}
-    <!-- シンプルなテキストローディング -->
-    <!-- オプショナルなコンテンツなので、軽めの表示で十分 -->
+    <!-- シンプルなローディングテキスト（非クリティカル） -->
     <p class="loading-text">読み込み中...</p>
   {:then optionalData}
-    <!-- オプショナルデータの表示 -->
-    <!-- メインコンテンツとは独立して読み込まれ、表示される -->
+    <!-- オプショナルコンテンツを表示 -->
     <div class="related">
       {#each optionalData.items as item}
         <a href={item.url}>{item.title}</a>
       {/each}
     </div>
   {:catch error}
-    <!-- オプショナルデータなのでエラーは控えめに -->
-    <!-- 必須ではない情報なので、エラーでもUXを損なわないよう配慮 -->
+    <!-- 優雅なエラー処理（非クリティカル） -->
     <p class="muted">追加情報は現在利用できません</p>
   {/await}
 </aside>
@@ -349,27 +341,23 @@ Svelteの`{#await}`ブロックを使用して、ストリーミングデータ�
 // +page.server.ts
 export const load: PageServerLoad = async ({ params, fetch }) => {
   // 商品の基本情報（必須・高速）
-  // 商品名、価格、画像など、購入判断に必要な最小限の情報
-  const product = await fetch(`/api/products/${params.id}`)
+  const productInfo = await fetch(`/api/products/${params.id}`)
     .then(r => r.json());
 
-  // 在庫情報も重要なので即座に取得
-  // 「購入可能か」という重要な情報は初回表示に含める
-  const inventory = await fetch(`/api/products/${params.id}/inventory`)
+  // 在庫情報（購入判断に重要）
+  const stockStatus = await fetch(`/api/products/${params.id}/inventory`)
     .then(r => r.json());
 
   return {
-    // 即座に表示
-    // SEOにも重要なため、サーバーサイドでレンダリング
-    product,
-    inventory,
+    // 即座に表示（SEOのためSSR）
+    product: productInfo,
+    inventory: stockStatus,
 
-    // ストリーミングで後から表示
-    // これらは並列で取得され、完了次第順次表示される
+    // ストリーミングデータ（並列取得）
     streamed: {
       reviews: fetch(`/api/products/${params.id}/reviews`).then(r => r.json()),     // ユーザーレビュー
       related: fetch(`/api/products/${params.id}/related`).then(r => r.json()),     // 関連商品
-      analytics: fetch(`/api/products/${params.id}/analytics`).then(r => r.json())  // 閲覧履歴等の分析データ
+      analytics: fetch(`/api/products/${params.id}/analytics`).then(r => r.json())  // 閲覧履歴
     }
   };
 };
@@ -382,17 +370,16 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   let { data }: { data: PageData } = $props();
 </script>
 
-<!-- 商品情報は即座に表示 -->
-<!-- サーバーでawait済みなので、ページ読み込み時点で表示される -->
+<!-- 商品情報：即座に表示 -->
 <section class="product-info">
   <h1>{data.product.name}</h1>
   <p class="price">¥{data.product.price.toLocaleString()}</p>
 
   {#if data.inventory.inStock}
-    <!-- 在庫ありの場合、購入ボタンを有効化 -->
+    <!-- 在庫あり：購入ボタンを有効化 -->
     <button class="buy-button">カートに追加</button>
   {:else}
-    <!-- 在庫切れの場合、ボタンを無効化 -->
+    <!-- 在庫切れ：ボタンを無効化 -->
     <button disabled>在庫切れ</button>
   {/if}
 
@@ -401,12 +388,11 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   </div>
 </section>
 
-<!-- レビューは後から表示 -->
+<!-- レビュー：ストリーミング表示 -->
 <section class="reviews">
   <h2>カスタマーレビュー</h2>
   {#await data.streamed.reviews}
-    <!-- レビュー読み込み中のスケルトン -->
-    <!-- 3つのダミーレビューエリアを表示して、レイアウトシフトを防ぐ -->
+    <!-- ローディングスケルトン（レイアウトシフト防止） -->
     <div class="review-skeleton">
       {#each Array(3) as _}
         <div class="skeleton-review">
@@ -415,10 +401,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         </div>
       {/each}
     </div>
-  {:then reviews}
-    <!-- レビューデータ取得完了後 -->
-    <!-- Promiseが解決されると、実際のレビューを表示 -->
-    {#each reviews.items as review}
+  {:then reviewData}
+    <!-- レビューデータ表示 -->
+    {#each reviewData.items as review}
       <article class="review">
         <div class="rating">★ {review.rating}/5</div>
         <h3>{review.title}</h3>
@@ -427,24 +412,21 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
       </article>
     {/each}
   {:catch}
-    <!-- レビューAPIエラー時 -->
-    <!-- レビューは重要度が低いので、エラーでもページ全体の動作に影響しない -->
+    <!-- 非クリティカルなエラーフォールバック -->
     <p>レビューを読み込めませんでした</p>
   {/await}
 </section>
 
-<!-- 関連商品も段階的に表示 -->
+<!-- 関連商品：段階的表示 -->
 <section class="related-products">
   <h2>関連商品</h2>
   {#await data.streamed.related}
-    <!-- シンプルなローディングメッセージ -->
-    <!-- 関連商品は重要度が低いので、軽い表示で十分 -->
+    <!-- シンプルなローディング（低優先度） -->
     <div class="products-loading">関連商品を読み込み中...</div>
-  {:then related}
-    <!-- 関連商品のグリッド表示 -->
-    <!-- ユーザーがスクロールしてここまで来る頃には表示されている -->
+  {:then relatedItems}
+    <!-- 商品グリッド -->
     <div class="product-grid">
-      {#each related.items as item}
+      {#each relatedItems.items as item}
         <a href="/products/{item.id}" class="product-card">
           <img src={item.image} alt={item.name} />
           <h3>{item.name}</h3>
@@ -453,13 +435,13 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
       {/each}
     </div>
   {/await}
-  <!-- catchブロックを省略 - 関連商品はエラーでも問題ない -->
+  <!-- catchブロックなし（オプショナルコンテンツ） -->
 </section>
 ```
 
 ### ダッシュボード画面
 
-重要なKPIは即座に表示し、詳細なグラフやデータは後から読み込みます。
+ダッシュボードでは、重要なKPI（売上、ユーザー数など）を即座に表示し、詳細なグラフやデータは段階的に読み込みます。これにより、ユーザーは最も重要な情報をすぐに確認でき、詳細データが読み込まれるのを待つ必要がありません。
 
 ```typescript
 // +page.server.ts
@@ -469,22 +451,18 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     throw redirect(302, '/login');
   }
 
-  // 重要なKPIデータは即座に取得
-  // 売上、ユーザー数など、ダッシュボードの主要指標
-  // これらは数値だけなので高速に取得できる
-  const kpi = await fetch('/api/dashboard/kpi').then(r => r.json());
+  // 重要なKPI指標（高速・数値データ）
+  const keyMetrics = await fetch('/api/dashboard/kpi').then(r => r.json());
 
   return {
-    // 即座に表示される重要指標
-    // ユーザーが最初に確認したい数値をすぐに表示
-    kpi,
+    // 即座に表示
+    kpi: keyMetrics,
     user: locals.user,
 
-    // 段階的に表示される詳細データ
-    // グラフやリストなど、データ量が多く処理に時間がかかるもの
+    // 段階的に読み込み
     streamed: {
       charts: fetch('/api/dashboard/charts').then(r => r.json()),           // グラフデータ（重い）
-      recentActivity: fetch('/api/dashboard/activity').then(r => r.json()), // 最近の活動履歴
+      recentActivity: fetch('/api/dashboard/activity').then(r => r.json()), // 活動履歴
       notifications: fetch('/api/dashboard/notifications').then(r => r.json()) // 通知一覧
     }
   };
@@ -495,34 +473,28 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
 ### 複数の段階的読み込み
 
-データの重要度に応じて、3段階の読み込みを実装できます。
+データの重要度と処理時間に応じて、3段階の読み込みパターンを実装できます。第1段階は100ms以内の最重要データ、第2段階は500ms以内の重要データ、第3段階は時間がかかってもよい補足データという構成です。
 
 ```typescript
 // +page.server.ts
 export const load: PageServerLoad = async () => {
-  // 第1段階：最重要データ（即座に表示）
-  // ページの基本構造、タイトル、主要なコンテンツ
-  // 100ms以内に取得できるデータ
-  const critical = await getCriticalData();
+  // 第1段階：クリティカルデータ（100ms以内）
+  const criticalContent = await getCriticalData();
 
-  // 第2段階：重要データ（500ms以内に表示）
-  // ユーザー体験に影響するが、少し待てるデータ
-  // 例：サイドバーの情報、追加のメタデータ
-  const importantPromise = new Promise(async (resolve) => {
-    const data = await getImportantData();
-    resolve(data);
+  // 第2段階：重要データ（500ms以内）
+  const importantDataPromise = new Promise(async (resolve) => {
+    const importantInfo = await getImportantData();
+    resolve(importantInfo);
   });
 
-  // 第3段階：補足データ（時間がかかっても良い）
-  // あると便利だが、なくても基本機能に影響しないデータ
-  // 例：おすすめ、統計情報、履歴データ
-  const supplementaryPromise = getSupplementaryData();
+  // 第3段階：補足データ（時間制限なし）
+  const supplementaryDataPromise = getSupplementaryData();
 
   return {
-    critical,
+    critical: criticalContent,
     streamed: {
-      important: importantPromise,
-      supplementary: supplementaryPromise
+      important: importantDataPromise,
+      supplementary: supplementaryDataPromise
     }
   };
 };
@@ -530,30 +502,28 @@ export const load: PageServerLoad = async () => {
 
 ### エラーハンドリングの強化
 
-ストリーミングデータでエラーが発生した場合の対処法です。
+ストリーミングデータでエラーが発生しても、ページ全体の動作に影響しないようにするためのパターンです。エラー時にはフォールバックデータを提供し、UIが壊れないようにします。
 
 ```typescript
 // +page.server.ts
 export const load: PageServerLoad = async () => {
-  // 必須データは通常通り取得
-  const critical = await getCriticalData();
+  // 必須データ
+  const criticalData = await getCriticalData();
 
   return {
-    critical,
+    critical: criticalData,
     streamed: {
-      // エラーハンドリングをPromiseチェーンに組み込む
-      slow: fetch('/api/slow')
+      // Promiseチェーンでエラーハンドリング
+      slowData: fetch('/api/slow')
         .then(r => r.json())
         .catch(error => {
           // エラー時のフォールバックデータ
-          // エラーログを記録しつつ、ユーザーには代替データを提供
           console.error('Slow data failed:', error);
           return {
             error: true,        // エラーフラグ
-            fallback: true,     // フォールバックデータであることを示す
+            fallback: true,     // フォールバック指標
             message: 'データの取得に失敗しました',
-            // ダミーデータを提供してUIが壊れないようにする
-            items: []
+            items: []          // 空配列（UIのクラッシュ防止）
           };
         })
     }
@@ -562,49 +532,47 @@ export const load: PageServerLoad = async () => {
 ```
 
 ```svelte
-<!-- エラー対応の表示 -->
-{#await data.streamed.slow}
+<!-- エラーハンドリングの表示 -->
+{#await data.streamed.slowData}
   <div class="loading">読み込み中...</div>
-{:then slowData}
-  {#if slowData.error}
-    <!-- エラーフラグが立っている場合 -->
-    <!-- catchブロックではなく、thenブロック内でエラーハンドリング -->
+{:then resultData}
+  {#if resultData.error}
+    <!-- エラー時のフォールバックUI -->
     <div class="error-fallback">
-      <p>{slowData.message}</p>
+      <p>{resultData.message}</p>
       <button onclick={() => location.reload()}>再試行</button>
     </div>
   {:else}
     <!-- 正常データの表示 -->
-    <!-- errorプロパティがない場合は正常データとして処理 -->
-    <div>{slowData.content}</div>
+    <div>{resultData.content}</div>
   {/if}
 {/await}
 ```
 
 ### 条件付きストリーミング
 
-ユーザーの権限や設定に応じて、ストリーミングするデータを変更します。
+ユーザーの認証状態や権限レベルに応じて、動的にストリーミングするデータを決定するパターンです。プレミアムユーザーには追加のデータを提供するなど、柔軟な対応が可能です。
 
 ```typescript
 // +page.server.ts
 export const load: PageServerLoad = async ({ locals }) => {
-  // すべてのユーザーが見る基本データ
-  const basicData = await getBasicData();
+  // すべてのユーザー向け基本データ
+  const baseData = await getBasicData();
 
-  // ストリーミングデータを動的に構築
-  const streamed: any = {
-    publicData: getPublicData()  // 公開データは全員にストリーミング
+  // 動的なストリーミングデータ
+  const streamedContent: any = {
+    publicData: getPublicData()  // 公開データ（全員）
   };
 
-  // 認証済みユーザーには追加データをストリーミング
+  // 認証済みユーザーには追加データ
   if (locals.user) {
-    // パーソナライズされたデータを追加
-    streamed.personalData = getPersonalData(locals.user.id);
+    // パーソナライズされたコンテンツ
+    streamedContent.personalData = getPersonalData(locals.user.id);
 
-    // プレミアムユーザーにはさらに詳細なデータ
+    // プレミアムユーザーにはプレミアム機能
     if (locals.user.isPremium) {
-      // プレミアム機能のデータも追加
-      streamed.premiumData = getPremiumData(locals.user.id);
+      // 追加のプレミアムデータ
+      streamedContent.premiumData = getPremiumData(locals.user.id);
     }
   }
 
@@ -623,30 +591,30 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 ### 適切なデータ分割
 
+ユーザーが最初に見る画面上部のコンテンツ（Above the Fold）を優先的に読み込み、スクロールが必要な部分は後から読み込む戦略です。
+
 ```typescript
-// ✅ 良い例：データを適切に分割
+// ✅ 良い例：適切なデータ分割
 export const load: PageServerLoad = async () => {
   return {
-    // Above the fold（画面上部）の重要コンテンツ
-    // ユーザーがスクロールせずに見える部分
+    // Above the foldコンテンツ（可視領域）
     critical: await getFoldData(),
 
-    // Below the fold（画面下部）は後から読み込み
-    // スクロールしないと見えないコンテンツ
+    // Below the foldコンテンツ（遅延読み込み）
     streamed: {
       belowFold: getBelowFoldData(),       // スクロール後のコンテンツ
-      analytics: getAnalyticsData(),       // 分析データ（裏側で処理）
-      recommendations: getRecommendations() // おすすめ（低優先度）
+      analytics: getAnalyticsData(),       // バックグラウンド分析
+      recommendations: getRecommendations() // 低優先度
     }
   };
 };
 
-// ❌ 悪い例：重要度を考慮しない分割
+// ❌ 悪い例：優先度を考慮していない
 export const load: PageServerLoad = async () => {
   return {
-    critical: await getRandomData1(),  // どのデータが重要か不明
+    critical: await getRandomData1(),  // 重要度が不明
     streamed: {
-      random: getRandomData2()  // 優先度が分からない
+      random: getRandomData2()  // 優先度が不明
     }
   };
 };
@@ -654,27 +622,29 @@ export const load: PageServerLoad = async () => {
 
 ### キャッシュとの組み合わせ
 
+メモリキャッシュを活用して、2回目以降のアクセスを高速化する実装パターンです。
+
 ```typescript
 // lib/cache.ts
-const cache = new Map();
-const CACHE_TIME = 5 * 60 * 1000; // 5分
+const memoryCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5分間
 
 export async function getCachedData<T>(
-  key: string,
-  fetcher: () => Promise<T>
+  cacheKey: string,
+  dataFetcher: () => Promise<T>
 ): Promise<T> {
-  const cached = cache.get(key);
-  const now = Date.now();
+  const cachedEntry = memoryCache.get(cacheKey);
+  const currentTime = Date.now();
 
-  // キャッシュが有効であればそれを返す
-  if (cached && now - cached.timestamp < CACHE_TIME) {
-    return cached.data;  // メモリから即座に返す
+  // 有効なキャッシュを返す
+  if (cachedEntry && currentTime - cachedEntry.timestamp < CACHE_DURATION) {
+    return cachedEntry.data;  // メモリから即座にアクセス
   }
 
-  // キャッシュがないか古い場合は新しく取得
-  const data = await fetcher();
-  cache.set(key, { data, timestamp: now });
-  return data;
+  // キャッシュミス時は新データを取得
+  const freshData = await dataFetcher();
+  memoryCache.set(cacheKey, { data: freshData, timestamp: currentTime });
+  return freshData;
 }
 
 // +page.server.ts
@@ -682,13 +652,11 @@ import { getCachedData } from '$lib/cache';
 
 export const load: PageServerLoad = async () => {
   return {
-    // キャッシュされた重要データは高速
-    // 2回目以降のアクセスではメモリから即座に取得
+    // 高速なキャッシュされたクリティカルデータ
     critical: await getCachedData('critical', getCriticalData),
 
     streamed: {
-      // キャッシュされていない場合でもストリーミング
-      // キャッシュヒット時はPromiseが即座に解決される
+      // キャッシュチェック付きストリーミング
       slow: getCachedData('slow', getSlowData)
     }
   };
@@ -727,12 +695,12 @@ export const load: PageServerLoad = async () => {
     <div class="spinner"></div>
     <p>データを読み込んでいます...</p>
   </div>
-{:then slowData}
+{:then loadedData}
   <!-- データ取得後：空データのチェックも必要 -->
-  {#if slowData && slowData.items && slowData.items.length > 0}
+  {#if loadedData?.items?.length > 0}
     <!-- データがある場合の表示 -->
     <ul>
-      {#each slowData.items as item}
+      {#each loadedData.items as item}
         <li>{item.name}</li>
       {/each}
     </ul>
@@ -785,25 +753,26 @@ export const load: PageServerLoad = async () => {
 
 ### 3. キャッシング戦略
 
+Server-Timingヘッダーを使用してパフォーマンスを監視し、Chrome DevToolsで最適化の効果を確認できます。
+
 ```typescript
-// Server-Timingヘッダーでパフォーマンス監視
+// Performance monitoring with Server-Timing
 export const load: PageServerLoad = async ({ setHeaders }) => {
-  const start = performance.now();
+  const startTime = performance.now();
 
-  // クリティカルデータの取得時間を計測
-  const critical = await getCriticalData();
-  const criticalTime = performance.now() - start;
+  // Measure critical data fetch
+  const criticalData = await getCriticalData();
+  const duration = performance.now() - startTime;
 
-  // Server-Timingヘッダーでパフォーマンス情報を伝達
-  // Chrome DevToolsのNetworkタブで確認可能
+  // Send timing info to browser DevTools
   setHeaders({
-    'Server-Timing': `critical;dur=${criticalTime}`
+    'Server-Timing': `critical;dur=${duration}`
   });
 
   return {
-    critical,
+    critical: criticalData,
     streamed: {
-      slow: getSlowData()  // これは計測しない（ストリーミングのため）
+      slow: getSlowData()  // Not measured (streaming)
     }
   };
 };
@@ -820,10 +789,10 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 ### 2. ローディング状態の設計
 
 ```svelte
-<!-- 良いローディング状態の例 -->
+<!-- Good loading state example -->
 {#await data.streamed.articles}
   <div class="articles-loading">
-    <!-- スケルトンローディング -->
+    <!-- Skeleton loading -->
     {#each Array(3) as _}
       <article class="article-skeleton">
         <div class="skeleton-title"></div>
@@ -833,14 +802,14 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
     {/each}
   </div>
 {:then articles}
-  <!-- 実際のコンテンツ -->
+  <!-- Actual content here -->
 {/await}
 ```
 
 ### 3. エラー処理の戦略
 
 ```typescript
-// フォールバック機能付きのストリーミング
+// Streaming with fallback
 export const load: PageServerLoad = async () => {
   return {
     critical: await getCriticalData(),
@@ -860,10 +829,10 @@ export const load: PageServerLoad = async () => {
 
 1. **Promiseが解決されない**
    ```typescript
-   // ❌ 問題のあるコード
-   const slowData = fetch('/api/slow'); // .then()を忘れている
+   // ❌ Problem: Missing .then()
+   const slowData = fetch('/api/slow'); // Returns Response, not data
 
-   // ✅ 修正後
+   // ✅ Fixed: Parse JSON
    const slowData = fetch('/api/slow').then(r => r.json());
    ```
 

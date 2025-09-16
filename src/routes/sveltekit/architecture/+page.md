@@ -108,7 +108,6 @@ SvelteKitのアーキテクチャを理解することで、以下のような�
       <div class="text-3xl mb-2">📁</div>
       <h3 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
         ファイル構成と実行環境
-        <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">準備中</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">各ファイルの役割と実行環境の対応を解説します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">

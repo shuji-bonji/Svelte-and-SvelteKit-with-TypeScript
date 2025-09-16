@@ -383,7 +383,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/sveltekit/optimization/build-optimization/',
             },
             {
-              title: 'キャッシュ戦略 (準備中)',
+              title: 'キャッシュ戦略',
               to: '/sveltekit/optimization/caching/',
             },
             { title: 'SEO最適化 (準備中)', to: '/sveltekit/optimization/seo/' },

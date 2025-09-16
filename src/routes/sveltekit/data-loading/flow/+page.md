@@ -5,6 +5,7 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
 
 <script>
   import Mermaid from '$lib/components/Mermaid.svelte';
+  import { base } from '$app/paths';
   
   
   const ssrDataFlowDiagram = `sequenceDiagram
@@ -122,6 +123,16 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
     style Parallel fill:#fff3e0,color:#000
     style Universal fill:#fff3e0,color:#000`;
 </script>
+
+:::info[関連ページ]
+このページは**Load関数の基本的な実行順序とデータの流れ**を解説しています。
+
+- 📊 **現在のページ**: データフローの詳細（初級〜中級）
+- ⚡ [データフェッチング戦略]({base}/sveltekit/data-loading/strategies/) - 実践的なパターンとベストプラクティス（中級〜上級）
+- 🏗️ [データロードアーキテクチャ]({base}/sveltekit/architecture/data-loading/) - 内部実装とメカニズムの詳解（上級）
+
+**学習パス**: 基本的な流れを理解 → 実践パターンを学ぶ → 内部実装を理解
+:::
 
 SvelteKitのデータフローは、サーバーサイドとクライアントサイドで異なる動作をします。このページでは、Load関数の実行順序、データの流れ、並列処理の仕組みを詳しく解説します。
 

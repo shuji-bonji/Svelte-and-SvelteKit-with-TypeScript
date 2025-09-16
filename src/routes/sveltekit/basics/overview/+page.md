@@ -214,13 +214,13 @@ Svelteをベースにしたフルスタックフレームワークで、サー�
 
 ### フレームワークの位置づけ
 
-Next.js（React）やNuxt（Vue）に相当する位置づけでありながら、より軽量で高速、そして開発者体験に優れた設計となっています。
+Next.js（React）やNuxt（Vue）に相当する位置づけでありながら、より軽量で高速、そして開発者体験に優れた設計となっています。以下の図は、各フロントエンドフレームワークとそれに対応するフルスタックフレームワークの関係を示しています。
 
 <Mermaid diagram={frameworkPositionDiagram} />
 
 ### 主要な特徴
 
-SvelteKitは開発効率とパフォーマンスを両立させる多くの機能を標準で提供しています。
+SvelteKitは開発効率とパフォーマンスを両立させる多くの機能を標準で提供しています。これらの機能は追加設定なしで利用可能で、プロジェクトの立ち上げから本番デプロイまでをスムーズに行えます。
 
 | 特徴 | 説明 |
 |------|------|
@@ -234,7 +234,7 @@ SvelteKitは開発効率とパフォーマンスを両立させる多くの機�
 
 ## 基本的な動作フロー
 
-SvelteKitがどのように動作するか、開発からデプロイまでの流れを理解しましょう。
+SvelteKitがどのように動作するか、開発からデプロイまでの流れを理解しましょう。SvelteKitは開発者が書いたコードを、選択したレンダリングモード（SSR/SSG/CSR）に応じて最適な形に変換し、ブラウザに配信します。
 
 <Mermaid diagram={basicFlowDiagram} />
 
@@ -249,7 +249,9 @@ SvelteKitがどのように動作するか、開発からデプロイまでの�
 
 ## ファイルベースルーティング
 
-SvelteKitでは、ディレクトリ構造がそのままURLになる直感的なルーティングシステムを採用しています。
+SvelteKitでは、ディレクトリ構造がそのままURLになる直感的なルーティングシステムを採用しています。ファイルを作成するだけで自動的にルートが生成され、複雑なルーティング設定は不要です。
+
+以下は、ディレクトリ構造とURLの対応関係を示しています：
 
 ```
 src/routes/
@@ -266,7 +268,7 @@ src/routes/
 
 ## レンダリングモード
 
-ページごとに最適なレンダリング方式を選択できます。
+ページごとに最適なレンダリング方式を選択できます。SvelteKitは3つの主要なレンダリングモードをサポートし、ページの特性に応じて最適な方式を選択することで、パフォーマンスとUXを最大化できます。
 
 | モード | 用途 | 特徴 |
 |------|------|------|
@@ -300,6 +302,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
   // 1. サーバー側でのみ実行（DBアクセスや秘密情報を扱える）
+  // このファイルはブラウザに送信されないため、環境変数やDBクレデンシャルを安全に使用可能
   const secretData = await fetchFromDatabase();
   
   console.log('1️⃣ +page.server.ts実行中（サーバー）');
@@ -320,6 +323,7 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ data, fetch }) => {
   // 2. サーバー側（SSR時）で実行
   // 3. その後、クライアント側（ハイドレーション時）でも実行
+  // fetchはSvelteKitが提供する拡張版で、SSR時にはサーバー内部で、クライアントではブラウザのfetchを使用
   
   console.log('2️⃣ +page.ts実行中');
   console.log('サーバーから受け取ったデータ:', data);
@@ -341,8 +345,9 @@ export const load: PageLoad = async ({ data, fetch }) => {
 ```svelte
 <script lang="ts">
   import type { PageData } from './$types';
-  
+
   // 4. 最終的にコンポーネントがデータを受け取る
+  // PageDataは自動生成される型で、load関数の戻り値と完全に一致
   let { data }: { data: PageData } = $props();
 </script>
 
@@ -388,6 +393,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 // 1️⃣ GET: 投稿一覧を取得
+// HTTPのGETメソッドに対応する関数をexportすることで、自動的にエンドポイントが作成される
 export const GET: RequestHandler = async ({ url }) => {
   console.log('🔵 GET /api/posts - サーバー側で実行');
   
@@ -405,6 +411,7 @@ export const GET: RequestHandler = async ({ url }) => {
 };
 
 // 2️⃣ POST: 新しい投稿を作成
+// POSTメソッドでデータを受け取り、バリデーション後にDBへ保存
 export const POST: RequestHandler = async ({ request }) => {
   console.log('🟢 POST /api/posts - サーバー側で実行');
   
@@ -433,6 +440,7 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 
 // 3️⃣ DELETE: 投稿を削除
+// DELETEメソッドでリソースの削除を処理。RESTfulな設計に準拠
 export const DELETE: RequestHandler = async ({ url }) => {
   console.log('🔴 DELETE /api/posts - サーバー側で実行');
   
@@ -476,6 +484,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
   let loading = false;
   
   // 4️⃣ ページ読み込み時に投稿を取得
+  // onMountはクライアントサイドでのみ実行される。SSR時には実行されない
   onMount(async () => {
     console.log('📱 クライアント: 投稿一覧を取得');
     const response = await fetch('/api/posts?limit=5');
@@ -485,6 +494,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
   });
   
   // 5️⃣ 新しい投稿を作成
+  // フォーム送信をJavaScriptで処理。プログレッシブエンハンスメントにより、JSなしでも動作可能
   async function createPost() {
     loading = true;
     console.log('📱 クライアント: 新規投稿を送信');
@@ -505,6 +515,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
   }
   
   // 6️⃣ 投稿を削除
+  // DELETE メソッドを使用してRESTfulに削除処理。楽観的UIアップデートも実装可能
   async function deletePost(id: string) {
     console.log('📱 クライアント: 投稿削除リクエスト');
     
@@ -563,7 +574,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
 
 ## プログレッシブエンハンスメント
 
-JavaScriptが無効でも動作する堅牢なアプリケーションを構築できます。SvelteKitは「まずHTMLで動作し、JavaScriptで強化する」という設計思想を採用しています。
+JavaScriptが無効でも動作する堅牢なアプリケーションを構築できます。SvelteKitは「まずHTMLで動作し、JavaScriptで強化する」という設計思想を採用しています。これにより、ネットワーク環境が悪い場合やJavaScriptの読み込みに失敗した場合でも、基本機能は確実に動作します。
 
 <Mermaid diagram={progressiveEnhancementDiagram} />
 
@@ -572,6 +583,8 @@ JavaScriptが無効でも動作する堅牢なアプリケーションを構築�
 <Expansion title="1. 基本のHTML（JavaScriptなしでも動作）">
 
 ```html
+<!-- JavaScriptなしでも動作する基本的なHTMLフォーム -->
+<!-- action="?/login"はSvelteKitのForm Actions機能を使用 -->
 <form method="POST" action="?/login">
   <input name="email" type="email" required>
   <input name="password" type="password" required>
@@ -585,6 +598,7 @@ JavaScriptが無効でも動作する堅牢なアプリケーションを構築�
 
 ```css
 /* HTML5のバリデーション状態に応じたスタイリング */
+/* CSSだけで入力状態を視覚的にフィードバック。JavaScriptは不要 */
 input:required {
   border-left: 3px solid #ff6b6b;
 }
@@ -616,6 +630,7 @@ input:invalid:not(:placeholder-shown) + .hint {
 <script>
   import { enhance } from '$app/forms';
   let loading = false;
+  // use:enhanceディレクティブでフォームを強化し、ページリロードなしで送信
 </script>
 
 <form method="POST" action="?/login" use:enhance={() => {
@@ -648,10 +663,11 @@ input:invalid:not(:placeholder-shown) + .hint {
 
 ## 型安全性
 
-TypeScriptによる完全な型サポートで、開発時のエラーを防ぎます。
+TypeScriptによる完全な型サポートで、開発時のエラーを防ぎます。SvelteKitは各ルートごとに型定義を自動生成し、load関数の引数と戻り値、Form Actionsの型などを完全に型付けします。
 
 ```typescript
 // ./$typesから自動生成される型
+// PageLoadやPageDataなどの型は、実際のコードから自動的に推論・生成される
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
@@ -690,6 +706,7 @@ import adapter from '@sveltejs/adapter-auto';
 export default {
   kit: {
     adapter: adapter() // 自動でプラットフォームを検出
+    // adapter-autoは、Vercel、Netlify、Cloudflareなどの主要プラットフォームを自動認識
   }
 };
 ```
@@ -713,9 +730,13 @@ SvelteKitは**設定なしですぐに開発を始められる**ように設計�
 ### デフォルトで含まれる機能
 
 ```bash
+# 1. プロジェクト作成（対話形式でTypeScript、ESLint、Prettierなどを選択可能）
 npm create svelte@latest my-app
+# 2. プロジェクトディレクトリに移動
 cd my-app
+# 3. 依存関係をインストール
 npm install
+# 4. 開発サーバー起動（http://localhost:5173でアクセス可能）
 npm run dev
 ```
 
@@ -737,6 +758,8 @@ npm run dev
 // vite.config.js - 必要な時だけカスタマイズ
 export default defineConfig({
   // デフォルト設定を上書き
+  // 例：プロキシ設定、エイリアス設定、プラグイン追加など
+  // 基本的な開発では触る必要なし
 });
 ```
 

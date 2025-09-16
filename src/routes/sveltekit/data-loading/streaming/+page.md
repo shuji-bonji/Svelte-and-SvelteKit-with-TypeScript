@@ -910,6 +910,6 @@ export const load: PageServerLoad = async () => {
 
 ## 次のステップ
 
-- [データフローの詳細](../flow/) - ストリーミングSSRが全体のデータフローでどう動作するか
-- [データフェッチング戦略](../strategies/) - より高度な最適化技術
+- [キャッシュ戦略](../../optimization/caching/) - PWA・CDN・エッジコンピューティングによる最適化
+- [WebSocket・SSE通信](../../server/websocket-sse/) - リアルタイム通信の実装
 - [最適化](../../optimization/) - 総合的なパフォーマンス改善手法

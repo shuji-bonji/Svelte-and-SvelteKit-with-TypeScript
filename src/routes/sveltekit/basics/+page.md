@@ -78,6 +78,24 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
     </div>
   </a>
 
+  <a href="{base}/sveltekit/basics/app-modules/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📦</div>
+      <h3 class="font-bold text-lg mb-2 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+        $appモジュール
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitの組み込みモジュール群について包括的に学びます。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><code>$app/state</code>: Svelte 5 Runes対応（推奨）</li>
+        <li><code>$app/stores</code>: レガシーストアAPI</li>
+        <li><code>$app/navigation</code>: goto、invalidate</li>
+        <li><code>$app/environment</code>: browser、dev判定</li>
+        <li><code>$app/paths</code>: base、assetsパス</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/sveltekit/basics/rendering-strategies/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎨</div>
@@ -152,8 +170,9 @@ SvelteKitは、モダンなWebアプリケーション開発に必要なすべ�
 1. **概要とアーキテクチャ** - まずSvelteKitの全体像を理解
 2. **プロジェクト構造** - ディレクトリ構造と命名規約を習得
 3. **特殊ファイルシステム** - 各ファイルの役割と実行環境を理解
-4. **レンダリング戦略** - SSR/SSG/SPAの使い分けを習得
-5. **TypeScript型の自動生成** - `./$types`による型安全な開発
+4. **$appモジュール** - 組み込みモジュールの活用方法を習得（`$app/state`を中心に）
+5. **レンダリング戦略** - SSR/SSG/SPAの使い分けを習得
+6. **TypeScript型の自動生成** - `./$types`による型安全な開発
 
 ### 学習目標
 

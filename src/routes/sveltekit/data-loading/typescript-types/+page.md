@@ -594,8 +594,8 @@ export const actions = {
 
   // Svelte 5の$derivedでリアクティブな値を定義
   // 型が完全に推論される
-  $: user = data.user;  // 型: User | null（レイアウトから）
-  $: post = data.post;  // 型: Post（ページLoadから）
+  let user = $derived(data.user);  // 型: User | null（レイアウトから）
+  let post = $derived(data.post);  // 型: Post（ページLoadから）
 </script>
 
 <h1>編集: {post.title}</h1>

@@ -188,6 +188,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               title: '特殊ファイルシステム',
               to: '/sveltekit/basics/file-system/',
             },
+            { title: '$appモジュール', to: '/sveltekit/basics/app-modules/' },
             {
               title: 'レンダリング戦略（基礎）',
               to: '/sveltekit/basics/rendering-strategies/',

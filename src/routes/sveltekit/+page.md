@@ -131,6 +131,10 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">+page、+layout、+serverの役割</td>
           </tr>
           <tr>
+            <td class="py-2"><a href="{base}/sveltekit/basics/app-modules/" class="text-blue-600 dark:text-blue-400 hover:underline">$appモジュール</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">$app/state（推奨）、$app/navigation等</td>
+          </tr>
+          <tr>
             <td class="py-2"><a href="{base}/sveltekit/basics/rendering-strategies/" class="text-blue-600 dark:text-blue-400 hover:underline">レンダリング戦略（基礎）</a></td>
             <td class="py-2 text-gray-6 dark:text-gray-4">SSR/SSG/SPAの基本</td>
           </tr>
@@ -489,7 +493,8 @@ npm create svelte@latest my-first-sveltekit-app
 1. **[SvelteKit概要]({base}/sveltekit/basics/overview/)** - SSR/SSG/SPAの違いとSvelteKitの位置づけを理解
 2. **[プロジェクト構造]({base}/sveltekit/basics/project-structure/)** - `routes/`、`+page.svelte`、`+layout.svelte`の役割を把握
 3. **[特殊ファイルシステム]({base}/sveltekit/basics/file-system/)** - `+page`、`+layout`、`+server`ファイルの役割を理解
-4. **[app.d.tsの役割]({base}/sveltekit/basics/global-types/)** - グローバルな型定義の設定方法を理解
+4. **[$appモジュール]({base}/sveltekit/basics/app-modules/)** - `$app/stores`、`$app/navigation`などの組み込みモジュール
+5. **[app.d.tsの役割]({base}/sveltekit/basics/global-types/)** - グローバルな型定義の設定方法を理解
 
 ### Step 2: コア機能習得（3-5日）
 1. **[基本ルーティング]({base}/sveltekit/routing/basic/)** - ファイルベースルーティングで最初のページを作成

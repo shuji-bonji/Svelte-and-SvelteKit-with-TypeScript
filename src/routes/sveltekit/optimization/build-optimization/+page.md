@@ -411,10 +411,12 @@ export default defineConfig({
 ```svelte
 <!-- lib/components/OptimizedImage.svelte -->
 <script lang="ts">
-  export let src: string;
-  export let alt: string;
-  export let sizes = '100vw';
-  
+  let { src, alt, sizes = '100vw' }: {
+    src: string;
+    alt: string;
+    sizes?: string;
+  } = $props();
+
   // 画像URLから各サイズを生成
   function generateSrcSet(src: string): string {
     const widths = [320, 640, 768, 1024, 1280, 1920];

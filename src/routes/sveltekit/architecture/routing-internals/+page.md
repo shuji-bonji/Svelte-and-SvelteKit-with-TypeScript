@@ -495,9 +495,9 @@ pushStateとreplaceStateの使い分け
   import { pushState, replaceState } from '$app/navigation';
 
   // 現在のURL情報
-  $: currentUrl = $page.url;
-  $: currentParams = $page.params;
-  $: currentRoute = $page.route;
+  let currentUrl = $derived($page.url);
+  let currentParams = $derived($page.params);
+  let currentRoute = $derived($page.route);
 
   // 状態の保存
   function saveState() {
@@ -606,8 +606,8 @@ export const match = ((param) => {
   import { invalidate } from '$app/navigation';
 
   // エラー情報
-  $: error = $page.error;
-  $: status = $page.status;
+  let error = $derived($page.error);
+  let status = $derived($page.status);
 
   // エラーからの回復
   async function retry() {

@@ -12,11 +12,32 @@ SvelteKitのActionsは、サーバーサイドでフォーム送信を処理す�
 
 ### Progressive Enhancement とは
 
-Progressive Enhancement（プログレッシブエンハンスメント）は、基本的なHTML機能から始めて、段階的に機能を強化していく開発アプローチです。SvelteKitのフォームは、JavaScript無効でも動作する**プログレッシブエンハンスメント**を実現
+Progressive Enhancement（プログレッシブエンハンスメント）は、基本的なHTML機能から始めて、段階的に機能を強化していく開発アプローチです。SvelteKitのフォームは、JavaScript無効でも動作する**プログレッシブエンハンスメント**を実現します。
 
 - **JavaScript無効時**: 通常のHTMLフォーム送信
 - **JavaScript有効時**: ページリロードなしでフォーム処理
 - **自動的な切り替え**: use:enhance で自動最適化
+
+:::info[重要な理解]
+**Actions自体はサーバーサイドのみで動作**します。JavaScript無効時も有効時も、フォーム処理のロジックは常にサーバー側のActionsが実行します。`use:enhance`は、**クライアント側でのUX改善**のみを担当し、処理自体には関与しません。
+
+#### SvelteKit Actionsの役割
+
+**Actions**は、**サーバーサイドでフォーム処理を担当**します。
+
+1. **基本動作（JavaScript無効時）**
+   - ブラウザの標準的なフォーム送信（POSTリクエスト）
+   - サーバー側のActionsがフォームデータを処理
+   - 処理後、ページ全体をリロードして結果を表示
+   - **これは純粋なHTMLとサーバーサイド処理で動作**
+
+2. **強化動作（JavaScript有効時 + use:enhance）**
+   - `use:enhance`ディレクティブがフォーム送信をインターセプト
+   - AJAXでフォームデータをサーバーに送信
+   - **同じActions**がサーバー側で処理
+   - ページリロードなしで結果を反映
+   - ローディング状態やアニメーションを追加可能
+:::
 
 ### 基本的なAction実装
 

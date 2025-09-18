@@ -1,15 +1,19 @@
 ---
-title: テンプレート構文
-description: Svelte5のテンプレート構文をTypeScriptで活用。{#if}/{#each}/{#await}ブロック、@render/@htmlタグ、条件分岐とループ処理の実装パターンを解説
+title: テンプレート構文 - 特殊タグとアノテーション
+description: Svelte5の特殊なテンプレート構文を解説。@render/@html/@const/@debugアノテーション、{#key}ブロック、{#snippet}定義の実装パターンをTypeScriptで解説
 ---
 
-Svelteのテンプレートは、HTMLをベースに独自の構文を追加したものです。このページでは、Svelteが提供する特殊なタグとテンプレート構文について詳しく解説します。
+Svelteのテンプレートは、HTMLをベースに独自の構文を追加したものです。このページでは、Svelteが提供する**特殊なタグとアノテーション**について詳しく解説します。
+
+:::info[基本的なテンプレート構文について]
+`{#if}`、`{#each}`、`{#await}`などの基本的な制御フロー構文については、[コンポーネントの基本](/svelte/basics/component-basics/)ページで解説しています。このページでは、より高度な特殊タグとアノテーションを扱います。
+:::
 
 ## レンダリングタグ
 
 ### @render - Snippetsのレンダリング
 
-`{@render}`タグは、[Snippets](/svelte/advanced/snippets/)を呼び出してレンダリングするためのタグです。
+`{@render}`（renderアノテーション）は、[Snippets](/svelte/advanced/snippets/)を呼び出してレンダリングするためのタグです。
 
 ```svelte
 <script lang="ts">
@@ -41,7 +45,7 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
 
 ### @html - HTML文字列の挿入（インタラクティブデモ）
 
-`@html`タグは、文字列をHTMLとして解釈してDOMに挿入します。XSS攻撃のリスクがあるため、信頼できるコンテンツのみに使用してください。
+`@html`（htmlアノテーション）は、文字列をHTMLとして解釈してDOMに挿入します。XSS攻撃のリスクがあるため、信頼できるコンテンツのみに使用してください。
 
 ```svelte live
 <script lang="ts">
@@ -125,7 +129,7 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
 
 ### @const - ローカル定数の定義
 
-`@const`タグは、テンプレート内でローカル定数を定義します。`{#if}`、`{#each}`、`{#snippet}`などのブロック内でのみ使用できます。
+`@const`（constアノテーション）は、テンプレート内でローカル定数を定義します。`{#if}`、`{#each}`、`{#snippet}`などのブロック内でのみ使用できます。
 
 ```svelte
 <script lang="ts">
@@ -211,7 +215,7 @@ Snippetsは、コンポーネント内で再利用可能なテンプレートの
 
 ### @debug - デバッグ情報の出力
 
-`@debug`タグは、指定した変数の値が変更されるたびに、ブラウザのデバッガーを一時停止し、コンソールに値を出力します。
+`@debug`（debugアノテーション）は、指定した変数の値が変更されるたびに、ブラウザのデバッガーを一時停止し、コンソールに値を出力します。
 
 ```svelte
 <script lang="ts">

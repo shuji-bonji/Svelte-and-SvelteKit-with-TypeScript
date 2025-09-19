@@ -542,26 +542,27 @@ APIクライアントのインスタンスを一度だけ作成し、アプリ�
 </script>
 
 <script lang="ts">
-  import { onMount } from 'svelte';
-  
   interface User {
     id: number;
     name: string;
   }
-  
+
   let users: User[] = [];
   let loading = true;
-  
-  onMount(async () => {
-    try {
-      users = await fetchWithCache(
-        'users',
-        () => fetch('/api/users').then(r => r.json()),
-        300000 // 5分間キャッシュ
-      );
-    } finally {
-      loading = false;
-    }
+
+  // 初回マウント時にキャッシュされたデータを取得
+  $effect(() => {
+    (async () => {
+      try {
+        users = await fetchWithCache(
+          'users',
+          () => fetch('/api/users').then(r => r.json()),
+          300000 // 5分間キャッシュ
+        );
+      } finally {
+        loading = false;
+      }
+    })();
   });
 </script>
 ```

@@ -695,6 +695,128 @@ $effect(() => {
 });
 ```
 
+## ライフサイクル処理の使い分けガイド
+
+実際の開発では、`onMount`、`$effect`、`use:action`のどれを使うべきか迷うことがあります。以下のガイドラインを参考にしてください。
+
+### `onMount`を使うべき場合
+
+**初回のみ実行したい処理**に最適です。
+
+```typescript
+import { onMount } from 'svelte';
+
+onMount(() => {
+  // 動的インポート（クライアントサイドのみで実行）
+  const module = await import('heavy-library');
+
+  // グローバルイベントリスナーの登録（一度だけ）
+  document.addEventListener('keydown', globalKeyHandler);
+
+  // サードパーティライブラリの初期化
+  initializeChartLibrary();
+
+  return () => {
+    // クリーンアップ
+    document.removeEventListener('keydown', globalKeyHandler);
+  };
+});
+```
+
+**適している用途：**
+- 動的インポート（SSRを避ける）
+- 初回のみのDOM操作
+- グローバルイベントリスナーの登録
+- サードパーティライブラリの初期化（Chart.js、D3.jsなど）
+
+### `$effect`を使うべき場合
+
+**リアクティブな値に反応する処理**に最適です。
+
+```typescript
+let searchQuery = $state('');
+let debouncedQuery = $state('');
+
+// 検索クエリが変更されるたびに実行
+$effect(() => {
+  const timer = setTimeout(() => {
+    debouncedQuery = searchQuery;
+  }, 300);
+
+  return () => clearTimeout(timer);
+});
+
+// データの同期
+$effect(() => {
+  // searchQueryが変わるたびにAPIを呼び出し
+  if (searchQuery) {
+    fetchResults(searchQuery);
+  }
+});
+```
+
+**適している用途：**
+- リアクティブな値の監視と反応
+- データの同期処理
+- デバウンス・スロットル処理
+- 条件付きのDOM更新
+- リアルタイム更新の購読
+
+### `use:action`を使うべき場合
+
+**特定のDOM要素に対する処理**に最適です。
+
+```typescript
+// カスタムアクション定義
+function tooltip(node: HTMLElement, text: string) {
+  // 要素固有の初期化
+  const tip = createTooltip(text);
+
+  node.addEventListener('mouseenter', () => tip.show());
+  node.addEventListener('mouseleave', () => tip.hide());
+
+  return {
+    // パラメータ更新時
+    update(newText: string) {
+      tip.setText(newText);
+    },
+    // 要素削除時
+    destroy() {
+      tip.remove();
+    }
+  };
+}
+```
+
+```svelte
+<!-- 使用例 -->
+<button use:tooltip={'クリックしてください'}>
+  ボタン
+</button>
+```
+
+**適している用途：**
+- DOM要素固有の処理
+- サードパーティライブラリの要素への適用（Tippy.js、Popper.jsなど）
+- カスタムイベントハンドリング
+- 要素のライフサイクルに紐づく処理
+- 再利用可能な動作の定義
+
+### 使い分けの決定フロー
+
+以下のフローチャートで適切な選択を判断できます。
+
+1. **DOM要素固有の処理？** → Yes: `use:action`
+2. **リアクティブ値に依存？** → No: `onMount`（特にSSR回避が必要な場合）
+3. **初回のみ実行？** → Yes: `onMount` / No: `$effect`
+
+:::tip[実践的な判断基準]
+- **再利用性が必要** → `use:action`（複数の要素で使い回せる）
+- **コンポーネント全体の処理** → `$effect`または`onMount`
+- **値の変更を監視** → `$effect`（自動的に再実行される）
+- **一度だけ実行** → `onMount`（依存値があっても再実行されない）
+:::
+
 ## まとめ
 
 Svelte 5のコンポーネントライフサイクル
@@ -702,11 +824,13 @@ Svelte 5のコンポーネントライフサイクル
 - **`$effect`** - マウント、更新、アンマウントを統一的に管理
 - **`$effect.pre`** - DOM構築前の処理
 - **`$effect.root`** - 独立したエフェクトスコープ
-- **従来のAPI** - 後方互換性のために利用可能だが非推奨
+- **`onMount`** - 初回のみの処理（動的インポートなど）に今でも有用
+- **`use:action`** - DOM要素固有の処理に最適
+- **従来のAPI** - 後方互換性のために利用可能だが基本的に非推奨
 
 :::info[移行のヒント]
 既存のSvelteプロジェクトから移行する場合
-1. `onMount` → `$effect`に置き換え
+1. `onMount` → 初回のみなら継続使用、リアクティブなら`$effect`
 2. `beforeUpdate` → `$effect.pre`に置き換え
 3. `afterUpdate` → `$effect`に置き換え
 4. `onDestroy` → `$effect`のクリーンアップ関数に置き換え

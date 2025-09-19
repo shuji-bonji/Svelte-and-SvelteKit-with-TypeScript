@@ -1003,6 +1003,31 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 - `<slot />` による子要素の挿入
 - ストアの`$`プレフィックス（自動サブスクリプション）
 - `$derived(() => {...})` の誤用（`$derived.by()` を使用すべき場合）
+- `onDestroy`、`beforeUpdate`、`afterUpdate`などのライフサイクル関数（`$effect`で代替）
+- `tick()`の過度な使用（多くの場合`$effect`で解決可能）
+
+**注意**:
+1. レガシー構文の説明や比較を目的とした例示では、これらの構文を使用しても構いません。実際の実装コードでのみ、Svelte 5の新しい構文を使用してください。
+
+#### ライフサイクル関数の適切な使い分け
+
+##### `onMount`を使うべき場合：
+- **動的インポート** - クライアントサイドのみで実行する必要がある場合
+- **初回のみの処理** - グローバルイベントリスナーの登録など、一度だけ実行したい処理
+- **DOM操作の初期化** - コンポーネントマウント時に一度だけ実行したいDOM操作
+- **サードパーティライブラリの初期化** - Mermaid、D3.js、Chart.jsなどの初期化
+
+##### `$effect`を使うべき場合：
+- **リアクティブな副作用** - 依存値の変更に反応する必要がある場合
+- **継続的な同期** - データの変更を監視し、DOM を更新する場合
+- **クリーンアップが必要な購読** - WebSocket、イベントリスナー等（ただし依存値が変わる場合）
+- **デバウンス・スロットル処理** - 入力値の変更に対する遅延処理
+
+##### `use:action`を検討すべき場合：
+- **DOM要素の初期化とクリーンアップ** - 特定のDOM要素に対する処理
+- **サードパーティライブラリの統合** - DOM要素へのライブラリのアタッチ（Tippy.js、Popper.jsなど）
+- **カスタムイベントハンドリング** - 要素固有のイベント処理
+- **要素のライフサイクル管理** - 要素の追加・削除に応じた処理
 
 #### 推奨パターン（Svelte 5）
 - `$state` による明示的なリアクティビティ
@@ -1010,6 +1035,249 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 - `$props` によるprops定義
 - `{@render children?.()}` による子要素のレンダリング
 - `.svelte.ts`ファイルでのストア定義
+
+#### SvelteKitでのURL処理ガイドライン
+
+##### `resolveRoute`を使うべき場合：
+- **静的なルート名からURLを生成** - ルート名とパラメータから型安全なURLを作成
+- **base pathを考慮したURL生成** - サブディレクトリでホストする場合に必須
+- **リンクのhref属性** - `<a href={resolveRoute('/about')}>` のように使用
+- **プログラマティックナビゲーション** - `goto(resolveRoute('/login'))` のように使用
+
+##### 正しいURL処理の例：
+```typescript
+import { resolveRoute } from '$app/paths';
+import { goto } from '$app/navigation';
+
+// ✅ 良い例：静的ルートの場合
+const aboutUrl = resolveRoute('/about');
+const loginUrl = resolveRoute('/login');
+
+// ナビゲーション
+await goto(resolveRoute('/dashboard'));
+
+// リンク生成
+<a href={resolveRoute('/products')}>商品一覧</a>
+
+// ❌ 悪い例：ハードコードされたパス
+await goto('/dashboard');  // base pathが考慮されない
+<a href="/products">商品一覧</a>  // サブディレクトリで動作しない
+```
+
+##### 動的URLの場合：
+```typescript
+// 動的パラメータを含む場合はテンプレートリテラルでOK
+const productUrl = `/products/${id}`;
+await goto(productUrl);
+
+// ただし、base pathが必要な場合は注意
+import { base } from '$app/paths';
+const productUrl = `${base}/products/${id}`;
+```
+
+##### Hooks内での`resolve`関数：
+```typescript
+// hooks.server.tsのresolveは別物（ミドルウェアチェーン用）
+export const handle: Handle = async ({ event, resolve }) => {
+  // このresolveはリクエスト処理を次のミドルウェアに渡す関数
+  return resolve(event);
+};
+```
+
+**注意**:
+- `resolveRoute`は SvelteKit 2.0以降で利用可能
+- 古いバージョンでは`base`を手動で結合する必要がある
+- 外部URLへのナビゲーションはそのまま`goto('https://example.com')`でOK
+
+### SvelteKit 新旧記述の違い
+
+#### レガシーなSvelteKit記述（避けるべき）
+
+##### 1. Load関数のレガシー記述
+```typescript
+// ❌ 古い：load関数の型注釈
+import type { Load } from '@sveltejs/kit';
+
+export const load: Load = async ({ fetch, params }) => {
+  // ...
+};
+
+// ✅ 新しい：PageLoad/LayoutLoadを使用
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ fetch, params }) => {
+  // ...
+};
+```
+
+##### 2. エラーハンドリング
+```typescript
+// ❌ 古い：errorオブジェクトを直接throw
+throw {
+  status: 404,
+  message: 'Not found'
+};
+
+// ✅ 新しい：error関数を使用
+import { error } from '@sveltejs/kit';
+throw error(404, 'Not found');
+```
+
+##### 3. リダイレクト
+```typescript
+// ❌ 古い：オブジェクトでリダイレクト
+throw {
+  status: 302,
+  redirect: '/login'
+};
+
+// ✅ 新しい：redirect関数を使用
+import { redirect } from '@sveltejs/kit';
+throw redirect(302, '/login');
+```
+
+##### 4. ページコンポーネントのprops
+```svelte
+<!-- ❌ 古い：export let data -->
+<script>
+  export let data;
+</script>
+
+<!-- ✅ 新しい：$props()を使用（Svelte 5） -->
+<script>
+  let { data } = $props();
+</script>
+```
+
+##### 5. フォームActions（旧action）
+```typescript
+// ❌ 古い：actionsという名前
+export const actions = {
+  default: async ({ request }) => {
+    // ...
+  }
+};
+
+// ✅ 現在も同じ名前だが、型安全性を重視
+import type { Actions } from './$types';
+
+export const actions: Actions = {
+  default: async ({ request }) => {
+    // ...
+  }
+};
+```
+
+##### 6. RequestHandlerの型
+```typescript
+// ❌ 古い：RequestHandler型を直接インポート
+import type { RequestHandler } from '@sveltejs/kit';
+
+export const GET: RequestHandler = async () => {
+  // ...
+};
+
+// ✅ 新しい：./$typesから型をインポート
+import type { RequestHandler } from './$types';
+
+export const GET: RequestHandler = async () => {
+  // ...
+};
+```
+
+##### 7. page/sessionストア
+```typescript
+// ❌ 古い：sessionストア（廃止）
+import { session } from '$app/stores';
+
+// ❌ 古い：getStores関数
+import { getStores } from '$app/stores';
+const { page, session } = getStores();
+
+// ✅ 新しい：pageストアのみ、dataプロパティを使用
+import { page } from '$app/stores';
+// セッション情報は$page.dataに含める
+```
+
+##### 8. load関数の戻り値
+```typescript
+// ❌ 古い：propsプロパティ
+export const load = async () => {
+  return {
+    props: {
+      message: 'Hello'
+    }
+  };
+};
+
+// ✅ 新しい：直接オブジェクトを返す
+export const load = async () => {
+  return {
+    message: 'Hello'
+  };
+};
+```
+
+##### 9. エンドポイント（API Routes）
+```typescript
+// ❌ 古い：エンドポイントという名前、bodyプロパティ
+export async function get() {
+  return {
+    body: {
+      message: 'Hello'
+    }
+  };
+}
+
+// ✅ 新しい：大文字のメソッド名、Response/jsonを使用
+import { json } from '@sveltejs/kit';
+
+export async function GET() {
+  return json({
+    message: 'Hello'
+  });
+}
+```
+
+##### 10. hydrate/routerオプション
+```typescript
+// ❌ 古い：app.htmlでのオプション設定
+export const hydrate = false;
+export const router = false;
+
+// ✅ 新しい：+page.jsでcsr/ssrオプション
+export const csr = false;
+export const ssr = true;
+```
+
+##### 11. prefetch属性
+```svelte
+<!-- ❌ 古い：sveltekit:prefetch -->
+<a href="/about" sveltekit:prefetch>About</a>
+
+<!-- ✅ 新しい：data-sveltekit-prefetch -->
+<a href="/about" data-sveltekit-preload-data>About</a>
+```
+
+##### 12. $app/pathsの使い方
+```typescript
+// ❌ 古い：assetsとbase を個別に使用
+import { assets, base } from '$app/paths';
+const imagePath = `${assets}/images/logo.png`;
+
+// ✅ 新しい：base のみ、またはresolveRoute
+import { base } from '$app/paths';
+import { resolveRoute } from '$app/paths';
+const aboutUrl = resolveRoute('/about');
+```
+
+#### SvelteKit 2.x 推奨パターン
+
+1. **型安全性を重視** - `./$types`から自動生成される型を使用
+2. **明示的なエラー/リダイレクト** - `error()`、`redirect()`関数を使用
+3. **シンプルなデータフロー** - load関数は直接データを返す
+4. **標準的なWeb API** - Response、Request、Headers等を使用
+5. **Progressive Enhancement** - form actionsとuse:enhanceの活用
 
 #### 具体的な移行例
 

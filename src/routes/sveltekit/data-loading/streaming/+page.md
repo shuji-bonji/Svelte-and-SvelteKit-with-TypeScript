@@ -839,11 +839,10 @@ export const load: PageServerLoad = async () => {
 2. **メモリリーク**
    ```svelte
    <script lang="ts">
-     import { onMount } from 'svelte';
-
      let abortController: AbortController;
 
-     onMount(() => {
+     // Svelte 5: $effectを使用
+     $effect(() => {
        abortController = new AbortController();
        return () => abortController.abort();
      });

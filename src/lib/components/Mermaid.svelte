@@ -14,6 +14,8 @@
   let container: HTMLDivElement;
   let mermaidLoaded = $state(false);
   
+  // 動的インポートと初回のみのDOM操作のためonMountを使用
+  // $effectでは依存値の変更で再実行されるため不適切
   onMount(() => {
     const loadMermaid = async () => {
       // Mermaidを動的にインポート（クライアントサイドのみ）

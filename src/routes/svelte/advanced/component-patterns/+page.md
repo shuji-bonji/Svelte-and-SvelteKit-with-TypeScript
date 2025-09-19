@@ -14,12 +14,12 @@ graph TD
     B --> E[children: Snippet]
     B --> F[...restProps]
     
-    style A fill:#e0f2fe
-    style B fill:#dbeafe
-    style C fill:#f0f9ff
-    style D fill:#f0f9ff
-    style E fill:#f0f9ff
-    style F fill:#f0f9ff
+    style A fill:#e0f2fe,color:black
+    style B fill:#dbeafe,color:black
+    style C fill:#f0f9ff,color:black
+    style D fill:#f0f9ff,color:black
+    style E fill:#f0f9ff,color:black
+    style F fill:#f0f9ff,color:black
 `;
 
   const SlotsPattern = `
@@ -32,13 +32,13 @@ graph TB
     C --> F[card-body]
     D --> G[card-footer]
     
-    style A fill:#fef3c7
-    style B fill:#fef9c3
-    style C fill:#fef9c3
-    style D fill:#fef9c3
-    style E fill:#fffbeb
-    style F fill:#fffbeb
-    style G fill:#fffbeb
+    style A fill:#fef3c7,color:black
+    style B fill:#fef9c3,color:black
+    style C fill:#fef9c3,color:black
+    style D fill:#fef9c3,color:black
+    style E fill:#fffbeb,color:black
+    style F fill:#fffbeb,color:black
+    style G fill:#fffbeb,color:black
 `;
 
   const BindablePattern = `
@@ -49,10 +49,10 @@ graph LR
     D -->|変更| C
     C -->|同期| A
     
-    style A fill:#dcfce7
-    style B fill:#ecfccb
-    style C fill:#f7fee7
-    style D fill:#fef9c3
+    style A fill:#dcfce7,color:black
+    style B fill:#ecfccb,color:black
+    style C fill:#f7fee7,color:black
+    style D fill:#fef9c3,color:black
 `;
 
   const CompoundPattern = `
@@ -69,13 +69,13 @@ graph TD
     D --> I[activeTab状態]
     E --> J[条件付きレンダリング]
     
-    style A fill:#ede9fe
-    style B fill:#f3e8ff
-    style C fill:#faf5ff
-    style D fill:#faf5ff
-    style E fill:#faf5ff
-    style I fill:#fdf4ff
-    style J fill:#fdf4ff
+    style A fill:#ede9fe,color:black
+    style B fill:#f3e8ff,color:black
+    style C fill:#faf5ff,color:black
+    style D fill:#faf5ff,color:black
+    style E fill:#faf5ff,color:black
+    style I fill:#fdf4ff,color:black
+    style J fill:#fdf4ff,color:black
 `;
 
   const SnippetPropsPattern = `
@@ -90,12 +90,12 @@ graph TD
     C --> G[親が定義]
     G --> H[表示ロジック制御]
     
-    style A fill:#fee2e2
-    style B fill:#fecaca
-    style C fill:#fecaca
-    style D fill:#fef2f2
-    style E fill:#fef2f2
-    style F fill:#fff5f5
+    style A fill:#fee2e2,color:black
+    style B fill:#fecaca,color:black
+    style C fill:#fecaca,color:black
+    style D fill:#fef2f2,color:black
+    style E fill:#fef2f2,color:black
+    style F fill:#fff5f5,color:black
 `;
 
   const HOCPattern = `
@@ -111,13 +111,13 @@ graph TD
     C --> H[保護されたコンテンツ]
     D --> I[ログイン画面]
     
-    style A fill:#e0e7ff
-    style B fill:#eef2ff
-    style C fill:#f0f4ff
-    style D fill:#f0f4ff
-    style E fill:#f5f7ff
-    style H fill:#fafbff
-    style I fill:#fafbff
+    style A fill:#e0e7ff,color:black
+    style B fill:#eef2ff,color:black
+    style C fill:#f0f4ff,color:black
+    style D fill:#f0f4ff,color:black
+    style E fill:#f5f7ff,color:black
+    style H fill:#fafbff,color:black
+    style I fill:#fafbff,color:black
 `;
 
   const EventPattern = `
@@ -135,12 +135,12 @@ graph TD
     I[クリアボタン] --> J[handleClear]
     J --> D
     
-    style A fill:#fef3c7
-    style B fill:#fef9c3
-    style C fill:#fffbeb
-    style D fill:#fffbeb
-    style E fill:#ecfccb
-    style F fill:#ecfccb
+    style A fill:#fef3c7,color:black
+    style B fill:#fef9c3,color:black
+    style C fill:#fffbeb,color:black
+    style D fill:#fffbeb,color:black
+    style E fill:#ecfccb,color:black
+    style F fill:#ecfccb,color:black
 `;
 </script>
 

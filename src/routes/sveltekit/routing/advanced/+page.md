@@ -303,7 +303,7 @@ JavaScriptコードから直接ページ遷移を制御する機能です。ユ�
   }
 </script>
 
-<form on:submit={handleSubmit}>
+<form onsubmit={handleSubmit}>
   <!-- フォーム内容 -->
 </form>
 ```

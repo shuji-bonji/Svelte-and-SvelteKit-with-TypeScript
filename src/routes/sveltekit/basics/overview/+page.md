@@ -535,7 +535,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
   <h2>APIルートのデモ</h2>
   
   <!-- 投稿作成フォーム -->
-  <form on:submit|preventDefault={createPost}>
+  <form onsubmit={(e) => { e.preventDefault(); createPost(); }}>
     <input
       bind:value={newPost.title}
       placeholder="タイトル"
@@ -557,7 +557,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
       <article>
         <h3>{post.title}</h3>
         <p>{post.content}</p>
-        <button on:click={() => deletePost(post.id)}>
+        <button onclick={() => deletePost(post.id)}>
           削除
         </button>
       </article>

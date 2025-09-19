@@ -844,7 +844,7 @@ export const actions = {
   }
 </script>
 
-<button on:click={handleChunkedUpload}>
+<button onclick={handleChunkedUpload}>
   チャンク分割でアップロード（推奨）
 </button>
 ```
@@ -889,7 +889,7 @@ export const actions = {
   }
 </script>
 
-<form on:submit|preventDefault={handleUpload}>
+<form onsubmit={(e) => { e.preventDefault(); handleUpload(); }}
   <input 
     type="file" 
     bind:this={fileInput}
@@ -1376,13 +1376,13 @@ export function createFormStore<T extends Record<string, any>>(
     
     <div class="buttons">
       {#if currentStep > 1}
-        <button type="button" on:click={prevStep}>
+        <button type="button" onclick={prevStep}>
           戻る
         </button>
       {/if}
       
       {#if currentStep < totalSteps}
-        <button type="button" on:click={nextStep}>
+        <button type="button" onclick={nextStep}>
           次へ
         </button>
       {:else}

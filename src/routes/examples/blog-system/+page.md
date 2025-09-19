@@ -4,7 +4,7 @@ description: Svelte 5とSvelteKitでTypeScriptを使った最小構成のブロ�
 ---
 
 <script>
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
 </script>
 
 Svelte 5とSvelteKitを使用した、実践的なブログシステムの最小構成実装例です。ルーティング、レイアウト、動的ルート、データ取得など、実際の開発で必要な機能を網羅しています。
@@ -30,15 +30,15 @@ Svelte 5とSvelteKitを使用した、実践的なブログシステムの最小
   <!-- スクリーンショット表示 -->
   <div class="relative overflow-hidden rounded-xl shadow-2xl">
     <!-- ライトモード画像（html.darkクラスがない場合に表示） -->
-    <img 
-      src="{base}/images/examples/blog-example-light.png" 
-      alt="Blog - ライトモード" 
+    <img
+      src="{resolve('/images/examples/blog-example-light.png')}"
+      alt="Blog - ライトモード"
       class="w-full transition-opacity duration-300 block dark:hidden"
     >
     <!-- ダークモード画像（html.darkクラスがある場合に表示） -->
-    <img 
-      src="{base}/images/examples/blog-example-dark.png" 
-      alt="Blog - ダークモード" 
+    <img
+      src="{resolve('/images/examples/blog-example-dark.png')}"
+      alt="Blog - ダークモード"
       class="w-full transition-opacity duration-300 hidden dark:block"
     >
   </div>
@@ -185,7 +185,7 @@ export function getAllTags(): string[] {
 <!-- src/lib/components/Navigation.svelte -->
 <script lang="ts">
   import { page } from '$app/stores';
-  import { base, resolveRoute } from '$app/paths';
+  import { base, resolve } from '$app/paths';
 
   type NavItem = {
     href: string;
@@ -212,11 +212,11 @@ export function getAllTags(): string[] {
     return false;
   }
 
-  // resolveRouteを使用してナビゲーションURLを解決
-  const homeUrl = resolveRoute('/');
+  // resolveを使用してナビゲーションURLを解決
+  const homeUrl = resolve('/');
   const navUrls = $derived(navItems.map(item => ({
     ...item,
-    resolvedUrl: resolveRoute(item.href)
+    resolvedUrl: resolve(item.href)
   })));
 </script>
 
@@ -291,7 +291,7 @@ export function getAllTags(): string[] {
 <!-- src/lib/components/ArticleCard.svelte -->
 <script lang="ts">
   import type { ArticleMeta } from '$lib/types/blog';
-  import { resolveRoute } from '$app/paths';
+  import { resolve } from '$app/paths';
 
   let { article }: { article: ArticleMeta } = $props();
 
@@ -304,8 +304,8 @@ export function getAllTags(): string[] {
     });
   }
 
-  // resolveRouteを使用して記事URLを解決
-  const articleUrl = $derived(resolveRoute(`/blog/${article.slug}`));
+  // resolveを使用して記事URLを解決
+  const articleUrl = $derived(resolve(`/blog/${article.slug}`));
 </script>
 
 <article class="card">
@@ -448,13 +448,13 @@ export function getAllTags(): string[] {
 <script lang="ts">
   import { getArticles } from '$lib/data/articles';
   import ArticleCard from '$lib/components/ArticleCard.svelte';
-  import { resolveRoute } from '$app/paths';
+  import { resolve } from '$app/paths';
 
   // Svelte 5の$derivedを使用して最新記事を取得
   const recentArticles = $derived(getArticles().slice(0, 3));
 
-  // resolveRouteを使用してURLを解決
-  const blogUrl = resolveRoute('/blog');
+  // resolveを使用してURLを解決
+  const blogUrl = resolve('/blog');
 </script>
 
 <div class="home">
@@ -590,9 +590,10 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
 <script lang="ts">
   import type { PageData } from './$types';
   import { marked } from 'marked'; // npm install marked
-  
+  import { resolve } from '$app/paths';
+
   let { data }: { data: PageData } = $props();
-  
+
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('ja-JP', {
@@ -601,7 +602,7 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
       day: 'numeric'
     });
   }
-  
+
   // Markdownをレンダリング（実際はより安全な処理が必要）
   let htmlContent = $derived(marked(data.article.content));
 </script>
@@ -616,7 +617,7 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
     </div>
     <div class="tags">
       {#each data.article.tags as tag}
-        <a href="/blog?tag={tag}" class="tag">{tag}</a>
+        <a href="{resolve('/blog')}?tag={tag}" class="tag">{tag}</a>
       {/each}
     </div>
   </header>
@@ -627,7 +628,7 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
   </div>
   
   <footer>
-    <a href="/blog">← ブログ一覧に戻る</a>
+    <a href={resolve('/blog')}>← ブログ一覧に戻る</a>
   </footer>
 </article>
 

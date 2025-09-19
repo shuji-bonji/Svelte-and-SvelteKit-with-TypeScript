@@ -4,7 +4,7 @@ description: Svelte 5とSvelteKitでMarkdownファイルから記事を自動生
 ---
 
 <script>
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
 </script>
 
 Markdownファイルで記事を管理し、全文検索とタグフィルタリングを実装した、開発者のための本格的なブログシステムです。
@@ -30,7 +30,7 @@ Markdownファイルで記事を管理し、全文検索とタグフィルタリ
   <!-- スクリーンショット表示 -->
   <div class="relative overflow-hidden rounded-xl shadow-2xl">
     <img 
-      src="{base}/images/examples/blog-markdown.png" 
+      src={resolve('/images/examples/blog-markdown.png')} 
       alt="TODOアプリ - ライトモード" 
       class="w-full transition-opacity duration-300 block"
     >

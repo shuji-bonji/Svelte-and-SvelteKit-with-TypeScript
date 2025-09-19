@@ -573,7 +573,7 @@ src/routes/
 <script lang="ts">
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import { resolveRoute } from '$app/paths';
+  import { resolve } from '$app/paths';
   import type { Snippet } from 'svelte';
 
   let { children }: { children?: Snippet } = $props();
@@ -581,8 +581,8 @@ src/routes/
   // すでにログイン済みの場合はダッシュボードへリダイレクト
   $effect(() => {
     if ($page.data.user) {
-      // resolveRouteを使用してbase pathを考慮
-      goto(resolveRoute('/dashboard'));
+      // resolveを使用してbase pathを考慮
+      goto(resolve('/dashboard'));
     }
   });
 </script>
@@ -926,7 +926,7 @@ export function rateLimiter(
       
       if (result.type === 'success') {
         await applyAction(result);
-        goto(resolveRoute('/dashboard'));
+        goto(resolve('/dashboard'));
       } else if (result.type === 'failure') {
         error = result.data?.error || 'ログインに失敗しました';
       }
@@ -1013,7 +1013,7 @@ async function refreshAccessToken() {
   }
   
   // リフレッシュ失敗時はログイン画面へ
-  goto(resolveRoute('/login'));
+  goto(resolve('/login'));
   throw new Error('Token refresh failed');
 }
 ```

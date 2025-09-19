@@ -1038,26 +1038,26 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 
 #### SvelteKitでのURL処理ガイドライン
 
-##### `resolveRoute`を使うべき場合：
+##### `resolve`を使うべき場合：
 - **静的なルート名からURLを生成** - ルート名とパラメータから型安全なURLを作成
 - **base pathを考慮したURL生成** - サブディレクトリでホストする場合に必須
-- **リンクのhref属性** - `<a href={resolveRoute('/about')}>` のように使用
-- **プログラマティックナビゲーション** - `goto(resolveRoute('/login'))` のように使用
+- **リンクのhref属性** - `<a href={resolve('/about')}>` のように使用
+- **プログラマティックナビゲーション** - `goto(resolve('/login'))` のように使用
 
 ##### 正しいURL処理の例：
 ```typescript
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { goto } from '$app/navigation';
 
 // ✅ 良い例：静的ルートの場合
-const aboutUrl = resolveRoute('/about');
-const loginUrl = resolveRoute('/login');
+const aboutUrl = resolve('/about');
+const loginUrl = resolve('/login');
 
 // ナビゲーション
-await goto(resolveRoute('/dashboard'));
+await goto(resolve('/dashboard'));
 
 // リンク生成
-<a href={resolveRoute('/products')}>商品一覧</a>
+<a href={resolve('/products')}>商品一覧</a>
 
 // ❌ 悪い例：ハードコードされたパス
 await goto('/dashboard');  // base pathが考慮されない
@@ -1085,7 +1085,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 ```
 
 **注意**:
-- `resolveRoute`は SvelteKit 2.0以降で利用可能
+- `resolve`は SvelteKit の最新バージョンで利用可能（`resolveRoute`は非推奨）
 - 古いバージョンでは`base`を手動で結合する必要がある
 - 外部URLへのナビゲーションはそのまま`goto('https://example.com')`でOK
 
@@ -1265,10 +1265,10 @@ export const ssr = true;
 import { assets, base } from '$app/paths';
 const imagePath = `${assets}/images/logo.png`;
 
-// ✅ 新しい：base のみ、またはresolveRoute
+// ✅ 新しい：base のみ、またはresolve
 import { base } from '$app/paths';
-import { resolveRoute } from '$app/paths';
-const aboutUrl = resolveRoute('/about');
+import { resolve } from '$app/paths';
+const aboutUrl = resolve('/about');
 ```
 
 #### SvelteKit 2.x 推奨パターン
@@ -1518,6 +1518,27 @@ https://github.com/shuji-bonji/svelte5-blog-markdown
 - 読了時間計算
 - TypeScript完全統合
 
+### TODOアプリ実装例
+
+#### 1. **TODOマネージャー** - `svelte5-todo-example` ✅完成
+```
+https://github.com/shuji-bonji/svelte5-todo-example
+```
+- **目的**: Svelte 5 Runesシステムの完全理解
+- **実装**: クライアントサイドTODOアプリ
+- **技術**: Svelte 5 Runes（$state、$derived、$effect）、TypeScript
+- **デプロイ**: なし（ローカル実行）
+- **学習サイト記事**: [TODOアプリ](/examples/todo-app/)
+
+**特徴**：
+- Svelte 5 Runesシステムの完全活用
+- `.svelte.ts`によるストア実装
+- GitHub風のモダンなUI/UXデザイン
+- ダークモード対応（システムテーマ検出）
+- LocalStorage永続化
+- フィルタリング機能（全て/アクティブ/完了）
+- TypeScript完全対応
+
 #### 3. **CMS統合版** - `svelte5-blog-cms`（構想）
 ```
 github.com/shuji-bonji/svelte5-blog-cms
@@ -1555,15 +1576,15 @@ github.com/shuji-bonji/svelte5-blog-production
 
 ### 認証システム実装例
 
-#### 1. **Cookie/Session認証** - `svelte5-auth-cookie-session` ✅完成
+#### 1. **Cookie/Session認証** - `svelte5-auth-basic` ✅完成
 ```
-https://github.com/shuji-bonji/svelte5-auth-cookie-session
+https://github.com/shuji-bonji/svelte5-auth-basic
 ```
 - **目的**: 認証の基礎を学ぶ
 - **実装**: Cookie + Session認証
 - **DB**: SQLite（Prisma）
 - **デプロイ**: Vercel
-- **デモ**: https://svelte5-auth-cookie-session.vercel.app/
+- **デモ**: https://svelte5-auth-basic.vercel.app/
 - **学習サイト記事**: [Cookie/Session認証](/examples/auth-cookie-session/)
 
 **特徴**：
@@ -1669,8 +1690,9 @@ github.com/shuji-bonji/svelte5-blog-auth
 
 1. ✅ **完成**: `svelte5-blog-example`（基礎版ブログ）
 2. ✅ **完成**: `svelte5-blog-markdown`（Markdown版ブログ）
-3. ✅ **完成**: `svelte5-auth-cookie-session`（Cookie/Session認証）
-4. ✅ **完成**: `svelte5-auth-jwt`（JWT認証）
+3. ✅ **完成**: `svelte5-todo-example`（TODOマネージャー）
+4. ✅ **完成**: `svelte5-auth-basic`（Cookie/Session認証）
+5. ✅ **完成**: `svelte5-auth-jwt`（JWT認証）
 5. 🚧 **開発中**: `svelte5-auth-route-groups`（ルートグループ認証）
 6. 📋 **計画中**: `svelte5-blog-auth`（ブログ + 認証統合）
 7. 📋 **構想**: その他の実装例（CMS統合、プロダクション版）

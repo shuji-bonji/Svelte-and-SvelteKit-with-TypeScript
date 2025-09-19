@@ -384,11 +384,11 @@ export function createUserStore() {
 ```svelte
 <script lang="ts">
   import { createUserStore } from './userStore.svelte';
-  import { onMount } from 'svelte';
-  
+
   const userStore = createUserStore();
-  
-  onMount(() => {
+
+  // 初回マウント時にユーザーデータを取得
+  $effect(() => {
     userStore.fetchUser('123');
   });
 </script>

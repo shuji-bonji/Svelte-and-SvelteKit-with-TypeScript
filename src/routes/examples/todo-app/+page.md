@@ -4,12 +4,12 @@ description: Svelte5とTypeScriptで作るTODOアプリ完全実装ガイド。$
 ---
 <script>
   import { base } from '$app/paths';
-  import { onMount } from 'svelte';
-  
+
   // html.darkクラスの存在をチェックして初期値を設定
   let htmlHasDarkClass = $state(false);
-  
-  onMount(() => {
+
+  // DOMの準備ができたらダークモードの状態を確認
+  $effect(() => {
     htmlHasDarkClass = document.documentElement.classList.contains('dark');
   });
 </script>

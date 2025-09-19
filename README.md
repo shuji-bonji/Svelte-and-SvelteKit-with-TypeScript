@@ -363,5 +363,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年9月16日 - README.md構成を最新のサイドバー構造に同期、実装例プロジェクト（ブログ・認証システム）の追加、単一情報源管理（sidebar.ts）への移行を反映
+**Last Updated**: 2025年9月19日 - レガシーSvelteコードの更新完了。onMountなどのライフサイクル関数を$effectに置き換え、CLAUDE.mdに避けるべきレガシー構文のガイドラインを追加
 

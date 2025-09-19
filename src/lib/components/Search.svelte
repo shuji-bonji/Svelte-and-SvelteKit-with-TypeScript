@@ -197,9 +197,11 @@
 		}
 	}
 
+	// グローバルイベントリスナーの初回登録のためonMountを使用
+	// $effectではbaseの変更などで再実行されるため不適切
 	onMount(() => {
 		document.addEventListener('keydown', handleKeydown);
-		
+
 		// デバッグ情報
 		console.log('Search component mounted');
 		console.log('Current URL:', window.location.href);

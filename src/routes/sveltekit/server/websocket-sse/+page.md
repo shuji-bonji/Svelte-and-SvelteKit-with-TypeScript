@@ -68,35 +68,34 @@ export const GET: RequestHandler = async ({ request }) => {
 #### クライアント側 (+page.svelte)
 ```svelte
 <script lang="ts">
-  import { onMount } from 'svelte';
-  
   type EventData = {
     type: string;
     timestamp: number;
     value?: number;
   };
-  
+
   let events = $state<EventData[]>([]);
   let eventSource: EventSource | null = null;
-  
-  onMount(() => {
+
+  // EventSourceの初期化とクリーンアップ
+  $effect(() => {
     eventSource = new EventSource('/api/events');
-    
+
     eventSource.onmessage = (event) => {
       const data: EventData = JSON.parse(event.data);
       events = [...events, data];
-      
+
       // 最新10件のみ保持
       if (events.length > 10) {
         events = events.slice(-10);
       }
     };
-    
+
     eventSource.onerror = (error) => {
       console.error('SSE error:', error);
       eventSource?.close();
     };
-    
+
     return () => {
       eventSource?.close();
     };
@@ -170,44 +169,43 @@ export default defineConfig({
 #### クライアント側の実装
 ```svelte
 <script lang="ts">
-  import { onMount } from 'svelte';
-  
   type Message = {
     id: string;
     user: string;
     text: string;
     timestamp: number;
   };
-  
+
   let messages = $state<Message[]>([]);
   let inputText = $state('');
   let username = $state('User' + Math.floor(Math.random() * 1000));
   let ws: WebSocket | null = null;
   let connected = $state(false);
-  
-  onMount(() => {
+
+  // WebSocketの初期化とクリーンアップ
+  $effect(() => {
     ws = new WebSocket('ws://localhost:5174');
-    
+
     ws.onopen = () => {
       connected = true;
       console.log('WebSocket connected');
     };
-    
+
     ws.onmessage = (event) => {
       const message: Message = JSON.parse(event.data);
       messages = [...messages, message];
     };
-    
+
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);
       connected = false;
     };
-    
+
     ws.onclose = () => {
       connected = false;
       console.log('WebSocket disconnected');
     };
-    
+
     return () => {
       ws?.close();
     };
@@ -340,29 +338,29 @@ function socketIOPlugin() {
 #### クライアント側の実装
 ```svelte
 <script lang="ts">
-  import { onMount } from 'svelte';
   import io from 'socket.io-client';
-  
+
   let socket: ReturnType<typeof io>;
   let currentRoom = $state('general');
   let rooms = $state(['general', 'tech', 'random']);
-  
-  onMount(() => {
+
+  // Socket.IOの初期化とクリーンアップ
+  $effect(() => {
     socket = io('http://localhost:5174');
-    
+
     socket.on('connect', () => {
       console.log('Connected to Socket.IO');
       socket.emit('join-room', currentRoom);
     });
-    
+
     socket.on('message', (data) => {
       // メッセージ処理
     });
-    
+
     socket.on('user-joined', (userId) => {
       console.log('User joined:', userId);
     });
-    
+
     return () => {
       socket.disconnect();
     };

@@ -3,7 +3,7 @@
   import { base } from '$app/paths';
   import Search from '$lib/components/Search.svelte';
   import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
-  import { onMount } from 'svelte';
+  // Svelte 5: onMountは不要（$effectを使用）
 
   const { children } = $props();
   
@@ -23,9 +23,9 @@
   const showSearch = $derived($page.url.pathname !== '/search');
   let mounted = $state(false);
 
-  onMount(() => {
+  $effect(() => {
     mounted = true;
-    
+
     // サイドバーの自動スクロール機能
     function scrollToActiveSection() {
       setTimeout(() => {

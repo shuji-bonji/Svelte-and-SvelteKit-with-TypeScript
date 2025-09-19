@@ -32,10 +32,18 @@
    - 全文検索、タグクラウド、読了時間計算機能付き
    - [デモサイト](https://shuji-bonji.github.io/svelte5-blog-markdown/)
 
+### TODOアプリ実装例
+1. **TODOマネージャー** - [svelte5-todo-example](https://github.com/shuji-bonji/svelte5-todo-example) ✅完成
+   - Svelte 5 Runesシステムを使用した完全なTODOアプリ
+   - GitHub風のモダンなUI/UXデザイン
+   - ダークモード対応、LocalStorage永続化
+   - フィルタリング（全て/アクティブ/完了）機能
+
 ### 認証システム実装例
-1. **基本認証** - [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic) 🚧開発中
+1. **基本認証** - [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic) ✅完成
    - Cookie + Session認証の基礎
    - SQLite（Prisma）を使用したユーザー管理
+   - [デモサイト](https://svelte5-auth-basic.vercel.app/)
 
 これらのプロジェクトは本ドキュメントの学習内容と連動し、実際に動作するコードとして提供されています。
 
@@ -363,5 +371,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年9月19日 - レガシーSvelteコードの更新完了。onMountなどのライフサイクル関数を$effectに置き換え、CLAUDE.mdに避けるべきレガシー構文のガイドラインを追加
+**Last Updated**: 2025年9月20日 - 実装例プロジェクトの最新化完了。`resolveRoute`を`resolve`に移行、svelte5-todo-exampleプロジェクトの追加
 

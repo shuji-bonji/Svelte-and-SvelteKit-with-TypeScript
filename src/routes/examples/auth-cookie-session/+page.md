@@ -4,7 +4,7 @@ description: SvelteKit 2.xとTypeScriptで実装するCookie/Sessionベースの
 ---
 
 <script>
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
   // Mermaidチャート定義
@@ -142,13 +142,13 @@ SvelteKit 2.xとTypeScriptを使用した、実践的なCookie/Sessionベース�
   <div class="relative overflow-hidden rounded-xl shadow-2xl">
     <!-- ライトモード画像（html.darkクラスがない場合に表示） -->
     <img 
-      src="{base}/images/examples/auth-basic.vercel.app-light.png" 
+      src={resolve('/images/examples/auth-basic.vercel.app-light.png')} 
       alt="認証システム - ライトモード" 
       class="w-full transition-opacity duration-300 block dark:hidden"
     >
     <!-- ダークモード画像（html.darkクラスがある場合に表示） -->
     <img 
-      src="{base}/images/examples/auth-basic.vercel.app-dark.png" 
+      src={resolve('/images/examples/auth-basic.vercel.app-dark.png')} 
       alt="認証システム - ダークモード" 
       class="w-full transition-opacity duration-300 hidden dark:block"
     >

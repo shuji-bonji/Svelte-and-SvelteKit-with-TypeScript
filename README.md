@@ -10,7 +10,7 @@
 [![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff)](https://claude.ai)
 
 
-日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。実際に動作するAPI連携例（JSONPlaceholder、GitHub Search API）を含む実践的な内容。Load関数のデータフローや実行環境別アーキテクチャ（SSR/SSG/SPA）についても詳細に解説。
+日本語によるTypeScript中心のSvelte 5/SvelteKit完全マスター学習コンテンツです。最新のSvelte 5 Runesシステムを使用し、Mermaidダイアグラムによる視覚的な解説も充実。実際に動作するAPI連携例（JSONPlaceholder、GitHub Search API）を含む実践的な内容。Load関数のデータフローや実行環境別アーキテクチャ（SSR/SSG/SPA）についても詳細に解説。フォーム処理のActions実行フローもシーケンス図とフローチャートで完全可視化。
 
 🌐 **公開サイト**: [https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)
 
@@ -51,7 +51,7 @@
 
 - 🎯 **TypeScript中心** - すべてのコード例でTypeScriptを使用
 - 🚀 **Svelte 5対応** - 最新のRunesシステムを完全網羅（`$derived.by()`など最新構文）
-- 📊 **Mermaidダイアグラム** - Load関数のデータフロー、実行順序を視覚的に解説
+- 📊 **Mermaidダイアグラム** - Load関数、Actions、フォーム処理の実行フローを視覚的に解説
 - 📖 **日本語** - 日本語による詳細な解説
 - 💡 **実践的** - Universal LoadとServer Loadの使い分けを具体例で解説
 - 🌙 **ダークモード対応** - テーマ切り替えに完全対応
@@ -134,7 +134,12 @@
 - ルーティング内部動作
 
 ### 1️⃣1️⃣ SvelteKitサーバーサイド編
-- フォーム処理とActions
+- フォーム処理とActions（✨ 実行フロー図を大幅拡充）
+  - Actions実行タイミングのシーケンス図
+  - Named Actions（複数Actions）のフロー
+  - use:enhanceライフサイクル図
+  - バリデーションフロー図
+  - ファイルアップロードフロー図
 - WebSocket/SSE
 - サーバーサイド処理（準備中）
 - APIルート設計（準備中）

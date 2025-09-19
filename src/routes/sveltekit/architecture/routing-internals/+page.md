@@ -623,7 +623,7 @@ export const match = ((param) => {
 {:else if status === 500}
   <h1>サーバーエラー</h1>
   <p>{error?.message}</p>
-  <button on:click={retry}>再試行</button>
+  <button onclick={retry}>再試行</button>
 {:else}
   <h1>エラー {status}</h1>
   <p>{error?.message}</p>

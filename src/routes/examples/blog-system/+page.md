@@ -185,37 +185,49 @@ export function getAllTags(): string[] {
 <!-- src/lib/components/Navigation.svelte -->
 <script lang="ts">
   import { page } from '$app/stores';
-  
+  import { base, resolveRoute } from '$app/paths';
+
   type NavItem = {
     href: string;
     label: string;
     matchPath?: string;
   };
-  
+
   const navItems: NavItem[] = [
     { href: '/', label: 'ホーム' },
     { href: '/blog', label: 'ブログ', matchPath: '/blog' },
     { href: '/about', label: 'About' }
   ];
-  
+
   let currentPath = $derived($page.url.pathname);
-  
+
   function isActive(item: NavItem): boolean {
-    if (item.href === '/') {
-      return currentPath === '/';
+    const path = currentPath.replace(base, '') || '/';
+    if (item.href === '/' && path === '/') {
+      return true;
     }
-    return currentPath.startsWith(item.matchPath || item.href);
+    if (item.href !== '/' && path.startsWith(item.matchPath || item.href)) {
+      return true;
+    }
+    return false;
   }
+
+  // resolveRouteを使用してナビゲーションURLを解決
+  const homeUrl = resolveRoute('/');
+  const navUrls = $derived(navItems.map(item => ({
+    ...item,
+    resolvedUrl: resolveRoute(item.href)
+  })));
 </script>
 
 <nav class="navbar">
   <div class="nav-container">
-    <a href="/" class="logo">My Blog</a>
+    <a href={homeUrl} class="logo">My Blog</a>
     <ul class="nav-menu">
-      {#each navItems as item}
+      {#each navUrls as item}
         <li>
-          <a 
-            href={item.href}
+          <a
+            href={item.resolvedUrl}
             class:active={isActive(item)}
             aria-current={isActive(item) ? 'page' : undefined}
           >
@@ -279,9 +291,10 @@ export function getAllTags(): string[] {
 <!-- src/lib/components/ArticleCard.svelte -->
 <script lang="ts">
   import type { ArticleMeta } from '$lib/types/blog';
-  
+  import { resolveRoute } from '$app/paths';
+
   let { article }: { article: ArticleMeta } = $props();
-  
+
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('ja-JP', {
@@ -290,10 +303,13 @@ export function getAllTags(): string[] {
       day: 'numeric'
     });
   }
+
+  // resolveRouteを使用して記事URLを解決
+  const articleUrl = $derived(resolveRoute(`/blog/${article.slug}`));
 </script>
 
 <article class="card">
-  <a href="/blog/{article.slug}" class="card-link">
+  <a href={articleUrl} class="card-link">
     <h2>{article.title}</h2>
     <p class="description">{article.description}</p>
     <div class="meta">
@@ -432,8 +448,13 @@ export function getAllTags(): string[] {
 <script lang="ts">
   import { getArticles } from '$lib/data/articles';
   import ArticleCard from '$lib/components/ArticleCard.svelte';
-  
-  const recentArticles = getArticles().slice(0, 3);
+  import { resolveRoute } from '$app/paths';
+
+  // Svelte 5の$derivedを使用して最新記事を取得
+  const recentArticles = $derived(getArticles().slice(0, 3));
+
+  // resolveRouteを使用してURLを解決
+  const blogUrl = resolveRoute('/blog');
 </script>
 
 <div class="home">
@@ -441,7 +462,7 @@ export function getAllTags(): string[] {
     <h1>Welcome to My Blog</h1>
     <p>Svelte 5とSvelteKitで構築された、モダンなブログシステムです。</p>
   </section>
-  
+
   <section class="recent-posts">
     <h2>最新の記事</h2>
     <div class="article-grid">
@@ -449,7 +470,7 @@ export function getAllTags(): string[] {
         <ArticleCard {article} />
       {/each}
     </div>
-    <a href="/blog" class="view-all">すべての記事を見る →</a>
+    <a href={blogUrl} class="view-all">すべての記事を見る →</a>
   </section>
 </div>
 

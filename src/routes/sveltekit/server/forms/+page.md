@@ -3,6 +3,148 @@ title: フォーム処理とActions
 description: SvelteKitのフォーム処理を完全マスター - Actions、Progressive Enhancement、バリデーション、ファイルアップロードまで
 ---
 
+<script>
+  import Mermaid from '$lib/components/Mermaid.svelte';
+
+  const executionFlowDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant SvelteKit as SvelteKit
+    participant Action as Action関数
+    participant Load as Load関数
+
+    Note over User,Browser: JavaScript無効時
+    User->>Browser: フォーム送信
+    Browser->>SvelteKit: POSTリクエスト（全画面遷移）
+    SvelteKit->>Action: Action実行
+    Action-->>SvelteKit: 結果返却
+    SvelteKit->>Load: Load関数実行
+    Load-->>SvelteKit: データ返却
+    SvelteKit->>Browser: HTML全体を返却
+    Browser->>User: ページ全体を再描画
+
+    Note over User,Browser: JavaScript有効時 + use:enhance
+    User->>Browser: フォーム送信
+    Browser->>Browser: use:enhanceが介入
+    Browser->>SvelteKit: fetch API（非同期）
+    SvelteKit->>Action: Action実行
+    Action-->>SvelteKit: 結果返却
+    SvelteKit->>Load: Load関数実行（invalidate時）
+    Load-->>SvelteKit: データ返却
+    SvelteKit->>Browser: JSON返却
+    Browser->>Browser: 差分更新
+    Browser->>User: 部分的な再描画`;
+
+  const actionFlowDiagram = `flowchart TB
+    A[POSTリクエスト受信] --> B[Actionが定義されているか]
+    B -->|Yes| C[FormDataを解析]
+    B -->|No| D[405 Method Not Allowed]
+    C --> E[Named Action]
+    E -->|Yes| F[該当するAction関数を実行]
+    E -->|No| G[defaultアクションを実行]
+    F --> H[結果を処理]
+    G --> H
+    H --> I[リダイレクト]
+    I -->|Yes| J[303リダイレクト]
+    I -->|No| K[エラー]
+    K -->|Yes| L[エラーデータと共にページ再描画]
+    K -->|No| M[成功データと共にページ再描画]`;
+
+  const redirectFlowDiagram = `flowchart LR
+    A[Action実行] --> B[成功]
+    B -->|Yes| C[redirect throw]
+    C --> D[303ステータス返却]
+    D --> E[ブラウザがリダイレクト先へ]
+    E --> F[新しいページのload実行]
+    B -->|No| G[エラーデータ返却]
+    G --> H[同じページで再描画]`;
+
+  const namedActionsDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant Server as サーバー
+
+    Note over User: 更新ボタンクリック
+    User->>Browser: form action="?/update"
+    Browser->>Server: POST /posts/123?/update
+    Server->>Server: actions.update実行
+    Server-->>Browser: 成功レスポンス
+    Browser->>User: 更新完了表示
+
+    Note over User: 削除ボタンクリック
+    User->>Browser: form action="?/delete"
+    Browser->>Server: POST /posts/123?/delete
+    Server->>Server: actions.delete実行
+    Server-->>Browser: リダイレクト(303)
+    Browser->>Server: GET /posts
+    Server-->>Browser: 一覧ページ
+    Browser->>User: 一覧ページ表示`;
+
+  const enhanceLifecycleDiagram = `flowchart TB
+    A[フォーム送信イベント] --> B[use:enhance呼び出し]
+    B --> C[送信前処理]
+    C --> D{cancel呼び出し}
+    D -->|Yes| E[処理中止]
+    D -->|No| F[fetchでサーバーへ送信]
+    F --> G[サーバーでAction実行]
+    G --> H[レスポンス受信]
+    H --> I[result処理]
+    I --> J{result.type判定}
+    J -->|success| K[成功処理]
+    J -->|failure| L[エラー処理]
+    J -->|redirect| M[リダイレクト処理]
+    K --> N[update関数呼び出し]
+    L --> N
+    M --> O[ページ遷移]
+    N --> P[DOM更新]
+    P --> Q[処理完了]`;
+
+  const validationFlowDiagram = `flowchart TB
+    A[フォームデータ受信] --> B[基本バリデーション]
+    B --> C{必須項目チェック}
+    C -->|NG| D["fail(400) エラー返却"]
+    C -->|OK| E[型バリデーション]
+    E --> F{型チェック}
+    F -->|NG| D
+    F -->|OK| G[ビジネスルール検証]
+    G --> H{重複チェック等}
+    H -->|NG| D
+    H -->|OK| I[データ処理実行]
+    I --> J{処理結果}
+    J -->|失敗| K["fail(500) サーバーエラー"]
+    J -->|成功| L[成功レスポンス]
+
+    D --> M[フォーム再表示]
+    M --> N[エラーメッセージ表示]
+    M --> O[入力値保持]`;
+
+  const fileUploadFlowDiagram = `sequenceDiagram
+    participant User as ユーザー
+    participant Browser as ブラウザ
+    participant Client as クライアント処理
+    participant Server as サーバー
+    participant Storage as ストレージ
+
+    User->>Browser: ファイル選択
+    Browser->>Client: Fileオブジェクト生成
+
+    Note over Client: プログレス表示開始
+    Client->>Server: FormData送信（XHR）
+
+    loop アップロード中
+        Server-->>Client: プログレスイベント
+        Client-->>Browser: 進捗率更新
+        Browser-->>User: プログレスバー表示
+    end
+
+    Server->>Server: ファイルサイズチェック
+    Server->>Server: ファイルタイプ検証
+    Server->>Storage: ファイル保存
+    Storage-->>Server: 保存完了
+    Server-->>Client: 成功レスポンス（URL含む）
+    Client->>Browser: 画像プレビュー表示
+    Browser->>User: アップロード完了`;
+</script>
 
 SvelteKitのActionsは、プログレッシブエンハンスメントに対応した強力なフォーム処理システムです。JavaScriptが無効でも動作し、有効時にはシームレスな体験を提供します。このガイドでは、基本的なフォーム処理から高度なバリデーション、ファイルアップロードまで、実践的なTypeScriptコード例で完全解説します。
 
@@ -119,9 +261,263 @@ export const actions = {
 </form>
 ```
 
+## Actionsの実行タイミングとフロー
+
+Actionsはサーバーサイドで実行され、以下のような流れで処理が進みます。理解することで、より効果的なフォーム処理の実装が可能になります。
+
+### 実行フローの全体像
+
+<Mermaid diagram={executionFlowDiagram} />
+
+上図は、フォーム送信時の処理フローを示しています。
+
+#### JavaScript無効時の流れ（上段）
+- ブラウザが標準のHTMLフォーム送信を行い、POSTリクエストとして全画面遷移を伴います
+- サーバー側でAction関数が実行され、その後Load関数が実行されます
+- 最終的にHTML全体が返却され、ページ全体が再描画されます
+
+#### JavaScript有効時の流れ（下段）
+- `use:enhance`がフォーム送信をインターセプトし、fetch APIを使用して非同期送信します
+- サーバー側の処理は同じですが、レスポンスはJSONとして返却されます
+- ブラウザ側で差分更新を行い、必要な部分だけを再描画します
+
+### 詳細な実行タイミング
+
+#### 1. リクエスト受信からAction実行まで
+
+<Mermaid diagram={actionFlowDiagram} />
+
+POSTリクエストを受信してからActionが実行されるまでの詳細な判定フローです。
+
+##### 処理の流れ
+1. **Action定義の確認** - 該当ページにActionsが定義されているか確認します
+2. **FormData解析** - リクエストボディからフォームデータを解析します
+3. **Named Action判定** - URLに`?/actionName`が含まれているか確認します
+4. **Action実行** - 該当するAction関数またはdefaultアクションを実行します
+5. **結果処理** - リダイレクト、エラー、成功のいずれかを処理します
+
+#### 2. Actionとload関数の実行順序
+
+Actions実行後のデータフローを理解することが重要です。
+
+```typescript
+// +page.server.ts
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ locals }) => {
+  console.log('1. Load関数が実行されます');
+
+  // 初期データの取得
+  const posts = await getPosts();
+
+  return {
+    posts,
+    timestamp: Date.now() // いつ実行されたか確認用
+  };
+};
+
+export const actions = {
+  create: async ({ request }) => {
+    console.log('2. Action（create）が実行されます');
+
+    const data = await request.formData();
+    const title = data.get('title');
+
+    // 新しい投稿を作成
+    await createPost({ title });
+
+    // 成功を返す
+    // この後、自動的にload関数が再実行される
+    return { success: true };
+  }
+} satisfies Actions;
+```
+
+#### 実行順序
+1. **初回ページ読み込み**: `load` → ページレンダリング
+2. **フォーム送信時**: `action` → `load` → ページ再レンダリング
+3. **use:enhance使用時**: `action` → 必要に応じて`load` → 差分更新
+
+### リダイレクト時の動作
+
+Actionからリダイレクトする場合の処理フローを理解することで、ログイン後の画面遷移などを適切に実装できます。
+
+```typescript
+import { redirect } from '@sveltejs/kit';
+
+export const actions = {
+  login: async ({ request, cookies }) => {
+    // ログイン処理
+    const { email, password } = await getFormData(request);
+    const user = await authenticate(email, password);
+
+    if (user) {
+      // セッション設定
+      cookies.set('session', user.sessionId, { path: '/' });
+
+      // リダイレクト（303 See Other）
+      // この時点でaction処理は終了
+      throw redirect(303, '/dashboard');
+      // ↓ これ以降のコードは実行されない
+    }
+
+    return fail(401, { message: 'Invalid credentials' });
+  }
+} satisfies Actions;
+```
+
+<Mermaid diagram={redirectFlowDiagram} />
+
+#### リダイレクトの仕組み
+- **成功時** - `redirect()`をthrowすることで303ステータスを返却し、ブラウザを新しいページへ遷移させます
+- **エラー時** - エラーデータを返却し、同じページで再描画してエラーメッセージを表示します
+- **重要** - redirectは`throw`で実行するため、それ以降のコードは実行されません
+
+### エラー処理のタイミング
+
+```typescript
+export const actions = {
+  default: async ({ request }) => {
+    try {
+      const data = await request.formData();
+
+      // バリデーションエラー（400番台）
+      if (!data.get('email')) {
+        // failヘルパーを使用
+        return fail(400, {
+          missing: true,
+          message: 'Email is required'
+        });
+      }
+
+      // 処理実行
+      await processData(data);
+
+      return { success: true };
+
+    } catch (error) {
+      // サーバーエラー（500番台）
+      // この場合、エラーページが表示される
+      throw error;
+    }
+  }
+} satisfies Actions;
+```
+
+### use:enhance のライフサイクル
+
+<Mermaid diagram={enhanceLifecycleDiagram} />
+
+`use:enhance`の処理フローを理解することで、柔軟なカスタマイズが可能になります。
+
+#### 各ステージの説明
+1. **送信前処理** - バリデーションやローディング表示を開始
+2. **キャンセル判定** - 条件によって送信を中止可能
+3. **サーバー処理** - Actionが実行され結果を返却
+4. **result判定** - success/failure/redirectを判定して適切に処理
+5. **DOM更新** - update関数でページを更新
+
+```typescript
+use:enhance={({ form, data, action, cancel }) => {
+  // ステップ1: 送信前処理（同期的に実行）
+  console.log('フォーム送信開始');
+
+  // バリデーションやローディング表示
+  const email = data.get('email')?.toString();
+  if (!email?.includes('@')) {
+    alert('メールアドレスが不正です');
+    cancel(); // ステップ2: キャンセル判定
+    return;
+  }
+
+  // ローディング開始
+  submitting = true;
+
+  // ステップ3-7: 非同期処理を返す
+  return async ({ result, update }) => {
+    // ステップ8: レスポンス受信後の処理
+    console.log('サーバーからのレスポンス:', result);
+
+    // ステップ9-10: result.typeの判定と処理
+    if (result.type === 'success') {
+      // 成功時のカスタム処理
+      console.log('処理成功');
+      form.reset(); // フォームをリセット
+    } else if (result.type === 'failure') {
+      // 失敗時のカスタム処理
+      console.log('エラー:', result.data);
+      errors = result.data?.errors || {};
+    } else if (result.type === 'redirect') {
+      // リダイレクト時の処理
+      console.log('リダイレクト先:', result.location);
+      // 通常は自動的に処理される
+    }
+
+    // ステップ11: DOM更新（update関数）
+    await update();
+
+    // ステップ12: DOM更新後の処理
+    submitting = false;
+    console.log('すべての処理完了');
+  };
+}}
+```
+
+### パフォーマンスの考慮事項
+
+#### 並列処理の活用
+
+```typescript
+export const load: PageServerLoad = async ({ parent }) => {
+  // 親のloadを待つ必要がある場合
+  const parentData = await parent();
+
+  // 並列でデータ取得
+  const [posts, categories, tags] = await Promise.all([
+    getPosts(),
+    getCategories(),
+    getTags()
+  ]);
+
+  return {
+    ...parentData,
+    posts,
+    categories,
+    tags
+  };
+};
+```
+
+#### invalidateの最適化
+
+```svelte
+<script lang="ts">
+  import { invalidate, invalidateAll } from '$app/navigation';
+
+  async function handleSubmit() {
+    // 特定のloadだけ再実行
+    await invalidate('app:posts');
+
+    // または全てのloadを再実行
+    // await invalidateAll();
+  }
+</script>
+```
+
 ## 複数のActions
 
 一つのページで複数の異なるアクションを処理する必要がある場合、Named Actions（名前付きアクション）を使用します。これにより、更新、削除、公開など、異なる操作を同じページで実装できます。
+
+### Named Actions の実行フロー
+
+<Mermaid diagram={namedActionsDiagram} />
+
+上図は、同一ページで複数のActionを処理する際のフローを示しています。
+
+#### 処理のポイント
+- **URLパラメータ** - `?/update`や`?/delete`のようにAction名をURLに付与します
+- **適切なAction実行** - URLパラメータに基づいて該当するAction関数を実行します
+- **異なる処理** - 更新はその場で結果表示、削除はリダイレクトなど、柔軟な処理が可能です
 
 ### Named Actions の実装
 
@@ -197,6 +593,18 @@ export const actions = {
 ## 高度なバリデーション
 
 フォームデータの検証は、アプリケーションのセキュリティと信頼性にとって極めて重要です。ここでは、型安全性を保ちながら強力なバリデーションを実装する方法を紹介します。
+
+### バリデーションフロー
+
+<Mermaid diagram={validationFlowDiagram} />
+
+バリデーションは段階的に実施し、各ステップでエラーを検出します。
+
+#### バリデーションの流れ
+1. **必須項目チェック** - 必要なフィールドが存在するか確認
+2. **型バリデーション** - メールアドレス、数値、日付などの形式チェック
+3. **ビジネスルール** - 重複チェック、権限確認など
+4. **エラーハンドリング** - エラー時は入力値を保持して再表示
 
 ### Zodを使った型安全なバリデーション
 
@@ -295,6 +703,18 @@ export function validateForm<T extends Record<string, any>>(
 
 SvelteKitでファイルアップロードを実装する方法を解説します。セキュリティを考慮しながら、画像やドキュメントなどのファイルを安全に処理します。
 
+### ファイルアップロードのフロー
+
+<Mermaid diagram={fileUploadFlowDiagram} />
+
+ファイルアップロードの全体的な流れを示しています。
+
+#### アップロードの特徴
+- **プログレス表示** - XMLHttpRequestを使用してリアルタイムで進捗を表示
+- **サーバー検証** - ファイルサイズとタイプをチェック
+- **ストレージ保存** - ローカルまたはクラウドストレージへ保存
+- **プレビュー表示** - アップロード後に画像を即座に表示
+
 ### 基本的なファイルアップロード
 
 FormDataを使用してファイルを受け取り、サーバーに保存する基本的な実装です。
@@ -345,47 +765,125 @@ export const actions = {
 
 ### プログレス表示付きアップロード
 
-XMLHttpRequestを使用することで、アップロードの進捗状況をリアルタイムで表示できます。大きなファイルをアップロードする際のユーザー体験を向上させます。
+大きなファイルのアップロード時に進捗を表示する方法を2つ紹介します。
+
+#### 方法1: Fetch API + Streams API（モダンな方法）
 
 ```svelte
 <!-- src/routes/upload/+page.svelte -->
 <script lang="ts">
   import type { ActionData } from './$types';
-  
+
   let { form }: { form: ActionData } = $props();
-  
+
   let uploading = $state(false);
   let progress = $state(0);
   let fileInput: HTMLInputElement;
-  
+
   async function handleUpload() {
     const file = fileInput.files?.[0];
     if (!file) return;
-    
+
     uploading = true;
     progress = 0;
-    
+
     const formData = new FormData();
     formData.append('file', file);
-    
+
+    try {
+      // ReadableStreamを使用してアップロード進捗を追跡
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData,
+        // 注意: Fetch APIでのアップロード進捗は限定的
+        // ダウンロード進捗の方が簡単に取得可能
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // 成功処理
+        form = data;
+      }
+    } catch (error) {
+      console.error('アップロードエラー:', error);
+    } finally {
+      uploading = false;
+    }
+  }
+
+  // 代替案: チャンク分割アップロード（より正確な進捗）
+  async function handleChunkedUpload() {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    const chunkSize = 1024 * 1024; // 1MB
+    const totalChunks = Math.ceil(file.size / chunkSize);
+
+    uploading = true;
+
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(start + chunkSize, file.size);
+      const chunk = file.slice(start, end);
+
+      const formData = new FormData();
+      formData.append('chunk', chunk);
+      formData.append('index', i.toString());
+      formData.append('total', totalChunks.toString());
+      formData.append('filename', file.name);
+
+      await fetch('/upload/chunk', {
+        method: 'POST',
+        body: formData
+      });
+
+      progress = Math.round(((i + 1) / totalChunks) * 100);
+    }
+
+    uploading = false;
+  }
+</script>
+
+<button on:click={handleChunkedUpload}>
+  チャンク分割でアップロード（推奨）
+</button>
+```
+
+#### 方法2: XMLHttpRequest（レガシーだが確実）
+
+```svelte
+<script lang="ts">
+  // XMLHttpRequestはアップロード進捗を確実に取得できる
+  // 古い方法だが、プログレス表示には最適
+
+  async function handleUploadXHR() {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    uploading = true;
+    progress = 0;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
     const xhr = new XMLHttpRequest();
-    
-    // プログレスイベント
+
+    // プログレスイベント（これがFetch APIでは難しい）
     xhr.upload.addEventListener('progress', (e) => {
       if (e.lengthComputable) {
         progress = Math.round((e.loaded / e.total) * 100);
       }
     });
-    
+
     // 完了イベント
     xhr.addEventListener('load', () => {
       uploading = false;
       if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
-        // 成功処理
+        form = response;
       }
     });
-    
+
     xhr.open('POST', '/upload');
     xhr.send(formData);
   }
@@ -427,15 +925,42 @@ CSRF（Cross-Site Request Forgery）攻撃から保護するため、トーク�
 
 Hooksを使用してCSRFトークンを生成し、フォーム送信時に検証する実装です。
 
+:::info[resolve関数について]
+`resolve`関数は、SvelteKitのHandleフック内で使用される関数で、**SvelteKitアプリケーション内部のルーティングとリクエスト処理**を実行する役割を持ちます。
+
+```typescript
+// Handleフックの基本構造
+export const handle: Handle = async ({ event, resolve }) => {
+  // リクエスト前の処理（認証、ヘッダー追加など）
+
+  // SvelteKit内部のルーティング処理を実行
+  const response = await resolve(event);
+
+  // レスポンス後の処理（ヘッダー追加、ログなど）
+
+  return response;
+};
+```
+
+`resolve(event)`を呼ぶことで、
+- SvelteKitの**アプリケーション内のルート**（`src/routes`配下）へのルーティング
+- 該当ページの**Load関数やActions**の実行
+- **ページのレンダリング**とレスポンス生成
+
+が行われます。外部サイトへのリクエストではなく、**SvelteKitアプリケーション内部の処理**を指します。
+
+Hooksの詳細については、今後作成予定の[Hooksページ](/sveltekit/server/hooks/)で解説予定です。
+:::
+
 ```typescript
 // src/hooks.server.ts
 import type { Handle } from '@sveltejs/kit';
 import { randomBytes } from 'crypto';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // CSRFトークンの生成
+  // CSRFトークンの生成（リクエスト前の処理）
   let token = event.cookies.get('csrf');
-  
+
   if (!token) {
     token = randomBytes(32).toString('hex');
     event.cookies.set('csrf', token, {
@@ -445,9 +970,10 @@ export const handle: Handle = async ({ event, resolve }) => {
       path: '/'
     });
   }
-  
+
   event.locals.csrf = token;
-  
+
+  // 通常のリクエスト処理を実行
   return resolve(event);
 };
 ```

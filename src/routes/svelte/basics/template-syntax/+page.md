@@ -11,9 +11,11 @@ Svelteのテンプレートは、HTMLをベースに独自の構文を追加し�
 
 ## レンダリングタグ
 
-### @render - Snippetsのレンダリング
+### @render - Snippetsとchildrenのレンダリング
 
-`{@render}`（renderアノテーション）は、[Snippets](/svelte/advanced/snippets/)を呼び出してレンダリングするためのタグです。
+`{@render}`（renderアノテーション）は、[Snippets](/svelte/advanced/snippets/)や`children`を呼び出してレンダリングするためのタグです。
+
+#### 基本的な使い方
 
 ```svelte
 <script lang="ts">
@@ -39,8 +41,104 @@ Svelteのテンプレートは、HTMLをベースに独自の構文を追加し�
 {@render counter?.(count)}
 ```
 
-:::tip[Snippetsの用途]
-Snippetsは、コンポーネント内で再利用可能なテンプレートの断片を定義する機能です。React のレンダープロップやVueのスロットに相当します。
+#### コンポーネントの合成：childrenパターン
+
+:::info[Svelte 5の重要な変更]
+Svelte 5では、コンポーネントの合成方法が`<slot />`から`children`パターンに変更されました。これにより、TypeScriptの型安全性が向上し、より明示的なコードが書けるようになりました。
+:::
+
+##### Svelte 5の新しいパターン
+
+```svelte
+<!-- Card.svelte -->
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+
+  let {
+    title,
+    children
+  }: {
+    title: string;
+    children?: Snippet;
+  } = $props();
+</script>
+
+<div class="card">
+  <h2>{title}</h2>
+  <div class="content">
+    <!-- childrenをレンダリング -->
+    {@render children?.()}
+  </div>
+</div>
+```
+
+##### 親コンポーネントでの使用
+
+```svelte
+<script lang="ts">
+  import Card from './Card.svelte';
+</script>
+
+<Card title="ユーザー情報">
+  <!-- この部分がchildrenとして渡される -->
+  <p>名前: 田中太郎</p>
+  <p>メール: tanaka@example.com</p>
+</Card>
+```
+:::warning[非推奨]
+以下の`<slot />`構文はSvelte 4以前のレガシー構文です。新規プロジェクトではSvelte 5の`children`パターンを使用してください。
+:::
+<Expansion title="レガシー構文：slot（Svelte 4以前）の詳細 👈👈 クリックすると展開されます。">
+
+##### Svelte 4以前の書き方
+
+```svelte
+<!-- Card.svelte (Svelte 4以前) -->
+<script lang="ts">
+  export let title: string;
+</script>
+
+<div class="card">
+  <h2>{title}</h2>
+  <div class="content">
+    <!-- slotで子コンテンツを受け取る -->
+    <slot />
+  </div>
+</div>
+```
+
+##### 名前付きスロット（Svelte 4以前）
+
+```svelte
+<!-- Modal.svelte (Svelte 4以前) -->
+<div class="modal">
+  <div class="modal-header">
+    <slot name="header" />
+  </div>
+  <div class="modal-body">
+    <slot />
+  </div>
+  <div class="modal-footer">
+    <slot name="footer" />
+  </div>
+</div>
+```
+
+##### 移行のポイント
+
+| Svelte 4以前 | Svelte 5 | 説明 |
+|-------------|----------|------|
+| `<slot />` | `{@render children?.()}` | 基本的なスロット |
+| `<slot name="header" />` | `{@render header?.()}` | 名前付きスロット |
+| `<slot>デフォルト</slot>` | 条件分岐で実装 | フォールバック |
+| 暗黙的な受け取り | 明示的なprops定義 | 型安全性の向上 |
+
+</Expansion>
+
+:::tip[Snippetsとchildrenの使い分け]
+- **children**: 親コンポーネントから子コンポーネントにコンテンツを渡す場合
+- **Snippets**: コンポーネント内で再利用可能なテンプレートを定義する場合
+- 両方とも`@render`でレンダリングします
 :::
 
 ### @html - HTML文字列の挿入（インタラクティブデモ）

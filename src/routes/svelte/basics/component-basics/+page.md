@@ -534,6 +534,10 @@ Svelte 5では新しい`$state`ルーンが導入され、リアクティビテ�
 - [$state: リアクティブな状態変数と、バインディングの違い](/deep-dive/reactive-state-variables-vs-bindings/) - `$state`と`bind:`構文の違いと使い分けを解説
 :::
 
+:::info[コンポーネントの合成について]
+Svelte 5では、コンポーネントの合成方法が`<slot />`から`children`パターンに変更されました。`@render`ディレクティブを使用した新しいパターンについて詳しく知りたい場合は、[テンプレート構文 - 特殊タグとアノテーション](/svelte/basics/template-syntax/)ページの「@render - Snippetsとchildrenのレンダリング」セクションを参照してください。
+:::
+
 ## 実践例：TODOアプリケーション
 
 ### 子（部品）コンポーネント（TodoItem.svelte）

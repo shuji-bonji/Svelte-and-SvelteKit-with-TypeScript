@@ -26,7 +26,7 @@
   .lg\:block.w-50 {
     width: 280px !important;
   }
-  
+
   /* pl-50 = padding-left: 200px を 280px に拡張 */
   .lg\:pl-50 {
     padding-left: 280px !important;
@@ -39,7 +39,7 @@
   .lg\:block.w-50 {
     width: 320px !important;
   }
-  
+
   /* コンテンツエリアのパディングも調整 */
   .lg\:pl-50 {
     padding-left: 320px !important;
@@ -52,7 +52,7 @@
   .lg\:block.w-50 {
     width: 350px !important;
   }
-  
+
   /* コンテンツエリアのパディングも調整 */
   .lg\:pl-50 {
     padding-left: 350px !important;
@@ -76,6 +76,33 @@ aside a {
   width: 100%;
 }
 
+/* サイドバーの現在ページインジケーターの修正 */
+/* border-leftがテキストと被る問題を解決 */
+aside .sidebar-item.active,
+aside li.active > a,
+aside a.active,
+aside [aria-current='page'],
+aside .border-l-4,
+aside .border-l-3,
+aside .border-l-2,
+aside [class*='border-l-'] {
+  padding-left: 0.5rem !important; /* border-leftがある場合はパディングを追加 */
+}
+
+/* または、border-leftを完全に無効化（active-iconがあるため不要） */
+/*
+aside .sidebar-item.active,
+aside li.active > a,
+aside a.active,
+aside [aria-current="page"],
+aside .border-l-4,
+aside .border-l-3,
+aside .border-l-2,
+aside [class*="border-l-"] {
+  border-left: none !important;
+}
+*/
+
 /* @media (max-width: 768px) {
   .logo-container .title {
     font-size: 2rem !important;
@@ -97,9 +124,9 @@ aside a {
   }
 }
 
-html[data-theme="dark"],
+html[data-theme='dark'],
 html.dark,
-body[data-theme="dark"],
+body[data-theme='dark'],
 body.dark {
   --shiki-dark-font-style: normal !important;
   --shiki-font-style: normal !important;
@@ -115,22 +142,16 @@ pre code,
 .shiki,
 .shiki code,
 .shiki span {
-  font-family: 
-    'JetBrains Mono',
-    'Fira Code',
-    'Source Code Pro',
-    'SF Mono',
-    Monaco,
-    'Cascadia Code',
-    'Roboto Mono',
-    Menlo,
-    Consolas,
-    'Courier New',
+  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'SF Mono',
+    Monaco, 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, 'Courier New',
     monospace !important;
   font-size: 0.875rem;
-  font-style: var(--shiki-font-style, normal) !important;  /* CSS変数を使用、デフォルトはnormal */
-  font-weight: 400 !important;     /* 通常の太さを強制 */
-  font-variant-ligatures: none;    /* リガチャを無効化（読みやすさ重視） */
+  font-style: var(
+    --shiki-font-style,
+    normal
+  ) !important; /* CSS変数を使用、デフォルトはnormal */
+  font-weight: 400 !important; /* 通常の太さを強制 */
+  font-variant-ligatures: none; /* リガチャを無効化（読みやすさ重視） */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -147,20 +168,11 @@ p code,
 li code,
 td code,
 :not(pre) > code {
-  font-family: 
-    'JetBrains Mono',
-    'Fira Code',
-    'Source Code Pro',
-    'SF Mono',
-    Monaco,
-    'Cascadia Code',
-    'Roboto Mono',
-    Menlo,
-    Consolas,
-    'Courier New',
+  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'SF Mono',
+    Monaco, 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, 'Courier New',
     monospace !important;
   font-size: 0.875em !important;
-  font-style: normal !important;  /* 斜体を防ぐ */
+  font-style: normal !important; /* 斜体を防ぐ */
   font-weight: 400 !important;
   padding: 0.2em 0.4em !important;
   margin: 0 !important;
@@ -219,22 +231,22 @@ td code,
 }
 
 /* すべてのコード関連要素で斜体を完全に無効化 */
-html[data-theme="dark"] pre *,
-html[data-theme="dark"] code *,
+html[data-theme='dark'] pre *,
+html[data-theme='dark'] code *,
 html.dark pre *,
 html.dark code *,
-body[data-theme="dark"] pre *,
-body[data-theme="dark"] code *,
+body[data-theme='dark'] pre *,
+body[data-theme='dark'] code *,
 body.dark pre *,
 body.dark code *,
-:root[data-theme="dark"] pre *,
-:root[data-theme="dark"] code * {
+:root[data-theme='dark'] pre *,
+:root[data-theme='dark'] code * {
   font-style: normal !important;
 }
 
 /* SveltePressのコードブロック内すべての要素 */
 .sp-code-block *,
-.sp-code-block [style*="font-style"],
+.sp-code-block [style*='font-style'],
 .sp-preview-code *,
 .sp-editor *,
 .sp-live-code * {
@@ -242,9 +254,9 @@ body.dark code *,
 }
 
 /* Shikiのstyle属性で直接指定される斜体を無効化 */
-.shiki [style*="--shiki-dark-font-style"],
-.shiki [style*="--shiki-light-font-style"],
-.shiki [style*="font-style"] {
+.shiki [style*='--shiki-dark-font-style'],
+.shiki [style*='--shiki-light-font-style'],
+.shiki [style*='font-style'] {
   --shiki-dark-font-style: normal !important;
   --shiki-light-font-style: normal !important;
   font-style: normal !important;
@@ -254,7 +266,7 @@ body.dark code *,
 .shiki {
   --shiki-dark-font-style: normal !important;
   --shiki-light-font-style: normal !important;
-  
+
   /* 各トークンタイプ用の変数も念のため上書き */
   --shiki-token-comment-font-style: normal !important;
   --shiki-token-string-font-style: normal !important;
@@ -267,12 +279,12 @@ body.dark code *,
 }
 
 /* インラインスタイルで設定される変数を含む要素 */
-[style*="--shiki-dark-font-style: italic"] {
+[style*='--shiki-dark-font-style: italic'] {
   --shiki-dark-font-style: normal !important;
   font-style: normal !important;
 }
 
-[style*="--shiki-light-font-style: italic"] {
+[style*='--shiki-light-font-style: italic'] {
   --shiki-light-font-style: normal !important;
   font-style: normal !important;
 }
@@ -283,23 +295,22 @@ body.dark code *,
   .shiki {
     filter: brightness(0.95) contrast(1.1) saturate(1.15);
   }
-  
+
   /* コメントは元の薄さを維持 */
   .shiki .token.comment,
-  .shiki [style*="color:#6A737D"],
-  .shiki [style*="color:#6a737d"],
-  .shiki [style*="color:#959da5"],
-  .shiki [style*="color:#969896"] {
+  .shiki [style*='color:#6A737D'],
+  .shiki [style*='color:#6a737d'],
+  .shiki [style*='color:#959da5'],
+  .shiki [style*='color:#969896'] {
     opacity: 0.8;
     filter: none;
   }
 }
 
 /* ライトモード検出の別パターン（控えめな調整） */
-html:not([data-theme="dark"]) .shiki,
+html:not([data-theme='dark']) .shiki,
 html:not(.dark) .shiki,
-body:not([data-theme="dark"]) .shiki,
+body:not([data-theme='dark']) .shiki,
 body:not(.dark) .shiki {
   filter: brightness(0.95) contrast(1.1) saturate(1.15);
 }
-

@@ -313,6 +313,90 @@ export const db = new PrismaClient();
 // import { db } from '$lib/server/database';
 ```
 
+### `$lib/api`と`src/routes/api`の使い分け
+
+SvelteKitでは、API関連のコードを配置する場所として`$lib/api`と`src/routes/api`の2つの選択肢があります。それぞれ明確に異なる役割を持っています。
+
+:::info[規約と慣例の違い]
+- **`src/routes/api`**: SvelteKitの**規約**。`+server.ts`ファイルは自動的にHTTP APIエンドポイントになる
+- **`$lib/api`**: コミュニティの**慣例**。技術的には`$lib/services`、`$lib/data`など任意の名前が使用可能
+:::
+
+#### `$lib/api` - サーバーサイドユーティリティ
+
+`$lib/api`ディレクトリは、サーバーサイドのユーティリティ関数を配置する場所です。これらは**Web APIエンドポイントではなく**、`+page.server.ts`や`+layout.server.ts`から呼び出される内部的な処理です。
+
+```typescript
+// src/lib/api/posts.ts
+// サーバーサイドユーティリティ（Web APIではない）
+export async function getPosts() {
+  const posts = await db.post.findMany();
+  return posts;
+}
+
+export async function getPostBySlug(slug: string) {
+  const post = await db.post.findUnique({
+    where: { slug }
+  });
+  return post;
+}
+```
+
+```typescript
+// src/routes/blog/+page.server.ts
+// Load関数から呼び出す
+import { getPosts } from '$lib/api/posts';
+
+export const load = async () => {
+  const posts = await getPosts();
+  return { posts };
+};
+```
+
+#### `src/routes/api` - Web APIエンドポイント
+
+`src/routes/api`以下の`+server.ts`ファイルは、実際のHTTP APIエンドポイントを定義します。これらはクライアントからfetchで呼び出し可能な**Web API**です。
+
+```typescript
+// src/routes/api/posts/+server.ts
+// Web APIエンドポイント
+import { json } from '@sveltejs/kit';
+import { getPosts } from '$lib/api/posts';
+
+export async function GET() {
+  const posts = await getPosts();
+  return json(posts);
+}
+
+export async function POST({ request }) {
+  const data = await request.json();
+  // 投稿作成処理
+  return json({ success: true });
+}
+```
+
+```typescript
+// クライアントから呼び出し
+const response = await fetch('/api/posts');
+const posts = await response.json();
+```
+
+#### 使い分けのガイドライン
+
+| 種類 | 配置場所 | 用途 | アクセス方法 |
+|------|---------|------|------------|
+| **サーバーサイドユーティリティ** | `$lib/api/` | Load関数やActions内で使用する処理<br/>データベースアクセス、外部API呼び出し | サーバーサイドコードからインポート |
+| **Web APIエンドポイント** | `src/routes/api/` | RESTful API<br/>外部システムとの連携<br/>モバイルアプリのバックエンド | HTTPリクエスト（fetch） |
+
+:::tip[実践的な使い方]
+- **`$lib/api/`（慣例）**：データ取得・処理のユーティリティ関数（ファイルシステムやDBアクセスなど）
+  - 他の名前でも可：`$lib/services/`、`$lib/data/`、`$lib/repositories/`など
+- **`src/routes/api/`（規約）**：外部に公開するWeb APIエンドポイント（JSON APIなど）
+  - 必ず`+server.ts`ファイルを使用し、HTTPメソッド（GET、POST等）をエクスポート
+- クライアントから直接呼び出す必要がない処理は`$lib/`配下の任意の場所に配置
+- サードパーティや別アプリケーションから呼び出す必要がある場合は`src/routes/api/`に配置
+:::
+
 ## `routes/` - ルーティング
 
 ファイルベースルーティングの中核となるディレクトリです。ディレクトリ構造がそのままURLパスになるため、直感的なルート設計が可能です。

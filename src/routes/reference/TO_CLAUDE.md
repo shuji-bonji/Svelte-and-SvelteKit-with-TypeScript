@@ -653,7 +653,7 @@ export const load: PageLoad = async ({ fetch }) => {
 
 ## 🤖 AIアシスタントへの指示
 
-このファイルを読んだAIアシスタントは、以下を厳守してください：
+このファイルを読んだAIアシスタントは、以下を厳守してください。
 
 1. **Svelte 5のRunes構文のみを使用する**
 2. **TypeScriptを必須とする**

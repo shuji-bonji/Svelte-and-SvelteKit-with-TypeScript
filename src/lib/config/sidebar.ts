@@ -278,16 +278,16 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           collapsible: true,
           items: [
             { title: 'サーバーサイド編概要', to: '/sveltekit/server/' },
-            { title: 'フォーム処理とActions', to: '/sveltekit/server/forms/' },
             {
-              title: 'サーバーサイド処理 (準備中)',
+              title: 'サーバーサイド処理',
               to: '/sveltekit/server/server-side/',
             },
+            { title: 'フォーム処理とActions', to: '/sveltekit/server/forms/' },
             {
-              title: 'APIルート設計 (準備中)',
+              title: 'APIルート設計',
               to: '/sveltekit/server/api-routes/',
             },
-            { title: 'Hooks (準備中)', to: '/sveltekit/server/hooks/' },
+            { title: 'Hooks', to: '/sveltekit/server/hooks/' },
             { title: 'WebSocket/SSE', to: '/sveltekit/server/websocket-sse/' },
           ],
         },

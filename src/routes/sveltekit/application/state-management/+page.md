@@ -1,6 +1,6 @@
 ---
 title: 状態管理パターン
-description: SvelteKitアプリケーションにおける効果的な状態管理パターン
+description: SvelteKitの状態管理パターンをTypeScriptで完全マスター - グローバルストア、Context API、URL状態、フォーム状態、$app/state、リアクティブストア、Svelte 5 Runesを実例を交えて体系的に詳しく解説します
 ---
 
 SvelteKitアプリケーションで使用できる様々な状態管理パターンとベストプラクティスを解説します。小規模から大規模まで、アプリケーションの規模に応じた最適な手法を選択できます。

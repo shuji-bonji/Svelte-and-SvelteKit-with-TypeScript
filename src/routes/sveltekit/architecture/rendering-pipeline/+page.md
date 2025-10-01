@@ -1,6 +1,6 @@
 ---
 title: レンダリングパイプライン
-description: SvelteKitのレンダリングパイプラインを完全理解。コンパイル、ビルド、実行、ハイドレーションの各フェーズをTypeScriptで詳解
+description: SvelteKitのレンダリングパイプラインをTypeScriptで徹底解説 - コンパイルフェーズ、ビルドフェーズ、実行フェーズ、Hydration、最適化プロセスの内部動作を実例を交えて詳細かつ体系的に詳しく解説します
 ---
 
 <script>

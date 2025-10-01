@@ -1,6 +1,6 @@
 ---
 title: ディープダイブ - 技術詳解
-description: Svelte/SvelteKitの内部実装と高度な技術トピックを深く理解する
+description: Svelte5とSvelteKitの技術詳解をTypeScriptで深掘り - コンパイル時最適化の仕組み、リアクティビティの内部実装、型システム、自動生成される型、内部アーキテクチャを実例を交えて上級者向けに詳しく解説します
 ---
 
 <script>

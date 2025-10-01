@@ -1,6 +1,6 @@
 ---
 title: トランジション・アニメーション
-description: Svelteの組み込みトランジション、アニメーション、モーション機能の完全ガイド
+description: Svelte5のトランジションとアニメーションをTypeScriptで実装 - fade、fly、slide、scale、組み込みトランジション、カスタムアニメーション、easing関数、CSS transitionsの使い方を実例を交えて詳しく解説します
 ---
 
 Svelteは、美しく滑らかなアニメーションを簡単に実装できる組み込み機能を提供しています。CSSやJavaScriptライブラリを使わずに、宣言的な方法でトランジションやアニメーションを追加できます。

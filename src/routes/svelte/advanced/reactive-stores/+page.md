@@ -1,6 +1,6 @@
 ---
 title: リアクティブストア
-description: .svelte.js/.svelte.tsファイルによる再利用可能なリアクティブロジック
+description: Svelte5のリアクティブストアをTypeScriptで完全マスター - .svelte.tsファイル、writable、derived、readonly、custom stores、サブスクリプション管理、自動購読の実装を実例を交えて体系的に詳しく解説します
 ---
 
 Svelte 5では、`.svelte.js`および`.svelte.ts`ファイルを使用して、コンポーネント間で共有可能なリアクティブストアを作成できます。これは従来のストアシステムを置き換える、より強力で型安全な方法です。

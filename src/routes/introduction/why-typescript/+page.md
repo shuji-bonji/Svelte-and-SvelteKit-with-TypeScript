@@ -1,6 +1,6 @@
 ---
 title: なぜTypeScriptが必要か
-description: モダンなWeb開発におけるTypeScriptの重要性とSvelte 5との相性
+description: なぜTypeScriptがSvelte5とSvelteKit開発に必須なのか - 型安全性、開発効率向上、バグの早期発見、保守性改善、IDE支援、リファクタリング容易性の具体的なメリットを実例付きで実践的かつ詳しく解説します
 ---
 
 ## TypeScriptとは

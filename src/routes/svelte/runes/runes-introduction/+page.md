@@ -1,6 +1,6 @@
 ---
 title: Runesシステム入門
-description: Svelte 5 Runesシステム入門 - $state/$derived/$effectによる明示的なリアクティビティ管理とTypeScript統合
+description: Svelte5のRunesシステム入門をTypeScriptで学ぶ - $state、$derived、$effectの基本的な使い方、従来の構文との違い、移行ガイド、実践的なパターンを実例を交えて初心者向けに体系的に詳しく解説します
 ---
 
 ## Runesとは

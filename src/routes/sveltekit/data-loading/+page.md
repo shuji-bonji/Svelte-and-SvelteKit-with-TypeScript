@@ -1,6 +1,6 @@
 ---
 title: Load関数とデータフェッチング
-description: SvelteKitのデータ取得戦略をTypeScriptで完全理解。Load関数の基礎からストリーミングSSR、キャッシュ戦略まで体系的に解説
+description: SvelteKitのLoad関数によるTypeScriptデータフェッチング完全ガイド - Universal Load、Server Load、ストリーミングSSR、キャッシュ戦略、データの無効化、型安全な実装を実例を交えて体系的かつ実践的に詳しく解説します
 ---
 
 <script>

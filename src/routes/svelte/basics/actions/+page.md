@@ -1,6 +1,6 @@
 ---
 title: use:アクション
-description: Svelte5のuse:アクションをTypeScriptで実装。DOM要素の直接操作、サードパーティライブラリ統合、カスタムディレクティブの作成方法を解説
+description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - DOM要素へのカスタム動作追加、パラメータ設定、update・destroy処理、Tippy.js統合などの実践的なアクション作成方法を実例を交えて詳しく解説します
 ---
 
 <style>

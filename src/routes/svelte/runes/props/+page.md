@@ -1,6 +1,6 @@
 ---
-title: $propsルーン
-description: Svelte 5の$propsルーンでコンポーネントプロパティを定義 - TypeScript型定義・デフォルト値・Rest Propsの実装方法
+title: Svelte $props完全ガイド - TypeScriptで型安全なコンポーネント通信を実装
+description: Svelte 5の$props完全解説 - TypeScriptで型安全なprops定義、デフォルト値、分割代入、children/Snippetを実装。React propsとの違い、ベストプラクティス、実践的なコード例を詳しく解説
 ---
 
 <script>

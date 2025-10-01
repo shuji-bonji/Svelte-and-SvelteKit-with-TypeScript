@@ -1,6 +1,6 @@
 ---
 title: 動的ルーティング
-description: SvelteKitの動的ルーティングをTypeScriptで実装。動的パラメータ、Rest Parameters、オプショナルパラメータ、ルートマッチャーの使い方を解説
+description: SvelteKitの動的ルーティングをTypeScriptで実装 - [param]パラメータ、[[optional]]、[...rest] catch-all、複数パラメータ、パラメータ検証、型安全な実装を実例を交えて実践的に詳しく解説します
 ---
 
 <script>

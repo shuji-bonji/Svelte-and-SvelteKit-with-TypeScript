@@ -1,6 +1,6 @@
 ---
 title: SvelteKit 基礎編
-description: SvelteKit基礎編をTypeScriptで学ぶ。プロジェクト構造、ファイルベースルーティング、load関数、サーバー/クライアントの実行環境を解説
+description: SvelteKitの基礎をTypeScriptで学ぶ入門ガイド - プロジェクト構造、特殊ファイルシステム、レンダリング戦略、$appモジュール、$app/state、app.d.tsグローバル型定義を実例を交えて体系的かつ実践的に詳しく解説します
 ---
 
 <script>

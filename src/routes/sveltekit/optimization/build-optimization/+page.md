@@ -1,6 +1,6 @@
 ---
 title: ビルド最適化
-description: SvelteKitのビルドプロセスを最適化し、バンドルサイズ削減、ビルド時間短縮、デプロイ効率化を実現。Viteの設定、コード分割、Tree Shaking、圧縮戦略をTypeScriptで解説
+description: SvelteKitのビルド最適化をTypeScriptで実践 - Vite設定によるコード分割、Tree Shaking、画像最適化、Gzip/Brotli圧縮戦略でバンドルサイズ削減とパフォーマンス向上を実現する方法を詳しく解説します
 ---
 
 <script>

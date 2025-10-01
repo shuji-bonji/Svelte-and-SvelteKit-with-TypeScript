@@ -1,6 +1,6 @@
 ---
 title: Runesシステム
-description: Svelte 5 Runesシステム完全ガイド - リアクティビティプリミティブの使い方とベストプラクティス
+description: Svelte5のRunesシステムをTypeScriptで完全マスター - $state、$derived、$effect、$props、$bindable、$inspect、$hostによるリアクティビティの新パラダイム、使い方を実例を交えて体系的かつ実践的に詳しく解説します
 ---
 
 <script>

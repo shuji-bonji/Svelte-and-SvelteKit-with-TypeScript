@@ -1,6 +1,6 @@
 ---
 title: SvelteKit完全ガイド
-description: SvelteKitをTypeScriptでマスターする完全ガイド。SSR/SSG/SPAのレンダリング戦略、ファイルベースルーティング、load関数、APIルートの実装方法を解説
+description: SvelteKitをTypeScriptで完全マスター - SSR/SSG/SPAレンダリング戦略、ファイルベースルーティング、Load関数、APIルート、フォーム処理、認証、デプロイまでを実例を交えて実践的かつ体系的に詳しく解説します
 ---
 
 <script>

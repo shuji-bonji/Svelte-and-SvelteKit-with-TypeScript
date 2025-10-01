@@ -1,6 +1,6 @@
 ---
 title: 基本ルーティング
-description: SvelteKitの基本ルーティングをTypeScriptで学ぶ。ファイルベースルーティング、静的ルート、レイアウト、エラーハンドリングの実装方法を解説
+description: SvelteKitの基本ルーティングをTypeScriptで実装 - ファイルベースルーティングシステム、+page.svelte、+layout.svelte、レイアウト継承、ナビゲーション、データ取得の基礎を実例を交えて実践的に詳しく解説します
 ---
 
 <script>

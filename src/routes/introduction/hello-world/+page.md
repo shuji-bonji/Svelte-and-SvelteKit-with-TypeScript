@@ -1,6 +1,6 @@
 ---
 title: Hello World
-description: 最初のSvelteコンポーネントを作成する
+description: Svelte5とTypeScriptで最初のHello Worldアプリを作成 - プロジェクトセットアップ、コンポーネント作成、開発サーバー起動、ビルド、Runesの基本構文の理解を実例を交えてステップバイステップで詳しく解説します
 ---
 
 プログラミング学習の第一歩は「Hello World」から始まります。このページでは、最初のSvelteコンポーネントを作成し、Svelteの基本的な仕組みを理解します。

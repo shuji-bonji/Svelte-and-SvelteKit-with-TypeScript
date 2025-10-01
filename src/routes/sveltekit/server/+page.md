@@ -1,6 +1,6 @@
 ---
 title: SvelteKit サーバーサイド編
-description: SvelteKitの強力なサーバーサイド機能をマスターする - フォーム処理、API開発、WebSocket、Hooksを完全解説
+description: SvelteKitのサーバーサイド機能をTypeScriptで完全マスター - フォーム処理、Actions、APIルート設計、Hooks、WebSocket/SSE実装、ミドルウェアによるバックエンド開発を実例を交えて体系的かつ実践的に詳しく解説します
 ---
 <script>
   import { base } from '$app/paths';

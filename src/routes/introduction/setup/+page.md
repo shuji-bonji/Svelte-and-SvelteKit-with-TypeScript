@@ -1,6 +1,6 @@
 ---
 title: 環境構築
-description: Svelte 5とSvelteKitの開発環境セットアップ
+description: Svelte5とSvelteKitの開発環境をTypeScriptで構築する完全ガイド - Node.js、pnpm、Vite、VS Code、エディタ設定、プロジェクト作成、必須ツール導入、初期設定を実例を交えてステップバイステップで詳しく解説します
 ---
 
 ## 必要な環境

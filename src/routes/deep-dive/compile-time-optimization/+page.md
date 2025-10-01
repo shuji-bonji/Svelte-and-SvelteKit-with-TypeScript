@@ -1,6 +1,6 @@
 ---
 title: Svelte はコンパイル時に何をやっているのか？
-description: Svelteが行う、コンパイル時最適化 について詳しく解説を行います
+description: Svelte5のコンパイル時最適化の仕組みをTypeScriptで徹底解説 - 依存関係の静的解析、サージカルアップデート、Tree Shakingによる高速化、最小バンドルサイズ実現の秘密を実例を交えて体系的に詳しく解説します
 ---
 
 <script lang="ts">

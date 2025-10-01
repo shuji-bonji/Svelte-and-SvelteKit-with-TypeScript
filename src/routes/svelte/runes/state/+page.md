@@ -1,6 +1,6 @@
 ---
 title: $state - リアクティブな状態
-description: Svelte 5の$stateルーンでリアクティブな状態管理 - プリミティブ値・オブジェクト・配列の宣言と深いリアクティビティ
+description: Svelte5の$stateルーンでTypeScriptによるリアクティブ状態管理を実装 - プリミティブ、オブジェクト、配列の定義方法、$state.frozen、$state.snapshot、クラス統合、深いリアクティビティを実例を交えて詳しく解説します
 ---
 
 

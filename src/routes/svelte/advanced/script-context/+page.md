@@ -1,6 +1,6 @@
 ---
 title: スクリプトコンテキスト
-description: script要素とscript context="module"の違いと使い分け
+description: Svelte5のスクリプトコンテキストをTypeScriptで活用 - module context、instance context、Context API、setContext/getContext、コンポーネント間データ共有、スコープの違いを実例を交えて体系的に詳しく解説します
 ---
 
 <script>

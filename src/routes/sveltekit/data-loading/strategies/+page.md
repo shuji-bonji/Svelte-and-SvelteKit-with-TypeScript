@@ -1,6 +1,6 @@
 ---
 title: データフェッチング戦略
-description: SvelteKitの高度なデータ取得戦略 - ストリーミングSSR、並列データ取得、キャッシング、TypeScriptによるリアルタイム更新の実装方法
+description: SvelteKitのデータフェッチング戦略をTypeScriptで完全マスター - 並列取得、ウォーターフォール回避、キャッシング、再検証、invalidate、depend、リアルタイム更新の実装方法を実例を交えて詳しく解説します
 ---
 
 <script>

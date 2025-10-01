@@ -1,6 +1,6 @@
 ---
 title: SvelteKit概要
-description: SvelteKitの全体像を理解する - フルスタックフレームワークの基本概念と特徴
+description: SvelteKitの全体像をTypeScriptで理解する入門ガイド - フレームワークの特徴、プロジェクト構造、ファイルベースルーティング、データ取得、レンダリング戦略、デプロイの基礎を実例を交えて包括的かつ詳しく解説します
 ---
 
 <script>

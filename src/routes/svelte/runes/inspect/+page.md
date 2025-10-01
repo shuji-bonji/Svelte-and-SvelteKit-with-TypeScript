@@ -1,6 +1,6 @@
 ---
 title: $inspectルーン（デバッグ用）
-description: Svelte 5の$inspectルーンでリアクティブ値をデバッグ - 開発時の値変更追跡とカスタムロギング
+description: Svelte5の$inspectルーンでTypeScriptによるデバッグを効率化 - リアクティブ値の監視、ブレークポイント設定、条件付きインスペクション、with console.log、開発環境での活用方法を実例を交えて実践的に詳しく解説します
 ---
 
 

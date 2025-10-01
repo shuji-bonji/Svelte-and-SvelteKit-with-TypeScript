@@ -1,6 +1,6 @@
 ---
 title: TypeScript統合
-description: SvelteコンポーネントでTypeScriptを効果的に使用する基本
+description: Svelte5コンポーネントでTypeScriptを効果的に使用する基本ガイド - Runesシステムの型定義、イベントハンドラの型、Props、$state、$derived、フォーム処理、状態管理の型安全な実装方法を詳しく解説します
 ---
 
 SvelteはTypeScriptを第一級市民として扱い、優れた型安全性とIDEサポートを提供します。このページでは、SvelteコンポーネントでTypeScriptを使用する基本的な方法を学びます。

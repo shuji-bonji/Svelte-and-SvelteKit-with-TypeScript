@@ -1,6 +1,6 @@
 ---
 title: コンポーネントパターン
-description: Svelte 5でよく使われるコンポーネント設計パターンとTypeScriptによる実装
+description: Svelte5のコンポーネントパターンをTypeScriptで実践 - 高階コンポーネント、Render Props、Compound Components、Context API、Snippets活用、状態共有パターンの実装を実例を交えて体系的に詳しく解説します
 ---
 
 <script lang="ts">

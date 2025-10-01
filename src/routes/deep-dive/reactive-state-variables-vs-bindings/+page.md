@@ -1,6 +1,6 @@
 ---
 title: "$state: リアクティブな状態変数と、バインディングの違い"
-description: "Svelte 5の$stateルーンと従来のbind:構文の違いを比較し、それぞれの使い方や特徴を解説"
+description: Svelte5のリアクティブ状態とバインディングをTypeScriptで完全理解 - $state vs bind、単方向/双方向データフロー、$bindableの使い分け、パフォーマンス考慮を実例を交えて実践的かつ詳しく解説します
 ---
 
 

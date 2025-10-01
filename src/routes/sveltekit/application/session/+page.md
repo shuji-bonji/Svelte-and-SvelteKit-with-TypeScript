@@ -1,6 +1,6 @@
 ---
 title: セッション管理と認証戦略
-description: SvelteKitでのセッション管理戦略を完全解説。クッキーベース、JWT、ステートレス認証の実装方法とベストプラクティスをTypeScriptで学ぶ
+description: SvelteKitのセッション管理と認証戦略をTypeScriptで完全実装 - Cookie/Session認証、JWT、リフレッシュトークン、ルートグループによる保護、セキュリティ、認証フロー、ベストプラクティスを実践的に詳しく解説します
 ---
 
 <script>

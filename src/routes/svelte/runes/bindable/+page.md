@@ -1,6 +1,6 @@
 ---
-title: $bindableルーン
-description: Svelte 5の$bindableルーンで双方向バインディングを実装 - bind:プロパティ構文とTypeScript型定義の統合
+title: Svelte $bindable完全ガイド - TypeScriptで双方向バインディングを実装
+description: Svelte 5の$bindable完全解説 - TypeScriptで双方向バインディング・bind構文・親子間データ同期を実装。v-modelとの違い、型安全なプロパティ定義、フォームコンポーネントの実践例を詳しく解説
 ---
 
 <script>

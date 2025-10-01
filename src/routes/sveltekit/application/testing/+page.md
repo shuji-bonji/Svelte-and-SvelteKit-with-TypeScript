@@ -1,6 +1,6 @@
 ---
 title: テスト戦略
-description: SvelteKitアプリケーションの包括的なテスト戦略
+description: SvelteKitのテスト戦略をTypeScriptで完全実装 - Vitest、@testing-library/svelte、Playwright、E2Eテスト、コンポーネントテスト、統合テスト、カバレッジの実践方法を実例を交えて体系的に詳しく解説します
 ---
 
 <script>

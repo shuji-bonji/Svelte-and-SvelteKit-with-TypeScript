@@ -1,6 +1,6 @@
 ---
 title: プロジェクト構造と規約
-description: SvelteKitプロジェクトの完全なディレクトリ構造と命名規約を理解する
+description: SvelteKitのプロジェクト構造をTypeScriptで理解する基礎ガイド - ディレクトリ構成、src/routes、src/lib、src/params、static、設定ファイル、特殊ファイルの役割を実例を交えて体系的に詳しく解説します
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: SvelteKit アーキテクチャ詳解
-description: SvelteKit 2.xの内部動作とアーキテクチャをTypeScriptで深く理解。レンダリングパイプライン、実行環境、ルーティング内部動作、ビルド最適化の完全解説
+description: SvelteKitのアーキテクチャをTypeScriptで完全理解 - レンダリング戦略の選択、パイプラインの動作、ルーティング内部動作、データロードの仕組み、ファイル構成を実例を交えて体系的かつ実践的に詳細解説します
 ---
 
 <script>

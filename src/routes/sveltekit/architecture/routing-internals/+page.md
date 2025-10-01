@@ -1,6 +1,6 @@
 ---
 title: ルーティング内部動作
-description: SvelteKitルーティング内部動作の完全ガイド - TypeScriptでルート生成とマッチング、プリフェッチ、History API統合を解説
+description: SvelteKitのルーティング内部動作をTypeScriptで完全理解 - ファイルベースルート生成アルゴリズム、マッチング処理の詳細、プリフェッチ戦略の実装、History API統合の仕組みを実例を交えて詳細かつ実践的に解説します
 ---
 
 <script>

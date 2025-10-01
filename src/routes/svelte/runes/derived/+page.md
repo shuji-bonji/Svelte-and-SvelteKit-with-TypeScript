@@ -1,6 +1,6 @@
 ---
-title: $derived - 派生値
-description: Svelte 5の$derivedルーンで計算プロパティを作成 - リアクティブな派生値の定義と$derived.byによる複雑な計算処理
+title: Svelte $derived完全ガイド - TypeScriptで計算プロパティとメモ化を実装
+description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパティ・派生値・メモ化を実装。$derived.by、useMemoとの違い、パフォーマンス最適化、複雑な派生ロジックの実践例を詳しく解説
 ---
 
 

@@ -1,6 +1,6 @@
 ---
 title: ビルド最適化
-description: SvelteKitのビルドプロセス最適化とパフォーマンス改善を理解。静的解析、コード分割、アセット最適化の詳細をTypeScriptで解説
+description: SvelteKitのビルド最適化をTypeScriptで実践する完全ガイド - Vite設定によるコード分割戦略、静的解析、アセット最適化、Service Worker実装、パフォーマンス計測で高速化を実現する方法を詳しく解説します
 ---
 
 <script>

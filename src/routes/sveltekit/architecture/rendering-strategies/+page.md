@@ -1,6 +1,6 @@
 ---
 title: "レンダリング戦略（詳解）"
-description: "SPA/MPAアーキテクチャとCSR/SSR/SSG/ISRなどのレンダリング手法を体系的に理解。パフォーマンス指標、動作フロー、選択ガイドラインを包括的に解説する上級者向けガイド"
+description: SvelteKitのレンダリング戦略をTypeScriptで完全マスター - SPA/MPAアーキテクチャ、CSR/SSR/SSG/ISR、Streaming SSRの動作原理、選択ガイドライン、SEO最適化を実例を交えて実践的かつ詳細に解説します
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: $host - カスタムエレメント
-description: Svelte 5の$hostルーンでWeb Componentsのホスト要素を操作 - カスタムエレメントのスタイリングとイベント処理
+description: Svelte5の$hostルーンを使ったTypeScriptによるWeb Components開発を実現 - カスタムエレメント作成、Shadow DOM操作、プロパティ定義、イベント発火、ライフサイクル管理の実装方法を実例を交えて詳しく解説します
 ---
 
 

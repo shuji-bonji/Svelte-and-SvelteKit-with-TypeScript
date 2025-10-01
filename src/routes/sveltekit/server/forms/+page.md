@@ -1432,5 +1432,8 @@ SvelteKitのActions とフォーム処理は、
 
 ## 次のステップ
 
+Form Actionsの実践的な使用例は以下をご覧ください。
+- **[Cookie/Session認証](/examples/auth-cookie-session/)** - ログインフォームの完全実装
+
 [APIルート](/sveltekit/server/api-routes/)で、RESTful APIの構築について学びましょう。
 

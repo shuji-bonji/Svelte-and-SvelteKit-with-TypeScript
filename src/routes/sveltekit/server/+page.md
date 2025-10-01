@@ -1,10 +1,7 @@
 ---
 title: SvelteKit サーバーサイド編
-description: SvelteKitの強力なサーバーサイド機能をマスターする
+description: SvelteKitの強力なサーバーサイド機能をマスターする - フォーム処理、API開発、WebSocket、Hooksを完全解説
 ---
-:::caution[タイトル]
-一部、執筆中
-:::
 <script>
   import { base } from '$app/paths';
 </script>
@@ -26,6 +23,24 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
+  <a href="{base}/sveltekit/server/server-side/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">⚙️</div>
+      <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
+        サーバーサイド処理
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">サーバーサイドアーキテクチャの全体像を理解します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li><strong>ファイルタイプ</strong>: +page.server.ts、+server.ts</li>
+        <li><strong>実行環境</strong>: サーバー/クライアント境界</li>
+        <li><strong>セキュリティモデル</strong>: 機密情報の保護</li>
+        <li><strong>リクエストフロー</strong>: 処理の流れを図解</li>
+        <li><strong>実装パターン</strong>: カード形式でナビゲーション</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/sveltekit/server/forms/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📝</div>
@@ -44,38 +59,20 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
     </div>
   </a>
   
-  <a href="{base}/sveltekit/server/server-side/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
-      <div class="text-3xl mb-2">⚙️</div>
-      <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
-        サーバーサイド処理 <span class="text-xs">(準備中)</span>
-        <span class="inline-block ml-1 text-xs opacity-60">→</span>
-      </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SSRとサーバー専用の処理を深く理解します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
-        <li><strong>SSR最適化</strong>: ストリーミングレンダリング</li>
-        <li><strong>データベース接続</strong>: Prisma/Drizzle統合</li>
-        <li><strong>キャッシュ戦略</strong>: Redis/メモリキャッシュ</li>
-        <li><strong>バックグラウンド処理</strong>: ジョブキュー</li>
-        <li><strong>WebSocket</strong>: リアルタイム通信</li>
-      </ul>
-    </div>
-  </a>
-  
   <a href="{base}/sveltekit/server/api-routes/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔌</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
-        APIルート設計 <span class="text-xs">(準備中)</span>
+        APIルート設計
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">RESTful APIとGraphQLエンドポイントを構築します。</p>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">RESTful APIエンドポイントを構築します。</p>
       <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
         <li><strong>+server.ts</strong>: APIルートハンドラー</li>
         <li><strong>RESTful設計</strong>: CRUD操作の実装</li>
-        <li><strong>認証・認可</strong>: JWTとセッション管理</li>
+        <li><strong>認証・認可</strong>: JWT認証パターン</li>
+        <li><strong>CORS設定</strong>: クロスオリジン対応</li>
         <li><strong>レート制限</strong>: APIの保護</li>
-        <li><strong>OpenAPI</strong>: API仕様の文書化</li>
       </ul>
     </div>
   </a>
@@ -84,7 +81,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-green-400 dark:hover:border-green-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎣</div>
       <h3 class="font-bold text-lg mb-2 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
-        Hooks <span class="text-xs">(準備中)</span>
+        Hooks
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">リクエスト/レスポンスのライフサイクルをカスタマイズします。</p>
@@ -93,7 +90,7 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
         <li><strong>handleFetch</strong>: 外部API呼び出し制御</li>
         <li><strong>handleError</strong>: エラー処理のカスタマイズ</li>
         <li><strong>認証ミドルウェア</strong>: グローバル認証チェック</li>
-        <li><strong>ロギング</strong>: リクエスト/レスポンス記録</li>
+        <li><strong>sequence</strong>: 複数Hooksの連鎖</li>
       </ul>
     </div>
   </a>
@@ -140,8 +137,8 @@ SvelteKitのサーバーサイド機能は、モダンなWeb開発のベスト�
 
 ### 推奨学習順序
 
-1. **フォーム処理とActions** - 基本的なサーバー通信を理解
-2. **サーバーサイド処理** - SSRとサーバー専用機能を習得
+1. **サーバーサイド処理** - アーキテクチャの全体像を把握
+2. **フォーム処理とActions** - 基本的なサーバー通信を理解
 3. **APIルート設計** - RESTful APIの構築方法を学習
 4. **Hooks** - 高度なリクエスト処理をマスター
 5. **WebSocket/SSE** - リアルタイム機能の実装

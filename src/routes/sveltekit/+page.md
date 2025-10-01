@@ -314,20 +314,20 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">サーバーサイド処理（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">SSR、サーバー専用コード</td>
+            <td class="py-2"><a href="{base}/sveltekit/server/server-side/" class="text-green-600 dark:text-green-400 hover:underline">サーバーサイド処理</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">アーキテクチャの全体像とファイルタイプ</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/server/forms/" class="text-green-600 dark:text-green-400 hover:underline">フォーム処理とActions</a></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Progressive Enhancement</td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Progressive Enhancement、バリデーション</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">APIルート設計（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">RESTful API構築</td>
+            <td class="py-2"><a href="{base}/sveltekit/server/api-routes/" class="text-green-600 dark:text-green-400 hover:underline">APIルート設計</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">RESTful API、認証、CORS、レート制限</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">Hooks（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">ミドルウェア実装</td>
+            <td class="py-2"><a href="{base}/sveltekit/server/hooks/" class="text-green-600 dark:text-green-400 hover:underline">Hooks</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">handle、handleFetch、handleError</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/server/websocket-sse/" class="text-green-600 dark:text-green-400 hover:underline">WebSocket/SSE</a></td>

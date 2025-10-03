@@ -4,6 +4,7 @@ description: SvelteKitのフォーム処理を完全マスター - Actions、Pro
 ---
 
 <script>
+  import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const executionFlowDiagram = `sequenceDiagram
@@ -148,17 +149,16 @@ description: SvelteKitのフォーム処理を完全マスター - Actions、Pro
 
 SvelteKitのActionsは、プログレッシブエンハンスメントに対応した強力なフォーム処理システムです。JavaScriptが無効でも動作し、有効時にはシームレスな体験を提供します。このガイドでは、基本的なフォーム処理から高度なバリデーション、ファイルアップロードまで、実践的なTypeScriptコード例で完全解説します。
 
+:::info[プログレッシブエンハンスメント って何？]
+Progressive Enhancement（プログレッシブエンハンスメント）は、JavaScript無効時でも基本機能が動作し、有効時にはよりリッチな体験を提供する開発アプローチです。
+
+詳細は [SvelteKit概要ページのプログレッシブエンハンスメント]({base}/sveltekit/basics/overview/#プログレッシブエンハンスメント) をご覧ください。
+:::
+
 ## Actions の基本概念
 
 SvelteKitのActionsは、サーバーサイドでフォーム送信を処理する仕組みです。従来のWebアプリケーションと同じようにHTMLフォームを使いながら、モダンなユーザー体験を提供できます。
 
-### Progressive Enhancement とは
-
-Progressive Enhancement（プログレッシブエンハンスメント）は、基本的なHTML機能から始めて、段階的に機能を強化していく開発アプローチです。SvelteKitのフォームは、JavaScript無効でも動作する**プログレッシブエンハンスメント**を実現します。
-
-- **JavaScript無効時**: 通常のHTMLフォーム送信
-- **JavaScript有効時**: ページリロードなしでフォーム処理
-- **自動的な切り替え**: use:enhance で自動最適化
 
 :::info[重要な理解]
 **Actions自体はサーバーサイドのみで動作**します。JavaScript無効時も有効時も、フォーム処理のロジックは常にサーバー側のActionsが実行します。`use:enhance`は、**クライアント側でのUX改善**のみを担当し、処理自体には関与しません。

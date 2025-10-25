@@ -7,6 +7,34 @@ description: SvelteKit 2.xの包括的リファレンス - ファイルベース
   import { base } from '$app/paths';
 </script>
 
+:::tip[AI開発には公式のSvelte MCPサーバーの利用を推奨]
+**Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
+
+Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサーバーで、以下の利点があります。
+
+- **常に最新**: Svelte 5とSvelteKitの公式ドキュメントから直接情報を取得
+- **包括的な機能**: ドキュメント検索、コード分析、自動修正提案、Playgroundリンク生成
+- **公式サポート**: Svelteチームによる保守
+- **このリファレンスとの相乗効果**: MCPで最新情報を取得し、このページで体系的な理解を深める
+
+**セットアップ方法**（Claude Desktop）:
+```js
+// claude_desktop_config.json
+{
+  "mcpServers": {
+    "svelte": {
+      "command": "npx",
+      "args": ["-y", "@sveltejs/mcp"]
+    }
+  }
+}
+```
+
+設定後、Claude Desktopを再起動してください。
+
+詳細: [Svelte MCP公式ドキュメント](https://svelte.dev/docs/mcp)
+:::
+
 ## SvelteKit 2.xとは
 
 SvelteKitは、Svelteを使用したモダンなWebアプリケーション構築のためのフルスタックフレームワークです。

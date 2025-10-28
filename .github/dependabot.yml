@@ -1,0 +1,53 @@
+# GitHub Dependabot 設定
+# 依存関係の自動更新とセキュリティアラート
+
+version: 2
+updates:
+  # npm パッケージの更新
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      # 毎週月曜日にチェック
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+
+    # 同時に開くPRの最大数
+    open-pull-requests-limit: 5
+
+    # PRにラベルを付ける
+    labels:
+      - "dependencies"
+      - "npm"
+      - "automated"
+
+    # コミットメッセージの設定
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+
+    # バージョニング戦略
+    versioning-strategy: increase
+
+    # セキュリティアップデートを優先
+    # セマンティックバージョニングに従った更新のみ自動化
+    # メジャーアップデートは手動レビューが必要
+
+  # GitHub Actions の更新
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+
+    labels:
+      - "github-actions"
+      - "automated"
+
+    commit-message:
+      prefix: "ci"
+      include: "scope"

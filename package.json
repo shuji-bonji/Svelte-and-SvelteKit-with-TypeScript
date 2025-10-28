@@ -9,7 +9,10 @@
     "dev": "vite dev",
     "build": "NODE_ENV=production vite build --logLevel=error && npx pagefind --site dist && node scripts/postbuild.js",
     "preview": "vite preview",
-    "postbuild": "node scripts/postbuild.js && node scripts/generate-sitemap.js"
+    "postbuild": "node scripts/postbuild.js && node scripts/generate-sitemap.js",
+    "security-check": "node scripts/check-security.js",
+    "update-safe": "npm update && npm audit fix && npm run build",
+    "check-outdated": "npm outdated"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.1",

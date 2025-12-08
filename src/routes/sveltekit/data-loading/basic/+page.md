@@ -1,6 +1,6 @@
 ---
 title: Load関数の基礎
-description: SvelteKitのLoad関数の基本を理解 - Universal LoadとServer Loadの違い、TypeScriptによる型安全なデータ取得、レイアウトとページ間のデータ共有パターン
+description: SvelteKitのLoad関数の基本をTypeScriptで丁寧に解説。universal/serverの違い、親子レイアウト間のデータ共有、入力バリデーション、エラー処理とリダイレクト、型安全なフェッチパターンをまとめる基礎編。避けたい落とし穴と確認事項も紹介。詳しい手順とチェックリスト付き。補足
 ---
 
 <script>

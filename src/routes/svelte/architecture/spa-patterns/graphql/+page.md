@@ -1,6 +1,6 @@
 ---
 title: Svelte + GraphQL
-description: SvelteとGraphQLでモダンなWebアプリを構築。Apollo Client、urql、Hasuraを使った型安全なデータフェッチングをTypeScriptで実装する方法を解説
+description: SvelteとGraphQLでSPAを構築するための実践ガイド。Apollo Clientやurql、Hasuraを用いたクエリ/ミューテーションの型安全化、キャッシュポリシー設定、リアルタイム購読の実装まで解説する。運用時の注意点も補足。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載。補足
 ---
 
 <script>

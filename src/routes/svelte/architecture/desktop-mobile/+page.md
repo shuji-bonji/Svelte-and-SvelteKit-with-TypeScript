@@ -1,6 +1,6 @@
 ---
 title: デスクトップ・モバイルアプリ
-description: SvelteとTauri、Electron、Capacitorでクロスプラットフォームアプリを構築。デスクトップとモバイル向けネイティブアプリの開発方法をTypeScriptで解説
+description: SvelteとTauri/Electron/Capacitorでデスクトップ・モバイルアプリを構築する方法をTypeScriptで解説。ビルド設定、ネイティブAPI連携、更新配信やセキュリティ、UI共有戦略とストア設計まで実践的にまとめたロードマップ。配布チャネル選定のポイント付き。詳しい手順とチェックリスト付き
 ---
 
 Svelteは、TauriやElectronを使用したデスクトップアプリ、Capacitorを使用したモバイルアプリの開発にも最適です。Webの技術でネイティブアプリケーションを構築できます。

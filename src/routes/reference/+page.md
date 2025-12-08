@@ -1,6 +1,6 @@
 ---
 title: リファレンス
-description: Svelte 5とSvelteKit 2.xの完全リファレンス - TypeScript完全対応、実践的なコード例、包括的なAPIドキュメント
+description: Svelte 5とSvelteKit 2.xの総合リファレンス。テンプレート構文、ルーティング、フォーム/サーバー処理、ストアやトランジション、TypeScriptの型情報まで実践コード付きで横断的に参照できる索引ページ。関連チャプターへの導線も完備。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 <script>

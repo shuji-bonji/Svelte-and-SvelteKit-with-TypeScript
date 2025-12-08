@@ -1,6 +1,6 @@
 ---
 title: レンダリング戦略（基礎）
-description: SvelteKitのSSR、SSG、SPAの基本的な実装方法をTypeScriptで解説。各戦略の設定方法と使い分けを実践的なコード例で学習
+description: SvelteKitのSSR/SSG/SPAをTypeScriptで比較。prerenderやssr設定、データ取得フロー、ハイドレーションとキャッシュ戦略、SEOと初期表示速度のトレードオフまで網羅し、実装手順と判断軸を示す実践ガイド。導入前のチェックリストと落とし穴まとめ。詳しい手順とチェックリスト付き
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: SvelteKitが自動生成する型の一覧
-description: SvelteKitが ./$types から自動生成される型の完全リスト
+description: SvelteKitが生成する./$typesの中身を一覧し、PageDataやActionResultなど主要型の意味と拡張方法を整理。タイプセーフなloadやアクションを書くための参照として活用できる技術解説で、型エラーの防止に役立つ。各型の活用例付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 **SvelteKitが自動生成する型は決まっていて、ファイル名に応じて特定の型が生成されます**。
@@ -433,7 +433,7 @@ declare global {
     interface PageData {
       meta?: {
         title: string;                 // ページタイトル
-        description: string;           // メタディスクリプション
+description: SvelteKitが生成する./$typesの中身を一覧し、PageDataやActionResultなど主要型の意味と拡張方法を整理。タイプセーフなloadやアクションを書くための参照として活用できる技術解説で、型エラーの防止に役立つ。各型の活用例付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
         ogImage?: string;              // OGP画像URL
       };
       breadcrumbs?: Array<{            // パンくずリスト

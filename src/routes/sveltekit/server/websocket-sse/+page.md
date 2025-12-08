@@ -1,6 +1,6 @@
 ---
 title: WebSocket/SSE
-description: SvelteKitでリアルタイム通信を実装 - WebSocketとServer-Sent Events (SSE)を使用したチャット、通知、ライブフィードの構築方法をTypeScriptで解説
+description: SvelteKitでリアルタイム通信を実装するための総合ガイド。WebSocketとSSEの使い分け、チャットや通知の配信設計、ハンドラーの型付け、認証・バックプレッシャー・クリーンアップのポイントを整理し、運用時の考慮点まで触れる。接続監視の実装例付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 <script>

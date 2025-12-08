@@ -1,6 +1,6 @@
 ---
 title: TypeScript設定
-description: Svelte 5とSvelteKitプロジェクトのTypeScript環境構築
+description: Svelte 5とSvelteKitのTypeScript環境構築手順を網羅。sv createの推奨選択、tsconfigと環境変数の設定、ESLint/Prettier/VitestやVS Code拡張の導入、型チェックやスニペット活用まで段階的に解説する実践入門。コマンド例と推奨設定付き。導入時の確認リストを収録
 ---
 
 TypeScriptを使用したSvelte 5プロジェクトのセットアップ方法と、最適な設定について解説します。プロジェクトの作成から、tsconfig.jsonの設定、VSCodeの設定まで、実践的な環境構築を行います。

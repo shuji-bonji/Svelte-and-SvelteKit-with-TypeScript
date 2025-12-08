@@ -1,6 +1,6 @@
 ---
 title: Svelte + Supabase
-description: SvelteとSupabaseでリアルタイムWebアプリを構築。PostgreSQL、認証、リアルタイム通信、Row Level Securityの実装をTypeScriptで解説
+description: SvelteとSupabaseでリアルタイムWebアプリを構築する手順を網羅。認証・RLSの設定、PostgreSQLとの型安全なやり取り、ライブデータ購読、Edge Functions連携、キャッシュとオフライン対応の実装を解説する実践チュートリアル。運用チェックリスト付き。詳しい手順とチェックリスト付き
 ---
 
 <script>

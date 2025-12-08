@@ -1,6 +1,6 @@
 ---
 title: はじめに
-description: Svelte5とSvelteKitをTypeScriptで始める入門ガイド。コンパイラベースのアプローチ、Runesシステム、環境構築からHello Worldまでを解説
+description: Svelte 5とSvelteKitの入門ガイド。コンパイラベースの仕組みとRunesリアクティビティの特徴、TypeScript前提の開発フロー、環境構築からHello World、学習パスと教材の選び方までを一気に把握できるスタートページ。初心者向けの導線付き。詳しい手順とチェックリスト付き。補足
 ---
 
 <script>

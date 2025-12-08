@@ -1,6 +1,6 @@
 ---
 title: Markdownベースのブログシステム
-description: Svelte 5とSvelteKitでMarkdownファイルから記事を自動生成し、全文検索とタグフィルタリングを実装したブログシステムの完全ガイド
+description: Svelte 5とSvelteKitでMarkdownから記事を自動生成するブログの作り方。ファイルシステムルーティング、メタデータ整形、全文検索とタグフィルタリング、デプロイ前のビルド・キャッシュ最適化まで紹介し、検索性を高める。拡張アイデアも掲載。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 <script>
@@ -52,7 +52,7 @@ Markdownファイルで記事を管理し、全文検索とタグフィルタリ
 ```markdown
 ---
 title: 記事のタイトル
-description: 記事の説明
+description: Svelte 5とSvelteKitでMarkdownから記事を自動生成するブログの作り方。ファイルシステムルーティング、メタデータ整形、全文検索とタグフィルタリング、デプロイ前のビルド・キャッシュ最適化まで紹介し、検索性を高める。拡張アイデアも掲載。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 date: 2025-01-08
 author: 著者名
 tags: [Svelte 5, TypeScript, Markdown]

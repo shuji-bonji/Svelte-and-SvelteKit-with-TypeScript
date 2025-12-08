@@ -1,6 +1,6 @@
 ---
 title: Svelte 5 ブログシステム実装例
-description: Svelte 5とSvelteKitでTypeScriptを使った最小構成のブログシステム実装。ルーティング、レイアウト、動的ルート、データ取得の実践的なサンプルコード
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 <script>
@@ -89,7 +89,7 @@ TypeScriptによる型安全な開発のための型定義です。
 export interface Article {
   slug: string;
   title: string;
-  description: string;
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
   content: string;
   date: string;
   author: string;
@@ -100,7 +100,7 @@ export interface Article {
 export interface ArticleMeta {
   slug: string;
   title: string;
-  description: string;
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
   date: string;
   author: string;
   tags: string[];
@@ -121,7 +121,7 @@ const articles: Article[] = [
   {
     slug: 'getting-started-with-sveltekit',
     title: 'SvelteKitで始めるWebアプリ開発',
-    description: 'SvelteKitの基本的な使い方と、最初のアプリケーションの作り方を解説します。',
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
     content: `# SvelteKitで始めるWebアプリ開発\n\n...記事の内容...`,
     date: '2024-01-15',
     author: '山田太郎',
@@ -131,7 +131,7 @@ const articles: Article[] = [
   {
     slug: 'svelte5-runes-deep-dive',
     title: 'Svelte 5 Runesシステム完全解説',
-    description: '$state、$derived、$effectなど、Svelte 5の新しいリアクティビティシステムを詳しく解説。',
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
     content: `# Svelte 5 Runesシステム完全解説\n\n...記事の内容...`,
     date: '2024-01-10',
     author: '鈴木花子',
@@ -141,7 +141,7 @@ const articles: Article[] = [
   {
     slug: 'typescript-best-practices',
     title: 'TypeScriptベストプラクティス2024',
-    description: 'Svelte/SvelteKitプロジェクトでのTypeScript活用法とベストプラクティス。',
+description: Svelte 5とSvelteKitで最小構成のブログをTypeScriptで構築する手順。ルーティングとレイアウト設計、動的ルート生成、サーバーLoadでのデータ取得、UI部品の再利用までをシンプルなコードで示す実践例。拡張プランと運用ヒント付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
     content: `# TypeScriptベストプラクティス2024\n\n...記事の内容...`,
     date: '2024-01-05',
     author: '佐藤次郎',

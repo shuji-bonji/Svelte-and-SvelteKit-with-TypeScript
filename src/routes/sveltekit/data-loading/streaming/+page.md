@@ -1,6 +1,6 @@
 ---
 title: ストリーミングSSR
-description: SvelteKitのストリーミングSSRで段階的データ送信を実装 - awaitブロックによる非同期レンダリング、パフォーマンス最適化、エラーハンドリングをTypeScriptで解説
+description: SvelteKitのストリーミングSSR実装ガイド。awaitブロックでの段階的レンダリング、ReadableStream配信、エラー再試行やフォールバック表示、パフォーマンス測定とキャッシュ戦略をTypeScriptで具体的に解説する実践手引き。検証コマンドと落とし穴も紹介。詳しい手順とチェックリスト付き
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: "$state: $derived vs $effect vs derived.by 完全比較ガイド"
-description: "Svelte 5のリアクティビティを扱う3つの方法（$derived、$effect、derived.by）の違いと使い分けを実践例とともに詳しく解説"
+description: Svelte 5のリアクティビティを扱う$derived、$effect、derived.byの挙動を徹底比較。依存関係追跡やメモ化コスト、購読解除タイミング、適材適所の選択基準をコード例とベンチマークで整理し、設計判断を助ける深掘り解説。実装アンチパターンも共有。詳しい手順とチェックリスト付き。補足
 ---
 
 

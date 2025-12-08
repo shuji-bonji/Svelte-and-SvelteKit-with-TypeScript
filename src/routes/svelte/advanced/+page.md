@@ -1,6 +1,6 @@
 ---
 title: 実践編
-description: Svelte5とTypeScriptの実践編。リアクティブストア、クラスベースのリアクティビティ、Snippets機能、コンポーネントパターンなど高度な実装技術を解説
+description: Svelte 5とTypeScriptの実践編ハブ。リアクティブストア運用、クラスベースのリアクティビティ、Snippetsの使いどころ、コンポーネント設計パターン、scriptコンテキストやslotの型付けまで中級〜上級トピックを案内する入口。関連ページ導線と実装チェックリスト付き。詳しい手順とチェックリスト付き
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: APIルート設計
-description: SvelteKitでRESTful APIを構築する方法と設計パターン
+description: SvelteKitでRESTful APIを構築するための設計ガイド。+server.tsの書き方、バリデーションとエラーハンドリング、認証とCSRF対策、型安全なレスポンス設計、ディレクトリ構成のベストプラクティスを整理し、実装フローを提示。エラーレスポンス例も収録。詳しい手順とチェックリスト付き
 ---
 
 <script>

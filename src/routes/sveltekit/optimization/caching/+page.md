@@ -1,6 +1,6 @@
 ---
 title: キャッシュ戦略
-description: SvelteKitでPWA・CDN・エッジコンピューティングを活用したキャッシュ戦略 - Service Worker、エッジキャッシュ、オフライン対応による最適化をTypeScriptで実装
+description: SvelteKitでPWA・CDN・エッジを組み合わせたキャッシュ戦略を設計。Service Workerによるオフライン対応、etagやmax-ageのチューニング、失効と再検証、エッジキャッシュ活用法をTypeScriptで解説し、運用チェックリストを提供。監視の指針付き。詳しい手順とチェックリスト付き
 ---
 
 <script lang="ts">
@@ -139,7 +139,7 @@ PWAマニフェストファイル（`static/manifest.json`）の設定:
 const manifest = {
   name: "My SvelteKit PWA",
   short_name: "MySKPWA",
-  description: "高度なデータフェッチング戦略を実装したPWA",
+description: SvelteKitでPWA・CDN・エッジを組み合わせたキャッシュ戦略を設計。Service Workerによるオフライン対応、etagやmax-ageのチューニング、失効と再検証、エッジキャッシュ活用法をTypeScriptで解説し、運用チェックリストを提供。監視の指針付き。詳しい手順とチェックリスト付き
   start_url: "/",
   display: "standalone",
   theme_color: "#000000",

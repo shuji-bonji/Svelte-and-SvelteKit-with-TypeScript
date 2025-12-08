@@ -1,6 +1,6 @@
 ---
 title: 特殊ファイルシステム
-description: SvelteKitの特殊ファイルシステムをTypeScriptで完全理解。+page/+layout/+serverファイルの関係性、データフロー、実行環境を実践的なコード例で解説
+description: SvelteKitの特殊ファイルシステムを体系的に整理。+page/+layout/+server/+errorの役割と実行環境、データフローや親子レイアウトの関係、TypeScriptでの型安全な実装例とベストプラクティスをまとめた導入ガイド。よくある質問とチェックリスト付き。詳しい手順とチェックリスト付き
 ---
 
 <script lang="ts">

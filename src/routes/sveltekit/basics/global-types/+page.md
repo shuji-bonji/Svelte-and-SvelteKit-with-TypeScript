@@ -1,6 +1,6 @@
 ---
 title: app.d.tsの役割
-description: SvelteKitのapp.d.tsでグローバルな型定義を設定 - App.Locals、App.PageData、App.Errorなど標準インターフェースの完全ガイド
+description: SvelteKitのapp.d.tsを用いたグローバル型定義の完全ガイド。App.Locals/PageData/Errorの拡張、セッション情報やAPIレスポンスの型付け、共通モジュール管理、フック・サーバーハンドラでの活用まで網羅し、型安全性と保守性を高める。サンプルとチェックリスト付き。運用時の確認ポイントも掲載
 ---
 
 <script lang="ts">
@@ -95,7 +95,7 @@ interface PageData {
   // すべてのページで利用可能なデータ
   meta?: {
     title: string;
-    description: string;
+description: SvelteKitのapp.d.tsを用いたグローバル型定義の完全ガイド。App.Locals/PageData/Errorの拡張、セッション情報やAPIレスポンスの型付け、共通モジュール管理、フック・サーバーハンドラでの活用まで網羅し、型安全性と保守性を高める。サンプルとチェックリスト付き。運用時の確認ポイントも掲載
     ogImage?: string;
   };
   flash?: {
@@ -120,7 +120,7 @@ export const load: LayoutServerLoad = async () => {
   return {
     meta: {
       title: 'マイアプリ',
-      description: '素晴らしいWebアプリケーション'
+description: SvelteKitのapp.d.tsを用いたグローバル型定義の完全ガイド。App.Locals/PageData/Errorの拡張、セッション情報やAPIレスポンスの型付け、共通モジュール管理、フック・サーバーハンドラでの活用まで網羅し、型安全性と保守性を高める。サンプルとチェックリスト付き。運用時の確認ポイントも掲載
     }
   };
 };
@@ -275,7 +275,7 @@ declare global {
     interface PageData {
       meta?: {
         title: string;
-        description: string;
+description: SvelteKitのapp.d.tsを用いたグローバル型定義の完全ガイド。App.Locals/PageData/Errorの拡張、セッション情報やAPIレスポンスの型付け、共通モジュール管理、フック・サーバーハンドラでの活用まで網羅し、型安全性と保守性を高める。サンプルとチェックリスト付き。運用時の確認ポイントも掲載
         keywords?: string[];
         ogImage?: string;
       };

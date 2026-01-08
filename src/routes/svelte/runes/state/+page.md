@@ -254,48 +254,103 @@ Svelte 5では、以下の配列メソッドがリアクティブです。
 
 ## $state.raw - Proxyを使わない状態管理
 
-`$state.raw()`は、Proxyを経由せず、生の状態オブジェクトを手動で管理するための低レベルAPIです。特殊なケースで使用します。
+`$state.raw()`は、Proxyを経由せず、生のオブジェクトや配列をそのまま保持するためのAPIです。**ミューテーション（直接変更）は検知されず、再代入のみがリアクティブ**になります。
 
 ### $state vs $state.raw の違い
 
 | 項目 | `$state()` | `$state.raw()` |
 | --- |--- |--- |
-| リアクティブ | 自動（Proxy） | 手動（`$get` / `$set`） |
-| 直感的な書き方 | 可能 | 不可（明示的な操作が必要） |
-| 適用例 | 通常のフォームや状態管理 | Map/Set、外部ライブラリ連携、デバッグ用途など |
-| 内部処理 | Proxy による追跡 | 生値への直接アクセス |
+| リアクティビティ | 深い（Proxy経由） | 浅い（再代入のみ） |
+| ミューテーション | 検知される | 検知されない |
+| 適用例 | 通常のフォームや状態管理 | 大きな配列、外部ライブラリ連携、パフォーマンス最適化 |
+| 内部処理 | Proxy でラップ | 生の値をそのまま保持 |
 
 ### $state.raw の使用例
 
 ```typescript
-// Map や Set などの特殊型で使用
-let myMap = $state.raw(new Map());
+// $state.raw は再代入のみリアクティブ
+let person = $state.raw({
+  name: 'Heraclitus',
+  age: 49
+});
 
-function updateMap() {
-  const map = $get(myMap);
-  map.set('key', 'updated');
-  $set(myMap, map); // 明示的に通知
-}
+// ❌ ミューテーションは効果なし（UIは更新されない）
+person.age += 1;
 
-// 外部ライブラリとの連携
-let chartData = $state.raw([]);
+// ✅ 再代入はリアクティブ（UIが更新される）
+person = {
+  name: 'Heraclitus',
+  age: 50
+};
+```
 
-function fetchDataFromLibrary() {
-  const data = externalLibrary.getData();
-  $set(chartData, data); // 手動で設定
-}
+```svelte
+<script lang="ts">
+  // 大きな配列のパフォーマンス最適化
+  let largeDataset = $state.raw<number[]>([]);
+
+  async function loadData() {
+    const response = await fetch('/api/large-data');
+    const data = await response.json();
+    // 再代入で更新
+    largeDataset = data;
+  }
+
+  function addItem(item: number) {
+    // 新しい配列を作成して再代入
+    largeDataset = [...largeDataset, item];
+  }
+</script>
 ```
 
 ### いつ $state.raw を使うべきか
 
-1. **特殊なネイティブ型**を扱うとき（Map、Set、Date、File など）
-2. **外部ライブラリ**と状態を連携する際
-3. **変更検知のタイミング**を明示的に制御したいとき
-4. **デバッグ**目的で状態の取得・更新をログしたいとき
+1. **大きな配列やオブジェクト** - Proxyのオーバーヘッドを避けたい場合
+2. **イミュータブルなデータ** - 常に新しいオブジェクトを作成するパターン
+3. **外部ライブラリ連携** - Proxyが問題を起こす可能性がある場合
+4. **パフォーマンス最適化** - 深いリアクティビティが不要な場合
 
 :::tip[通常は $state を使用]
-高度な制御が必要な場面を除いては、`$state()`で完結するコードの方が簡潔かつ安全です。
+ほとんどの場合、`$state()`で十分です。`$state.raw()`はパフォーマンスが重要な場面や、イミュータブルなデータパターンを使用する場合にのみ検討してください。
 :::
+
+## $state.snapshot - 静的なスナップショット
+
+`$state.snapshot()`は、リアクティブな状態の静的なコピーを取得します。Proxyを剥がした純粋なJavaScriptオブジェクトを返します。
+
+```typescript
+let counter = $state({ count: 0 });
+
+// スナップショットを取得
+const snapshot = $state.snapshot(counter);
+// snapshot は { count: 0 } という純粋なオブジェクト
+
+// 外部APIへの送信やログ出力に便利
+console.log(JSON.stringify($state.snapshot(counter)));
+await fetch('/api/save', {
+  method: 'POST',
+  body: JSON.stringify($state.snapshot(counter))
+});
+```
+
+:::warning[用途に注意]
+`$state.snapshot()`は静的なコピーを返すため、返されたオブジェクトを変更してもUIは更新されません。デバッグやデータ送信時に使用してください。
+:::
+
+## $state.is - 参照の比較
+
+`$state.is(a, b)`は、2つの値が同じであるかを比較します。Proxy経由でも正しく比較できます。
+
+```typescript
+let obj = $state({ name: 'Alice' });
+
+// 通常の比較は Proxy のため false になることがある
+console.log(obj === obj); // true（同じProxy参照）
+
+// $state.is を使うと安全に比較
+const copy = obj;
+console.log($state.is(obj, copy)); // true
+```
 
 ## 実践例：フォーム管理
 

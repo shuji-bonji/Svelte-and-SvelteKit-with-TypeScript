@@ -730,17 +730,38 @@ export const load: PageLoad = async ({ params }) => {
 `+error.svelte`ファイルを作成して、エラーの表示をカスタマイズします。このファイルはLoad関数でエラーが発生したときに自動的に表示されます。
 
 ```svelte
-<!-- +error.svelte -->
+<!-- +error.svelte（SvelteKit 2.12+ 推奨パターン） -->
 <script lang="ts">
-  import { page } from '$app/stores';
-  // $pageストアからエラー情報にアクセス
+  import { page } from '$app/state';
+  // $app/state からエラー情報にアクセス（$プレフィックス不要）
 </script>
 
 <!-- HTTPステータスコードを表示 -->
-<h1>{$page.status}</h1>
+<h1>{page.status}</h1>
 <!-- エラーメッセージを表示 -->
-<p>{$page.error?.message}</p>
+<p>{page.error?.message}</p>
 ```
+
+:::tip[$app/state vs $app/stores（SvelteKit 2.12+）]
+SvelteKit 2.12以降では、`$app/state`が推奨されます。
+
+```typescript
+// ✅ 推奨（SvelteKit 2.12+）
+import { page } from '$app/state';
+// $プレフィックスなしで直接アクセス
+console.log(page.url.pathname);
+
+// 従来の方法（引き続き動作）
+import { page } from '$app/stores';
+// ストアなので$プレフィックスが必要
+console.log($page.url.pathname);
+```
+
+`$app/state`の利点：
+- Svelte 5のrunesシステムとの一貫性
+- `$`プレフィックス不要でコードがすっきり
+- TypeScriptの型推論が改善
+:::
 
 ## よく使われるパターン
 

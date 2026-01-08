@@ -421,6 +421,74 @@ Svelte以外のライブラリ（Chart.js、D3.jsなど）をSvelteのリアク�
 オブジェクトや他の値を返すことはできません。
 :::
 
+## $effect.tracking() - トラッキングコンテキストの検出
+
+`$effect.tracking()`は、現在のコードがリアクティブなトラッキングコンテキスト内で実行されているかどうかを検出します。
+これは、特定のコードがリアクティブなコンテキストで実行されているかを確認する必要がある場合に便利です。
+
+```svelte
+<script lang="ts">
+  function logWithContext(message: string) {
+    // リアクティブコンテキスト内かどうかをチェック
+    if ($effect.tracking()) {
+      console.log(`[リアクティブ] ${message}`);
+    } else {
+      console.log(`[通常] ${message}`);
+    }
+  }
+
+  let count = $state(0);
+
+  // $effect 内ではトラッキング中
+  $effect(() => {
+    logWithContext(`カウント: ${count}`); // "[リアクティブ] カウント: 0"
+  });
+
+  // 通常の関数呼び出しではトラッキング外
+  logWithContext('初期化完了'); // "[通常] 初期化完了"
+</script>
+```
+
+:::tip[$effect.tracking() の用途]
+- **デバッグ**: リアクティブコンテキストでの動作確認
+- **条件分岐**: トラッキング状態に応じた処理の切り替え
+- **警告表示**: 期待されるコンテキスト外での実行を検出
+:::
+
+## $effect.pending() - 保留中の非同期操作
+
+`$effect.pending()`は、`<svelte:boundary>`内で保留中のPromiseの数を返します。
+非同期データの読み込み状態を追跡するのに役立ちます。
+
+```svelte
+<script lang="ts">
+  import { Suspense } from 'svelte';
+
+  let pendingCount = $derived($effect.pending());
+</script>
+
+<svelte:boundary>
+  {#if pendingCount > 0}
+    <div class="loading-indicator">
+      {pendingCount}件の処理が進行中...
+    </div>
+  {/if}
+
+  <!-- 非同期コンポーネント -->
+  {#await loadData()}
+    <p>データを読み込み中...</p>
+  {:then data}
+    <DataDisplay {data} />
+  {/await}
+</svelte:boundary>
+```
+
+:::note[$effect.pending() の注意点]
+- `<svelte:boundary>` 内でのみ意味のある値を返します
+- 境界外では常に 0 を返します
+- 非同期コンポーネントのローディング状態の管理に便利です
+:::
+
 ## 非同期処理との組み合わせ
 
 APIコールやデータフェッチなどの非同期処理を`$effect`内で扱う際のパターンを紹介します。
@@ -902,14 +970,14 @@ APIコールやデータフェッチなどの非同期処理を`$effect`内で�
     return () => clearInterval(interval);
   });
   
-  // チャートの描画設定
-  let chartPath = $derived(() => {
+  // チャートの描画設定（複雑なロジックには$derived.byを使用）
+  let chartPath = $derived.by(() => {
     if (dataPoints.length === 0) return '';
-    
+
     const width = 400;
     const height = 200;
     const xStep = width / (maxPoints - 1);
-    
+
     return dataPoints
       .map((value, index) => {
         const x = index * xStep;
@@ -918,21 +986,21 @@ APIコールやデータフェッチなどの非同期処理を`$effect`内で�
       })
       .join(' ');
   });
-  
+
   // 統計情報
-  let stats = $derived(() => {
+  let stats = $derived.by(() => {
     if (dataPoints.length === 0) {
       return { min: 0, max: 0, avg: 0, current: 0 };
     }
-    
+
     const min = Math.min(...dataPoints);
     const max = Math.max(...dataPoints);
     const avg = dataPoints.reduce((a, b) => a + b, 0) / dataPoints.length;
     const current = dataPoints[dataPoints.length - 1] || 0;
-    
-    return { 
-      min: min.toFixed(1), 
-      max: max.toFixed(1), 
+
+    return {
+      min: min.toFixed(1),
+      max: max.toFixed(1),
       avg: avg.toFixed(1),
       current: current.toFixed(1)
     };

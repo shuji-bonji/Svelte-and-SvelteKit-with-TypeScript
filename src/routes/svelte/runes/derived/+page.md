@@ -78,10 +78,15 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 
 
 
-## ブロック構文での使用
+## $derived.by - 複雑な計算ロジック
 
 単純な式では表現しにくい複雑な計算や、複数のステップが必要な処理には、
-ブロック構文（アロー関数）を使用してより読みやすいコードを書くことができます。
+`$derived.by()`を使用します。
+
+:::tip[$derived vs $derived.by の使い分け]
+- **`$derived(式)`** - 単純な1行の式（`count * 2`、`items.length`など）
+- **`$derived.by(() => { ... })`** - 複数ステートメントや複雑なロジック
+:::
 
 ```svelte live ln
 <script lang="ts">
@@ -91,27 +96,27 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
     price: number;
     quantity: number;
   }
-  
+
   let products = $state<Product[]>([
     { id: 1, name: 'ノートPC', price: 100000, quantity: 2 },
     { id: 2, name: 'マウス', price: 3000, quantity: 5 },
     { id: 3, name: 'キーボード', price: 8000, quantity: 3 }
   ]);
-  
+
   let taxRate = $state(0.1);
   let discountRate = $state(0.05);
-  
-  // ブロック構文で複雑な計算
-  let summary = $derived(() => {
+
+  // $derived.by で複雑な計算
+  let summary = $derived.by(() => {
     const subtotal = products.reduce((sum, product) => {
       return sum + product.price * product.quantity;
     }, 0);
-    
+
     const discount = subtotal * discountRate;
     const afterDiscount = subtotal - discount;
     const tax = afterDiscount * taxRate;
     const total = afterDiscount + tax;
-    
+
     return {
       subtotal,
       discount,
@@ -124,12 +129,12 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 </script>
 
 <div class="summary">
-  <p>商品数: {summary().itemCount}点</p>
-  <p>小計: ¥{summary().subtotal?.toLocaleString() ?? 0}</p>
-  <p>割引: -¥{summary().discount?.toLocaleString() ?? 0}</p>
-  <p>割引後: ¥{summary().afterDiscount?.toLocaleString() ?? 0}</p>
-  <p>税額: ¥{summary().tax?.toLocaleString() ?? 0}</p>
-  <p>合計: ¥{summary().total?.toLocaleString() ?? 0}</p>
+  <p>商品数: {summary.itemCount}点</p>
+  <p>小計: ¥{summary.subtotal?.toLocaleString() ?? 0}</p>
+  <p>割引: -¥{summary.discount?.toLocaleString() ?? 0}</p>
+  <p>割引後: ¥{summary.afterDiscount?.toLocaleString() ?? 0}</p>
+  <p>税額: ¥{summary.tax?.toLocaleString() ?? 0}</p>
+  <p>合計: ¥{summary.total?.toLocaleString() ?? 0}</p>
 </div>
 ```
 
@@ -160,23 +165,23 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
   let sortBy = $state<'priority' | 'dueDate'>('priority');
   let searchQuery = $state('');
   
-  // フィルタリングされたタスク
-  let filteredTasks = $derived(() => {
+  // フィルタリングされたタスク（複雑なロジックには$derived.byを使用）
+  let filteredTasks = $derived.by(() => {
     let result = tasks;
-    
+
     // 完了タスクのフィルタ
     if (!showCompleted) {
       result = result.filter(t => !t.completed);
     }
-    
+
     // 検索フィルタ
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(t => 
+      result = result.filter(t =>
         t.title.toLowerCase().includes(query)
       );
     }
-    
+
     // ソート
     result = [...result].sort((a, b) => {
       if (sortBy === 'priority') {
@@ -186,19 +191,19 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
         return a.dueDate.getTime() - b.dueDate.getTime();
       }
     });
-    
+
     return result;
   });
-  
+
   // 統計情報
-  let stats = $derived(() => {
+  let stats = $derived.by(() => {
     const total = tasks.length;
     const completed = tasks.filter(t => t.completed).length;
     const pending = total - completed;
     const highPriority = tasks.filter(
       t => t.priority === 'high' && !t.completed
     ).length;
-    
+
     return { total, completed, pending, highPriority };
   });
 </script>
@@ -227,63 +232,112 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
     { category: '衣類', name: 'シャツ', value: 3000 }
   ]);
   
-  // カテゴリごとにグループ化
-  let groupedItems = $derived(() => {
+  // カテゴリごとにグループ化（複雑なロジックには$derived.byを使用）
+  let groupedItems = $derived.by(() => {
     const groups = new Map<string, Item[]>();
-    
+
     for (const item of items) {
       if (!groups.has(item.category)) {
         groups.set(item.category, []);
       }
       groups.get(item.category)!.push(item);
     }
-    
+
     return groups;
   });
-  
+
   // カテゴリごとの合計
-  let categoryTotals = $derived(() => {
+  let categoryTotals = $derived.by(() => {
     const totals = new Map<string, number>();
-    
+
     for (const [category, categoryItems] of groupedItems) {
       const total = categoryItems.reduce(
         (sum, item) => sum + item.value, 0
       );
       totals.set(category, total);
     }
-    
+
     return totals;
   });
 </script>
 ```
 
 
-## $derived.by - 明示的な派生値
+## $derived vs $derived.by の使い分け
 
-`$derived.by`は、関数を明示的に渡して派生値を作成する別の構文です。
-通常の`$derived`と機能的には同じですが、コードの意図をより明確にしたい場合に使用します。
+`$derived`と`$derived.by`は異なる用途に最適化されています。
 
 ```svelte
 <script lang="ts">
+  let count = $state(0);
+  let items = $state<string[]>(['apple', 'banana', 'cherry']);
   let searchTerm = $state('');
-  let data = $state<string[]>([]);
-  
-  // $derived.byを使用した明示的な派生値
+
+  // ✅ $derived - 単純な式に使用
+  let doubled = $derived(count * 2);
+  let itemCount = $derived(items.length);
+  let hasItems = $derived(items.length > 0);
+
+  // ✅ $derived.by - 複雑なロジックに使用
   let searchResults = $derived.by(() => {
-    if (!searchTerm) return data;
-    
+    if (!searchTerm) return items;
+
     const term = searchTerm.toLowerCase();
-    return data.filter(item => 
+    return items.filter(item =>
       item.toLowerCase().includes(term)
     );
   });
-  
-  // 通常の$derivedと同じ（好みの問題）
-  let searchResults2 = $derived(() => {
-    // 同じロジック
-  });
 </script>
 ```
+
+:::warning[よくある間違い]
+```typescript
+// ❌ 間違い：複雑なロジックに $derived を使用
+let filtered = $derived(() => {
+  // 複数行のロジック...
+});
+
+// ✅ 正しい：$derived.by を使用
+let filtered = $derived.by(() => {
+  // 複数行のロジック...
+});
+```
+:::
+
+## $derived のオーバーライド（Svelte 5.25+）
+
+Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバーライドできるようになりました。
+これは、ユーザー入力で派生値を一時的に上書きしたい場合に便利です。
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+
+  // 通常は count * 2 を返す
+  let doubled = $derived(count * 2);
+
+  function overrideValue() {
+    // 一時的にオーバーライド（Svelte 5.25+）
+    doubled = 100;
+  }
+
+  function resetToCalculated() {
+    // count を変更すると、派生値が再計算される
+    count = count;
+  }
+</script>
+
+<p>Count: {count}</p>
+<p>Doubled: {doubled}</p>
+<button onclick={() => count++}>Increment</button>
+<button onclick={overrideValue}>Override to 100</button>
+```
+
+:::note[オーバーライドの動作]
+- オーバーライドされた値は、依存する状態が変更されるまで維持されます
+- 依存状態が変更されると、派生値は再計算されオーバーライドは解除されます
+- フォーム入力の一時的な上書きなどに便利です
+:::
 
 
 ## 非同期処理との組み合わせ
@@ -635,9 +689,9 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
 <script lang="ts">
   let numbers = $state([1, 2, 3, 4, 5]);
   let multiplier = $state(2);
-  
+
   // この計算は依存関係が変わらない限り実行されない
-  let expensiveCalculation = $derived(() => {
+  let expensiveCalculation = $derived.by(() => {
     console.log('計算実行'); // 依存関係が変わった時のみ出力
     return numbers.reduce((sum, n) => {
       // 重い計算をシミュレート
@@ -655,24 +709,22 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
 大きな派生値を小さな部分に分割することで、パフォーマンスを向上できます。
 各派生値が独立してメモ化されるため、必要な部分だけが再計算されます。
 
-大きな派生値を小さな部分に分割することで、パフォーマンスを向上できます。
-
 ```svelte
 <script lang="ts">
   // ❌ 悪い例：すべてを1つの派生値で計算
-  let everything = $derived(() => {
+  let everything = $derived.by(() => {
     const filtered = items.filter(/* ... */);
     const sorted = filtered.sort(/* ... */);
     const grouped = groupBy(sorted, /* ... */);
     const stats = calculateStats(grouped);
     return { filtered, sorted, grouped, stats };
   });
-  
-  // ✅ 良い例：段階的に派生値を作成
-  let filtered = $derived(() => items.filter(/* ... */));
-  let sorted = $derived(() => [...filtered].sort(/* ... */));
-  let grouped = $derived(() => groupBy(sorted, /* ... */));
-  let stats = $derived(() => calculateStats(grouped));
+
+  // ✅ 良い例：段階的に派生値を作成（単純な式は$derivedでOK）
+  let filtered = $derived(items.filter(i => i.active));
+  let sorted = $derived([...filtered].sort((a, b) => a.name.localeCompare(b.name)));
+  let grouped = $derived.by(() => groupBy(sorted, 'category'));
+  let stats = $derived.by(() => calculateStats(grouped));
 </script>
 ```
 

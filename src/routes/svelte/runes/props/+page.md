@@ -168,10 +168,67 @@ let { onClick, onChange, onSubmit }: Props = $props();
 function handleClick(event: MouseEvent) {
   // 内部処理
   console.log('ボタンクリック');
-  
+
   // 親のハンドラを呼び出す
   onClick?.(event);
 }
+```
+
+## $props.id() - ユニークIDの生成（Svelte 5.20+）
+
+`$props.id()`は、コンポーネントインスタンスごとにユニークなIDを生成します。
+フォーム要素の`id`/`for`属性や、アクセシビリティ属性（`aria-describedby`など）の関連付けに便利です。
+
+```svelte
+<script lang="ts">
+  type Props = {
+    label: string;
+    error?: string;
+    value: string;
+  };
+
+  let { label, error, value = $bindable('') }: Props = $props();
+
+  // コンポーネントインスタンスごとにユニークなIDを生成
+  const uid = $props.id();
+</script>
+
+<div class="form-field">
+  <label for="{uid}-input">{label}</label>
+  <input
+    id="{uid}-input"
+    bind:value
+    aria-describedby={error ? `${uid}-error` : undefined}
+    aria-invalid={!!error}
+  />
+  {#if error}
+    <span id="{uid}-error" class="error">{error}</span>
+  {/if}
+</div>
+```
+
+:::tip[$props.id() の利点]
+- **一意性保証**: 同じコンポーネントを複数配置してもIDが衝突しない
+- **アクセシビリティ**: `label`と`input`の関連付けが確実
+- **SSR対応**: サーバーとクライアントで一貫したIDを生成
+:::
+
+### 使用例：複数フィールドの関連付け
+
+```svelte
+<script lang="ts">
+  const uid = $props.id();
+</script>
+
+<fieldset>
+  <legend id="{uid}-legend">ユーザー情報</legend>
+
+  <label for="{uid}-firstname">名前</label>
+  <input id="{uid}-firstname" aria-labelledby="{uid}-legend" />
+
+  <label for="{uid}-email">メール</label>
+  <input id="{uid}-email" type="email" aria-labelledby="{uid}-legend" />
+</fieldset>
 ```
 
 ## 子要素としてのコンポーネント
@@ -872,14 +929,14 @@ let selected = $state<Set<T>>(new Set());
 let sortColumn = $state<keyof T | null>(null);
 let sortDirection = $state<'asc' | 'desc'>('asc');
 
-// ソート済みデータ
-let sortedData = $derived(() => {
+// ソート済みデータ（複雑なロジックには$derived.byを使用）
+let sortedData = $derived.by(() => {
   if (!sortColumn) return data;
-  
+
   return [...data].sort((a, b) => {
     const aVal = a[sortColumn];
     const bVal = b[sortColumn];
-    
+
     if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
     if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
     return 0;

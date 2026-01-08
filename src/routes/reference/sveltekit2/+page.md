@@ -32,6 +32,24 @@ Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサ
 
 設定後、Claude Desktopを再起動してください。
 
+**セットアップ方法**（Claude Code CLI）:
+```bash
+# プロジェクトスコープで追加（推奨）
+claude mcp add svelte -- npx -y @sveltejs/mcp
+
+# または、グローバルスコープで追加
+claude mcp add --scope user svelte -- npx -y @sveltejs/mcp
+```
+
+設定後、Claude Codeを再起動してください。
+
+```bash
+# 登録済みMCPサーバーの一覧を確認
+claude mcp list
+```
+
+会話中は `/mcp` コマンドでも接続状態を確認できます。
+
 詳細: [Svelte MCP公式ドキュメント](https://svelte.dev/docs/mcp)
 :::
 

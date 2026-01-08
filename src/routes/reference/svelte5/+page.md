@@ -8,7 +8,7 @@ description: Svelte 5の完全リファレンス。Runesシステム、コンポ
 </script>
 
 :::tip[AI開発には公式のSvelte MCPサーバーの利用を推奨]
-**Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
+**Claude Code / Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
 
 Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサーバーで、以下の利点があります。
 
@@ -17,7 +17,27 @@ Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサ
 - **公式サポート**: Svelteチームによる保守
 - **このリファレンスとの相乗効果**: MCPで最新情報を取得し、このページで体系的な理解を深める
 
-**セットアップ方法**（Claude Desktop）:
+#### Claude Code（CLI）でのセットアップ
+
+```bash
+# プロジェクトスコープで追加（推奨）
+claude mcp add svelte -- npx -y @sveltejs/mcp
+
+# または、グローバルスコープで追加
+claude mcp add --scope user svelte -- npx -y @sveltejs/mcp
+```
+
+設定後、Claude Codeを再起動してください。
+
+```bash
+# 登録済みMCPサーバーの一覧を確認
+claude mcp list
+```
+
+会話中は `/mcp` コマンドでも接続状態を確認できます。
+
+#### Claude Desktopでのセットアップ
+
 ```js
 // claude_desktop_config.json
 {

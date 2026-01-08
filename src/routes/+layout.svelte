@@ -39,6 +39,7 @@
 
         // すべてのアクティブリンクを取得
         const activeLinks = sidebar.querySelectorAll('.link.active');
+
         activeLinks.forEach((link) => {
           const href = link.getAttribute('href');
           if (!href) return;
@@ -175,15 +176,23 @@
     max-height: calc(100vh - 64px) !important; /* ヘッダーの高さを引く */
   }
   
-  /* アクティブなリンクのベーススタイル（7.xの仕様変更対応） */
-  /* 7.xでは子パスもアクティブになるため、完全一致のみ強調 */
+  /* 7.xの仕様変更対応: 全ての👈アイコンをデフォルトで非表示 */
+  :global(.theme-default-sidebar .active-icon) {
+    display: none !important;
+  }
+
+  /* 完全一致のリンクのみアイコンを表示（JavaScriptで.exact-matchクラスを付与） */
+  :global(.theme-default-sidebar .link.exact-match .active-icon) {
+    display: flex !important;
+  }
+
+  /* アクティブなリンクのベーススタイル（子パスによるアクティブは目立たせない） */
   :global(.theme-default-sidebar .link.active) {
-    /* 子パスによるアクティブは目立たせない */
     font-weight: 500 !important;
     position: relative !important;
   }
 
-  /* 完全一致のリンクを強調（JavaScriptで.exact-matchクラスを付与） */
+  /* 完全一致のリンクを強調 */
   :global(.theme-default-sidebar .link.exact-match) {
     background-color: rgba(251, 113, 133, 0.1) !important;
     font-weight: 600 !important;

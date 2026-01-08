@@ -1,8 +1,8 @@
 # TypeScriptで学ぶ Svelte 5/SvelteKit 完全ガイド
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
-[![SveltePress](https://img.shields.io/badge/SveltePress-v6.0.4-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.16-red?logo=svelte&labelColor=000)](https://svelte.dev/)
+[![SveltePress](https://img.shields.io/badge/SveltePress-v7.0-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.49-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
 [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -243,15 +243,14 @@ Svelte 5の内部実装や高度なトピックを扱います。
 ## 🛠 技術スタック
 
 ### コア技術
-- **Svelte 5** (5.0.0+) - 最新のRunesシステム対応
-- **SvelteKit** (2.8.1+) - フルスタックフレームワーク
+- **Svelte 5** (5.46+) - 最新のRunesシステム対応
+- **SvelteKit** (2.49+) - フルスタックフレームワーク
 - **TypeScript** (5.3.3+) - 型安全な開発環境
-- **Vite** (5.1.4+) - 高速ビルドツール
+- **Vite** (7.0+) - 高速ビルドツール
 
 ### ドキュメント・可視化
-- **SveltePress** (6.0.4+) - 静的サイト生成
-- **Mermaid** (11.9.0+) - ダイアグラム描画
-- **Rehype-Mermaid** (3.0.0+) - Markdown統合
+- **SveltePress** (7.0+) - 静的サイト生成
+- **Mermaid** (11.12+) - ダイアグラム描画
 
 ### カスタム機能
 - **AutoPageNavigation** - ページ間の自動ナビゲーション生成
@@ -371,5 +370,5 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2025年9月20日 - 実装例プロジェクトの最新化完了。`resolveRoute`を`resolve`に移行、svelte5-todo-exampleプロジェクトの追加
+**Last Updated**: 2026年1月8日 - 依存関係の大幅更新（Vite 7、SveltePress 7、@sveltejs/vite-plugin-svelte 6）。サイドバーのアクティブ状態表示の改善
 

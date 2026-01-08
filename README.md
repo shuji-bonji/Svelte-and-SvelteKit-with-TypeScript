@@ -87,14 +87,14 @@
 - トランジション・アニメーション
 
 ### 3️⃣ Runes基礎編
-- `$state` - リアクティブな状態管理
-- `$derived` / `$derived.by()` - 計算値と明示的な派生値
-- `$effect` / `$effect.pre` - 副作用の処理とDOM更新前実行
+- `$state` - リアクティブな状態管理（`$state.raw`, `$state.snapshot`, `$state.is`含む）
+- `$derived` / `$derived.by()` - 計算値と明示的な派生値（オーバーライド機能対応）
+- `$effect` / `$effect.pre` - 副作用の処理とDOM更新前実行（`$effect.tracking()`, `$effect.pending()`含む）
 - 他フレームワークとの比較
 
 ### 4️⃣ Runes応用編
 - Runesシステム詳細
-- `$props` - プロパティ定義
+- `$props` - プロパティ定義（`$props.id()`によるユニークID生成含む）
 - `$bindable` - 双方向バインディング
 - `$inspect` - デバッグツール
 
@@ -126,7 +126,7 @@
 - 高度なルーティング
 
 ### 9️⃣ SvelteKitデータ取得
-- Load関数の基礎
+- Load関数の基礎（`$app/state`推奨パターン対応）
 - TypeScript型の自動生成システム
 - データフローの詳細
 - SPAモードとデータ無効化
@@ -199,11 +199,12 @@
 Svelte 5の内部実装や高度なトピックを扱います。
 - Proxyオブジェクトの活用
 - リアクティブ状態変数とバインディングの違い
-- `$state.raw` vs `$state`の使い分け
-- `$derived` vs `$effect` vs `$derived.by`の違い
+- `$state.raw` vs `$state`の使い分け（浅いリアクティビティ）
+- `$derived` vs `$effect` vs `$derived.by`の完全比較
 - コンパイル時最適化
 - HTMLテンプレートとSnippets
 - カスタム要素とSvelteコンポーネント
+- SvelteKitプレースホルダー（`%sveltekit.*%`）
 
 ## 📊 Mermaidダイアグラム機能
 
@@ -370,5 +371,7 @@ pnpm preview
 
 **Note**: このドキュメントは継続的に更新されています。Svelte 5の最新機能やMermaidダイアグラムによる視覚的解説を随時追加しています。最新の情報は[公開サイト](https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/)をご確認ください。
 
-**Last Updated**: 2026年1月8日 - 依存関係の大幅更新（Vite 7、SveltePress 7、@sveltejs/vite-plugin-svelte 6）。サイドバーのアクティブ状態表示の改善
+変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
+
+**Last Updated**: 2026年1月8日 - Svelte 5 Runesドキュメント品質改善（`$state.raw`修正、`$derived.by()`統一、`$props.id()`/`$effect.tracking()`/`$effect.pending()`追加、`$app/state`推奨パターン対応）
 

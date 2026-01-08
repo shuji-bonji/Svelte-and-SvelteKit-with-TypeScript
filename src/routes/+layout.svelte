@@ -26,29 +26,62 @@
   $effect(() => {
     mounted = true;
 
+    // サイドバーのアクティブ状態を修正（7.xの仕様変更対応）
+    // 7.xでは子パスもアクティブになるため、完全一致のみをハイライトするよう修正
+    function fixActiveLinks() {
+      setTimeout(() => {
+        const sidebar = document.querySelector('.theme-default-sidebar');
+        if (!sidebar) return;
+
+        // 現在のパスを取得（末尾スラッシュを正規化）
+        const currentPath = $page.url.pathname;
+        const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
+
+        // すべてのアクティブリンクを取得
+        const activeLinks = sidebar.querySelectorAll('.link.active');
+        activeLinks.forEach((link) => {
+          const href = link.getAttribute('href');
+          if (!href) return;
+
+          // 完全一致かどうかをチェック
+          const normalizedHref = href.endsWith('/') ? href : `${href}/`;
+          const isExactMatch = normalizedPath === normalizedHref;
+
+          if (isExactMatch) {
+            // 完全一致の場合は強調クラスを追加
+            link.classList.add('exact-match');
+          } else {
+            // 完全一致でない場合はactiveクラスを削除
+            link.classList.remove('active');
+          }
+        });
+      }, 50);
+    }
+
     // サイドバーの自動スクロール機能
     function scrollToActiveSection() {
       setTimeout(() => {
         // SveltePressのサイドバー要素を探す
         const sidebar = document.querySelector('.theme-default-sidebar');
         if (!sidebar) return;
-        
-        // アクティブなリンクを探す（現在のページ）
-        const currentLink = sidebar.querySelector('.link.active');
+
+        // 完全一致のリンクを優先、なければアクティブなリンクを探す
+        const currentLink = sidebar.querySelector('.link.exact-match') ||
+                           sidebar.querySelector('.link.active');
         if (!currentLink) return;
-        
+
         // アクティブなリンクの位置を取得
         const sidebarRect = sidebar.getBoundingClientRect();
         const linkRect = currentLink.getBoundingClientRect();
-        
+
         // サイドバーの表示領域内にあるかチェック
-        const isInView = linkRect.top >= sidebarRect.top && 
+        const isInView = linkRect.top >= sidebarRect.top &&
                         linkRect.bottom <= sidebarRect.bottom;
-        
+
         if (!isInView) {
           // リンクが見える位置までスクロール（中央寄せ）
           const scrollTop = linkRect.top - sidebarRect.top - sidebarRect.height / 2 + linkRect.height / 2;
-          
+
           sidebar.scrollTo({
             top: sidebar.scrollTop + scrollTop,
             behavior: 'smooth'
@@ -56,15 +89,17 @@
         }
       }, 200); // DOMの更新を待つ
     }
-    
+
     // 初回実行
+    fixActiveLinks();
     scrollToActiveSection();
-    
+
     // ページ遷移時にも実行
     const unsubscribe = page.subscribe(() => {
+      fixActiveLinks();
       scrollToActiveSection();
     });
-    
+
     return () => {
       unsubscribe();
     };
@@ -140,15 +175,23 @@
     max-height: calc(100vh - 64px) !important; /* ヘッダーの高さを引く */
   }
   
-  /* アクティブなリンクをハイライト */
+  /* アクティブなリンクのベーススタイル（7.xの仕様変更対応） */
+  /* 7.xでは子パスもアクティブになるため、完全一致のみ強調 */
   :global(.theme-default-sidebar .link.active) {
+    /* 子パスによるアクティブは目立たせない */
+    font-weight: 500 !important;
+    position: relative !important;
+  }
+
+  /* 完全一致のリンクを強調（JavaScriptで.exact-matchクラスを付与） */
+  :global(.theme-default-sidebar .link.exact-match) {
     background-color: rgba(251, 113, 133, 0.1) !important;
     font-weight: 600 !important;
     position: relative !important;
   }
-  
-  /* アクティブなリンクに左ボーダーを追加 */
-  :global(.theme-default-sidebar .link.active::before) {
+
+  /* 完全一致リンクに左ボーダーを追加 */
+  :global(.theme-default-sidebar .link.exact-match::before) {
     content: '';
     position: absolute;
     left: 0;

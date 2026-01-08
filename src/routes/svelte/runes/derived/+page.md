@@ -1,10 +1,22 @@
 ---
-title: $derived - TypeScriptで計算プロパティとメモ化を実装
-description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパティ・派生値・メモ化を実装。$derived.by、useMemoとの違い、パフォーマンス最適化、複雑な派生ロジックの実践例を詳しく解説
+title: $derived - Svelte 5の計算プロパティをTypeScriptで完全マスター
+description: Svelte 5の$derived/$derived.by完全ガイド - TypeScriptで計算プロパティ・派生値・メモ化を実装。React useMemo/Vue computedとの違い、配列フィルタリング、パフォーマンス最適化を実践コードで解説
 ---
 
-
 `$derived`ルーンは、他のリアクティブな値から自動的に計算される値を作成します。依存する値が変更されると、派生値も自動的に再計算されます。
+
+## この記事で学べること
+
+- `$derived`の基本的な使い方と TypeScript 型推論
+- `$derived.by()`で複雑な計算ロジックを実装する
+- 配列のフィルタリング・ソート・グルーピングのパターン
+- 自動メモ化によるパフォーマンス最適化
+- `$derived`のオーバーライド機能（Svelte 5.25+）
+- React `useMemo` / Vue `computed` との違い
+
+:::tip[React 開発者の方へ]
+`$derived`は React の`useMemo`と似ていますが、**依存配列を指定する必要がありません**。Svelte が自動的に依存関係を追跡するため、依存配列の管理ミスによるバグから解放されます。
+:::
 
 ## 基本的な使い方
 
@@ -16,12 +28,12 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 ```svelte live
 <script lang="ts">
   let count = $state(0);
-  
+
   // countが変更されると自動的に再計算
   let doubled = $derived(count * 2);
   let squared = $derived(count ** 2);
   let isEven = $derived(count % 2 === 0);
-  
+
   function increment() {
     count++;
   }
@@ -33,11 +45,12 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 <p>偶数: {isEven}</p>
 ```
 
-:::tip[Vue やReactとの比較]
+:::tip[Vue や React との比較]
+
 - Vue の `computed` と同じ概念
 - React の `useMemo` に似ているが、依存関係の指定が不要
 - 自動的に依存関係を追跡し、必要な時だけ再計算
-:::
+  :::
 
 ### 複数の依存関係
 
@@ -49,17 +62,17 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
   let firstName = $state('太郎');
   let lastName = $state('山田');
   let separator = $state(' ');
-  
+
   // 複数の値に依存する派生値
   let fullName = $derived(
     lastName + separator + firstName
   );
-  
+
   // さらに派生値から派生
   let displayName = $derived(
     `${fullName}様`
   );
-  
+
   let nameLength = $derived(fullName.length);
 </script>
 
@@ -76,17 +89,16 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 <p>文字数: {nameLength}</p>
 ```
 
-
-
 ## $derived.by - 複雑な計算ロジック
 
 単純な式では表現しにくい複雑な計算や、複数のステップが必要な処理には、
 `$derived.by()`を使用します。
 
 :::tip[$derived vs $derived.by の使い分け]
-- **`$derived(式)`** - 単純な1行の式（`count * 2`、`items.length`など）
+
+- **`$derived(式)`** - 単純な 1 行の式（`count * 2`、`items.length`など）
 - **`$derived.by(() => { ... })`** - 複数ステートメントや複雑なロジック
-:::
+  :::
 
 ```svelte live ln
 <script lang="ts">
@@ -138,8 +150,6 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 </div>
 ```
 
-
-
 ## 配列とオブジェクトの処理
 
 実際のアプリケーションでは、配列やオブジェクトのデータを加工することが多くあります。
@@ -156,15 +166,15 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
     priority: 'low' | 'medium' | 'high';
     dueDate: Date;
   }
-  
+
   let tasks = $state<Task[]>([
     // タスクデータ
   ]);
-  
+
   let showCompleted = $state(false);
   let sortBy = $state<'priority' | 'dueDate'>('priority');
   let searchQuery = $state('');
-  
+
   // フィルタリングされたタスク（複雑なロジックには$derived.byを使用）
   let filteredTasks = $derived.by(() => {
     let result = tasks;
@@ -209,12 +219,10 @@ description: Svelte 5の$derived完全解説 - TypeScriptで計算プロパテ�
 </script>
 ```
 
-
-
 ### グルーピング
 
 データを特定のキーでグループ化することも、`$derived`で簡単に実現できます。
-MapやObjectを使って、カテゴリごとの集計や整理が可能です。
+Map や Object を使って、カテゴリごとの集計や整理が可能です。
 
 ```svelte
 <script lang="ts">
@@ -223,7 +231,7 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
     name: string;
     value: number;
   }
-  
+
   let items = $state<Item[]>([
     { category: '食品', name: 'りんご', value: 100 },
     { category: '食品', name: 'バナナ', value: 80 },
@@ -231,7 +239,7 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
     { category: '家電', name: '冷蔵庫', value: 80000 },
     { category: '衣類', name: 'シャツ', value: 3000 }
   ]);
-  
+
   // カテゴリごとにグループ化（複雑なロジックには$derived.byを使用）
   let groupedItems = $derived.by(() => {
     const groups = new Map<string, Item[]>();
@@ -262,7 +270,6 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
 </script>
 ```
 
-
 ## $derived vs $derived.by の使い分け
 
 `$derived`と`$derived.by`は異なる用途に最適化されています。
@@ -291,22 +298,24 @@ MapやObjectを使って、カテゴリごとの集計や整理が可能です�
 ```
 
 :::warning[よくある間違い]
+
 ```typescript
 // ❌ 間違い：複雑なロジックに $derived を使用
 let filtered = $derived(() => {
-  // 複数行のロジック...
+	// 複数行のロジック...
 });
 
 // ✅ 正しい：$derived.by を使用
 let filtered = $derived.by(() => {
-  // 複数行のロジック...
+	// 複数行のロジック...
 });
 ```
+
 :::
 
 ## $derived のオーバーライド（Svelte 5.25+）
 
-Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバーライドできるようになりました。
+Svelte 5.25 以降では、`$derived`で作成した値を一時的にオーバーライドできるようになりました。
 これは、ユーザー入力で派生値を一時的に上書きしたい場合に便利です。
 
 ```svelte
@@ -334,11 +343,11 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
 ```
 
 :::note[オーバーライドの動作]
+
 - オーバーライドされた値は、依存する状態が変更されるまで維持されます
 - 依存状態が変更されると、派生値は再計算されオーバーライドは解除されます
 - フォーム入力の一時的な上書きなどに便利です
-:::
-
+  :::
 
 ## 非同期処理との組み合わせ
 
@@ -355,17 +364,17 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
   let userData = $state<User | null>(null);
   let loading = $state(false);
   let error = $state<Error | null>(null);
-  
+
   // URLは同期的に派生
   let apiUrl = $derived(
     `/api/users/${userId}`
   );
-  
+
   // 非同期処理は$effectで実行
   $effect(async () => {
     loading = true;
     error = null;
-    
+
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error('Failed to fetch');
@@ -378,7 +387,6 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
   });
 </script>
 ```
-
 
 ## 実践例：シンプルなフィルタリング
 
@@ -395,7 +403,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
     inStock: boolean;
     rating: number;
   }
-  
+
   let products = $state<Product[]>([
     { id: 1, name: 'ノートPC Pro', category: 'パソコン', price: 150000, inStock: true, rating: 4.5 },
     { id: 2, name: 'ワイヤレスマウス', category: '周辺機器', price: 3000, inStock: true, rating: 4.0 },
@@ -404,7 +412,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
     { id: 5, name: 'デスクトップPC', category: 'パソコン', price: 200000, inStock: true, rating: 4.7 },
     { id: 6, name: 'USBハブ', category: '周辺機器', price: 2000, inStock: true, rating: 3.8 }
   ]);
-  
+
   // フィルタ条件
   let searchQuery = $state('');
   let selectedCategory = $state('all');
@@ -412,13 +420,13 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
   let maxPrice = $state(300000);
   let onlyInStock = $state(false);
   let minRating = $state(0);
-  
+
   // カテゴリ一覧を動的に生成
   let categories = $derived.by(() => {
     const cats = new Set(products.map(p => p.category));
     return ['all', ...Array.from(cats)];
   });
-  
+
   // フィルタリングされた商品
   let filteredProducts = $derived.by(() => {
     return products.filter(product => {
@@ -426,31 +434,31 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
       if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
-      
+
       // カテゴリ
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
-      
+
       // 価格範囲
       if (product.price < minPrice || product.price > maxPrice) {
         return false;
       }
-      
+
       // 在庫
       if (onlyInStock && !product.inStock) {
         return false;
       }
-      
+
       // 評価
       if (product.rating < minRating) {
         return false;
       }
-      
+
       return true;
     });
   });
-  
+
   // 統計情報
   let stats = $derived.by(() => {
     const total = filteredProducts.length;
@@ -461,7 +469,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
       ? filteredProducts.reduce((sum, p) => sum + p.rating, 0) / total
       : 0;
     const inStockCount = filteredProducts.filter(p => p.inStock).length;
-    
+
     return {
       total,
       avgPrice: Math.round(avgPrice),
@@ -474,7 +482,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
 <div class="search-filter-demo">
   <div class="filters">
     <h3>フィルタ条件</h3>
-    
+
     <div class="filter-group">
       <label for="search">検索:</label>
       <input
@@ -484,7 +492,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
         placeholder="商品名で検索..."
       />
     </div>
-    
+
     <div class="filter-group">
       <label for="category">カテゴリ:</label>
       <select id="category" bind:value={selectedCategory}>
@@ -495,7 +503,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
         {/each}
       </select>
     </div>
-    
+
     <div class="filter-group">
       <label for="min-price">価格範囲:</label>
       <div class="range-inputs">
@@ -515,14 +523,14 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
         />
       </div>
     </div>
-    
+
     <div class="filter-group">
       <label>
         <input type="checkbox" bind:checked={onlyInStock} />
         在庫ありのみ
       </label>
     </div>
-    
+
     <div class="filter-group">
       <label for="min-rating">最低評価: {minRating}</label>
       <input
@@ -535,7 +543,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
       />
     </div>
   </div>
-  
+
   <div class="results">
     <div class="stats">
       <span>該当商品: {stats.total}件</span>
@@ -543,7 +551,7 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
       <span>平均評価: ★{stats.avgRating}</span>
       <span>在庫あり: {stats.inStockCount}件</span>
     </div>
-    
+
     <div class="product-list">
       {#if filteredProducts.length === 0}
         <p class="no-results">該当する商品がありません</p>
@@ -571,25 +579,25 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
     gap: 2rem;
     padding: 1rem;
   }
-  
+
   .filters {
     color: white;
     background: #446;
     padding: 1rem;
     border-radius: 8px;
   }
-  
+
   .filter-group {
     margin-bottom: 1rem;
     width: 100%;
   }
-  
+
   .filter-group label {
     display: block;
     margin-bottom: 0.25rem;
     font-weight: bold;
   }
-  
+
   .filter-group input[type="text"],
   .filter-group input[type="number"],
   .filter-group select {
@@ -599,17 +607,17 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
     border-radius: 4px;
     box-sizing: border-box;
   }
-  
+
   .range-inputs {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-  
+
   .range-inputs input {
     width: 80px;
   }
-  
+
   .stats {
     display: flex;
     color: black;
@@ -620,43 +628,43 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
     margin-bottom: 1rem;
     font-size: 0.9rem;
   }
-  
+
   .product-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
   }
-  
+
   .product-card {
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #cce;
   }
-  
+
   .product-card h4 {
     margin: 0 0 0.5rem 0;
     color: white;
   }
-  
+
   .product-card p {
     margin: 0.25rem 0;
     font-size: 0.9rem;
   }
-  
+
   .category {
     color: #666;
   }
-  
+
   .price {
     font-weight: bold;
     color: #ff3e00;
   }
-  
+
   .stock {
     color: green;
   }
-  
+
   .stock.out-of-stock {
     color: #999;
   }
@@ -735,27 +743,133 @@ Svelte 5.25以降では、`$derived`で作成した値を一時的にオーバ�
 
 - **自動追跡** - 依存関係を自動的に検出
 - **メモ化** - 不要な再計算を避ける
-- **型安全** - TypeScriptの型推論が機能
+- **型安全** - TypeScript の型推論が機能
 - **宣言的** - 計算ロジックを明確に表現
 
 :::info[他のフレームワークとの比較]
+
 - **Vue**: `computed`とほぼ同じ
 - **React**: `useMemo`と似ているが、依存配列が不要
-- **Angular**: Computed signalsと類似
+- **Angular**: Computed signals と類似
 - **MobX**: `computed`と同じ概念
-:::
+  :::
 
 ## 関連ドキュメント
 
 ### さらに深く理解する
 
 - [📖 $derived vs $effect vs $derived.by 完全比較ガイド](/deep-dive/derived-vs-effect-vs-derived-by/)
-  - 3つのリアクティビティ手法の詳細な比較
+  - 3 つのリアクティビティ手法の詳細な比較
   - 使い分けのガイドライン
   - パフォーマンスの考慮事項
+
+## よくある質問（FAQ）
+
+### React useMemo との違いは？
+
+| 項目             | React `useMemo`                | Svelte 5 `$derived`  |
+| ---------------- | ------------------------------ | -------------------- |
+| 宣言方法         | `useMemo(() => value, [deps])` | `$derived(value)`    |
+| 依存配列         | **必須**（手動で指定）         | **不要**（自動追跡） |
+| 再計算タイミング | deps 変更時                    | 依存値変更時（自動） |
+| 複雑なロジック   | 同じ構文                       | `$derived.by()`      |
+| メモ化           | deps 指定ミスで無効            | 常に正確             |
+| 参照安定性       | deps 次第                      | 値が同じなら同じ     |
+
+### Vue computed との違いは？
+
+| 項目              | Vue 3 `computed`        | Svelte 5 `$derived`          |
+| ----------------- | ----------------------- | ---------------------------- |
+| 宣言方法          | `computed(() => value)` | `$derived(value)`            |
+| ゲッター/セッター | あり                    | なし（オーバーライドで代替） |
+| デバッグ          | `onTrack`/`onTrigger`   | `$inspect`                   |
+| TypeScript        | `.value`アクセス必要    | 直接アクセス                 |
+| 書き込み可能      | 別途定義必要            | 5.25+でオーバーライド可      |
+
+### $derived vs $derived.by の使い分け
+
+| 条件                 | 使うべき API  | 例                            |
+| -------------------- | ------------- | ----------------------------- |
+| 単純な式（1 行）     | `$derived`    | `$derived(count * 2)`         |
+| 配列メソッドチェーン | `$derived`    | `$derived(items.filter(...))` |
+| 複数ステートメント   | `$derived.by` | if 文、変数宣言を含む         |
+| 早期リターン         | `$derived.by` | 条件による return             |
+| ループ処理           | `$derived.by` | for 文、reduce                |
+
+### コード比較：React useMemo vs Svelte $derived
+
+```typescript
+// === React useMemo ===
+const [items, setItems] = useState<Item[]>([]);
+const [filter, setFilter] = useState('');
+
+// 依存配列を手動で管理（漏れるとバグの原因）
+const filteredItems = useMemo(() => {
+	return items.filter((item) => item.name.includes(filter));
+}, [items, filter]); // ← 依存配列必須
+
+// === Svelte 5 $derived ===
+let items = $state<Item[]>([]);
+let filter = $state('');
+
+// 依存関係は自動追跡（依存配列不要）
+let filteredItems = $derived(items.filter((item) => item.name.includes(filter)));
+```
+
+### 配列のフィルタリングパターン
+
+```typescript
+// 検索 + フィルタ + ソートの組み合わせ
+let items = $state<Product[]>([...]);
+let searchQuery = $state('');
+let category = $state('all');
+let sortBy = $state<'name' | 'price'>('name');
+
+let results = $derived.by(() => {
+  let filtered = items;
+
+  // 検索フィルタ
+  if (searchQuery) {
+    filtered = filtered.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  // カテゴリフィルタ
+  if (category !== 'all') {
+    filtered = filtered.filter(item => item.category === category);
+  }
+
+  // ソート
+  return [...filtered].sort((a, b) => {
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    return a.price - b.price;
+  });
+});
+```
+
+### パフォーマンス：いつ$derived を分割すべきか？
+
+| シナリオ               | アプローチ     | 理由               |
+| ---------------------- | -------------- | ------------------ |
+| 軽量な計算             | 1 つの$derived | オーバーヘッド少   |
+| 重い計算 + 軽い計算    | 分割           | 軽い方の再計算回避 |
+| 異なる依存関係         | 分割           | 独立した再計算     |
+| UI 表示用 + API 送信用 | 分割           | 用途別に最適化     |
+
+```typescript
+// ❌ 結合された派生値（どちらかの依存が変わると全て再計算）
+let combined = $derived.by(() => ({
+	filtered: heavyFilter(items),
+	stats: calculateStats(otherData),
+}));
+
+// ✅ 分割された派生値（独立して再計算）
+let filtered = $derived.by(() => heavyFilter(items));
+let stats = $derived.by(() => calculateStats(otherData));
+```
 
 ## 次のステップ
 
 `$derived`で派生値の作成方法を学んだら、次は副作用の管理方法を学びましょう。
 [$effect - 副作用](/svelte/runes/effect/)では、リアクティブな値の変更に応じて副作用を実行する方法を詳しく解説します。
-

@@ -37,6 +37,27 @@ const config = defineConfig({
     // @ts-ignore - Viteバージョンの互換性問題を回避
     sveltepress({
       theme: defaultTheme({
+        highlighter: {
+          languages: [
+            'svelte',
+            'sh',
+            'js',
+            'javascript',
+            'ts',
+            'typescript',
+            'html',
+            'md',
+            'css',
+            'scss',
+            'json',
+            'yaml',
+            'bash',
+            'sql',
+            'prisma',
+            'dockerfile',
+            'diff',
+          ],
+        },
         navbar: [
           { title: 'ホーム', to: '/' },
           { title: 'Svelte', to: '/svelte/' },

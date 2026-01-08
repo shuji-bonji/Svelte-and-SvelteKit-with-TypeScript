@@ -351,41 +351,265 @@ Svelte 5.25 以降では、`$derived`で作成した値を一時的にオーバ�
 
 ## 非同期処理との組み合わせ
 
-`$derived`自体は同期的な計算のみをサポートしますが、
-非同期処理の結果を扱うためのパターンを理解することも重要です。
+`$derived`自体は同期的な計算のみをサポートしますが、非同期処理の結果を扱うパターンは非常に重要です。
+ここでは、検索需要の多い「非同期データの派生」について詳しく解説します。
 
 :::warning[非同期派生値の注意]
 `$derived`は同期的に値を返す必要があります。非同期処理には`$effect`を組み合わせて使用します。
 :::
 
+### やってはいけないパターン
+
+```typescript
+// ❌ これは動作しません - dataはPromiseになってしまう
+let data = $derived(async () => {
+  const res = await fetch('/api/data');
+  return res.json();
+});
+
+// ❌ $derived.byでも同様
+let data = $derived.by(async () => {
+  const res = await fetch('/api/data');
+  return res.json();
+});
+```
+
+### パターン1: $effect + $state の組み合わせ（基本）
+
+最も基本的なパターンです。URLを同期的に派生させ、データ取得は`$effect`で行います。
+
 ```svelte
 <script lang="ts">
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+  }
+
   let userId = $state(1);
   let userData = $state<User | null>(null);
   let loading = $state(false);
-  let error = $state<Error | null>(null);
+  let error = $state<string | null>(null);
 
-  // URLは同期的に派生
-  let apiUrl = $derived(
-    `/api/users/${userId}`
-  );
+  // URLは同期的に派生（これはOK）
+  let apiUrl = $derived(`/api/users/${userId}`);
 
   // 非同期処理は$effectで実行
-  $effect(async () => {
+  $effect(() => {
     loading = true;
     error = null;
 
-    try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) throw new Error('Failed to fetch');
-      userData = await response.json();
-    } catch (e) {
-      error = e as Error;
-    } finally {
-      loading = false;
-    }
+    const controller = new AbortController();
+
+    fetch(apiUrl, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch');
+        return response.json();
+      })
+      .then(data => {
+        userData = data;
+        loading = false;
+      })
+      .catch(e => {
+        if (e.name !== 'AbortError') {
+          error = e.message;
+          loading = false;
+        }
+      });
+
+    // クリーンアップ: コンポーネント破棄時やuserIdが変わった時にリクエストをキャンセル
+    return () => controller.abort();
   });
+
+  // 取得したデータから同期的に派生値を計算
+  let userDisplayName = $derived(
+    userData ? `${userData.name} (${userData.email})` : ''
+  );
 </script>
+
+<select bind:value={userId}>
+  <option value={1}>ユーザー 1</option>
+  <option value={2}>ユーザー 2</option>
+  <option value={3}>ユーザー 3</option>
+</select>
+
+{#if loading}
+  <p>読み込み中...</p>
+{:else if error}
+  <p class="error">エラー: {error}</p>
+{:else if userData}
+  <p>ユーザー: {userDisplayName}</p>
+{/if}
+```
+
+### パターン2: デバウンス付き検索
+
+入力値の変更を検知して、デバウンス後にAPIを呼び出すパターンです。
+
+```svelte
+<script lang="ts">
+  interface SearchResult {
+    id: string;
+    title: string;
+    score: number;
+  }
+
+  let searchInput = $state('');
+  let debouncedQuery = $state('');
+  let results = $state<SearchResult[]>([]);
+  let loading = $state(false);
+
+  // デバウンス処理（300ms待機）
+  $effect(() => {
+    const timer = setTimeout(() => {
+      debouncedQuery = searchInput;
+    }, 300);
+
+    return () => clearTimeout(timer);
+  });
+
+  // デバウンス後のクエリでAPI呼び出し
+  $effect(() => {
+    if (!debouncedQuery.trim()) {
+      results = [];
+      return;
+    }
+
+    loading = true;
+    const controller = new AbortController();
+
+    fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`, {
+      signal: controller.signal
+    })
+      .then(res => res.json())
+      .then(data => {
+        results = data;
+        loading = false;
+      })
+      .catch(e => {
+        if (e.name !== 'AbortError') {
+          loading = false;
+        }
+      });
+
+    return () => controller.abort();
+  });
+
+  // 結果から派生値を計算（これは同期的）
+  let resultCount = $derived(results.length);
+  let hasResults = $derived(results.length > 0);
+  let topResults = $derived(results.filter(r => r.score > 0.8));
+</script>
+
+<input
+  type="search"
+  bind:value={searchInput}
+  placeholder="検索..."
+/>
+
+{#if loading}
+  <p>検索中...</p>
+{:else if hasResults}
+  <p>{resultCount}件の結果（上位: {topResults.length}件）</p>
+  <ul>
+    {#each results as result}
+      <li>{result.title} (スコア: {result.score})</li>
+    {/each}
+  </ul>
+{:else if searchInput}
+  <p>結果なし</p>
+{/if}
+```
+
+### パターン3: SvelteKitのload関数を活用（推奨）
+
+最も推奨されるパターンです。サーバーサイドでデータを取得し、クライアントでは同期的に派生値を計算します。
+
+```typescript
+// src/routes/users/[id]/+page.server.ts
+import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
+
+export const load: PageServerLoad = async ({ params, fetch }) => {
+  const response = await fetch(`/api/users/${params.id}`);
+
+  if (!response.ok) {
+    throw error(404, 'ユーザーが見つかりません');
+  }
+
+  const user = await response.json();
+  const posts = await fetch(`/api/users/${params.id}/posts`).then(r => r.json());
+
+  return { user, posts };
+};
+```
+
+```svelte
+<!-- src/routes/users/[id]/+page.svelte -->
+<script lang="ts">
+  import type { PageData } from './$types';
+
+  let { data }: { data: PageData } = $props();
+
+  // サーバーから取得したデータを同期的に派生
+  // 非同期処理は不要！
+  let fullName = $derived(
+    `${data.user.firstName} ${data.user.lastName}`
+  );
+
+  let recentPosts = $derived(
+    data.posts.filter(post => {
+      const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      return new Date(post.createdAt).getTime() > oneWeekAgo;
+    })
+  );
+
+  let postCount = $derived(data.posts.length);
+  let hasRecentActivity = $derived(recentPosts.length > 0);
+</script>
+
+<h1>{fullName}</h1>
+<p>投稿数: {postCount}件</p>
+
+{#if hasRecentActivity}
+  <h2>最近の投稿 ({recentPosts.length}件)</h2>
+  <ul>
+    {#each recentPosts as post}
+      <li>{post.title}</li>
+    {/each}
+  </ul>
+{:else}
+  <p>最近の投稿はありません</p>
+{/if}
+```
+
+### パターン比較表
+
+| パターン | 用途 | メリット | デメリット |
+|---------|------|---------|-----------|
+| $effect + $state | クライアントサイド検索 | リアルタイム更新、柔軟 | 初期表示が空、ローディング管理必要 |
+| SvelteKit load | ページ単位のデータ | SEO対応、SSR、シンプル | URLパラメータ必要 |
+| デバウンス付き | 入力連動検索 | リクエスト削減 | 遅延が発生 |
+
+### 非同期処理のベストプラクティス
+
+```typescript
+// ✅ 推奨: 非同期データ取得と同期的な派生を分離
+let rawData = $state<Data | null>(null);
+
+$effect(() => {
+  // 非同期処理
+  fetchData().then(data => { rawData = data; });
+});
+
+// 同期的に派生
+let processedData = $derived.by(() => {
+  if (!rawData) return [];
+  return rawData.items.filter(item => item.active);
+});
+
+// ❌ 避ける: 派生値の中で非同期処理
+let data = $derived(await fetchData()); // コンパイルエラー
 ```
 
 ## 実践例：シンプルなフィルタリング

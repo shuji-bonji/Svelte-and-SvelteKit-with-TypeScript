@@ -205,6 +205,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             { title: '基本ルーティング', to: '/sveltekit/routing/basic/' },
             { title: '動的ルーティング', to: '/sveltekit/routing/dynamic/' },
             { title: '高度なルーティング', to: '/sveltekit/routing/advanced/' },
+            { title: 'エラーページ', to: '/sveltekit/routing/error-pages/' },
           ],
         },
         {
@@ -246,6 +247,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           collapsed: true,
           items: [
             { title: 'アーキテクチャ概要', to: '/sveltekit/architecture/' },
+            {
+              title: 'SPA/MPA混在',
+              to: '/sveltekit/architecture/spa-mpa-hybrid/',
+            },
             {
               title: 'レンダリング戦略（詳解）',
               to: '/sveltekit/architecture/rendering-strategies/',

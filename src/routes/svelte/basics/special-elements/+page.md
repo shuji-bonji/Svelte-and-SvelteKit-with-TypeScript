@@ -157,8 +157,9 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 ```svelte
 <script lang="ts">
   let innerWidth = $state(0);
-  
-  let screenSize = $derived(() => {
+
+  // 複数行の処理には $derived.by() を使用
+  let screenSize = $derived.by(() => {
     if (innerWidth < 640) return 'mobile';
     if (innerWidth < 1024) return 'tablet';
     return 'desktop';

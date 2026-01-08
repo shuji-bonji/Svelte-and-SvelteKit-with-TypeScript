@@ -58,8 +58,8 @@ Runesは大きく分けて「状態管理」と「コンポーネント間通信
   // priceやquantityが変更されると自動的に再計算
   let total = $derived(price * quantity);
   
-  // 複雑な計算も可能
-  let summary = $derived(() => {
+  // 複雑な計算には $derived.by() を使用
+  let summary = $derived.by(() => {
     const subtotal = price * quantity;
     const tax = subtotal * 0.1;
     return {
@@ -71,7 +71,7 @@ Runesは大きく分けて「状態管理」と「コンポーネント間通信
 </script>
 
 <p>合計: {total}円</p>
-<p>税込: {summary().total}円</p>
+<p>税込: {summary.total}円</p>
 ```
 
 ### $effect - 副作用
@@ -165,8 +165,8 @@ Svelte 4からSvelte 5への移行で、リアクティビティの書き方が�
   // priceやquantityが変更されると自動的に再計算
   let total = $derived(price * quantity);
   
-  // 複雑な計算も可能
-  let summary = $derived(() => {
+  // 複雑な計算には $derived.by() を使用
+  let summary = $derived.by(() => {
     const subtotal = price * quantity;
     const tax = subtotal * 0.1;
     return {
@@ -178,7 +178,7 @@ Svelte 4からSvelte 5への移行で、リアクティビティの書き方が�
 </script>
 
 <p>合計: {total}円</p>
-<p>税込: {summary().total}円</p>
+<p>税込: {summary.total}円</p>
 ```
 
 ### $effect - 副作用
@@ -301,8 +301,8 @@ Runesシステムを使った実際のTODOリストアプリケーションで�
     todos.filter(t => !t.done).length
   );
   
-  // 完了率
-  let completionRate = $derived(() => {
+  // 完了率（複数行の処理には $derived.by() を使用）
+  let completionRate = $derived.by(() => {
     if (todos.length === 0) return 0;
     const completed = todos.filter(t => t.done).length;
     return Math.round((completed / todos.length) * 100);
@@ -380,9 +380,9 @@ Runesシステムを使った実際のTODOリストアプリケーションで�
     
     <div class="stats">
       <p>📊 残りのタスク: <strong>{remainingCount}</strong>個</p>
-      <p>✅ 完了率: <strong>{completionRate()}</strong>%</p>
+      <p>✅ 完了率: <strong>{completionRate}</strong>%</p>
       <div class="progress-bar">
-        <div class="progress-fill" style="width: {completionRate()}%"></div>
+        <div class="progress-fill" style="width: {completionRate}%"></div>
       </div>
     </div>
   {:else}

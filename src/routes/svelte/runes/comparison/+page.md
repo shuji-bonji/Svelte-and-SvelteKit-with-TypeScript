@@ -109,8 +109,9 @@ useMemo(() => {
     // 使用している変数を自動追跡
     console.log(`${name} is ${age} years old`);
   }); // 依存配列不要
-  
-  let result = $derived(() => {
+
+  // 複数行の処理には $derived.by() を使用
+  let result = $derived.by(() => {
     return expensiveCalculation(data);
   }); // 依存配列不要
 </script>

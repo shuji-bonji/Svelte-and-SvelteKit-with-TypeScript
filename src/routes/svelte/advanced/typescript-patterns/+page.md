@@ -677,13 +677,14 @@ function handleStatus(status: Status) {
   let selected = $state<Set<string>>(new Set());
   
   // 派生値（高度な型推論）
-  let filteredData = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let filteredData = $derived.by(() => {
     if (!searchQuery) return data;
-    
+
     const searchableColumns = columns
       .filter(col => col.searchable !== false)
       .map(col => col.key);
-    
+
     return data.filter(item =>
       searchableColumns.some(key => {
         const value = item[key];
@@ -694,29 +695,29 @@ function handleStatus(status: Status) {
       })
     );
   });
-  
-  let sortedData = $derived(() => {
-    if (!sortColumn) return filteredData();
-    
-    return [...filteredData()].sort((a, b) => {
+
+  let sortedData = $derived.by(() => {
+    if (!sortColumn) return filteredData;
+
+    return [...filteredData].sort((a, b) => {
       const aVal = a[sortColumn];
       const bVal = b[sortColumn];
-      
+
       if (aVal === bVal) return 0;
-      
+
       const comparison = aVal < bVal ? -1 : 1;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   });
-  
-  let paginatedData = $derived(() => {
+
+  let paginatedData = $derived.by(() => {
     const start = currentPage * pageSize;
     const end = start + pageSize;
-    return sortedData().slice(start, end);
+    return sortedData.slice(start, end);
   });
-  
+
   let totalPages = $derived(
-    Math.ceil(sortedData().length / pageSize)
+    Math.ceil(sortedData.length / pageSize)
   );
   
   let selectedItems = $derived(
@@ -748,14 +749,14 @@ function handleStatus(status: Status) {
     currentTarget: HTMLInputElement
   }) {
     if (event.currentTarget.checked) {
-      paginatedData().forEach(item => selected.add(item.id));
+      paginatedData.forEach(item => selected.add(item.id));
     } else {
-      paginatedData().forEach(item => selected.delete(item.id));
+      paginatedData.forEach(item => selected.delete(item.id));
     }
     selected = selected; // リアクティビティのトリガー
-    onSelectionChange?.(selectedItems());
+    onSelectionChange?.(selectedItems);
   }
-  
+
   function handleSelectItem(id: string) {
     if (selected.has(id)) {
       selected.delete(id);
@@ -763,7 +764,7 @@ function handleStatus(status: Status) {
       selected.add(id);
     }
     selected = selected;
-    onSelectionChange?.(selectedItems());
+    onSelectionChange?.(selectedItems);
   }
   
   // エフェクト
@@ -789,7 +790,7 @@ function handleStatus(status: Status) {
           <input
             type="checkbox"
             onchange={handleSelectAll}
-            checked={paginatedData().every(item => selected.has(item.id))}
+            checked={paginatedData.every(item => selected.has(item.id))}
           />
         </th>
         {#each columns as column}
@@ -809,7 +810,7 @@ function handleStatus(status: Status) {
       </tr>
     </thead>
     <tbody>
-      {#each paginatedData() as item, index (item.id)}
+      {#each paginatedData as item, index (item.id)}
         <tr
           class:selected={selected.has(item.id)}
           onclick={() => onRowClick?.(item)}

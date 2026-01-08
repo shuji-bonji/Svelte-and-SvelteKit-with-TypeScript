@@ -584,7 +584,8 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
   let renderAsHtml = $state(true);
   
   // Markdownを安全なHTMLに変換
-  let safeHtml = $derived(() => {
+  // 複数行の処理が必要な場合は $derived.by() を使用
+  let safeHtml = $derived.by(() => {
     const rawHtml = marked(markdown);
     return DOMPurify.sanitize(rawHtml);
   });

@@ -847,7 +847,8 @@ Svelte 5では、`Array`と`Object`は`$state()`でラップするだけで自�
   
   // 相対的な日付計算
   let daysFromNow = $state(0);
-  let targetDate = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let targetDate = $derived.by(() => {
     const date = new SvelteDate(currentDate);
     date.setDate(date.getDate() + daysFromNow);
     return date;
@@ -931,18 +932,18 @@ Svelte 5では、`Array`と`Object`は`$state()`でラップするだけで自�
   let allTags = $state(new SvelteSet<string>(['work', 'personal', 'urgent', 'someday']));
   
   // フィルタリングされたタスク
-  let filteredTasks = $derived(() => {
+  let filteredTasks = $derived.by(() => {
     if (selectedTags.size === 0) {
       return Array.from(tasks.values());
     }
-    
+
     return Array.from(tasks.values()).filter(task => {
       return Array.from(selectedTags).some(tag => task.tags.has(tag));
     });
   });
-  
+
   // 統計情報
-  let stats = $derived(() => {
+  let stats = $derived.by(() => {
     const all = Array.from(tasks.values());
     return {
       total: all.length,
@@ -1239,13 +1240,15 @@ $derivedを使って計算結果を効率的にキャッシュし、パフォー
 
 ```typescript
 // ✅ 派生値で計算結果をキャッシュ
-let data = $state(new SvelteMap());
+// 複数行の処理には $derived.by() を使用
+let data = $state(new SvelteMap<string, number>());
 
-let summary = $derived(() => {
+let summary = $derived.by(() => {
   const values = Array.from(data.values());
+  const sum = values.reduce((a, b) => a + b, 0);
   return {
     count: values.length,
-    sum: values.reduce((a, b) => a + b, 0),
+    sum,
     average: values.length > 0 ? sum / values.length : 0
   };
 });

@@ -608,11 +608,12 @@ Snippetと条件分岐を組み合わせた実装例です。
   let sortKey = $state<keyof Product>('id');
   let sortOrder = $state<'asc' | 'desc'>('asc');
   
-  let sortedProducts = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let sortedProducts = $derived.by(() => {
     return [...products].sort((a, b) => {
       const aVal = a[sortKey];
       const bVal = b[sortKey];
-      
+
       if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
       return 0;
@@ -681,7 +682,7 @@ Snippetと条件分岐を組み合わせた実装例です。
       </tr>
     </thead>
     <tbody>
-      {#each sortedProducts() as product}
+      {#each sortedProducts as product}
         {@render tableRow(product)}
       {/each}
     </tbody>
@@ -767,7 +768,8 @@ Snippetと条件分岐を組み合わせた実装例です。
   let scale = $state(1);
   
   // 重い計算をメモ化
-  let processedData = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let processedData = $derived.by(() => {
     console.log('データ処理中...');
     return dataPoints.map(point => ({
       ...point,
@@ -801,7 +803,7 @@ Snippetと条件分岐を組み合わせた実装例です。
 </div>
 
 <div class="data-points">
-  {#each processedData() as data}
+  {#each processedData as data}
     {@render dataPointView(data)}
   {/each}
 </div>

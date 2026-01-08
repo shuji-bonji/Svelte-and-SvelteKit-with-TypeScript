@@ -566,28 +566,29 @@ export function createTodoStore(initialTodos: Todo[] = []) {
   let searchQuery = $state('');
   
   // フィルタリングされたTODOリスト
-  let filteredTodos = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let filteredTodos = $derived.by(() => {
     let result = todos;
-    
+
     // フィルター適用
     if (filter === 'active') {
       result = result.filter(t => !t.completed);
     } else if (filter === 'completed') {
       result = result.filter(t => t.completed);
     }
-    
+
     // 検索クエリ適用
     if (searchQuery) {
-      result = result.filter(t => 
+      result = result.filter(t =>
         t.text.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     return result;
   });
-  
+
   // 統計情報
-  let stats = $derived(() => ({
+  let stats = $derived.by(() => ({
     total: todos.length,
     active: todos.filter(t => !t.completed).length,
     completed: todos.filter(t => t.completed).length
@@ -1808,33 +1809,30 @@ export function createPaginationStore<T>(
   let error = $state<string | null>(null);
   
   // 派生値
-  let totalPages = $derived(() => 
-    Math.ceil(totalItems / pageSize)
-  );
-  
-  let hasNextPage = $derived(() => 
-    currentPage < totalPages
-  );
-  
-  let hasPreviousPage = $derived(() => 
-    currentPage > 1
-  );
-  
-  let pageInfo = $derived(() => ({
+  let totalPages = $derived(Math.ceil(totalItems / pageSize));
+
+  // 単純な式には $derived() を使用
+  let hasNextPage = $derived(currentPage < totalPages);
+
+  let hasPreviousPage = $derived(currentPage > 1);
+
+  // オブジェクトリテラルを返す場合は $derived.by() を使用
+  let pageInfo = $derived.by(() => ({
     from: (currentPage - 1) * pageSize + 1,
     to: Math.min(currentPage * pageSize, totalItems),
     total: totalItems
   }));
-  
+
   // ページ番号の配列を生成（ページネーションUI用）
-  let pageNumbers = $derived(() => {
+  // 複数行の処理には $derived.by() を使用
+  let pageNumbers = $derived.by(() => {
     const pages: number[] = [];
     const maxVisible = 5;
     const halfVisible = Math.floor(maxVisible / 2);
-    
+
     let start = Math.max(1, currentPage - halfVisible);
     let end = Math.min(totalPages, currentPage + halfVisible);
-    
+
     // 表示するページ数を調整
     if (end - start < maxVisible - 1) {
       if (start === 1) {
@@ -1843,11 +1841,11 @@ export function createPaginationStore<T>(
         start = Math.max(1, end - maxVisible + 1);
       }
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   });
   

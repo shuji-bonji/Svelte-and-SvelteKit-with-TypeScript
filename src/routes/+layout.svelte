@@ -37,6 +37,12 @@
         const currentPath = $page.url.pathname;
         const normalizedPath = currentPath.endsWith('/') ? currentPath : `${currentPath}/`;
 
+        // まず、すべてのリンクから exact-match クラスを削除
+        const allLinks = sidebar.querySelectorAll('.link');
+        allLinks.forEach((link) => {
+          link.classList.remove('exact-match');
+        });
+
         // すべてのアクティブリンクを取得
         const activeLinks = sidebar.querySelectorAll('.link.active');
 
@@ -49,12 +55,10 @@
           const isExactMatch = normalizedPath === normalizedHref;
 
           if (isExactMatch) {
-            // 完全一致の場合は強調クラスを追加
+            // 完全一致の場合のみ強調クラスを追加
             link.classList.add('exact-match');
-          } else {
-            // 完全一致でない場合はactiveクラスを削除
-            link.classList.remove('active');
           }
+          // activeクラスは削除しない（SveltePressの挙動を壊さないため）
         });
       }, 50);
     }
@@ -181,25 +185,37 @@
     display: none !important;
   }
 
-  /* 完全一致のリンクのみアイコンを表示（JavaScriptで.exact-matchクラスを付与） */
+  /* 完全一致のリンクのみアイコンを表示 */
   :global(.theme-default-sidebar .link.exact-match .active-icon) {
     display: flex !important;
   }
 
-  /* アクティブなリンクのベーススタイル（子パスによるアクティブは目立たせない） */
-  :global(.theme-default-sidebar .link.active) {
-    font-weight: 500 !important;
-    position: relative !important;
+  /* サイドバーのリンク文字色をリセット（親の色を継承しない） */
+  :global(.theme-default-sidebar .link) {
+    color: var(--sp-color-text, inherit) !important;
   }
 
-  /* 完全一致のリンクを強調 */
+  :global(.theme-default-sidebar .link .text) {
+    color: inherit !important;
+  }
+
+  /* activeクラスがあっても子要素の色は変えない */
+  :global(.theme-default-sidebar .sidebar-group.active .link),
+  :global(.theme-default-sidebar .link.active) {
+    color: var(--sp-color-text, inherit) !important;
+  }
+
+  /* 完全一致のリンクのみ左ボーダーで強調 */
   :global(.theme-default-sidebar .link.exact-match) {
-    background-color: rgba(251, 113, 133, 0.1) !important;
     font-weight: 600 !important;
     position: relative !important;
+    color: var(--sp-color-primary, #ff3e00) !important;
   }
 
-  /* 完全一致リンクに左ボーダーを追加 */
+  :global(.theme-default-sidebar .link.exact-match .text) {
+    color: inherit !important;
+  }
+
   :global(.theme-default-sidebar .link.exact-match::before) {
     content: '';
     position: absolute;
@@ -207,7 +223,7 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background-color: rgb(251, 113, 133);
+    background-color: var(--sp-color-primary, #ff3e00);
   }
 
   /* サイドバーのフォントサイズ調整（セクションタイトル以外） */
@@ -234,42 +250,50 @@
   /* モバイルサイドバーのスタイル改善 */
   @media (max-width: 949px) {
     :global(.theme-default-sidebar) {
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15) !important;
-      background: linear-gradient(to bottom, #f8f9fa, #ffffff) !important;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
+      background: #ffffff !important;
     }
 
     :global(.dark .theme-default-sidebar) {
-      background: linear-gradient(to bottom, #1a1a1a, #0f0f0f) !important;
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5) !important;
+      background: #1a1a1a !important;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4) !important;
     }
 
-    /* サイドバーのヘッダー部分を強調 */
+    /* サイドバーのヘッダー部分（シンプルに） */
     :global(.sidebar-logo) {
-      background: rgba(251, 113, 133, 0.05) !important;
-      border-bottom: 2px solid rgb(251, 113, 133) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
       padding: 1rem !important;
     }
 
     :global(.dark .sidebar-logo) {
-      background: rgba(251, 113, 133, 0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
 
     /* サイドバーグループのスタイル改善 */
     :global(.sidebar-group .group-title) {
       font-size: 0.9rem !important;
       font-weight: 700 !important;
-      color: rgb(251, 113, 133) !important;
+      color: var(--sp-color-text, #374151) !important;
       padding: 0.5rem 0 !important;
-      border-bottom: 1px solid rgba(251, 113, 133, 0.2) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
       margin-bottom: 0.5rem !important;
     }
 
-    /* リンクのホバー効果 */
+    :global(.dark .sidebar-group .group-title) {
+      color: var(--sp-color-text, #e5e7eb) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    /* リンクのホバー効果（控えめに） */
     :global(.sidebar-group .link:hover) {
-      background: rgba(251, 113, 133, 0.1) !important;
+      background: rgba(0, 0, 0, 0.04) !important;
       padding-left: 1rem !important;
       border-radius: 0.25rem !important;
       transition: all 0.2s ease !important;
+    }
+
+    :global(.dark .sidebar-group .link:hover) {
+      background: rgba(255, 255, 255, 0.04) !important;
     }
   }
 
@@ -304,54 +328,54 @@
     padding-bottom: 2rem !important; /* 下部に余白 */
   }
 
-  /* スクロールバーのスタイリング */
+  /* スクロールバーのスタイリング（ニュートラルカラー） */
   :global(.toc .anchors::-webkit-scrollbar) {
     width: 6px;
   }
 
   :global(.toc .anchors::-webkit-scrollbar-track) {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.03);
     border-radius: 3px;
   }
 
   :global(.toc .anchors::-webkit-scrollbar-thumb) {
-    background: rgba(251, 113, 133, 0.3);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 3px;
   }
 
   :global(.toc .anchors::-webkit-scrollbar-thumb:hover) {
-    background: rgba(251, 113, 133, 0.5);
+    background: rgba(0, 0, 0, 0.25);
   }
 
   /* ダークモードのスクロールバー */
   :global(.dark .toc .anchors::-webkit-scrollbar-track) {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
   }
 
   :global(.dark .toc .anchors::-webkit-scrollbar-thumb) {
-    background: rgba(251, 113, 133, 0.4);
+    background: rgba(255, 255, 255, 0.15);
   }
 
   :global(.dark .toc .anchors::-webkit-scrollbar-thumb:hover) {
-    background: rgba(251, 113, 133, 0.6);
+    background: rgba(255, 255, 255, 0.25);
   }
 
   /* モバイルでハンバーガーメニューボタンをシンプルに */
   @media (max-width: 949px) {
     :global(.nav-trigger) {
       background: transparent !important;
-      color: rgb(251, 113, 133) !important;
+      color: var(--sp-color-text, #374151) !important;
       padding: 0.5rem !important;
       border-radius: 0.25rem !important;
       transition: all 0.2s ease !important;
     }
 
     :global(.nav-trigger:hover) {
-      background: rgba(251, 113, 133, 0.1) !important;
+      background: rgba(0, 0, 0, 0.05) !important;
     }
 
     :global(.nav-trigger:active) {
-      background: rgba(251, 113, 133, 0.2) !important;
+      background: rgba(0, 0, 0, 0.1) !important;
     }
 
     /* ハンバーガーアイコンのスタイル */
@@ -362,36 +386,44 @@
 
     /* ダークモードでの色調整 */
     :global(.dark .nav-trigger) {
-      color: rgb(251, 113, 133) !important;
+      color: var(--sp-color-text, #e5e7eb) !important;
+    }
+
+    :global(.dark .nav-trigger:hover) {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    :global(.dark .nav-trigger:active) {
+      background: rgba(255, 255, 255, 0.1) !important;
     }
 
     /* On this page (TOC) の幅調整 */
     :global(.toc) {
       width: 240px !important;
       max-width: 85vw !important;
-      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15) !important;
-      background: linear-gradient(to bottom, #f8f9fa, #ffffff) !important;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1) !important;
+      background: #ffffff !important;
       z-index: 1000 !important; /* ヘッダーより上に表示 */
       position: fixed !important;
       top: 48px !important; /* ヘッダーの高さ分下げる */
     }
 
     :global(.dark .toc) {
-      background: linear-gradient(to bottom, #1a1a1a, #0f0f0f) !important;
-      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.5) !important;
+      background: #1a1a1a !important;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.4) !important;
     }
 
-    /* TOCのタイトルを強調 */
+    /* TOCのタイトル（シンプルに） */
     :global(.toc .title) {
-      background: rgba(251, 113, 133, 0.05) !important;
       padding: 1rem !important;
-      border-bottom: 2px solid rgb(251, 113, 133) !important;
-      color: rgb(251, 113, 133) !important;
-      font-weight: 700 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+      color: var(--sp-color-text, #374151) !important;
+      font-weight: 600 !important;
     }
 
     :global(.dark .toc .title) {
-      background: rgba(251, 113, 133, 0.1) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: var(--sp-color-text, #e5e7eb) !important;
     }
 
     /* TOCのアンカーエリアのパディング調整 */
@@ -399,12 +431,16 @@
       padding: 1rem !important;
     }
 
-    /* TOCのリンクのホバー効果 */
+    /* TOCのリンクのホバー効果（控えめに） */
     :global(.toc .item:hover) {
-      background: rgba(251, 113, 133, 0.1) !important;
+      background: rgba(0, 0, 0, 0.04) !important;
       padding-left: 0.5rem !important;
       border-radius: 0.25rem !important;
       transition: all 0.2s ease !important;
+    }
+
+    :global(.dark .toc .item:hover) {
+      background: rgba(255, 255, 255, 0.04) !important;
     }
   }
 

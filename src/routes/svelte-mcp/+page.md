@@ -125,6 +125,23 @@ Svelte MCP の公式ドキュメントは [svelte.dev/docs/mcp](https://svelte.d
     </div>
   </a>
 
+  <a href="{base}/svelte-mcp/integration/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-500 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">⚙️</div>
+      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        開発環境との統合
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">プロジェクトへの統合方法を解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>プロジェクト初期化</li>
+        <li>ESLint との連携</li>
+        <li>CLAUDE.md / AGENTS.md 設定</li>
+        <li>CI/CD 統合</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/svelte-mcp/ecosystem/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-500 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🌐</div>

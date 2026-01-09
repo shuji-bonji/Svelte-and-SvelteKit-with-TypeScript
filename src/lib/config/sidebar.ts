@@ -431,6 +431,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         { title: 'セットアップ', to: '/svelte-mcp/setup/' },
         { title: 'ツール詳解', to: '/svelte-mcp/tools/' },
         { title: 'ユースケース', to: '/svelte-mcp/usecases/' },
+        { title: '開発環境との統合', to: '/svelte-mcp/integration/' },
         { title: 'エコシステム', to: '/svelte-mcp/ecosystem/' },
       ],
     },

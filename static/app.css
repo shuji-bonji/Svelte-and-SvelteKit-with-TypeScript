@@ -231,27 +231,46 @@ td code,
 }
 
 /* ダークモードでコメントをより見やすく */
+/* Shikiのコメント色（--shiki-dark変数）を明るい色に上書き */
+.shiki [style*='--shiki-dark:#A0ADA0'],
+.shiki [style*='--shiki-dark:#a0ada0'],
+.shiki [style*='--shiki-dark:#6A737D'],
+.shiki [style*='--shiki-dark:#6a737d'],
+.shiki [style*='--shiki-dark:#8b949e'] {
+  --shiki-dark: #b8c8d8 !important; /* 明るいブルーグレー */
+}
+
 @media (prefers-color-scheme: dark) {
   .shiki .token.comment,
   .shiki .comment,
   .shiki [style*='color:#6A737D'],
   .shiki [style*='color:#6a737d'],
-  .shiki [style*='color:#8b949e'] {
+  .shiki [style*='color:#8b949e'],
+  .shiki [style*='color:#A0ADA0'],
+  .shiki [style*='color:#a0ada0'],
+  .shiki [style*='--shiki-dark:#A0ADA0'],
+  .shiki [style*='--shiki-dark:#a0ada0'] {
     opacity: 1 !important;
-    color: #9ca3af !important; /* より明るいグレー */
+    --shiki-dark: #b8c8d8 !important;
+    color: #b8c8d8 !important; /* 明るいブルーグレー - 可読性向上 */
   }
 }
 
 html[data-theme='dark'] .shiki .token.comment,
 html[data-theme='dark'] .shiki .comment,
+html[data-theme='dark'] .shiki [style*='--shiki-dark:#A0ADA0'],
+html[data-theme='dark'] .shiki [style*='--shiki-dark:#a0ada0'],
 html.dark .shiki .token.comment,
 html.dark .shiki .comment,
+html.dark .shiki [style*='--shiki-dark:#A0ADA0'],
+html.dark .shiki [style*='--shiki-dark:#a0ada0'],
 body[data-theme='dark'] .shiki .token.comment,
 body[data-theme='dark'] .shiki .comment,
 body.dark .shiki .token.comment,
 body.dark .shiki .comment {
   opacity: 1 !important;
-  color: #9ca3af !important; /* より明るいグレー */
+  --shiki-dark: #b8c8d8 !important;
+  color: #b8c8d8 !important; /* 明るいブルーグレー - 可読性向上 */
 }
 
 /* すべてのコード関連要素で斜体を完全に無効化 */

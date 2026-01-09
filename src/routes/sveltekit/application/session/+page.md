@@ -639,7 +639,7 @@ export const load: LayoutServerLoad = async ({ locals, url, cookies }) => {
 
 ```typescript
 // src/routes/(admin)/+layout.server.ts
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {

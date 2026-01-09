@@ -2,6 +2,40 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-01-11] - コードブロック品質改善（全セクションレビュー）
+
+### 修正
+全セクションのコードブロックをレビューし、以下の問題を修正：
+
+#### Svelte 5イベント構文の修正
+- `on:click` → `onclick`
+- `on:submit` → `onsubmit`
+- `on:mouseenter` → `onmouseenter`
+- 他、すべてのイベントハンドラをSvelte 5構文に統一
+
+#### SvelteKitインポートの追加
+不足していた`error`、`redirect`、型定義のインポートを追加：
+
+| セクション | 修正ファイル数 | 主な修正内容 |
+|-----------|--------------|-------------|
+| svelte/runes | 5 | `onclick`構文修正 |
+| svelte/advanced | 3 | イベント構文修正 |
+| sveltekit/basics | 2 | `error`インポート追加 |
+| sveltekit/routing | 1 | `error`インポート追加 |
+| sveltekit/data-loading | 4 | `error`、`redirect`インポート追加 |
+| sveltekit/architecture | 1 | `onmouseenter`構文修正 |
+| sveltekit/server | 2 | `error`、`redirect`、型定義追加 |
+| sveltekit/application | 2 | `error`、`redirect`インポート追加 |
+| sveltekit/optimization | 1 | `redirect`、`LayoutServerLoad`追加 |
+| examples | 1 | `error`、`redirect`、型定義追加 |
+| reference | 2 | `error`、型定義追加 |
+
+### 品質向上
+- すべてのコードブロックでSvelte 5構文を統一
+- `throw error()`、`throw redirect()`使用箇所に適切なインポート文を追加
+- 型定義（`PageServerLoad`、`LayoutServerLoad`、`RequestHandler`等）のインポートを補完
+- ビルド検証によりすべての修正を確認
+
 ## [2026-01-10] - Svelte MCPセクション追加
 
 ### 新規セクション

@@ -48,7 +48,6 @@ deno run npm:sv create my-app
 │ ◻ Add Prettier for code formatting （コードフォーマット）
 │ ◻ Add Playwright for browser testing （E2Eテスト）
 │ ◻ Add Vitest for unit testing （ユニットテスト）
-│ ◻ Try Svelte 5 beta （Svelte 5ベータ版）
 │
 └ Your project is ready!
 ```

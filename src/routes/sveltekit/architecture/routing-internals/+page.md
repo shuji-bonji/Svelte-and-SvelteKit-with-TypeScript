@@ -406,7 +406,7 @@ SvelteKitは以下の4つのプリフェッチ戦略を提供しています。
 <nav>
   <a
     href="/profile"
-    on:mouseenter={() => handleHover('/profile')}
+    onmouseenter={() => handleHover('/profile')}
   >
     Profile
   </a>

@@ -193,7 +193,7 @@ export const storage = getStorage(app);
 </script>
 
 <div class="todo-container">
-  <form on:submit|preventDefault={addTodo}>
+  <form onsubmit={(e) => { e.preventDefault(); addTodo(); }}>
     <input
       bind:value={newTodo}
       placeholder="新しいTODOを入力"

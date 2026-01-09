@@ -267,7 +267,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     top: 50px;
     left: 0;
     background: #333;
-    border: 1px solid ##ccc;
+    border: 1px solid #ccc;
     padding: 1rem;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);

@@ -445,6 +445,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 
 ```typescript
 // +page.server.ts
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   // 認証チェック
   if (!locals.user) {

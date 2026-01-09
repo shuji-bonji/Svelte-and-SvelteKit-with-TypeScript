@@ -978,28 +978,28 @@ export function createFormStore<T extends Record<string, any>>(
   let submitted = $state(false);
   
   // フォーム全体の状態を派生
-  let isValid = $derived(() => 
+  let isValid = $derived.by(() =>
     Object.values(fields).every(field => !field.error)
   );
-  
-  let isDirty = $derived(() =>
+
+  let isDirty = $derived.by(() =>
     Object.values(fields).some(field => field.dirty)
   );
-  
-  let isTouched = $derived(() =>
+
+  let isTouched = $derived.by(() =>
     Object.values(fields).some(field => field.touched)
   );
-  
+
   // フォームの値を派生
-  let values = $derived(() =>
+  let values = $derived.by(() =>
     Object.entries(fields).reduce((acc, [key, field]) => ({
       ...acc,
       [key]: field.value
     }), {} as T)
   );
-  
+
   // エラーのみを抽出
-  let errors = $derived(() =>
+  let errors = $derived.by(() =>
     Object.entries(fields).reduce((acc, [key, field]) => {
       if (field.error) {
         acc[key] = field.error;

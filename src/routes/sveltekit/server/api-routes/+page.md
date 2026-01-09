@@ -525,6 +525,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 ```typescript
 // $lib/server/rateLimit.ts
+import { error } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
+
 const attempts = new Map<string, { count: number; resetAt: number }>();
 
 export function rateLimit(maxAttempts = 10, windowMs = 60000) {
@@ -597,6 +600,8 @@ export const POST: RequestHandler = async ({ request }) => {
 ```typescript
 // Zodを使用した例
 import { z } from 'zod';
+import { error } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
 const createPostSchema = z.object({
   title: z.string().min(1).max(100),
@@ -627,6 +632,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
 ```typescript
 // $lib/server/logger.ts
+import { error, json } from '@sveltejs/kit';
+import type { RequestEvent, RequestHandler } from '@sveltejs/kit';
+
 export function logAPIRequest(event: RequestEvent, status: number, duration: number) {
   console.log({
     method: event.request.method,

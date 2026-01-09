@@ -431,6 +431,9 @@ export {};
 ```typescript
 // Cookie/Session + ルートグループの組み合わせ
 // (auth)/+layout.server.ts
+import { error, redirect } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+
 // Cookie/Session認証の安全性とルートグループの構造的明確性を両立
 export const load: LayoutServerLoad = async ({ cookies }) => {
   // Cookieからセッショントークンを取得して検証

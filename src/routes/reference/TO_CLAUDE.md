@@ -379,6 +379,7 @@ let {
 
 ```typescript
 // ✅ 完全な型定義
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
@@ -627,6 +628,9 @@ export function createCounter(initial = 0) {
 
 ```typescript
 // Load関数でのエラーハンドリング
+import { error } from '@sveltejs/kit';
+import type { PageLoad } from './$types';
+
 export const load: PageLoad = async ({ fetch }) => {
   try {
     const response = await fetch('/api/data');

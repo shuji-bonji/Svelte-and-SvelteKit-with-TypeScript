@@ -134,6 +134,7 @@ src/routes/
 │   │   ├── +page.md             # アーキテクチャ概要 ✅完成
 │   │   ├── rendering-strategies/+page.md # レンダリング戦略（詳解）
 │   │   ├── rendering-pipeline/+page.md # レンダリングパイプライン
+│   │   ├── hydration/+page.md   # ハイドレーション詳解 ✅完成
 │   │   ├── access-logs/+page.md # アクセスログと分析戦略
 │   │   ├── data-loading/+page.md # データロードアーキテクチャ
 │   │   ├── routing-internals/+page.md # ルーティング内部動作
@@ -229,6 +230,18 @@ src/routes/
 ```
 
 ## 🔄 移行計画と変更履歴
+
+### 完了した変更（2026年1月）
+
+#### ✅ 全セクションコードブロック品質改善（2026年1月11日）
+- **対象**: 全ドキュメントセクション（svelte/、sveltekit/、examples/、reference/）
+- **修正内容**:
+  - Svelte 5イベント構文への統一（`on:click` → `onclick`等）
+  - SvelteKitの`error`、`redirect`インポート追加
+  - 型定義（`PageServerLoad`、`LayoutServerLoad`、`RequestHandler`等）のインポート補完
+- **効果**:
+  - すべてのコード例がそのままコピー＆ペーストで動作
+  - Svelte 5/SvelteKit 2.xのベストプラクティスに準拠
 
 ### 完了した変更（2025年9月）
 

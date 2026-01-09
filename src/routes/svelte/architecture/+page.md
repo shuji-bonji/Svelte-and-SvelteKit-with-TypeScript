@@ -9,29 +9,24 @@ description: Svelteで採用できる主要アーキテクチャを俯瞰。SPA/
   
   const architectureChoice = `flowchart TD
     Start[プロジェクト要件]
-    
-    Q1{既存バックエンド<br/>があるか？}
-    Q2{SSR/SEOが<br/>必要か？}
-    Q3{プラットフォーム}
-    
+
+    Q1{SSR/SEOが<br/>必要か？}
+    Q2{プラットフォーム}
+
     A1[Svelte + API<br/>（SPA構成）]
     A2[SvelteKit<br/>（フルスタック）]
-    A3[既存システムに<br/>Svelte統合]
-    A4[Tauri/Electron<br/>デスクトップ]
-    
+    A3[Tauri/Electron<br/>Capacitor]
+
     Start --> Q1
-    Q1 -->|ない| Q2
-    Q1 -->|ある| Q3
-    Q2 -->|必要| A2
-    Q2 -->|不要| A1
-    Q3 -->|Web| A3
-    Q3 -->|Desktop| A4
-    
+    Q1 -->|必要| A2
+    Q1 -->|不要| Q2
+    Q2 -->|Web| A1
+    Q2 -->|Desktop/Mobile| A3
+
     style Start fill:#FF5722,color:#fff
     style A1 fill:#4CAF50,color:#fff
     style A2 fill:#2196F3,color:#fff
-    style A3 fill:#FF9800,color:#fff
-    style A4 fill:#9C27B0,color:#fff`;
+    style A3 fill:#9C27B0,color:#fff`;
 </script>
 
 Svelteは柔軟なフレームワークであり、**様々なバックエンドやプラットフォームと組み合わせて**使用できます。SvelteKitだけでなく、既存システムとの統合やSPA構築など、プロジェクトの要件に応じた最適な構成を選択できます。
@@ -64,21 +59,6 @@ Svelteは柔軟なフレームワークであり、**様々なバックエンド
     </div>
   </a>
 
-  <a href="{base}/svelte/architecture/hybrid-integration/" class="flex no-underline group">
-    <div class="p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 transition-all">
-      <div class="text-3xl mb-3">🔄</div>
-      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400">既存システム統合</h3>
-      <p class="text-sm text-gray-700 dark:text-gray-300">
-        Rails、Laravel、DjangoなどにSvelteコンポーネントを段階的に導入
-      </p>
-      <ul class="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-1">
-        <li>✅ 段階的移行</li>
-        <li>✅ 部分的な導入</li>
-        <li>✅ 既存資産の活用</li>
-      </ul>
-    </div>
-  </a>
-
   <a href="{base}/svelte/architecture/desktop-mobile/" class="flex no-underline group">
     <div class="p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 transition-all">
       <div class="text-3xl mb-3">💻</div>
@@ -107,8 +87,7 @@ Svelteは柔軟なフレームワークであり、**様々なバックエンド
 |---------|---------|---------|-----------|
 | **Svelte + API** | 既存APIがある、BaaS利用 | 柔軟性が高い、既存資産活用 | SEOが弱い、初期表示が遅い |
 | **SvelteKit** | 新規プロジェクト、SSR必要 | SSR/SSG対応、統合環境 | 学習コスト、制約がある |
-| **既存システム統合** | レガシー改善、段階的移行 | リスク低、部分導入可能 | 複雑性増加、二重管理 |
-| **デスクトップ** | ネイティブアプリ | OS機能アクセス、配布容易 | バンドルサイズ大 |
+| **デスクトップ/モバイル** | ネイティブアプリ | OS機能アクセス、配布容易 | バンドルサイズ大 |
 
 
 ## SvelteKitを使わない理由

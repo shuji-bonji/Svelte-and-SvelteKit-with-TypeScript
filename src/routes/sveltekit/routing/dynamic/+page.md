@@ -121,20 +121,21 @@ Load関数で動的パラメータを取得する例です。`params.id`はSvelt
 
 ```typescript
 // src/routes/posts/[id]/+page.ts
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, fetch }) => {
   // params.id は自動的に型付けされる
   const postId = params.id;
-  
+
   // SvelteKit内部のAPIルート（src/routes/api/posts/[id]/+server.ts）を呼び出す
   // 外部APIの場合は完全なURL（例: https://api.example.com/posts/${postId}）を使用
   const response = await fetch(`/api/posts/${postId}`);
-  
+
   if (!response.ok) {
     throw error(404, 'Post not found');
   }
-  
+
   return {
     post: await response.json()
   };

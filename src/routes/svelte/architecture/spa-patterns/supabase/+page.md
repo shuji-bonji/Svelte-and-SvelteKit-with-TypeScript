@@ -168,10 +168,11 @@ export const authStore = new AuthStore();
   let error = $state<string | null>(null);
   let loading = $state(false);
   
-  async function handleSubmit() {
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
     loading = true;
     error = null;
-    
+
     try {
       if (isSignUp) {
         await supabase.auth.signUp({ email, password });

@@ -1105,6 +1105,9 @@ type MyPageLoad = (event: any) => any;
 
 ```typescript
 // ✅ 良い例：適切なエラーハンドリング
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
 export const load: PageServerLoad = async ({ params }) => {
   try {
     const data = await fetchData(params.id);

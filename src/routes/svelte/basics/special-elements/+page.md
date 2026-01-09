@@ -72,7 +72,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     私は{tag}要素です
   </svelte:element>
   
-  <div style="margin-top: 1rem; color: #333;　padding: 0.5rem; background: #e8f5e9; border-radius: 4px;　">
+  <div style="margin-top: 1rem; color: #333; padding: 0.5rem; background: #e8f5e9; border-radius: 4px;">
     <strong>現在のHTML:</strong>
     <code style="color: #333;">&lt;{tag}&gt;私は{tag}要素です&lt;/{tag}&gt;</code>
   </div>

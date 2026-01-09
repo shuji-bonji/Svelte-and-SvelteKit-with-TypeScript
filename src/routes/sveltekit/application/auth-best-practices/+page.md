@@ -279,7 +279,7 @@ export function requireOwnership(
 ```typescript
 // src/routes/api/posts/[id]/+server.ts
 import { requireOwnership } from '$lib/server/auth-helpers';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ params, locals, url }) => {
@@ -499,6 +499,7 @@ export class AuthPolicy {
 }
 
 // 使用例：ポリシーベースの認可
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {
@@ -570,6 +571,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 ```typescript
 // ❌ 悪い例：読みにくく、テストしにくい条件分岐
 // src/routes/posts/[id]/edit/+page.server.ts
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
 export const load: PageServerLoad = async ({ params, locals }) => {
   const post = await getPost(params.id);
   

@@ -130,41 +130,42 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
           ],
         },
-        // {
-        //   title: 'アーキテクチャ',
-        //   to: '/svelte/architecture/',
-        //   collapsible: true,
-        //   collapsed: true,
-        //   items: [
-        //     { title: 'アーキテクチャ概要', to: '/svelte/architecture/' },
-        //     {
-        //       title: 'SPA + 既存API統合',
-        //       to: '/svelte/architecture/spa-patterns/',
-        //     },
-        //     {
-        //       title: 'BaaS統合パターン',
-        //       to: '/svelte/architecture/baas-integration/',
-        //       items: [
-        //         {
-        //           title: 'Firebase統合',
-        //           to: '/svelte/architecture/baas-integration/firebase/',
-        //         },
-        //         {
-        //           title: 'Supabase統合',
-        //           to: '/svelte/architecture/baas-integration/supabase/',
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       title: 'GraphQL統合',
-        //       to: '/svelte/architecture/graphql/',
-        //     },
-        //     {
-        //       title: 'マイクロフロントエンド',
-        //       to: '/svelte/architecture/micro-frontends/',
-        //     },
-        //   ],
-        // },
+        {
+          title: 'アーキテクチャ',
+          to: '/svelte/architecture/',
+          collapsible: true,
+          collapsed: true,
+          items: [
+            { title: 'アーキテクチャ概要', to: '/svelte/architecture/' },
+            {
+              title: 'SPA + API構成',
+              to: '/svelte/architecture/spa-patterns/',
+              collapsible: true,
+              items: [
+                {
+                  title: 'SPA + API概要',
+                  to: '/svelte/architecture/spa-patterns/',
+                },
+                {
+                  title: 'Firebase統合',
+                  to: '/svelte/architecture/spa-patterns/firebase/',
+                },
+                {
+                  title: 'Supabase統合',
+                  to: '/svelte/architecture/spa-patterns/supabase/',
+                },
+                {
+                  title: 'GraphQL統合',
+                  to: '/svelte/architecture/spa-patterns/graphql/',
+                },
+              ],
+            },
+            {
+              title: 'デスクトップ・モバイル',
+              to: '/svelte/architecture/desktop-mobile/',
+            },
+          ],
+        },
       ],
     },
     {
@@ -258,6 +259,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'レンダリングパイプライン',
               to: '/sveltekit/architecture/rendering-pipeline/',
+            },
+            {
+              title: 'ハイドレーション詳解',
+              to: '/sveltekit/architecture/hydration/',
             },
             {
               title: 'アクセスログと分析戦略',

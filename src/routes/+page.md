@@ -17,6 +17,10 @@ actions:
     to: ./sveltekit
     class: learning-content
   # 補助コンテンツ
+  - label: Svelte MCP
+    type: secondary
+    to: ./svelte-mcp
+    class: auxiliary-content
   - label: 実装例
     type: secondary
     to: ./examples
@@ -36,6 +40,8 @@ features:
     description: すべてのコード例でTypeScriptを使用し、型安全な開発を実現
   - title: 実践的な内容
     description: ビジネスレベルのアプリケーション開発に必要な知識を網羅
+  - title: Svelte MCP対応
+    description: 公式MCPサーバーでAI支援開発を加速。autofixerによるコード品質保証
 ---
 
 <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">

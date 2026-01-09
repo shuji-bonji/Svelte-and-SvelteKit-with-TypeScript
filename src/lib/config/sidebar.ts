@@ -423,6 +423,18 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
       ],
     },
     {
+      title: 'Svelte MCP',
+      to: '/svelte-mcp/',
+      collapsible: true,
+      items: [
+        { title: 'Svelte MCPとは', to: '/svelte-mcp/' },
+        { title: 'セットアップ', to: '/svelte-mcp/setup/' },
+        { title: 'ツール詳解', to: '/svelte-mcp/tools/' },
+        { title: 'ユースケース', to: '/svelte-mcp/usecases/' },
+        { title: 'エコシステム', to: '/svelte-mcp/ecosystem/' },
+      ],
+    },
+    {
       title: '実装例',
       to: '/examples/',
       collapsible: true,

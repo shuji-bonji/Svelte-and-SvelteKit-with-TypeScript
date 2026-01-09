@@ -195,67 +195,71 @@ description: SvelteKitのLoad関数の基本をTypeScriptで丁寧に解説。un
     Browser->>User: カート更新を表示`;
 </script>
 
-このページでは、SvelteKitの中核機能であるLoad関数の基本的な使い方を学びます。
+このページでは、SvelteKit の中核機能である Load 関数の基本的な使い方を学びます。
 
-## Load関数とは何か？
+## Load 関数とは何か？
 
-Load関数は、SvelteKitにおける**データフェッチングの中心的な仕組み**です。ページやレイアウトがレンダリングされる前に必要なデータを取得し、コンポーネントに渡す役割を担います。
+Load 関数は、SvelteKit における**データフェッチングの中心的な仕組み**です。ページやレイアウトがレンダリングされる前に必要なデータを取得し、コンポーネントに渡す役割を担います。
 
 ### 主な特徴
 
-1. **自動実行**: SvelteKitがページ遷移時に自動的にload関数を呼び出し、結果をコンポーネントに渡す（開発者が手動で呼び出す必要がない）
+1. **自動実行**: SvelteKit がページ遷移時に自動的に load 関数を呼び出し、結果をコンポーネントに渡す（開発者が手動で呼び出す必要がない）
 2. **非同期処理**: `async/await`を使った非同期データ取得が可能
-3. **型安全**: TypeScriptとの完全な統合により型安全性を保証
-4. **最適化**: SvelteKitが自動的にキャッシュやプリフェッチを最適化
+3. **型安全**: TypeScript との完全な統合により型安全性を保証
+4. **最適化**: SvelteKit が自動的にキャッシュやプリフェッチを最適化
 
 :::info[「自動実行」の意味]
 **自動実行とは「開発者が明示的に呼び出さなくても良い」という意味です。**
 
-React等では、
+React 等では、
+
 ```javascript
 // React - useEffectで手動実行
 useEffect(() => {
-  fetchData(); // 開発者が明示的に呼び出す
+	fetchData(); // 開発者が明示的に呼び出す
 }, []);
 ```
 
-SvelteKitでは、
+SvelteKit では、
+
 ```typescript
 // +page.ts に定義するだけ
 export const load: PageLoad = async ({ params, fetch }) => {
-  // paramsやfetchの型が自動推論される
-  return {
-    post: await fetch(`/api/posts/${params.id}`).then(r => r.json())
-  };
+	// paramsやfetchの型が自動推論される
+	return {
+		post: await fetch(`/api/posts/${params.id}`).then((r) => r.json()),
+	};
 };
 // コンポーネント側でload()を呼ぶ必要はない！
 ```
+
 :::
 
-### なぜLoad関数が必要か？
+### なぜ Load 関数が必要か？
 
-従来のSPAでは、コンポーネントのマウント後にデータを取得することが一般的でした。しかし、これには以下の問題があります。
+従来の SPA では、コンポーネントのマウント後にデータを取得することが一般的でした。しかし、これには以下の問題があります。
 
-- **SEOの問題**: 初期HTMLにデータが含まれない
+- **SEO の問題**: 初期 HTML にデータが含まれない
 - **パフォーマンス**: 画面表示後にローディングが発生
 - **ウォーターフォール**: 親子コンポーネントで順次データ取得
 
-Load関数はこれらの問題を解決します。
-
+Load 関数はこれらの問題を解決します。
 
 ### データ取得パターンの比較
 
-#### 従来のSPAパターン（避けるべき）
+#### 従来の SPA パターン（避けるべき）
+
 データがコンポーネントマウント後にデータ取得される。
 
 <Mermaid diagram={spaPattern} />
 
 #### コード例
+
 ```svelte
 <script lang="ts">
   import { onMount } from 'svelte';
   let data = null;
-  
+
   onMount(async () => {
     // コンポーネントマウント後にデータ取得
     const response = await fetch('/api/data');
@@ -264,9 +268,9 @@ Load関数はこれらの問題を解決します。
 </script>
 ```
 
+#### SvelteKit の Load 関数パターン（推奨）
 
-#### SvelteKitのLoad関数パターン（推奨）
-データは自動的に実行されるload関数を呼び出し時にfetchにて取得され、その結果をコンポーネントに渡され、データが反映された状態で表示される。
+データは自動的に実行される load 関数を呼び出し時に fetch にて取得され、その結果をコンポーネントに渡され、データが反映された状態で表示される。
 
 <Mermaid diagram={loadPattern} />
 
@@ -278,25 +282,24 @@ export const load = async ({ fetch }) => {
   // ページ表示前にデータ取得
   const response = await fetch('/api/data');
   const data = await response.json();
-  
+
   return { data };
 };
 ```
 
-### Load関数の実行タイミング
+### Load 関数の実行タイミング
 
 <Mermaid diagram={executionTiming} />
 
-## 2種類のLoad関数
+## 2 種類の Load 関数
 
-SvelteKitには2種類のLoad関数があります。それぞれ異なる実行環境と用途があり、適切に使い分けることでセキュリティとパフォーマンスを両立できます。
+SvelteKit には 2 種類の Load 関数があります。それぞれ異なる実行環境と用途があり、適切に使い分けることでセキュリティとパフォーマンスを両立できます。
 
 ## Universal Load (`+page.ts` / `+layout.ts`)
 
-サーバーとクライアントの両方で実行される関数です。初回アクセス時はSSRのためサーバーで実行され、クライアントサイドナビゲーション時はブラウザで実行されます。これにより、SEOとユーザー体験の両方を最適化できます。
+サーバーとクライアントの両方で実行される関数です。初回アクセス時は SSR のためサーバーで実行され、クライアントサイドナビゲーション時はブラウザで実行されます。これにより、SEO とユーザー体験の両方を最適化できます。
 
 <Mermaid diagram={UniversalLoad} />
-
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
@@ -351,14 +354,14 @@ SvelteKitには2種類のLoad関数があります。それぞれ異なる実行
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
-  // fetch関数はSvelteKitによって拡張され、
-  // サーバー/クライアント両方で動作する
-  const response = await fetch('/api/data');
-  const data = await response.json();
-  
-  return {
-    data  // このデータはコンポーネントの`data`プロップに渡される
-  };
+	// fetch関数はSvelteKitによって拡張され、
+	// サーバー/クライアント両方で動作する
+	const response = await fetch('/api/data');
+	const data = await response.json();
+
+	return {
+		data, // このデータはコンポーネントの`data`プロップに渡される
+	};
 };
 ```
 
@@ -367,19 +370,19 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 ```typescript
 // +page.ts
 export const load: PageLoad = async ({ fetch, url }) => {
-  // ✅ 公開APIの呼び出し
-  const posts = await fetch('/api/posts').then(r => r.json());
-  
-  // ✅ URLパラメータの処理
-  const page = url.searchParams.get('page') || '1';
-  
-  // ✅ クライアントでも必要な計算
-  const currentPage = parseInt(page);
-  
-  return {
-    posts,
-    currentPage
-  };
+	// ✅ 公開APIの呼び出し
+	const posts = await fetch('/api/posts').then((r) => r.json());
+
+	// ✅ URLパラメータの処理
+	const page = url.searchParams.get('page') || '1';
+
+	// ✅ クライアントでも必要な計算
+	const currentPage = parseInt(page);
+
+	return {
+		posts,
+		currentPage,
+	};
 };
 ```
 
@@ -388,7 +391,6 @@ export const load: PageLoad = async ({ fetch, url }) => {
 サーバーサイドでのみ実行される関数です。データベースへの直接アクセスや秘密情報の取り扱いが可能で、セキュリティを保ちながらバックエンド処理を実装できます。
 
 <Mermaid diagram={ServerLoad} />
-
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
   <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
@@ -448,15 +450,15 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/database';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-  // データベースに直接アクセス可能
-  // このコードはブラウザに送られないため安全
-  const user = await db.user.findUnique({
-    where: { id: params.id }
-  });
-  
-  return {
-    user  // シリアライズ可能なデータのみ返す
-  };
+	// データベースに直接アクセス可能
+	// このコードはブラウザに送られないため安全
+	const user = await db.user.findUnique({
+		where: { id: params.id },
+	});
+
+	return {
+		user, // シリアライズ可能なデータのみ返す
+	};
 };
 ```
 
@@ -469,130 +471,134 @@ import { PRIVATE_API_KEY } from '$env/static/private';
 import fs from 'fs/promises';
 
 export const load: PageServerLoad = async ({ cookies, locals, platform }) => {
-  // ✅ 認証チェック
-  const sessionId = cookies.get('session');
-  if (!sessionId) throw redirect(303, '/login');
-  
-  // ✅ データベースアクセス
-  const user = await db.user.findUnique({
-    where: { sessionId }
-  });
-  
-  // ✅ 秘密情報の使用
-  const apiData = await fetch('https://api.example.com', {
-    headers: {
-      'Authorization': `Bearer ${PRIVATE_API_KEY}`
-    }
-  });
-  
-  // ✅ ファイルシステムアクセス
-  const config = await fs.readFile('./config.json', 'utf-8');
-  
-  return {
-    user,
-    apiData: await apiData.json(),
-    config: JSON.parse(config)
-  };
+	// ✅ 認証チェック
+	const sessionId = cookies.get('session');
+	if (!sessionId) throw redirect(303, '/login');
+
+	// ✅ データベースアクセス
+	const user = await db.user.findUnique({
+		where: { sessionId },
+	});
+
+	// ✅ 秘密情報の使用
+	const apiData = await fetch('https://api.example.com', {
+		headers: {
+			Authorization: `Bearer ${PRIVATE_API_KEY}`,
+		},
+	});
+
+	// ✅ ファイルシステムアクセス
+	const config = await fs.readFile('./config.json', 'utf-8');
+
+	return {
+		user,
+		apiData: await apiData.json(),
+		config: JSON.parse(config),
+	};
 };
 ```
 
 ## 比較表
 
-| 項目 | Universal Load | Server Load |
-|------|---------------|-------------|
-| **ファイル名** | `+page.ts`<br/>`+layout.ts` | `+page.server.ts`<br/>`+layout.server.ts` |
-| **型定義** | `PageLoad`<br/>`LayoutLoad` | `PageServerLoad`<br/>`LayoutServerLoad` |
-| **実行環境** | サーバー＆クライアント両方 | サーバーのみ |
-| **SSR時** | サーバーで実行 | サーバーで実行 |
-| **CSR時** | クライアントで実行 | サーバーで実行（API経由） |
-| **データベース** | ❌ 直接アクセス不可 | ✅ 直接アクセス可能 |
-| **秘密情報** | ❌ 扱えない（クライアントに露出） | ✅ 安全に扱える |
-| **Node.js API** | ⚠️ SSR時のみ | ✅ 常に利用可能 |
-| **ファイルシステム** | ⚠️ SSR時のみ | ✅ 常に利用可能 |
-| **実行タイミング** | ナビゲーション前 | ナビゲーション前 |
-| **キャッシュ** | クライアント側でキャッシュ可能 | サーバー側で制御 |
-| **バンドルサイズ** | クライアントバンドルに含まれる | 含まれない |
+| 項目                 | Universal Load                    | Server Load                               |
+| -------------------- | --------------------------------- | ----------------------------------------- |
+| **ファイル名**       | `+page.ts`<br/>`+layout.ts`       | `+page.server.ts`<br/>`+layout.server.ts` |
+| **型定義**           | `PageLoad`<br/>`LayoutLoad`       | `PageServerLoad`<br/>`LayoutServerLoad`   |
+| **実行環境**         | サーバー＆クライアント両方        | サーバーのみ                              |
+| **SSR 時**           | サーバーで実行                    | サーバーで実行                            |
+| **CSR 時**           | クライアントで実行                | サーバーで実行（API 経由）                |
+| **データベース**     | ❌ 直接アクセス不可               | ✅ 直接アクセス可能                       |
+| **秘密情報**         | ❌ 扱えない（クライアントに露出） | ✅ 安全に扱える                           |
+| **Node.js API**      | ⚠️ SSR 時のみ                     | ✅ 常に利用可能                           |
+| **ファイルシステム** | ⚠️ SSR 時のみ                     | ✅ 常に利用可能                           |
+| **実行タイミング**   | ナビゲーション前                  | ナビゲーション前                          |
+| **キャッシュ**       | クライアント側でキャッシュ可能    | サーバー側で制御                          |
+| **バンドルサイズ**   | クライアントバンドルに含まれる    | 含まれない                                |
 
-### Load関数のパラメータ
+### Load 関数のパラメータ
 
 #### 共通パラメータ
 
-両方のLoad関数で使用できるパラメータ
+両方の Load 関数で使用できるパラメータ
 
-| パラメータ | 型 | 説明 |
-|-----------|---|------|
-| **url** | `URL` | リクエストのURL（searchParamsを含む） |
-| **params** | `Record<string, string>` | 動的ルートパラメータ（`[slug]`など） |
-| **route** | `{ id: string }` | 現在のルートID |
-| **fetch** | `Fetch` | SvelteKit拡張版のfetch関数 |
-| **setHeaders** | `(headers: Record<string, string>) => void` | レスポンスヘッダーを設定 |
-| **depends** | `(...deps: string[]) => void` | 依存関係を宣言（invalidate用） |
-| **parent** | `() => Promise<ParentData>` | 親レイアウトのデータを取得 |
+| パラメータ     | 型                                          | 説明                                    |
+| -------------- | ------------------------------------------- | --------------------------------------- |
+| **url**        | `URL`                                       | リクエストの URL（searchParams を含む） |
+| **params**     | `Record<string, string>`                    | 動的ルートパラメータ（`[slug]`など）    |
+| **route**      | `{ id: string }`                            | 現在のルート ID                         |
+| **fetch**      | `Fetch`                                     | SvelteKit 拡張版の fetch 関数           |
+| **setHeaders** | `(headers: Record<string, string>) => void` | レスポンスヘッダーを設定                |
+| **depends**    | `(...deps: string[]) => void`               | 依存関係を宣言（invalidate 用）         |
+| **parent**     | `() => Promise<ParentData>`                 | 親レイアウトのデータを取得              |
 
-#### Universal Load専用パラメータ
+#### Universal Load 専用パラメータ
 
-| パラメータ | 型 | 説明 |
-|-----------|---|------|
-| **data** | `PageData` | Server Loadからのデータ（ある場合） |
+| パラメータ | 型         | 説明                                 |
+| ---------- | ---------- | ------------------------------------ |
+| **data**   | `PageData` | Server Load からのデータ（ある場合） |
 
-#### Server Load専用パラメータ
+#### Server Load 専用パラメータ
 
-| パラメータ | 型 | 説明 |
-|-----------|---|------|
-| **request** | `Request` | 元のHTTPリクエストオブジェクト |
-| **cookies** | `Cookies` | Cookieの読み書きAPI |
-| **locals** | `App.Locals` | Hooksで設定したローカルデータ |
-| **platform** | `App.Platform` | プラットフォーム固有のデータ |
-| **isDataRequest** | `boolean` | データリクエストかどうか |
-| **isSubRequest** | `boolean` | サブリクエストかどうか |
+| パラメータ        | 型             | 説明                             |
+| ----------------- | -------------- | -------------------------------- |
+| **request**       | `Request`      | 元の HTTP リクエストオブジェクト |
+| **cookies**       | `Cookies`      | Cookie の読み書き API            |
+| **locals**        | `App.Locals`   | Hooks で設定したローカルデータ   |
+| **platform**      | `App.Platform` | プラットフォーム固有のデータ     |
+| **isDataRequest** | `boolean`      | データリクエストかどうか         |
+| **isSubRequest**  | `boolean`      | サブリクエストかどうか           |
 
-## Load関数の選び方
+## Load 関数の選び方
 
-データ取得の要件に応じて、適切なLoad関数を選択します。
+データ取得の要件に応じて、適切な Load 関数を選択します。
 
-### Server Loadを使用すべき場合
+### Server Load を使用すべき場合
 
 1. **秘密情報の取り扱い**
-   - APIキーやデータベースクレデンシャル
+
+   - API キーやデータベースクレデンシャル
    - サードパーティサービスのシークレット
    - 環境変数に保存された機密情報
 
 2. **データベース直接アクセス**
-   - Prisma、Drizzle ORMなどのORM使用
-   - SQLクエリの直接実行
-   - RedisやMongoDBへの接続
+
+   - Prisma、Drizzle ORM などの ORM 使用
+   - SQL クエリの直接実行
+   - Redis や MongoDB への接続
 
 3. **サーバーサイド専用ライブラリ**
-   - Node.js専用モジュールの使用
+   - Node.js 専用モジュールの使用
    - ファイルシステムへのアクセス
    - システムコマンドの実行
 
 ```typescript
 // 例：Server Loadが適切なケース
 export const load: PageServerLoad = async ({ locals }) => {
-  // データベースに直接アクセス
-  const posts = await db.post.findMany({
-    where: { userId: locals.session.userId }
-  });
+	// データベースに直接アクセス
+	const posts = await db.post.findMany({
+		where: { userId: locals.session.userId },
+	});
 
-  // 秘密のAPIキーを使用
-  const analytics = await fetchWithSecret(process.env.ANALYTICS_KEY);
+	// 秘密のAPIキーを使用
+	const analytics = await fetchWithSecret(process.env.ANALYTICS_KEY);
 
-  return { posts, analytics };
+	return { posts, analytics };
 };
 ```
 
-### Universal Loadを使用すべき場合
+### Universal Load を使用すべき場合
 
-1. **公開APIの呼び出し**
-   - REST APIエンドポイント
-   - GraphQLクエリ
-   - パブリックAPIのデータ
+1. **公開 API の呼び出し**
 
-2. **SEOが重要な場合**
+   - REST API エンドポイント
+   - GraphQL クエリ
+   - パブリック API のデータ
+
+2. **SEO が重要な場合**
+
    - サーバーサイドレンダリングが必要
    - メタデータの動的生成
-   - Open Graphタグの設定
+   - Open Graph タグの設定
 
 3. **クライアントサイド再実行**
    - ナビゲーション時のデータ更新
@@ -602,12 +608,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 ```typescript
 // 例：Universal Loadが適切なケース
 export const load: PageLoad = async ({ fetch, params }) => {
-  // 公開APIからデータ取得
-  const response = await fetch(`/api/posts/${params.id}`);
-  const post = await response.json();
+	// 公開APIからデータ取得
+	const response = await fetch(`/api/posts/${params.id}`);
+	const post = await response.json();
 
-  // クライアントサイドでも再実行可能
-  return { post };
+	// クライアントサイドでも再実行可能
+	return { post };
 };
 ```
 
@@ -615,81 +621,82 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 <Mermaid diagram={selectionFlowchart} />
 
-## async/awaitの実行タイミングと並列処理
+## async/await の実行タイミングと並列処理
 
-Load関数内でのasync/awaitの実行タイミングと並列処理による最適化の詳細については、[データフローの詳細](../flow/)ページで解説しています。
+Load 関数内での async/await の実行タイミングと並列処理による最適化の詳細については、[データフローの詳細](../flow/)ページで解説しています。
 
-## TypeScript型の自動生成システム
+## TypeScript 型の自動生成システム
 
-SvelteKitの型安全なデータ取得と`./$types`の自動生成システムの詳細は、[TypeScript型の自動生成システム](../typescript-types/)の専用ページで解説しています。
+SvelteKit の型安全なデータ取得と`./$types`の自動生成システムの詳細は、[TypeScript 型の自動生成システム](../typescript-types/)の専用ページで解説しています。
 
 ## レイアウトとページ間のデータ共有
 
-レイアウトとページ間でデータを共有する方法です。SvelteKitはレイアウトのLoad関数を先に実行し、そのデータをページのLoad関数で利用できるようにします。これにより、共通データの重複取得を避け、効率的なデータフローを実現します。
+レイアウトとページ間でデータを共有する方法です。SvelteKit はレイアウトの Load 関数を先に実行し、そのデータをページの Load 関数で利用できるようにします。これにより、共通データの重複取得を避け、効率的なデータフローを実現します。
 
 <Mermaid diagram={parentChildDataFlow} />
 
-### レイアウトのLoad関数でのデータ取得
+### レイアウトの Load 関数でのデータ取得
 
-レイアウトのLoad関数で取得したデータは、そのレイアウトに属するすべてのページで共有されます。一般的にユーザー情報や設定など、アプリケーション全体で必要なデータをここで取得します。
+レイアウトの Load 関数で取得したデータは、そのレイアウトに属するすべてのページで共有されます。一般的にユーザー情報や設定など、アプリケーション全体で必要なデータをここで取得します。
 
 ```typescript
 // +layout.server.ts
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-  // セッションからユーザー情報を取得
-  // このデータはすべての子ページで利用可能
-  const user = await getUserFromSession(locals.session);
-  
-  return {
-    user  // このユーザー情報はこのレイアウトに属するすべてのページで利用可能
-  };
+	// セッションからユーザー情報を取得
+	// このデータはすべての子ページで利用可能
+	const user = await getUserFromSession(locals.session);
+
+	return {
+		user, // このユーザー情報はこのレイアウトに属するすべてのページで利用可能
+	};
 };
 ```
 
-### ページのLoad関数でのデータ取得
+### ページの Load 関数でのデータ取得
 
-ページのLoad関数で`parent()`関数を使って、上位レイアウトのデータにアクセスします。これにより、レイアウトで取得したデータを基に、追加のデータを取得できます。
+ページの Load 関数で`parent()`関数を使って、上位レイアウトのデータにアクセスします。これにより、レイアウトで取得したデータを基に、追加のデータを取得できます。
 
 ```typescript
 // +page.ts
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent }) => {
-  // 上位レイアウトのデータを取得
-  // parent()は上位のLoad関数の完了を待つ
-  const { user } = await parent();
-  
-  // ユーザー固有のデータを取得
-  // 親のデータを活用して追加情報を取得
-  const posts = await fetch(`/api/users/${user.id}/posts`)
-    .then(r => r.json());
-  
-  return {
-    posts
-    // userは自動的に継承される
-    // 明示的に返さなくてもコンポーネントで利用可能
-  };
+	// 上位レイアウトのデータを取得
+	// parent()は上位のLoad関数の完了を待つ
+	const { user } = await parent();
+
+	// ユーザー固有のデータを取得
+	// 親のデータを活用して追加情報を取得
+	const posts = await fetch(`/api/users/${user.id}/posts`).then((r) => r.json());
+
+	return {
+		posts,
+		// userは自動的に継承される
+		// 明示的に返さなくてもコンポーネントで利用可能
+	};
 };
 ```
 
-## 実践的な例：ECサイトの商品詳細ページ
+## 実践的な例：EC サイトの商品詳細ページ
 
-実際のECサイトを想定した、Load関数の実践的な使用例です。レイアウトでユーザー情報を取得し、ページで商品データを取得する典型的なパターンを示します。
+実際の EC サイトを想定した、Load 関数の実践的な使用例です。レイアウトでユーザー情報を取得し、ページで商品データを取得する典型的なパターンを示します。
 
 <Mermaid diagram={practicalExample} />
 
 この例では、以下の処理が行われています。
 
-1. **レイアウトLoad（+layout.server.ts）**
-   - Redisからセッション情報を取得
+1. **レイアウト Load（+layout.server.ts）**
+
+   - Redis からセッション情報を取得
    - ユーザー情報とカート情報を管理
 
-2. **ページLoad（+page.server.ts）**
+2. **ページ Load（+page.server.ts）**
+
    - parent()で親のユーザー情報を活用
-   - PostgreSQLから商品情報を取得
-   - AWS S3から署名付きURLを生成
+   - PostgreSQL から商品情報を取得
+   - AWS S3 から署名付き URL を生成
    - レコメンド商品を取得
 
 3. **Form Action**
@@ -699,35 +706,35 @@ export const load: PageLoad = async ({ parent }) => {
 
 ## エラーハンドリング
 
-Load関数でのエラー処理方法です。適切なエラーハンドリングにより、ユーザーにわかりやすいエラーメッセージを表示し、アプリケーションの信頼性を向上させます。
+Load 関数でのエラー処理方法です。適切なエラーハンドリングにより、ユーザーにわかりやすいエラーメッセージを表示し、アプリケーションの信頼性を向上させます。
 
 ### 基本的なエラー処理
 
-SvelteKitの`error`関数を使って、HTTPステータスコードとメッセージを持つエラーを投げます。これにより、適切なエラーページが表示されます。
+SvelteKit の`error`関数を使って、HTTP ステータスコードとメッセージを持つエラーを投げます。これにより、適切なエラーページが表示されます。
 
 ```typescript
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params }) => {
-  const response = await fetch(`/api/posts/${params.id}`);
-  
-  if (!response.ok) {
-    // HTTPエラーを投げる
-    // error関数はステータスコードとオプションデータを受け取る
-    throw error(response.status, {
-      message: 'Post not found'  // エラーページで表示されるメッセージ
-    });
-  }
-  
-  const post = await response.json();
-  return { post };
+	const response = await fetch(`/api/posts/${params.id}`);
+
+	if (!response.ok) {
+		// HTTPエラーを投げる
+		// error関数はステータスコードとオプションデータを受け取る
+		throw error(response.status, {
+			message: 'Post not found', // エラーページで表示されるメッセージ
+		});
+	}
+
+	const post = await response.json();
+	return { post };
 };
 ```
 
 ### カスタムエラーページ
 
-`+error.svelte`ファイルを作成して、エラーの表示をカスタマイズします。このファイルはLoad関数でエラーが発生したときに自動的に表示されます。
+`+error.svelte`ファイルを作成して、エラーの表示をカスタマイズします。このファイルは Load 関数でエラーが発生したときに自動的に表示されます。
 
 ```svelte
 <!-- +error.svelte（SvelteKit 2.12+ 推奨パターン） -->
@@ -743,7 +750,7 @@ export const load: PageLoad = async ({ params }) => {
 ```
 
 :::tip[$app/state vs $app/stores（SvelteKit 2.12+）]
-SvelteKit 2.12以降では、`$app/state`が推奨されます。
+SvelteKit 2.12 以降では、`$app/state`が推奨されます。
 
 ```typescript
 // ✅ 推奨（SvelteKit 2.12+）
@@ -757,68 +764,70 @@ import { page } from '$app/stores';
 console.log($page.url.pathname);
 ```
 
-`$app/state`の利点：
-- Svelte 5のrunesシステムとの一貫性
+`$app/state`の利点
+
+- Svelte 5 の runes システムとの一貫性
 - `$`プレフィックス不要でコードがすっきり
-- TypeScriptの型推論が改善
-:::
+- TypeScript の型推論が改善
+  :::
 
 ## よく使われるパターン
 
-実際のアプリケーションでよく使われるLoad関数のパターンを紹介します。これらの例を参考に、効率的なデータ取得を実装できます。
+実際のアプリケーションでよく使われる Load 関数のパターンを紹介します。これらの例を参考に、効率的なデータ取得を実装できます。
 
 ### 複数データの同時取得
 
-複数のデータソースから同時にデータを取得することで、パフォーマンスを大幅に改善できます。Promise.allを使って並列処理を実現します。
+複数のデータソースから同時にデータを取得することで、パフォーマンスを大幅に改善できます。Promise.all を使って並列処理を実現します。
 
 ```typescript
 export const load: PageLoad = async ({ fetch }) => {
-  // 並列でデータを取得（効率的）
-  // 3つのAPIコールが同時に実行される
-  const [posts, categories, tags] = await Promise.all([
-    fetch('/api/posts').then(r => r.json()),
-    fetch('/api/categories').then(r => r.json()),
-    fetch('/api/tags').then(r => r.json())
-  ]);
-  
-  return {
-    posts,      // 投稿データ
-    categories, // カテゴリ一覧
-    tags        // タグ一覧
-  };
+	// 並列でデータを取得（効率的）
+	// 3つのAPIコールが同時に実行される
+	const [posts, categories, tags] = await Promise.all([
+		fetch('/api/posts').then((r) => r.json()),
+		fetch('/api/categories').then((r) => r.json()),
+		fetch('/api/tags').then((r) => r.json()),
+	]);
+
+	return {
+		posts, // 投稿データ
+		categories, // カテゴリ一覧
+		tags, // タグ一覧
+	};
 };
 ```
 
 ### 動的なデータ取得
 
-URLパラメータやユーザーの状態に応じて、異なるデータを取得するパターンです。動的なコンテンツ表示に役立ちます。
+URL パラメータやユーザーの状態に応じて、異なるデータを取得するパターンです。動的なコンテンツ表示に役立ちます。
 
 ```typescript
 export const load: PageLoad = async ({ url, fetch }) => {
-  const filter = url.searchParams.get('filter');
-  
-  // 条件に応じて異なるデータを取得
-  // ?filter=active のようなクエリパラメータをチェック
-  const data = filter
-    ? await fetch(`/api/items?filter=${filter}`).then(r => r.json())
-    : await fetch('/api/items').then(r => r.json());
-  
-  return {
-    items: data  // フィルタリングされたデータまたは全データ
-  };
+	const filter = url.searchParams.get('filter');
+
+	// 条件に応じて異なるデータを取得
+	// ?filter=active のようなクエリパラメータをチェック
+	const data = filter
+		? await fetch(`/api/items?filter=${filter}`).then((r) => r.json())
+		: await fetch('/api/items').then((r) => r.json());
+
+	return {
+		items: data, // フィルタリングされたデータまたは全データ
+	};
 };
 ```
 
-
 ## ベストプラクティス
 
-Load関数を使う際の推奨事項です。これらのベストプラクティスに従うことで、保守性が高くパフォーマントなコードを書けます。
+Load 関数を使う際の推奨事項です。これらのベストプラクティスに従うことで、保守性が高くパフォーマントなコードを書けます。
 
 1. **エラーハンドリング**
-   - 適切なHTTPステータスコードを返す
+
+   - 適切な HTTP ステータスコードを返す
    - ユーザーフレンドリーなエラーメッセージ
 
 2. **キャッシュを考慮**
+
    - `fetch`の`cache`オプションを適切に設定
    - 適切なキャッシュヘッダーの設定
 
@@ -828,6 +837,6 @@ Load関数を使う際の推奨事項です。これらのベストプラクテ�
 
 ## 次のステップ
 
-- [TypeScript型の自動生成システム](../typescript-types/) - TypeScript型の自動生成の仕組み
-- [データフローの詳細](../flow/) - Load関数の実行順序とデータの流れ
+- [TypeScript 型の自動生成システム](../typescript-types/) - TypeScript 型の自動生成の仕組み
+- [データフローの詳細](../flow/) - Load 関数の実行順序とデータの流れ
 - [データフェッチング戦略](../strategies/) - 高度なデータ取得テクニック

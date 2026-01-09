@@ -291,26 +291,38 @@ body.dark code *,
 
 /* ライトモードでコードの色を調整 */
 @media (prefers-color-scheme: light) {
-  /* 全体を少しだけ濃くする（控えめに） */
+  /* 全体をより濃く、読みやすくする */
   .shiki {
-    filter: brightness(0.95) contrast(1.1) saturate(1.15);
+    filter: brightness(0.85) contrast(1.25) saturate(1.2);
   }
 
-  /* コメントは元の薄さを維持 */
+  /* Shikiのspan要素にも適用 */
+  .shiki span {
+    filter: brightness(0.9) contrast(1.15);
+  }
+
+  /* コメントは少し薄めに維持 */
   .shiki .token.comment,
   .shiki [style*='color:#6A737D'],
   .shiki [style*='color:#6a737d'],
   .shiki [style*='color:#959da5'],
   .shiki [style*='color:#969896'] {
-    opacity: 0.8;
+    opacity: 0.85;
     filter: none;
   }
 }
 
-/* ライトモード検出の別パターン（控えめな調整） */
+/* ライトモード検出の別パターン */
 html:not([data-theme='dark']) .shiki,
 html:not(.dark) .shiki,
 body:not([data-theme='dark']) .shiki,
 body:not(.dark) .shiki {
-  filter: brightness(0.95) contrast(1.1) saturate(1.15);
+  filter: brightness(0.85) contrast(1.25) saturate(1.2);
+}
+
+html:not([data-theme='dark']) .shiki span,
+html:not(.dark) .shiki span,
+body:not([data-theme='dark']) .shiki span,
+body:not(.dark) .shiki span {
+  filter: brightness(0.9) contrast(1.15);
 }

@@ -226,8 +226,32 @@ td code,
 /* コメントは色を変えて区別（斜体の代わり） */
 .shiki .token.comment,
 .shiki .comment {
-  opacity: 0.7;
+  opacity: 0.8;
   font-style: normal !important;
+}
+
+/* ダークモードでコメントをより見やすく */
+@media (prefers-color-scheme: dark) {
+  .shiki .token.comment,
+  .shiki .comment,
+  .shiki [style*='color:#6A737D'],
+  .shiki [style*='color:#6a737d'],
+  .shiki [style*='color:#8b949e'] {
+    opacity: 1 !important;
+    color: #9ca3af !important; /* より明るいグレー */
+  }
+}
+
+html[data-theme='dark'] .shiki .token.comment,
+html[data-theme='dark'] .shiki .comment,
+html.dark .shiki .token.comment,
+html.dark .shiki .comment,
+body[data-theme='dark'] .shiki .token.comment,
+body[data-theme='dark'] .shiki .comment,
+body.dark .shiki .token.comment,
+body.dark .shiki .comment {
+  opacity: 1 !important;
+  color: #9ca3af !important; /* より明るいグレー */
 }
 
 /* すべてのコード関連要素で斜体を完全に無効化 */

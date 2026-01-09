@@ -71,14 +71,14 @@
 
 ## 🗂 コンテンツ構成
 
-### 1️⃣ はじめに
+### 1. はじめに
 - Svelte 5の概要
 - なぜSvelteか
 - 環境構築
 - TypeScript設定
 - 学習パス
 
-### 2️⃣ Svelteの基本
+### 2. Svelteの基本
 - Hello World
 - コンポーネントの基本構造
 - テンプレート構文
@@ -86,19 +86,19 @@
 - Actions
 - トランジション・アニメーション
 
-### 3️⃣ Runes基礎編
+### 3. Runes基礎編
 - `$state` - リアクティブな状態管理（`$state.raw`, `$state.snapshot`, `$state.is`含む）
 - `$derived` / `$derived.by()` - 計算値と明示的な派生値（オーバーライド機能対応）
 - `$effect` / `$effect.pre` - 副作用の処理とDOM更新前実行（`$effect.tracking()`, `$effect.pending()`含む）
 - 他フレームワークとの比較
 
-### 4️⃣ Runes応用編
+### 4. Runes応用編
 - Runesシステム詳細
 - `$props` - プロパティ定義（`$props.id()`によるユニークID生成含む）
 - `$bindable` - 双方向バインディング
 - `$inspect` - デバッグツール
 
-### 5️⃣ 実践編
+### 5. 実践編
 - リアクティブストア（.svelte.ts）
 - クラスとリアクティビティ
 - 組み込みリアクティブクラス
@@ -107,25 +107,34 @@
 - TypeScriptパターン
 - スクリプトコンテキスト
 
-### 6️⃣ Svelteアーキテクチャ（計画中）
+### 6. Svelteアーキテクチャ（計画中）
 - SPA + 既存API統合パターン
 - BaaS統合（Firebase、Supabase）
 - GraphQL統合
 - マイクロフロントエンド
 
-### 7️⃣ SvelteKit基礎編
+### 7. Svelte MCP
+- Svelte MCPとは - 公式MCPサーバーの概要
+- セットアップ - Claude Code、Cursor、VS Code等への導入
+- ツール詳解 - list-sections、get-documentation、svelte-autofixer、playground-link
+- ユースケース - 学習支援、コード生成、移行支援、品質保証
+- アーキテクチャ - モノレポ構造、Local/Remote版の仕組み
+- 開発環境との統合 - ESLint連携、CI/CD統合、AGENTS.md設定
+- エコシステム - 関連ツールとリソース
+
+### 8. SvelteKit基礎編
 - SvelteKit概要とアーキテクチャ
 - プロジェクト構造
 - 特殊ファイルシステム
 - レンダリング戦略（基礎）
 - app.d.tsの役割
 
-### 8️⃣ SvelteKitルーティング
+### 9. SvelteKitルーティング
 - 基本ルーティング
 - 動的ルーティング
 - 高度なルーティング
 
-### 9️⃣ SvelteKitデータ取得
+### 10. SvelteKitデータ取得
 - Load関数の基礎（`$app/state`推奨パターン対応）
 - TypeScript型の自動生成システム
 - データフローの詳細
@@ -134,15 +143,15 @@
 - データフェッチング戦略
 - 高度なデータフェッチング戦略
 
-### 🔟 SvelteKitアーキテクチャ詳解
+### 11. SvelteKitアーキテクチャ詳解
 - レンダリング戦略（詳解）
 - レンダリングパイプライン
 - アクセスログと分析戦略
 - データロードアーキテクチャ
 - ルーティング内部動作
 
-### 1️⃣1️⃣ SvelteKitサーバーサイド編
-- フォーム処理とActions（✨ 実行フロー図を大幅拡充）
+### 12. SvelteKitサーバーサイド編
+- フォーム処理とActions（実行フロー図を大幅拡充）
   - Actions実行タイミングのシーケンス図
   - Named Actions（複数Actions）のフロー
   - use:enhanceライフサイクル図
@@ -153,7 +162,7 @@
 - APIルート設計（準備中）
 - Hooks（準備中）
 
-### 1️⃣2️⃣ SvelteKitアプリケーション構築編
+### 13. SvelteKitアプリケーション構築編
 - セッション管理と認証戦略
 - 認証ベストプラクティス
 - テスト戦略
@@ -163,26 +172,26 @@
 - 環境変数管理（準備中）
 - エラーハンドリング（準備中）
 
-### 1️⃣3️⃣ SvelteKitエンタープライズ開発（計画中）
+### 14. SvelteKitエンタープライズ開発（計画中）
 - レイヤードアーキテクチャ
 - ドメイン駆動設計（DDD）
 - リポジトリパターン
 - 依存性注入（DI）
 - Clean Architecture実装
 
-### 1️⃣4️⃣ SvelteKit最適化編
+### 15. SvelteKit最適化編
 - ビルド最適化
 - キャッシュ戦略
 - パフォーマンス最適化（準備中）
 - SEO最適化（準備中）
 
-### 1️⃣5️⃣ SvelteKitデプロイ・運用編
+### 16. SvelteKitデプロイ・運用編
 - プラットフォーム別デプロイ
 - 実行環境とランタイム
 - セキュリティ（準備中）
 - モニタリング（準備中）
 
-### 1️⃣6️⃣ 実装例
+### 17. 実装例
 - ブログシステム（基礎・発展）
 - Cookie/Session認証
 - JWT認証
@@ -191,11 +200,11 @@
 - WebSocket実装
 - Mermaidダイアグラム（SSR対応）
 
-### 1️⃣7️⃣ リファレンス
+### 18. リファレンス
 - Svelte 5 完全リファレンス
 - SvelteKit 2.x 完全リファレンス
 
-### 1️⃣8️⃣ ディープダイブ（技術詳細）
+### 19. ディープダイブ（技術詳細）
 Svelte 5の内部実装や高度なトピックを扱います。
 - Proxyオブジェクトの活用
 - リアクティブ状態変数とバインディングの違い
@@ -373,5 +382,5 @@ pnpm preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026年1月8日 - Svelte 5 Runesドキュメント品質改善（`$state.raw`修正、`$derived.by()`統一、`$props.id()`/`$effect.tracking()`/`$effect.pending()`追加、`$app/state`推奨パターン対応）
+**Last Updated**: 2026年1月10日 - Svelte MCPセクション追加（7ページ：概要、セットアップ、ツール詳解、ユースケース、アーキテクチャ、開発環境統合、エコシステム）
 

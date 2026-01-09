@@ -125,6 +125,23 @@ Svelte MCP の公式ドキュメントは [svelte.dev/docs/mcp](https://svelte.d
     </div>
   </a>
 
+  <a href="{base}/svelte-mcp/architecture/" class="flex no-underline group h-full">
+    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-500 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🏗️</div>
+      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+        アーキテクチャ
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">内部アーキテクチャを詳しく解説します。</p>
+      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+        <li>Local版 vs Remote版</li>
+        <li>autofixer の仕組み</li>
+        <li>ドキュメント同期フロー</li>
+        <li>技術スタック</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/svelte-mcp/integration/" class="flex no-underline group h-full">
     <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-500 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>

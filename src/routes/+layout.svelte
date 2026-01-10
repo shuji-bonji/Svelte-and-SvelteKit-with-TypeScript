@@ -3,6 +3,7 @@
   import { base } from '$app/paths';
   import Search from '$lib/components/Search.svelte';
   import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
+  import '../styles/theme.css';
   // Svelte 5: onMountは不要（$effectを使用）
 
   const { children } = $props();
@@ -25,6 +26,32 @@
 
   $effect(() => {
     mounted = true;
+
+    // ホームページでは検索バーをヘッダー内に移動
+    function moveSearchToHeader() {
+      const searchContainer = document.querySelector('.search-container');
+      const header = document.querySelector('.header .header-inner');
+      const logoContainer = header?.querySelector('.left');
+
+      if (!searchContainer || !header || !logoContainer) return;
+
+      if (isHome) {
+        // ホームページ：検索コンテナをロゴの右に移動
+        if (!searchContainer.classList.contains('in-header')) {
+          logoContainer.after(searchContainer);
+          searchContainer.classList.add('in-header');
+        }
+      } else {
+        // 他のページ：検索コンテナを元の位置（body直下）に戻す
+        if (searchContainer.classList.contains('in-header')) {
+          document.body.appendChild(searchContainer);
+          searchContainer.classList.remove('in-header');
+        }
+      }
+    }
+
+    // 初回実行
+    setTimeout(moveSearchToHeader, 100);
 
     // サイドバーのアクティブ状態を修正（7.xの仕様変更対応）
     // 7.xでは子パスもアクティブになるため、完全一致のみをハイライトするよう修正
@@ -103,6 +130,7 @@
     const unsubscribe = page.subscribe(() => {
       fixActiveLinks();
       scrollToActiveSection();
+      setTimeout(moveSearchToHeader, 100);
     });
 
     return () => {
@@ -161,14 +189,14 @@
 
   /* 検索ボックスのスタイル調整 */
   :global(.search-teleport .search-button) {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: var(--color-header-bg) !important;
     backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid var(--color-border) !important;
   }
 
   :global(.dark .search-teleport .search-button) {
-    background: rgba(30, 30, 30, 0.9) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: var(--color-header-bg) !important;
+    border: 1px solid var(--color-border) !important;
   }
 
   /* サイドバーのパディング調整 */
@@ -180,14 +208,9 @@
     max-height: calc(100vh - 64px) !important; /* ヘッダーの高さを引く */
   }
   
-  /* 7.xの仕様変更対応: 全ての👈アイコンをデフォルトで非表示 */
+  /* サイドバーのアクティブアイコン（👈）を非表示 */
   :global(.theme-default-sidebar .active-icon) {
     display: none !important;
-  }
-
-  /* 完全一致のリンクのみアイコンを表示 */
-  :global(.theme-default-sidebar .link.exact-match .active-icon) {
-    display: flex !important;
   }
 
   /* サイドバーのリンク文字色をリセット（親の色を継承しない） */
@@ -209,7 +232,7 @@
   :global(.theme-default-sidebar .link.exact-match) {
     font-weight: 600 !important;
     position: relative !important;
-    color: var(--sp-color-primary, #ff3e00) !important;
+    color: var(--color-sidebar-active-text) !important;
   }
 
   :global(.theme-default-sidebar .link.exact-match .text) {
@@ -223,7 +246,7 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background-color: var(--sp-color-primary, #ff3e00);
+    background-color: var(--color-sidebar-active-border);
   }
 
   /* サイドバーのフォントサイズ調整（セクションタイトル以外） */
@@ -250,50 +273,50 @@
   /* モバイルサイドバーのスタイル改善 */
   @media (max-width: 949px) {
     :global(.theme-default-sidebar) {
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
-      background: #ffffff !important;
+      box-shadow: var(--shadow-md) !important;
+      background: var(--color-sidebar-bg) !important;
     }
 
     :global(.dark .theme-default-sidebar) {
-      background: #1a1a1a !important;
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4) !important;
+      background: var(--color-sidebar-bg) !important;
+      box-shadow: var(--shadow-lg) !important;
     }
 
     /* サイドバーのヘッダー部分（シンプルに） */
     :global(.sidebar-logo) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+      border-bottom: 1px solid var(--color-border) !important;
       padding: 1rem !important;
     }
 
     :global(.dark .sidebar-logo) {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-bottom: 1px solid var(--color-border) !important;
     }
 
     /* サイドバーグループのスタイル改善 */
     :global(.sidebar-group .group-title) {
       font-size: 0.9rem !important;
       font-weight: 700 !important;
-      color: var(--sp-color-text, #374151) !important;
+      color: var(--color-sidebar-text) !important;
       padding: 0.5rem 0 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+      border-bottom: 1px solid var(--color-border-soft) !important;
       margin-bottom: 0.5rem !important;
     }
 
     :global(.dark .sidebar-group .group-title) {
-      color: var(--sp-color-text, #e5e7eb) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: var(--color-sidebar-text) !important;
+      border-bottom: 1px solid var(--color-border-soft) !important;
     }
 
     /* リンクのホバー効果（控えめに） */
     :global(.sidebar-group .link:hover) {
-      background: rgba(0, 0, 0, 0.04) !important;
+      background: var(--color-sidebar-hover-bg) !important;
       padding-left: 1rem !important;
       border-radius: 0.25rem !important;
-      transition: all 0.2s ease !important;
+      transition: all var(--transition-base) !important;
     }
 
     :global(.dark .sidebar-group .link:hover) {
-      background: rgba(255, 255, 255, 0.04) !important;
+      background: var(--color-sidebar-hover-bg) !important;
     }
   }
 
@@ -364,18 +387,18 @@
   @media (max-width: 949px) {
     :global(.nav-trigger) {
       background: transparent !important;
-      color: var(--sp-color-text, #374151) !important;
+      color: var(--color-nav-text) !important;
       padding: 0.5rem !important;
       border-radius: 0.25rem !important;
-      transition: all 0.2s ease !important;
+      transition: all var(--transition-base) !important;
     }
 
     :global(.nav-trigger:hover) {
-      background: rgba(0, 0, 0, 0.05) !important;
+      background: var(--color-sidebar-hover-bg) !important;
     }
 
     :global(.nav-trigger:active) {
-      background: rgba(0, 0, 0, 0.1) !important;
+      background: var(--color-primary-bg) !important;
     }
 
     /* ハンバーガーアイコンのスタイル */
@@ -386,44 +409,44 @@
 
     /* ダークモードでの色調整 */
     :global(.dark .nav-trigger) {
-      color: var(--sp-color-text, #e5e7eb) !important;
+      color: var(--color-nav-text) !important;
     }
 
     :global(.dark .nav-trigger:hover) {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: var(--color-sidebar-hover-bg) !important;
     }
 
     :global(.dark .nav-trigger:active) {
-      background: rgba(255, 255, 255, 0.1) !important;
+      background: var(--color-primary-bg) !important;
     }
 
     /* On this page (TOC) の幅調整 */
     :global(.toc) {
       width: 240px !important;
       max-width: 85vw !important;
-      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1) !important;
-      background: #ffffff !important;
+      box-shadow: var(--shadow-md) !important;
+      background: var(--color-bg) !important;
       z-index: 1000 !important; /* ヘッダーより上に表示 */
       position: fixed !important;
       top: 48px !important; /* ヘッダーの高さ分下げる */
     }
 
     :global(.dark .toc) {
-      background: #1a1a1a !important;
-      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.4) !important;
+      background: var(--color-bg) !important;
+      box-shadow: var(--shadow-lg) !important;
     }
 
     /* TOCのタイトル（シンプルに） */
     :global(.toc .title) {
       padding: 1rem !important;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-      color: var(--sp-color-text, #374151) !important;
+      border-bottom: 1px solid var(--color-border) !important;
+      color: var(--color-text) !important;
       font-weight: 600 !important;
     }
 
     :global(.dark .toc .title) {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      color: var(--sp-color-text, #e5e7eb) !important;
+      border-bottom: 1px solid var(--color-border) !important;
+      color: var(--color-text) !important;
     }
 
     /* TOCのアンカーエリアのパディング調整 */
@@ -433,14 +456,14 @@
 
     /* TOCのリンクのホバー効果（控えめに） */
     :global(.toc .item:hover) {
-      background: rgba(0, 0, 0, 0.04) !important;
+      background: var(--color-sidebar-hover-bg) !important;
       padding-left: 0.5rem !important;
       border-radius: 0.25rem !important;
-      transition: all 0.2s ease !important;
+      transition: all var(--transition-base) !important;
     }
 
     :global(.dark .toc .item:hover) {
-      background: rgba(255, 255, 255, 0.04) !important;
+      background: var(--color-sidebar-hover-bg) !important;
     }
   }
 
@@ -451,15 +474,15 @@
       top: 0 !important;
       transform: translateY(0) !important;
       transition: none !important;
-      background: rgba(255, 255, 255, 0.95) !important;
+      background: var(--color-header-bg) !important;
       backdrop-filter: blur(10px) !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: var(--shadow-sm) !important;
       z-index: 999 !important;
     }
 
     :global(.dark .header) {
-      background: rgba(0, 0, 0, 0.95) !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+      background: var(--color-header-bg) !important;
+      box-shadow: var(--shadow-md) !important;
     }
 
     :global(.header.hidden-in-mobile) {
@@ -477,15 +500,15 @@
       top: 48px !important;
       left: 0 !important;
       right: 0 !important;
-      background: rgba(255, 255, 255, 0.95) !important;
+      background: var(--color-header-bg) !important;
       backdrop-filter: blur(10px) !important;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+      border-bottom: 1px solid var(--color-border) !important;
       z-index: 998 !important;
     }
 
     :global(.dark .sub-nav) {
-      background: rgba(0, 0, 0, 0.95) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      background: var(--color-header-bg) !important;
+      border-bottom: 1px solid var(--color-border) !important;
     }
 
     /* サブナビゲーションがある場合はさらにパディングを追加 */
@@ -531,7 +554,7 @@
 
   /* ダークモード時のコードブロック背景色統一 */
   :global(.dark .svp-code-block-wrapper) {
-    background-color: #1e1e1e !important;
+    background-color: var(--color-code-bg) !important;
     --shiki-dark-bg: transparent !important;
   }
   
@@ -572,14 +595,14 @@
   :global(.dark h4 > code),
   :global(.dark h5 > code),
   :global(.dark h6 > code) {
-    background-color: rgba(110, 118, 129, 0.2) !important;
+    background-color: var(--color-inline-code-bg) !important;
     padding: 0.2em 0.4em;
     border-radius: 3px;
   }
 
   /* ライトモード時のコードブロック背景色も統一 */
   :global(.svp-code-block-wrapper) {
-    background-color: #f6f8fa !important;
+    background-color: var(--color-code-bg) !important;
   }
   
   /* 内部要素の背景を透明に */
@@ -618,7 +641,7 @@
   :global(h4 > code),
   :global(h5 > code),
   :global(h6 > code) {
-    background-color: rgba(175, 184, 193, 0.2) !important;
+    background-color: var(--color-inline-code-bg) !important;
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.875em;
@@ -700,12 +723,26 @@
     max-width: var(--vp-layout-max-width, 960px);
   }
 
+  /* ホームページのアクションボタンのレイアウト */
+  /* 1248px以下で2列表示 */
+  @media (min-width: 640px) and (max-width: 1248px) {
+    :global(.home-page .actions) {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
+      max-width: 500px !important;
+    }
+
+    /* プライマリボタンは2列分の幅 */
+    :global(.home-page .actions .svp-action--primary) {
+      grid-column: span 2 !important;
+    }
+  }
+
   /* ホームページのアクションボタンのカスタマイズ */
   /* 学習コンテンツボタン（Svelte, SvelteKit）をTypeScript青で強調 */
-  :global(.home .svp-action[href="./svelte"]),
-  :global(.home .svp-action[href="./sveltekit"]),
-  :global(.svp-action.svp-action--secondary[href="./svelte"]),
-  :global(.svp-action.svp-action--secondary[href="./sveltekit"]) {
+  :global(.home-page .svp-action[href="./svelte"]),
+  :global(.home-page .svp-action[href="./sveltekit"]) {
     background-image: linear-gradient(to bottom right, #2196F3 0%, #1976D2 50%, #0D47A1 100%) !important;
     background-color: transparent !important;
     background-size: 200% 200% !important;
@@ -717,10 +754,8 @@
     transition: all 0.3s ease !important;
   }
 
-  :global(.home .svp-action[href="./svelte"]:hover),
-  :global(.home .svp-action[href="./sveltekit"]:hover),
-  :global(.svp-action.svp-action--secondary[href="./svelte"]:hover),
-  :global(.svp-action.svp-action--secondary[href="./sveltekit"]:hover) {
+  :global(.home-page .svp-action[href="./svelte"]:hover),
+  :global(.home-page .svp-action[href="./sveltekit"]:hover) {
     background-position: 100% 100% !important;
     border-color: rgba(13, 71, 161, 0.7) !important;
     box-shadow: 0 6px 20px 0 rgba(13, 71, 161, 0.4) !important;
@@ -733,25 +768,23 @@
   :global(.svp-action[href="./deep-dive"]) {
     background: transparent !important;
     background-color: transparent !important;
-    color: var(--sp-color-text-secondary, #64748b) !important;
-    border: 1px solid var(--sp-color-border, #e2e8f0) !important;
+    color: var(--color-text-secondary) !important;
+    border: 1px solid var(--color-border) !important;
     font-weight: 500 !important;
   }
 
   :global(.svp-action[href="./examples"]:hover),
   :global(.svp-action[href="./reference"]:hover),
   :global(.svp-action[href="./deep-dive"]:hover) {
-    background: var(--sp-color-bg-soft, #f8fafc) !important;
-    background-color: var(--sp-color-bg-soft, #f8fafc) !important;
-    border-color: var(--sp-color-text-secondary, #64748b) !important;
-    color: var(--sp-color-text, #0f172a) !important;
+    background: var(--color-bg-soft) !important;
+    background-color: var(--color-bg-soft) !important;
+    border-color: var(--color-text-secondary) !important;
+    color: var(--color-text) !important;
   }
 
   /* ダークモードでの調整 */
-  :global(.dark .home .svp-action[href="./svelte"]),
-  :global(.dark .home .svp-action[href="./sveltekit"]),
-  :global(.dark .svp-action.svp-action--secondary[href="./svelte"]),
-  :global(.dark .svp-action.svp-action--secondary[href="./sveltekit"]) {
+  :global(.dark .home-page .svp-action[href="./svelte"]),
+  :global(.dark .home-page .svp-action[href="./sveltekit"]) {
     background-image: linear-gradient(to bottom right, #42A5F5 0%, #2196F3 50%, #1976D2 100%) !important;
     background-color: transparent !important;
     background-size: 200% 200% !important;
@@ -761,10 +794,8 @@
     transition: all 0.3s ease !important;
   }
 
-  :global(.dark .home .svp-action[href="./svelte"]:hover),
-  :global(.dark .home .svp-action[href="./sveltekit"]:hover),
-  :global(.dark .svp-action.svp-action--secondary[href="./svelte"]:hover),
-  :global(.dark .svp-action.svp-action--secondary[href="./sveltekit"]:hover) {
+  :global(.dark .home-page .svp-action[href="./svelte"]:hover),
+  :global(.dark .home-page .svp-action[href="./sveltekit"]:hover) {
     background-position: 100% 100% !important;
     border-color: rgba(25, 118, 210, 0.7) !important;
     box-shadow: 0 6px 20px 0 rgba(33, 150, 243, 0.5) !important;
@@ -776,16 +807,16 @@
   :global(.dark .svp-action[href="./deep-dive"]) {
     background: transparent !important;
     background-color: transparent !important;
-    color: var(--sp-color-text-secondary, #94a3b8) !important;
-    border: 1px solid var(--sp-color-border, #334155) !important;
+    color: var(--color-text-secondary) !important;
+    border: 1px solid var(--color-border) !important;
   }
 
   :global(.dark .svp-action[href="./examples"]:hover),
   :global(.dark .svp-action[href="./reference"]:hover),
   :global(.dark .svp-action[href="./deep-dive"]:hover) {
-    background: var(--sp-color-bg-soft, #1e293b) !important;
-    background-color: var(--sp-color-bg-soft, #1e293b) !important;
-    border-color: var(--sp-color-text-secondary, #94a3b8) !important;
-    color: var(--sp-color-text, #f1f5f9) !important;
+    background: var(--color-bg-soft) !important;
+    background-color: var(--color-bg-soft) !important;
+    border-color: var(--color-text-secondary) !important;
+    color: var(--color-text) !important;
   }
 </style>

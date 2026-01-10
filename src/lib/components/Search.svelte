@@ -381,16 +381,27 @@
 		}
 	}
 
-	/* ホームページでの配置 - 4rem右にずらす */
+	/* ホームページでヘッダー内に配置された場合（デスクトップのみ） */
 	@media (min-width: 950px) {
-		:global(.is-home) .search-wrapper {
-			left: calc(260px + 4rem); /* 通常位置から4rem右へ */
+		:global(.in-header) .search-wrapper {
+			position: static;
+			margin-left: 1.5rem;
+		}
+
+		:global(.in-header) {
+			display: flex;
+			align-items: center;
 		}
 	}
 
-	@media (min-width: 1240px) {
-		:global(.is-home) .search-wrapper {
-			left: calc(300px + 4rem); /* 通常位置から4rem右へ */
+	/* モバイルでは常に固定位置（ホームページでも） */
+	@media (max-width: 949px) {
+		:global(.in-header) .search-wrapper {
+			position: fixed;
+			bottom: 24px;
+			right: 24px;
+			left: auto;
+			margin-left: 0;
 		}
 	}
 

@@ -1,0 +1,199 @@
+/* ==========================================================================
+   Theme: kit-docs inspired + TypeScript Blue Accent
+   ========================================================================== */
+
+:root {
+  /* ----------------------------------------------------------------
+     Base Colors (Light Mode) - kit-docs / Tailwind Docs inspired
+     ---------------------------------------------------------------- */
+
+  /* Background */
+  --color-bg: #ffffff;
+  --color-bg-soft: #f8fafc;
+  --color-bg-muted: #f1f5f9;
+  --color-bg-elevated: #ffffff;
+
+  /* Text */
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-faint: #94a3b8;
+
+  /* Border */
+  --color-border: #e2e8f0;
+  --color-border-soft: #f1f5f9;
+  --color-border-emphasis: #cbd5e1;
+
+  /* ----------------------------------------------------------------
+     Accent Colors
+     ---------------------------------------------------------------- */
+
+  /* Primary: TypeScript Blue */
+  --color-primary: #3178c6;
+  --color-primary-light: #4b8eda;
+  --color-primary-lighter: #60a5fa;
+  --color-primary-dark: #235a97;
+  --color-primary-bg: rgba(49, 120, 198, 0.1);
+  --color-primary-bg-hover: rgba(49, 120, 198, 0.15);
+
+  /* Svelte Orange (使用を控えめに) */
+  --color-svelte: #ff3e00;
+  --color-svelte-soft: rgba(255, 62, 0, 0.1);
+  --color-svelte-muted: #ff6b35;
+
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-danger: #ef4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-info: #3b82f6;
+  --color-info-bg: rgba(59, 130, 246, 0.1);
+
+  /* ----------------------------------------------------------------
+     Code Blocks
+     ---------------------------------------------------------------- */
+  --color-code-bg: #f8fafc;
+  --color-code-border: #e2e8f0;
+  --color-inline-code-bg: rgba(175, 184, 193, 0.2);
+  --color-inline-code-text: #1e293b;
+
+  /* ----------------------------------------------------------------
+     Sidebar
+     ---------------------------------------------------------------- */
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-text: #334155;
+  --color-sidebar-text-muted: #64748b;
+  --color-sidebar-active-bg: rgba(49, 120, 198, 0.08);
+  --color-sidebar-active-text: #3178c6;
+  --color-sidebar-active-border: #3178c6;
+  --color-sidebar-hover-bg: rgba(0, 0, 0, 0.04);
+
+  /* ----------------------------------------------------------------
+     Header / Navigation
+     ---------------------------------------------------------------- */
+  --color-header-bg: rgba(255, 255, 255, 0.95);
+  --color-header-border: #e2e8f0;
+  --color-nav-text: #334155;
+  --color-nav-text-hover: #0f172a;
+  --color-nav-active: #3178c6;
+
+  /* ----------------------------------------------------------------
+     Shadows (目に優しい控えめなシャドウ)
+     ---------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-focus: 0 0 0 3px rgba(49, 120, 198, 0.2);
+
+  /* ----------------------------------------------------------------
+     Typography
+     ---------------------------------------------------------------- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  /* ----------------------------------------------------------------
+     Transitions
+     ---------------------------------------------------------------- */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* ==========================================================================
+   Dark Mode
+   ========================================================================== */
+
+.dark {
+  /* Background */
+  --color-bg: #0f172a;
+  --color-bg-soft: #1e293b;
+  --color-bg-muted: #334155;
+  --color-bg-elevated: #1e293b;
+
+  /* Text */
+  --color-text: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-faint: #64748b;
+
+  /* Border */
+  --color-border: #334155;
+  --color-border-soft: #1e293b;
+  --color-border-emphasis: #475569;
+
+  /* Primary: TypeScript Blue (ダークモード調整) */
+  --color-primary: #60a5fa;
+  --color-primary-light: #93c5fd;
+  --color-primary-lighter: #bfdbfe;
+  --color-primary-dark: #3b82f6;
+  --color-primary-bg: rgba(96, 165, 250, 0.15);
+  --color-primary-bg-hover: rgba(96, 165, 250, 0.2);
+
+  /* Code Blocks */
+  --color-code-bg: #1e293b;
+  --color-code-border: #334155;
+  --color-inline-code-bg: rgba(148, 163, 184, 0.2);
+  --color-inline-code-text: #e2e8f0;
+
+  /* Sidebar */
+  --color-sidebar-bg: #0f172a;
+  --color-sidebar-text: #e2e8f0;
+  --color-sidebar-text-muted: #94a3b8;
+  --color-sidebar-active-bg: rgba(96, 165, 250, 0.1);
+  --color-sidebar-active-text: #60a5fa;
+  --color-sidebar-active-border: #60a5fa;
+  --color-sidebar-hover-bg: rgba(255, 255, 255, 0.04);
+
+  /* Header */
+  --color-header-bg: rgba(15, 23, 42, 0.95);
+  --color-header-border: #334155;
+  --color-nav-text: #e2e8f0;
+  --color-nav-text-hover: #f8fafc;
+  --color-nav-active: #60a5fa;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-focus: 0 0 0 3px rgba(96, 165, 250, 0.3);
+}
+
+/* ==========================================================================
+   SveltePress Variable Overrides
+   既存の --sp-color-* 変数を新しいカラーにマッピング
+   ========================================================================== */
+
+:root {
+  /* SveltePress の変数をオーバーライド */
+  --sp-color-primary: var(--color-primary);
+  --sp-color-primary-light: var(--color-primary-light);
+  --sp-color-bg: var(--color-bg);
+  --sp-color-bg-soft: var(--color-bg-soft);
+  --sp-color-text: var(--color-text);
+  --sp-color-text-secondary: var(--color-text-secondary);
+  --sp-color-border: var(--color-border);
+  --sp-color-danger: var(--color-danger);
+
+  /* グレースケール */
+  --sp-color-gray-100: var(--color-bg-muted);
+  --sp-color-gray-200: var(--color-border);
+  --sp-color-gray-300: var(--color-border-emphasis);
+  --sp-color-gray-400: var(--color-text-faint);
+  --sp-color-gray-500: var(--color-text-muted);
+  --sp-color-gray-600: var(--color-text-secondary);
+  --sp-color-gray-700: var(--color-text);
+}
+
+.dark {
+  --sp-color-primary: var(--color-primary);
+  --sp-color-primary-light: var(--color-primary-light);
+  --sp-color-bg: var(--color-bg);
+  --sp-color-bg-soft: var(--color-bg-soft);
+  --sp-color-text: var(--color-text);
+  --sp-color-text-secondary: var(--color-text-secondary);
+  --sp-color-border: var(--color-border);
+}

@@ -1,14 +1,15 @@
 # TypeScript で学ぶ Svelte 5/SvelteKit 完全ガイド
 
-> [!IMPORTANT] > **📢 Svelte MCP Server の登場について**
+> [!IMPORTANT]
+> **📢 Svelte MCP Serverの登場について**
 >
-> 2025 年 1 月、Svelte 公式が [MCP Server](https://svelte.dev/docs/mcp/overview) をリリースしました。
-> Claude、Cursor、VS Code 等の AI ツールから公式ドキュメントを直接参照し、コードの自動検証まで行えるようになりました。
+> 2025年1月、Svelte公式が [MCP Server](https://svelte.dev/docs/mcp/overview) をリリースしました。
+> Claude、Cursor、VS Code等のAIツールから公式ドキュメントを直接参照し、コードの自動検証まで行えるようになりました。
 >
-> **MCP Server と公式ドキュメントがあれば、このサイトの「Svelte 解説サイト」としての役割は終わりつつあります。**
+> **MCP Serverと公式ドキュメントがあれば、このサイトの「Svelte解説サイト」としての役割は終わりつつあります。**
 >
-> Svelte を学び始める方は、まず [Svelte MCP](/svelte-mcp/) の導入をお勧めします。
-> このサイトは今後、MCP では得られない「実務での設計判断」「フレームワーク比較」などの情報提供にシフトしていく予定です。
+> Svelteを学び始める方は、まず [Svelte MCP](/svelte-mcp/) の導入をお勧めします。
+> このサイトは今後、MCPでは得られない「実務での設計判断」「フレームワーク比較」などの情報提供にシフトしていく予定です。
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
 [![SveltePress](https://img.shields.io/badge/SveltePress-v7.0-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)

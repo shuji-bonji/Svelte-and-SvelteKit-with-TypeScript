@@ -2,6 +2,45 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-01-11] - 新機能ドキュメント追加（Svelte 5.29+/SvelteKit 2.27+）
+
+### 追加
+- **Remote Functions**: SvelteKit 2.27+の新しいサーバー連携機能（実験的）
+  - `query` - 型安全なデータ取得
+  - `form` - フォーム処理の簡略化
+  - `command` - サーバーサイド処理の実行
+  - `prerender` - ビルド時データ生成
+  - Standard Schema（Zod/Valibot）によるバリデーション連携
+  - Load関数/Form Actionsとの比較表
+
+- **{@attach ...}**: Svelte 5.29+のリアクティブDOM操作パターン
+  - `use:`アクションとの違いと使い分け
+  - Attachment factoriesによる再利用パターン
+  - コンポーネントへのアタッチメント適用
+  - `svelte/attachments`ユーティリティ（`createAttachmentKey`、`fromAction`）
+  - 外部ライブラリ（tippy.js等）との統合例
+
+- **hydratable**: SSRハイドレーション最適化の低レベルAPI
+  - SSR時のデータ再取得問題の解決
+  - シリアライゼーション（devalue）の型サポート
+  - CSP（Content Security Policy）対応（nonce/hash）
+  - SvelteKit Remote Functionsとの関係
+
+- **await expressions**: Svelte 5.36+の実験的非同期構文
+  - スクリプト/マークアップ内での直接await
+  - 同期された更新（Synchronized Updates）の仕組み
+  - `<svelte:boundary>`のpendingスニペット
+  - `$effect.pending()`によるローディング状態検出
+  - `fork()`によるプリロード
+
+## [2026-01-11] - $state.eager ドキュメント追加
+
+### 追加
+- **$state.eager**: 非同期操作中の即時UI更新機能のドキュメント（Svelte 5）
+  - ナビゲーション中のメニューハイライト、楽観的UI更新のユースケース解説
+  - 通常の`$state`/`$derived`との比較表
+  - TypeScriptによる実践的なコード例
+
 ## [2026-01-11] - コードブロック品質改善（全セクションレビュー）
 
 ### 修正

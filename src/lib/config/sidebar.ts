@@ -58,6 +58,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
             { title: 'use:アクション', to: '/svelte/basics/actions/' },
             {
+              title: '{@attach} アタッチメント',
+              to: '/svelte/basics/attachments/',
+            },
+            {
               title: 'トランジション・アニメーション',
               to: '/svelte/basics/transitions/',
             },
@@ -127,6 +131,14 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'TypeScriptパターン',
               to: '/svelte/advanced/typescript-patterns/',
+            },
+            {
+              title: 'hydratable（SSRデータ再利用）',
+              to: '/svelte/advanced/hydratable/',
+            },
+            {
+              title: 'await expressions（実験的）',
+              to: '/svelte/advanced/await-expressions/',
             },
           ],
         },
@@ -299,6 +311,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             },
             { title: 'Hooks', to: '/sveltekit/server/hooks/' },
             { title: 'WebSocket/SSE', to: '/sveltekit/server/websocket-sse/' },
+            {
+              title: 'Remote Functions（実験的）',
+              to: '/sveltekit/server/remote-functions/',
+            },
           ],
         },
         {

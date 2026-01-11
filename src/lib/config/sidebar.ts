@@ -26,6 +26,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           to: '/introduction/why-typescript/',
         },
         { title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
+        { title: 'CLI tools', to: '/introduction/cli/' },
       ],
     },
     {
@@ -64,6 +65,14 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'トランジション・アニメーション',
               to: '/svelte/basics/transitions/',
+            },
+            {
+              title: 'svelte/motion',
+              to: '/svelte/basics/motion/',
+            },
+            {
+              title: 'svelte/easing',
+              to: '/svelte/basics/easing/',
             },
             {
               title: 'TypeScript統合',
@@ -139,6 +148,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: 'await expressions（実験的）',
               to: '/svelte/advanced/await-expressions/',
+            },
+            {
+              title: 'svelte/reactivity/window',
+              to: '/svelte/advanced/reactivity-window/',
             },
           ],
         },
@@ -219,6 +232,14 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             { title: '動的ルーティング', to: '/sveltekit/routing/dynamic/' },
             { title: '高度なルーティング', to: '/sveltekit/routing/advanced/' },
             { title: 'エラーページ', to: '/sveltekit/routing/error-pages/' },
+            {
+              title: 'Shallow routing',
+              to: '/sveltekit/routing/shallow/',
+            },
+            {
+              title: 'Link options',
+              to: '/sveltekit/routing/link-options/',
+            },
           ],
         },
         {
@@ -312,6 +333,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             { title: 'Hooks', to: '/sveltekit/server/hooks/' },
             { title: 'WebSocket/SSE', to: '/sveltekit/server/websocket-sse/' },
             {
+              title: 'Server-only modules',
+              to: '/sveltekit/server/server-only-modules/',
+            },
+            {
               title: 'Remote Functions（実験的）',
               to: '/sveltekit/server/remote-functions/',
             },
@@ -355,6 +380,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: '状態管理パターン',
               to: '/sveltekit/application/state-management/',
+            },
+            {
+              title: 'Snapshots',
+              to: '/sveltekit/application/snapshots/',
             },
           ],
         },
@@ -413,6 +442,14 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               title: 'キャッシュ戦略',
               to: '/sveltekit/optimization/caching/',
             },
+            {
+              title: 'Service Workers / PWA',
+              to: '/sveltekit/optimization/pwa/',
+            },
+            {
+              title: 'Observability',
+              to: '/sveltekit/optimization/observability/',
+            },
             { title: 'SEO最適化 (準備中)', to: '/sveltekit/optimization/seo/' },
           ],
         },
@@ -430,6 +467,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
             {
               title: '実行環境とランタイム',
               to: '/sveltekit/deployment/execution-environments/',
+            },
+            {
+              title: 'Packaging',
+              to: '/sveltekit/deployment/packaging/',
             },
             {
               title: 'セキュリティ (準備中)',

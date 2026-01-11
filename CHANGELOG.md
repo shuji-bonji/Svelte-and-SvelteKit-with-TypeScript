@@ -2,6 +2,83 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-01-12] - 新規ドキュメントページ追加・Mermaid修正
+
+### 追加
+以下の新規ドキュメントページを作成し、サイドバーナビゲーションに追加：
+
+**Svelte 基本編:**
+- **svelte/motion** (`/svelte/basics/motion/`) - Tweened/Spring によるモーションプリミティブ
+- **svelte/easing** (`/svelte/basics/easing/`) - イージング関数の解説
+
+**Svelte 実践編:**
+- **svelte/reactivity/window** (`/svelte/advanced/reactivity-window/`) - ウィンドウ状態のリアクティブ管理
+
+**SvelteKit ルーティング:**
+- **Shallow routing** (`/sveltekit/routing/shallow/`) - 履歴駆動のUI（pushState/replaceState）
+- **Link options** (`/sveltekit/routing/link-options/`) - プリロード最適化
+
+**SvelteKit サーバーサイド:**
+- **Server-only modules** (`/sveltekit/server/server-only-modules/`) - 機密情報の保護
+
+**SvelteKit アプリケーション:**
+- **Snapshots** (`/sveltekit/application/snapshots/`) - DOM状態の保持（capture/restore）
+
+**SvelteKit 最適化:**
+- **Service Workers / PWA** (`/sveltekit/optimization/pwa/`) - オフライン対応とキャッシュ戦略
+- **Observability** (`/sveltekit/optimization/observability/`) - OpenTelemetryトレーシング
+
+**SvelteKit デプロイ:**
+- **Packaging** (`/sveltekit/deployment/packaging/`) - コンポーネントライブラリの公開
+
+**入門編:**
+- **CLI tools** (`/introduction/cli/`) - sv コマンドの使い方
+
+### 修正
+Markdownの ` ```mermaid ` コードブロックを `<Mermaid>` コンポーネント形式に変換し、Shikiハイライターとの互換性問題を解決：
+
+- **hydratable** (`/svelte/advanced/hydratable/`)
+- **motion** (`/svelte/basics/motion/`) - 2箇所
+- **easing** (`/svelte/basics/easing/`)
+- **link-options** (`/sveltekit/routing/link-options/`)
+- **shallow** (`/sveltekit/routing/shallow/`)
+- **snapshots** (`/sveltekit/application/snapshots/`) - 2箇所
+- **cli** (`/introduction/cli/`)
+- **observability** (`/sveltekit/optimization/observability/`)
+- **packaging** (`/sveltekit/deployment/packaging/`)
+- **pwa** (`/sveltekit/optimization/pwa/`)
+- **server-only-modules** (`/sveltekit/server/server-only-modules/`)
+
+### 技術的詳細
+- SveltePressはShikiハイライターを使用しており、`mermaid`は認識されない言語
+- プロジェクトの`$lib/components/Mermaid.svelte`コンポーネントを使用することで解決
+- 一部のダイアグラムで特殊文字（✓ ❌ `<br/>`等）を削除/修正
+- サイドバー構成（`src/lib/config/sidebar.ts`）を更新し、新規ページをナビゲーションに追加
+
+## [2026-01-11] - ドキュメント説明文の充実化
+
+### 改善
+以下のドキュメントページに説明文（セクション導入、コード例の前後説明）を追加し、読み物としての品質を向上：
+
+- **Remote Functions** (`/sveltekit/server/remote-functions/`)
+  - query、form、command、prerenderの各セクションに導入説明を追加
+  - 従来のLoad関数/Form Actionsとの比較や使い分けガイダンスを充実化
+
+- **{@attach}** (`/svelte/basics/attachments/`)
+  - use:アクションとの違いを詳しく説明
+  - fromAction移行ガイドの各ステップに説明を追加
+  - 実践例（ドラッグ可能な要素）に導入説明を追加
+
+- **hydratable** (`/svelte/advanced/hydratable/`)
+  - キーの重要性とシリアライゼーションの仕組みを説明
+  - CSP対応（nonce vs hash）の使い分けを詳細化
+  - 動作の流れ図をMermaidダイアグラムに変換（3フェーズの色分け）
+
+- **await expressions** (`/svelte/advanced/await-expressions/`)
+  - スクリプト/マークアップ/$derived内での使い方を個別に説明
+  - 同期された更新と並行処理の動作原理を詳細化
+  - fork()によるプリローディングの仕組みを説明
+
 ## [2026-01-11] - 新機能ドキュメント追加（Svelte 5.29+/SvelteKit 2.27+）
 
 ### 追加

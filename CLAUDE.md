@@ -1007,6 +1007,266 @@ function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
 }
 ```
 
+### TypeScript厳密レベル規約
+
+#### 基本原則
+
+- **すべてのファイルでTypeScriptを使用（.ts/.svelte内でlang="ts"）**
+- **型定義を省略しない - 推論に頼りすぎない**
+- **`any`と`unknown`の使用を禁止（やむを得ない場合はコメントで理由を明記）**
+- **strictモードとすべてのstrict系オプションを有効化**
+
+#### tsconfig.json 推奨設定
+
+```json
+{
+  "compilerOptions": {
+    // 厳密性の最大化
+    "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    // 追加の厳密性オプション
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // 未使用コードの検出
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // 型の一貫性
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
+```
+
+#### 型定義の厳密なルール
+
+##### 関数の型定義
+```typescript
+// ❌ 悪い例：型推論に依存
+const add = (a, b) => a + b;
+const handleClick = (e) => { };
+
+// ❌ 悪い例：戻り値の型が不明確
+function processData(data: string) {
+  return data.length > 0 ? data : null;
+}
+
+// ✅ 良い例：完全な型定義
+const add = (a: number, b: number): number => a + b;
+
+const handleClick = (event: MouseEvent): void => {
+  console.log(event.clientX);
+};
+
+function processData(data: string): string | null {
+  return data.length > 0 ? data : null;
+}
+
+// ✅ 非同期関数も戻り値を明確に
+async function fetchUser(id: string): Promise<User> {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json() as Promise<User>;
+}
+```
+
+##### オブジェクトとインターフェース
+```typescript
+// ❌ 悪い例：型定義なし
+const user = { name: 'John', age: 30 };
+
+// ✅ 良い例：詳細な型定義
+interface User {
+  readonly id: string;  // 読み取り専用
+  name: string;
+  age: number;
+  email: string | null;  // nullableは明示的に
+  roles: readonly Role[];  // 配列も読み取り専用
+  metadata?: UserMetadata;  // オプショナルは本当に必要な場合のみ
+}
+
+// ✅ ユーティリティ型の活用
+type UserUpdate = Partial<Omit<User, 'id'>>;
+type UserCreation = Omit<User, 'id'> & { password: string };
+```
+
+##### 配列とタプル
+```typescript
+// ❌ 悪い例
+const items = [];
+const coords = [10, 20];
+
+// ✅ 良い例
+const items: string[] = [];
+const coords: readonly [x: number, y: number] = [10, 20];
+const matrix: number[][] = [[1, 2], [3, 4]];
+
+// ✅ 読み取り専用配列
+const immutableList: ReadonlyArray<string> = ['a', 'b', 'c'];
+```
+
+##### ユニオン型と型ガード
+```typescript
+// ✅ 判別可能なユニオン型
+type Result<T> =
+  | { success: true; data: T }
+  | { success: false; error: Error };
+
+// ✅ 型ガード関数
+function isError(result: Result<unknown>): result is { success: false; error: Error } {
+  return !result.success;
+}
+
+// ✅ 使用例
+function handleResult<T>(result: Result<T>): T {
+  if (isError(result)) {
+    throw result.error;
+  }
+  return result.data;
+}
+```
+
+##### ジェネリクス
+```typescript
+// ❌ 悪い例：anyの使用
+function getValue(obj: any, key: string): any {
+  return obj[key];
+}
+
+// ✅ 良い例：ジェネリクスで型安全に
+function getValue<T extends object, K extends keyof T>(
+  obj: T,
+  key: K
+): T[K] {
+  return obj[key];
+}
+
+// ✅ 制約付きジェネリクス
+interface HasLength {
+  length: number;
+}
+
+function logLength<T extends HasLength>(item: T): T {
+  console.log(item.length);
+  return item;
+}
+```
+
+### エラーハンドリングパターン
+
+```typescript
+// ✅ カスタムエラークラス
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly code: string
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+// ✅ Result型パターン
+type ApiResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: ApiError };
+
+async function apiCall<T>(url: string): Promise<ApiResult<T>> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: new ApiError(
+          'API call failed',
+          response.status,
+          'API_ERROR'
+        )
+      };
+    }
+    return {
+      ok: true,
+      data: await response.json() as T
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof ApiError
+        ? error
+        : new ApiError('Network error', 0, 'NETWORK_ERROR')
+    };
+  }
+}
+```
+
+### Null/Undefined の扱い
+
+```typescript
+// ✅ 明示的なnullチェック
+function processUser(user: User | null): string {
+  if (user === null) {
+    return 'No user';
+  }
+  return user.name;
+}
+
+// ✅ Optional chainingとnullish coalescing
+const name = user?.profile?.name ?? 'Anonymous';
+
+// ✅ Non-null assertion（確実な場合のみ）
+function getValue(map: Map<string, string>, key: string): string {
+  if (!map.has(key)) {
+    throw new Error(`Key ${key} not found`);
+  }
+  return map.get(key)!; // hasでチェック済みなので安全
+}
+```
+
+### 型アサーションの制限
+
+```typescript
+// ❌ 悪い例：安易な型アサーション
+const user = {} as User;
+const data = <any>response;
+
+// ✅ 良い例：型ガードを使用
+function isUser(obj: unknown): obj is User {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    'name' in obj &&
+    'email' in obj
+  );
+}
+
+// ✅ zodなどのスキーマバリデーションライブラリを使用
+import { z } from 'zod';
+
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email()
+});
+
+type User = z.infer<typeof UserSchema>;
+
+function parseUser(data: unknown): User {
+  return UserSchema.parse(data);
+}
+```
+
 ### 移行時の注意点
 
 #### 避けるべきパターン（レガシー構文）

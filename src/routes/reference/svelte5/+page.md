@@ -343,12 +343,111 @@ $inspect(count).with((type, value) => {
   $host().addEventListener('custom-event', (e) => {
     console.log('Custom event received', e);
   });
-  
+
   // ホスト要素のスタイル設定
   $effect(() => {
     $host().style.setProperty('--count', String(count));
   });
 </script>
+```
+
+### $state.eager - 非同期中の即時UI更新
+
+ナビゲーションなどの非同期操作中でも即座にUIを更新する機能です（Svelte 5.36+）。
+
+```typescript
+import { page } from '$app/state';
+
+// 通常の$derivedはナビゲーション完了後に更新
+let currentPath = $derived(page.url.pathname);
+
+// $state.eagerはナビゲーション開始時に即座に更新
+let eagerPath = $state.eager(page.url.pathname);
+```
+
+#### ユースケース
+
+```svelte
+<script lang="ts">
+  import { page } from '$app/state';
+
+  // ナビゲーション中もアクティブなメニュー項目を即座に更新
+  let activePath = $state.eager(page.url.pathname);
+</script>
+
+<nav>
+  <a href="/" class:active={activePath === '/'}>ホーム</a>
+  <a href="/about" class:active={activePath === '/about'}>About</a>
+</nav>
+```
+
+### hydratable - SSRデータの再利用
+
+SSRで取得したデータをハイドレーション時に再利用する低レベルAPIです。
+
+```typescript
+import { hydratable } from 'svelte';
+
+// サーバー: getUser()を実行し、結果をシリアライズしてHTMLに埋め込む
+// クライアント（ハイドレーション時）: シリアライズされたデータを使用
+// クライアント（ハイドレーション後）: getUser()を実行
+const user = await hydratable('user', () => getUser());
+```
+
+#### ランダム値・時刻の安定化
+
+```typescript
+// サーバーで生成されたランダム値がクライアントでも同じになる
+const randomId = hydratable('random-id', () => Math.random().toString(36).slice(2));
+
+// SSR時の時刻がハイドレーション時にも維持される
+const timestamp = hydratable('page-timestamp', () => Date.now());
+```
+
+:::info[Remote Functionsを推奨]
+通常の開発では、SvelteKitの[Remote Functions](/sveltekit/server/remote-functions/)がこのAPIを内部的に使用しています。
+:::
+
+### await expressions - 非同期構文（実験的）
+
+Svelte 5.36+でサポートされる実験的な非同期構文です。
+
+```svelte
+<script lang="ts">
+  // スクリプト内でのawait
+  const user = await fetchUser();
+</script>
+
+<!-- マークアップ内でのawait -->
+<h1>{(await fetchTitle()).toUpperCase()}</h1>
+
+<!-- $derivedと組み合わせ -->
+{@const data = await $derived(fetchData(id))}
+<div>{data.content}</div>
+```
+
+#### svelte:boundaryとの連携
+
+```svelte
+<svelte:boundary>
+  {#snippet pending()}
+    <Loading />
+  {/snippet}
+
+  <AsyncContent />
+</svelte:boundary>
+```
+
+#### ローディング状態の検出
+
+```typescript
+import { pending } from 'svelte';
+
+$effect(() => {
+  if (pending()) {
+    console.log('非同期処理中...');
+  }
+});
 ```
 
 ## コンポーネント構造
@@ -497,6 +596,57 @@ $inspect(count).with((type, value) => {
 
 <!-- デバッグ出力 -->
 {@debug value}
+```
+
+### Attachments - リアクティブDOM操作
+
+Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`{@attach}`）です。`use:`アクションと異なり、リアクティブコンテキストで動作します。
+
+```svelte
+<script lang="ts">
+  import { createAttachmentKey } from 'svelte/attachments';
+
+  // アタッチメントキーを作成
+  const tooltip = createAttachmentKey();
+
+  // リアクティブな値を使用可能
+  let tooltipText = $state('ヒント');
+</script>
+
+<button {@attach tooltip((node) => {
+  // リアクティブ: tooltipTextの変更で再実行される
+  node.title = tooltipText;
+
+  return () => {
+    node.title = '';
+  };
+})}>
+  ホバーしてください
+</button>
+```
+
+#### use:アクションとの違い
+
+| 機能 | `use:action` | `{@attach}` |
+|------|-------------|-------------|
+| リアクティビティ | パラメータ変更でupdate() | 自動再実行 |
+| 実行タイミング | マウント時のみ | リアクティブ値変更時 |
+| クリーンアップ | destroy() | 戻り値の関数 |
+
+#### 外部ライブラリとの統合
+
+```svelte
+<script lang="ts">
+  import tippy from 'tippy.js';
+  import { fromAction } from 'svelte/attachments';
+
+  // 既存のuse:アクションをアタッチメントに変換
+  const tippyAttachment = fromAction(tippy);
+</script>
+
+<button {@attach tippyAttachment({ content: 'ツールチップ' })}>
+  ホバー
+</button>
 ```
 
 ## イベント処理

@@ -161,6 +161,69 @@ export const match: ParamMatcher = (param) => {
 };
 ```
 
+### Shallow routing
+
+履歴エントリを作成せずにURLを更新する機能です。モーダルやタブなどの状態をURLに反映させる際に使用します。
+
+```typescript
+import { pushState, replaceState } from '$app/navigation';
+
+// 新しい履歴エントリを作成（戻るボタンで戻れる）
+pushState('/modal/open', { showModal: true });
+
+// 現在の履歴エントリを置換（戻るボタンでは戻れない）
+replaceState('/tab/settings', { activeTab: 'settings' });
+```
+
+#### 状態の取得
+
+```svelte
+<script lang="ts">
+  import { page } from '$app/state';
+
+  // shallow stateを取得
+  let showModal = $derived(page.state?.showModal ?? false);
+</script>
+
+{#if showModal}
+  <Modal onclose={() => history.back()} />
+{/if}
+```
+
+### Link options
+
+リンクのプリロード動作をカスタマイズするデータ属性です。
+
+```svelte
+<!-- hover時にプリロード（デフォルト） -->
+<a href="/about">About</a>
+
+<!-- 即座にプリロード -->
+<a href="/products" data-sveltekit-preload-data="eager">
+  Products
+</a>
+
+<!-- タップ/クリック時にプリロード -->
+<a href="/heavy" data-sveltekit-preload-data="tap">
+  Heavy Page
+</a>
+
+<!-- プリロード無効 -->
+<a href="/external" data-sveltekit-preload-data="off">
+  External
+</a>
+
+<!-- コードのみプリフェッチ（データは除く） -->
+<a href="/lazy" data-sveltekit-preload-code>
+  Lazy Load
+</a>
+
+<!-- ナビゲーション無効（フォーム送信等用） -->
+<a href="/action" data-sveltekit-noscroll data-sveltekit-replacestate>
+  No Scroll Action
+</a>
+```
+
 ## データローディング
 
 ### Universal Load関数（+page.ts）
@@ -271,6 +334,72 @@ export const load: PageServerLoad = async () => {
 {:catch error}
   <Error {error} />
 {/await}
+```
+
+## Remote Functions（実験的）
+
+SvelteKit 2.27+で導入された実験的なサーバー連携機能です。型安全なサーバー関数を簡潔に定義できます。
+
+### query - データ取得
+
+```typescript
+// src/routes/api.server.ts
+import { query } from '$app/server';
+
+export const getUser = query(async (id: string) => {
+  const user = await db.user.findUnique({ where: { id } });
+  return user;
+});
+```
+
+```svelte
+<!-- +page.svelte -->
+<script lang="ts">
+  import { getUser } from './api.server';
+
+  const user = await getUser('123');
+</script>
+```
+
+### form - フォーム処理
+
+```typescript
+// src/routes/api.server.ts
+import { form } from '$app/server';
+import { z } from 'zod';
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8)
+});
+
+export const login = form(schema, async (data) => {
+  const user = await authenticate(data);
+  return { success: true, user };
+});
+```
+
+### command - サーバー処理
+
+```typescript
+// src/routes/api.server.ts
+import { command } from '$app/server';
+
+export const deletePost = command(async (id: string) => {
+  await db.post.delete({ where: { id } });
+  return { deleted: true };
+});
+```
+
+### prerender - ビルド時データ生成
+
+```typescript
+// src/routes/api.server.ts
+import { prerender } from '$app/server';
+
+export const getConfig = prerender(async () => {
+  return await fetchConfiguration();
+});
 ```
 
 ## Form Actions
@@ -620,17 +749,94 @@ import type { HandleClientError } from '@sveltejs/kit';
 
 export const handleError: HandleClientError = ({ error, event }) => {
   console.error('Client error:', error);
-  
+
   // エラー追跡
   if (import.meta.env.PROD) {
     // Sentryなどへ送信
     captureException(error);
   }
-  
+
   return {
     message: 'アプリケーションエラーが発生しました',
     code: 'CLIENT_ERROR'
   };
+};
+```
+
+## Server-only modules
+
+サーバー専用コードをクライアントから保護する機能です。
+
+### $lib/server ディレクトリ
+
+```typescript
+// src/lib/server/database.ts
+import { PrismaClient } from '@prisma/client';
+
+// このファイルはサーバーコードからのみインポート可能
+export const prisma = new PrismaClient();
+```
+
+### .server ファイル
+
+```typescript
+// src/lib/auth.server.ts
+import { hash, verify } from 'argon2';
+
+export async function hashPassword(password: string) {
+  return hash(password);
+}
+```
+
+### プライベート環境変数
+
+```typescript
+// サーバーのみ（静的）
+import { DATABASE_URL, API_SECRET } from '$env/static/private';
+
+// サーバーのみ（動的）
+import { env } from '$env/dynamic/private';
+```
+
+## Snapshots
+
+ページ間ナビゲーション時にDOM状態を保持する機能です。
+
+```svelte
+<!-- +page.svelte -->
+<script lang="ts">
+  import type { Snapshot } from './$types';
+
+  let comment = $state('');
+
+  // snapshot オブジェクトをエクスポート
+  export const snapshot: Snapshot<string> = {
+    // ページを離れる直前に呼ばれる
+    capture: () => comment,
+    // ページに戻ってきた時に呼ばれる
+    restore: (value) => comment = value
+  };
+</script>
+
+<textarea bind:value={comment}></textarea>
+```
+
+### 複数値の保持
+
+```typescript
+interface FormSnapshot {
+  title: string;
+  content: string;
+  step: number;
+}
+
+export const snapshot: Snapshot<FormSnapshot> = {
+  capture: () => ({ title, content, step }),
+  restore: (value) => {
+    title = value.title;
+    content = value.content;
+    step = value.step;
+  }
 };
 ```
 
@@ -972,9 +1178,40 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 };
 ```
 
+## CLI ツール（sv）
+
+SvelteKitプロジェクト管理のためのCLIツールです。
+
+### プロジェクト作成
+
+```bash
+# 新規プロジェクト作成
+npx sv create my-app
+
+# テンプレート選択
+npx sv create my-app --template minimal
+npx sv create my-app --template demo
+npx sv create my-app --template library
+```
+
+### 開発ツール
+
+```bash
+# 依存関係の追加
+npx sv add tailwindcss
+npx sv add drizzle
+npx sv add lucia
+
+# 型チェック
+npx sv check
+
+# マイグレーション
+npx sv migrate
+```
+
 ## 高度な機能
 
-### Service Worker
+### Service Worker / PWA
 
 ```typescript
 // src/service-worker.ts
@@ -1028,10 +1265,10 @@ export default defineConfig({
       name: 'websocket-server',
       configureServer(server) {
         const io = new Server(server.httpServer);
-        
+
         io.on('connection', (socket) => {
           console.log('Client connected');
-          
+
           socket.on('message', (data) => {
             io.emit('broadcast', data);
           });
@@ -1040,6 +1277,92 @@ export default defineConfig({
     }
   ]
 });
+```
+
+### Observability（OpenTelemetry）
+
+SvelteKitアプリケーションの監視・トレーシング設定です。
+
+```typescript
+// hooks.server.ts
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
+const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter({
+    url: 'http://localhost:4318/v1/traces'
+  }),
+  serviceName: 'sveltekit-app'
+});
+
+sdk.start();
+```
+
+#### リクエストトレーシング
+
+```typescript
+import { trace } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('sveltekit');
+
+export const handle: Handle = async ({ event, resolve }) => {
+  return tracer.startActiveSpan('request', async (span) => {
+    span.setAttribute('http.method', event.request.method);
+    span.setAttribute('http.url', event.url.pathname);
+
+    try {
+      const response = await resolve(event);
+      span.setAttribute('http.status_code', response.status);
+      return response;
+    } finally {
+      span.end();
+    }
+  });
+};
+```
+
+### Packaging（ライブラリ公開）
+
+コンポーネントライブラリをnpmパッケージとして公開する方法です。
+
+```bash
+# ライブラリテンプレートでプロジェクト作成
+npx sv create my-component-library
+# "Library" を選択
+```
+
+#### package.json 設定
+
+```json
+{
+  "name": "@yourorg/svelte-components",
+  "version": "1.0.0",
+  "type": "module",
+  "files": ["dist"],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    },
+    "./Button.svelte": {
+      "types": "./dist/Button.svelte.d.ts",
+      "svelte": "./dist/Button.svelte"
+    }
+  },
+  "sideEffects": ["**/*.css"]
+}
+```
+
+#### ビルドと公開
+
+```bash
+# ビルド
+npx svelte-package
+
+# 公開
+npm publish --access public
 ```
 
 ## テスト

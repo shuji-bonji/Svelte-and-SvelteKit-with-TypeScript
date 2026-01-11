@@ -152,7 +152,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### Propsパターン
 
-コンポーネント間でデータを受け渡す最も基本的なパターンです。
+コンポーネント間でデータを受け渡す最も基本的なパターンです。Svelte 5では`$props()`を使用してpropsを受け取り、TypeScriptの型定義と組み合わせることで、コンパイル時に型チェックが行われます。
+
+このパターンでは、コンポーネント固有のプロパティと標準のHTML属性を組み合わせて定義し、`...restProps`で未知の属性も透過的に渡すことができます。
 
 <Mermaid diagram={PropsPattern} />
 
@@ -220,11 +222,13 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+上記のButtonコンポーネントを使用する際は、定義した`variant`や`size`プロパティに加えて、`onclick`や`disabled`などの標準的なボタン属性もそのまま渡すことができます。TypeScriptが型チェックを行うため、無効なvariant値などを指定するとエディタ上でエラーが表示されます。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
   import Button from './Button.svelte';
-  
+
   function handleClick() {
     console.log('クリックされました');
   }
@@ -245,7 +249,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### Slots（スロット）パターン
 
-コンポーネントの特定の部分に子要素を挿入するパターンです。
+コンポーネントの特定の部分に子要素を挿入するパターンです。Svelte 5では、従来の`<slot />`に代わり、`Snippet`型と`{@render}`構文を使用します。
+
+このパターンは、Cardコンポーネントのようにヘッダー・ボディ・フッターなど複数の領域を持つレイアウトコンポーネントを作成する際に特に有効です。名前付きスロット（named slots）により、親コンポーネントから各領域に個別のコンテンツを挿入できます。
 
 <Mermaid diagram={SlotsPattern} />
 
@@ -309,6 +315,8 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+Cardコンポーネントを使用する際は、`{#snippet name()}...{/snippet}`構文で名前付きスロットのコンテンツを定義します。スロット外に直接記述したコンテンツは`children`として渡されます。`header`と`footer`はオプショナルなので、省略することも可能です。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
@@ -319,10 +327,10 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
   {#snippet header()}
     <h2>カードタイトル</h2>
   {/snippet}
-  
+
   <p>これはカードの本文です。</p>
   <p>複数の要素を含むことができます。</p>
-  
+
   {#snippet footer()}
     <button>アクション</button>
   {/snippet}
@@ -335,7 +343,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### Bindableプロパティ
 
-親コンポーネントと子コンポーネント間で双方向にデータを同期するパターンです。
+親コンポーネントと子コンポーネント間で双方向にデータを同期するパターンです。Svelte 5では`$bindable()`を使用してバインド可能なプロパティを宣言します。
+
+フォーム入力コンポーネントなど、親が値を制御しつつ子コンポーネント内でも値を変更できる場合に有効です。子コンポーネント内での値の変更が自動的に親に反映され、親での変更も子に反映されます。
 
 <Mermaid diagram={BindablePattern} />
 
@@ -411,37 +421,39 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+TextInputコンポーネントを使用する際、`bind:value`ディレクティブで親の状態変数をバインドします。入力フィールドで値が変更されると、親の`username`や`email`変数も自動的に更新されます。`$derived`を使用してリアルタイムバリデーションを実装し、エラーメッセージをコンポーネントに渡すことができます。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
   import TextInput from './TextInput.svelte';
-  
+
   let username = $state('');
   let email = $state('');
-  
+
   const emailError = $derived(
-    email && !email.includes('@') 
-      ? '有効なメールアドレスを入力してください' 
+    email && !email.includes('@')
+      ? '有効なメールアドレスを入力してください'
       : ''
   );
 </script>
 
 <form>
-  <TextInput 
+  <TextInput
     bind:value={username}
     label="ユーザー名"
     placeholder="ユーザー名を入力"
     id="username"
   />
-  
-  <TextInput 
+
+  <TextInput
     bind:value={email}
     label="メールアドレス"
     error={emailError}
     placeholder="example@email.com"
     id="email"
   />
-  
+
   <p>入力値: {username} / {email}</p>
 </form>
 ```
@@ -456,7 +468,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### Compound Components（複合コンポーネント）
 
-関連する複数のコンポーネントを組み合わせて、より複雑なUIを構築するパターンです。
+関連する複数のコンポーネントを組み合わせて、より複雑なUIを構築するパターンです。Reactでもよく使われるこのパターンは、タブ、アコーディオン、ドロップダウンメニューなどの複合UIに最適です。
+
+このパターンの核心は、親コンポーネントが`setContext`でコンテキストを提供し、子コンポーネントが`getContext`でそれを取得して状態を共有することです。これにより、各コンポーネントは独立したファイルに分割しながらも、協調して動作できます。
 
 <Mermaid diagram={CompoundPattern} />
 
@@ -625,6 +639,10 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+複合コンポーネントを使用すると、マークアップが直感的で読みやすくなります。`TabContainer`が全体の状態を管理し、`Tab`と`TabPanel`は同じ`id`で関連付けられます。タブをクリックすると、対応するパネルが表示されます。
+
+この構造はアクセシビリティ（a11y）にも配慮しており、`role="tablist"`、`role="tab"`、`role="tabpanel"`、`aria-selected`などの属性が適切に設定されています。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
@@ -640,17 +658,17 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
     <Tab id="tab2">詳細設定</Tab>
     <Tab id="tab3">セキュリティ</Tab>
   </TabList>
-  
+
   <TabPanel id="tab1">
     <h3>基本情報</h3>
     <p>ユーザーの基本的な情報を設定します。</p>
   </TabPanel>
-  
+
   <TabPanel id="tab2">
     <h3>詳細設定</h3>
     <p>アプリケーションの詳細な設定を行います。</p>
   </TabPanel>
-  
+
   <TabPanel id="tab3">
     <h3>セキュリティ</h3>
     <p>セキュリティ関連の設定を管理します。</p>
@@ -668,7 +686,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### Snippet Props
 
-子コンポーネントに関数を渡して、レンダリングロジックを制御するパターンです。
+子コンポーネントに関数を渡して、レンダリングロジックを制御するパターンです。ReactのRender Propsパターンに相当し、Svelte 5ではSnippetを活用して実現します。
+
+このパターンは、データのフェッチやフィルタリングなどのロジックをコンポーネントに委譲しつつ、表示方法は親コンポーネントが決定したい場合に有効です。ジェネリクス（`generics="T"`）を使用することで、任意の型のデータに対応できます。
 
 <Mermaid diagram={SnippetPropsPattern} />
 
@@ -738,24 +758,28 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+DataListコンポーネントはデータの反復処理、ローディング状態、空状態の表示を担当し、各アイテムの具体的な表示方法は`renderItem`スニペットで親が決定します。スニペットには現在のアイテムとインデックスが引数として渡されます。
+
+この分離により、同じDataListコンポーネントを商品一覧、ユーザー一覧、記事一覧など、様々なデータ型に対して再利用できます。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
   import DataList from './DataList.svelte';
-  
+
   type User = {
     id: number;
     name: string;
     email: string;
     role: string;
   };
-  
+
   let users = $state<User[]>([
     { id: 1, name: '田中太郎', email: 'tanaka@example.com', role: 'admin' },
     { id: 2, name: '佐藤花子', email: 'sato@example.com', role: 'user' },
     { id: 3, name: '鈴木一郎', email: 'suzuki@example.com', role: 'user' }
   ]);
-  
+
   let loading = $state(false);
 </script>
 
@@ -810,7 +834,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### コンポーネントラッパー
 
-既存のコンポーネントに機能を追加するパターンです。
+既存のコンポーネントに機能を追加するパターンです。認証チェック、権限制御、ローディング状態の管理など、横断的関心事（cross-cutting concerns）をカプセル化するのに適しています。
+
+このパターンでは、ラッパーコンポーネントが条件に基づいてコンテンツの表示を制御し、必要に応じてコンテキストを通じて情報を子コンポーネントに提供します。
 
 <Mermaid diagram={HOCPattern} />
 
@@ -882,18 +908,22 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+WithAuthコンポーネントはユーザーの認証状態をチェックし、認証済みの場合は`children`（保護されたコンテンツ）を表示し、未認証の場合は`fallback`スニペットの内容を表示します。
+
+このパターンを使用すると、認証ロジックをアプリケーション全体で一貫して適用でき、各ページで個別に認証チェックを実装する必要がなくなります。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
   import WithAuth from './withAuth.svelte';
   import type { User } from './withAuth.svelte';
-  
+
   let currentUser = $state<User | null>({
     id: '1',
     name: '田中太郎',
     role: 'admin'
   });
-  
+
   function logout() {
     currentUser = null;
   }
@@ -905,7 +935,7 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
     <p>ようこそ、{currentUser?.name}さん！</p>
     <button onclick={logout}>ログアウト</button>
   </div>
-  
+
   {#snippet fallback()}
     <div class="login-prompt">
       <h2>ログインが必要です</h2>
@@ -921,7 +951,9 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 ### イベントディスパッチ
 
-コンポーネントからカスタムイベントを発火するパターンです。
+コンポーネントからカスタムイベントを発火するパターンです。`createEventDispatcher`を使用してカスタムイベントを定義し、親コンポーネントがそれをリッスンできるようにします。
+
+TypeScriptのジェネリクスを使用してイベント名とペイロードの型を定義することで、イベント名のタイプミスや不正なペイロードをコンパイル時に検出できます。これにより、大規模なアプリケーションでも安全にイベント駆動の通信が行えます。
 
 <Mermaid diagram={EventPattern} />
 
@@ -1022,21 +1054,25 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
 
 #### 使用例
 
+親コンポーネントでは、`onsearch`と`onclear`プロパティにイベントハンドラを渡します。SearchBoxコンポーネントが`dispatch('search', { query })`を呼び出すと、親の`handleSearch`関数が実行されます。
+
+イベントのペイロードは`event.detail`からアクセスでき、型定義により`query`プロパティが文字列であることが保証されています。
+
 ```typescript
 <!-- App.svelte -->
 <script lang="ts">
   import SearchBox from './SearchBox.svelte';
-  
+
   let searchResults = $state<string[]>([]);
   let searching = $state(false);
-  
+
   async function handleSearch(event: CustomEvent<{ query: string }>) {
     searching = true;
     const { query } = event.detail;
-    
+
     // 実際のAPI呼び出しをシミュレート
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     searchResults = [
       `「${query}」の検索結果1`,
       `「${query}」の検索結果2`,
@@ -1044,7 +1080,7 @@ Svelte 5で実装する際の再利用可能なコンポーネントパターン
     ];
     searching = false;
   }
-  
+
   function handleClear() {
     searchResults = [];
   }

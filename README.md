@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > **📢 Svelte MCP Serverの登場について**
 >
-> 2025年1月、Svelte公式が [MCP Server](https://svelte.dev/docs/mcp/overview) をリリースしました。
+> 2025年11月、Svelte公式が [MCP Server](https://svelte.dev/docs/mcp/overview) をリリースしました。
 > Claude、Cursor、VS Code等のAIツールから公式ドキュメントを直接参照し、コードの自動検証まで行えるようになりました。
 >
 > **MCP Serverと公式ドキュメントがあれば、このサイトの「Svelte解説サイト」としての役割は終わりつつあります。**

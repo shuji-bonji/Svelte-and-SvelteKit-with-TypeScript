@@ -1,6 +1,6 @@
 ---
-title: $effect - TypeScriptで副作用とライフサイクルを管理
-description: Svelte 5の$effectルーン完全解説 - TypeScriptでDOM操作・API呼び出し・副作用管理を実装。$effect.pre、クリーンアップ処理、useEffectとの違い、実践的なコード例で学ぶリアクティブプログラミング
+title: $effect完全ガイド - Svelte 5で副作用処理とuseEffectとの違いを理解
+description: Svelte 5の$effectルーン完全解説 - React useEffectとの違いを比較しながらDOM操作・API呼び出し・クリーンアップ処理をTypeScriptで実装。依存配列不要の自動追跡でバグを削減する実践パターン
 ---
 
 `$effect`ルーンは、リアクティブな値が変更されたときに副作用（side effects）を実行するために使用します。DOM 操作、API 呼び出し、ロギング、外部ライブラリとの統合などに使用されます。

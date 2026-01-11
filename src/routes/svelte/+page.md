@@ -1,6 +1,6 @@
 ---
-title: Svelte 5完全ガイド
-description: Svelte5をTypeScriptで学ぶ完全マスターガイド - Runesシステム、リアクティビティ、コンポーネント設計、トランジション、アニメーション、パフォーマンス最適化まで、モダンUIフレームワークの全てを体系的に詳しく解説します
+title: Svelte 5 Runes完全ガイド - TypeScriptで学ぶモダンUI開発
+description: Svelte 5 Runesシステム完全マスターガイド - $state/$derived/$effectによるリアクティビティ、コンポーネント設計、トランジション、TypeScript統合まで、React/Vue経験者も安心の実践解説
 ---
 
 <script>

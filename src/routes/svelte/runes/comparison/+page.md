@@ -1,6 +1,6 @@
 ---
-title: 他フレームワークとの比較
-description: Svelte 5 RunesとReact/Vue/Angularの比較 - useState/$ref/SignalとRunesの対応関係とマイグレーション
+title: Svelte 5 RunesとReact/Vue/Angularを徹底比較 - 移行ガイド付き
+description: Svelte 5 Runesを他フレームワークと徹底比較 - $stateとuseState、$derivedとuseMemo/computed、$effectとuseEffectの対応表。TypeScriptでの移行パターンと、Svelteが選ばれる理由を実コードで解説
 ---
 
 

@@ -25,7 +25,7 @@
 		"svelte": "^5.46.1",
 		"svelte-sitemap": "^2.7.1",
 		"typescript": "^5.3.3",
-		"vite": "^7.0.0"
+		"vite": "^7.3.1"
 	},
 	"dependencies": {
 		"mermaid": "^11.12.2"

@@ -1196,5 +1196,5 @@ export const analyticsConfig = {
 ## 次のステップ
 
 - [レンダリング戦略（詳解）]({base}/sveltekit/architecture/rendering-strategies/) - 各戦略の詳細な仕組み
-- [実行環境とランタイム]({base}/sveltekit/architecture/execution-environments/) - 様々な実行環境での動作
+- [実行環境とランタイム]({base}/sveltekit/deployment/execution-environments/) - 様々な実行環境での動作
 - [ビルド最適化]({base}/sveltekit/architecture/build-optimization/) - パフォーマンス改善手法

@@ -45,7 +45,7 @@ description: SvelteKitのビルド最適化をTypeScriptで実践する完全ガ
 ## 関連ページ
 
 - [レンダリングパイプライン]({base}/sveltekit/architecture/rendering-pipeline/) - ビルドフェーズの詳細
-- [実行環境とランタイム]({base}/sveltekit/architecture/execution-environments/) - デプロイ環境の最適化
+- [実行環境とランタイム]({base}/sveltekit/deployment/execution-environments/) - デプロイ環境の最適化
 - [レンダリング戦略]({base}/sveltekit/architecture/rendering-strategies/) - レンダリング方式の選択
 
 ## 参考資料

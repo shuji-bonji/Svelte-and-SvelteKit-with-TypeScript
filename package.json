@@ -23,7 +23,7 @@
     "@types/node": "^25.5.0",
     "pagefind": "^1.4.0",
     "svelte": "^5.53.11",
-    "svelte-sitemap": "^2.8.0",
+    "svelte-sitemap": "^3.0.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },

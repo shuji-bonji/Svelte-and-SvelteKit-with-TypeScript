@@ -4,6 +4,7 @@ description: SvelteとGraphQLでSPAを構築するための実践ガイド。Apo
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
@@ -63,7 +64,7 @@ import {
   ApolloClient,
   InMemoryCache,
   createHttpLink,
-  split
+  split,
 } from '@apollo/client/core';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -72,19 +73,20 @@ import { getMainDefinition } from '@apollo/client/utilities';
 const httpLink = createHttpLink({
   uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
   headers: {
-    authorization: localStorage.getItem('token') || ''
-  }
+    authorization: localStorage.getItem('token') || '',
+  },
 });
 
 // WebSocketリンク（Subscription用）
 const wsLink = new WebSocketLink({
-  uri: import.meta.env.VITE_GRAPHQL_WS_ENDPOINT || 'ws://localhost:4000/graphql',
+  uri:
+    import.meta.env.VITE_GRAPHQL_WS_ENDPOINT || 'ws://localhost:4000/graphql',
   options: {
     reconnect: true,
     connectionParams: {
-      authorization: localStorage.getItem('token') || ''
-    }
-  }
+      authorization: localStorage.getItem('token') || '',
+    },
+  },
 });
 
 // リンクの分割（Query/MutationとSubscription）
@@ -97,7 +99,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  httpLink
+  httpLink,
 );
 
 // Apolloクライアントの作成
@@ -106,9 +108,9 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'cache-and-network'
-    }
-  }
+      fetchPolicy: 'cache-and-network',
+    },
+  },
 });
 ```
 
@@ -181,11 +183,11 @@ class GraphQLStore {
   posts = $state<Post[]>([]);
   loading = $state(false);
   error = $state<Error | null>(null);
-  
+
   async fetchPosts(limit = 10) {
     this.loading = true;
     this.error = null;
-    
+
     try {
       const result = await apolloClient.query({
         query: gql`
@@ -202,9 +204,9 @@ class GraphQLStore {
             }
           }
         `,
-        variables: { limit }
+        variables: { limit },
       });
-      
+
       this.posts = result.data.posts;
     } catch (err) {
       this.error = err as Error;
@@ -212,7 +214,7 @@ class GraphQLStore {
       this.loading = false;
     }
   }
-  
+
   async createPost(title: string, content: string, authorId: string) {
     const result = await apolloClient.mutate({
       mutation: gql`
@@ -230,39 +232,41 @@ class GraphQLStore {
         }
       `,
       variables: {
-        input: { title, content, authorId }
-      }
+        input: { title, content, authorId },
+      },
     });
-    
+
     if (result.data) {
       this.posts = [result.data.createPost, ...this.posts];
     }
   }
-  
+
   subscribeToNewPosts() {
-    const subscription = apolloClient.subscribe({
-      query: gql`
-        subscription OnPostCreated {
-          postCreated {
-            id
-            title
-            content
-            author {
+    const subscription = apolloClient
+      .subscribe({
+        query: gql`
+          subscription OnPostCreated {
+            postCreated {
               id
-              name
+              title
+              content
+              author {
+                id
+                name
+              }
+              createdAt
             }
-            createdAt
           }
-        }
-      `
-    }).subscribe({
-      next: ({ data }) => {
-        if (data?.postCreated) {
-          this.posts = [data.postCreated, ...this.posts];
-        }
-      }
-    });
-    
+        `,
+      })
+      .subscribe({
+        next: ({ data }) => {
+          if (data?.postCreated) {
+            this.posts = [data.postCreated, ...this.posts];
+          }
+        },
+      });
+
     return () => subscription.unsubscribe();
   }
 }
@@ -288,27 +292,27 @@ import { createClient as createWSClient } from 'graphql-ws';
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
   connectionParams: {
-    authorization: localStorage.getItem('token') || ''
-  }
+    authorization: localStorage.getItem('token') || '',
+  },
 });
 
 export const urqlClient = createClient({
   url: 'http://localhost:4000/graphql',
   fetchOptions: {
     headers: {
-      authorization: localStorage.getItem('token') || ''
-    }
+      authorization: localStorage.getItem('token') || '',
+    },
   },
   exchanges: [
     ...defaultExchanges,
     subscriptionExchange({
       forwardSubscription: (operation) => ({
         subscribe: (sink) => ({
-          unsubscribe: wsClient.subscribe(operation, sink)
-        })
-      })
-    })
-  ]
+          unsubscribe: wsClient.subscribe(operation, sink),
+        }),
+      }),
+    }),
+  ],
 });
 ```
 
@@ -319,7 +323,7 @@ export const urqlClient = createClient({
 <script lang="ts">
   import { urqlClient } from '$lib/urql';
   import { gql } from 'urql';
-  
+
   interface Post {
     id: string;
     title: string;
@@ -328,11 +332,11 @@ export const urqlClient = createClient({
       name: string;
     };
   }
-  
+
   let posts = $state<Post[]>([]);
   let loading = $state(true);
   let error = $state<Error | null>(null);
-  
+
   const POSTS_QUERY = gql`
     query GetPosts($limit: Int!) {
       posts(limit: $limit) {
@@ -345,22 +349,22 @@ export const urqlClient = createClient({
       }
     }
   `;
-  
+
   async function fetchPosts() {
     loading = true;
     error = null;
-    
+
     const result = await urqlClient.query(POSTS_QUERY, { limit: 10 });
-    
+
     if (result.error) {
       error = result.error;
     } else if (result.data) {
       posts = result.data.posts;
     }
-    
+
     loading = false;
   }
-  
+
   // 初期ロード
   $effect(() => {
     fetchPosts();
@@ -402,12 +406,12 @@ services:
   hasura:
     image: hasura/graphql-engine:latest
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       - postgres
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecret
 
 volumes:
@@ -427,17 +431,14 @@ export const hasuraClient = createClient({
     return {
       headers: {
         'x-hasura-admin-secret': 'myadminsecret',
-        ...(token ? { authorization: `Bearer ${token}` } : {})
-      }
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+      },
     };
-  }
+  },
 });
 
 // リアルタイムサブスクリプション
-export function subscribeToTable<T>(
-  tableName: string,
-  fields: string[]
-) {
+export function subscribeToTable<T>(tableName: string, fields: string[]) {
   const subscription = gql`
     subscription Subscribe {
       ${tableName}(order_by: {created_at: desc}) {
@@ -445,7 +446,7 @@ export function subscribeToTable<T>(
       }
     }
   `;
-  
+
   return hasuraClient.subscription(subscription);
 }
 ```
@@ -502,12 +503,12 @@ export function handleGraphQLError(error: ApolloError): string {
   if (error.networkError) {
     return 'ネットワークエラーが発生しました';
   }
-  
+
   // GraphQLエラー
   if (error.graphQLErrors?.length > 0) {
     return error.graphQLErrors[0].message;
   }
-  
+
   return '予期しないエラーが発生しました';
 }
 ```
@@ -518,23 +519,23 @@ export function handleGraphQLError(error: ApolloError): string {
 // src/lib/stores/optimistic.svelte.ts
 class OptimisticStore {
   items = $state<Item[]>([]);
-  
+
   async createItem(input: CreateItemInput) {
     // オプティミスティック更新
     const optimisticItem = {
       id: `temp-${Date.now()}`,
       ...input,
-      __typename: 'Item'
+      __typename: 'Item',
     };
-    
+
     this.items = [optimisticItem, ...this.items];
-    
+
     try {
       const result = await apolloClient.mutate({
         mutation: CREATE_ITEM,
         variables: { input },
         optimisticResponse: {
-          createItem: optimisticItem
+          createItem: optimisticItem,
         },
         update: (cache, { data }) => {
           // キャッシュ更新
@@ -545,25 +546,25 @@ class OptimisticStore {
                 items(existingItems = []) {
                   const newItemRef = cache.writeFragment({
                     data: newItem,
-                    fragment: ITEM_FRAGMENT
+                    fragment: ITEM_FRAGMENT,
                   });
                   return [newItemRef, ...existingItems];
-                }
-              }
+                },
+              },
             });
           }
-        }
+        },
       });
-      
+
       // 一時アイテムを実際のアイテムに置き換え
       if (result.data?.createItem) {
-        this.items = this.items.map(item =>
-          item.id === optimisticItem.id ? result.data.createItem : item
+        this.items = this.items.map((item) =>
+          item.id === optimisticItem.id ? result.data.createItem : item,
         );
       }
     } catch (error) {
       // エラー時はオプティミスティック更新を取り消し
-      this.items = this.items.filter(item => item.id !== optimisticItem.id);
+      this.items = this.items.filter((item) => item.id !== optimisticItem.id);
       throw error;
     }
   }
@@ -579,26 +580,26 @@ class PaginationStore {
   hasMore = $state(true);
   loading = $state(false);
   cursor = $state<string | null>(null);
-  
+
   async loadMore() {
     if (this.loading || !this.hasMore) return;
-    
+
     this.loading = true;
     const result = await apolloClient.query({
       query: GET_ITEMS,
       variables: {
         limit: 20,
-        cursor: this.cursor
-      }
+        cursor: this.cursor,
+      },
     });
-    
+
     const newItems = result.data.items;
     this.items = [...this.items, ...newItems];
     this.hasMore = newItems.length === 20;
     this.cursor = newItems[newItems.length - 1]?.id || null;
     this.loading = false;
   }
-  
+
   // 無限スクロール
   setupInfiniteScroll(element: HTMLElement) {
     const observer = new IntersectionObserver(
@@ -607,21 +608,24 @@ class PaginationStore {
           this.loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
-    
+
     observer.observe(element);
     return () => observer.disconnect();
   }
 }
 ```
 
-:::tip[GraphQLツール]
-- **GraphQL Playground** - APIエクスプローラー
-- **GraphQL Code Generator** - 型の自動生成
-- **Apollo DevTools** - デバッグツール
-- **Hasura Console** - 管理画面
-:::
+<Admonition type="tip" title="GraphQLツール">
+<ul>
+<li><strong>GraphQL Playground</strong> - APIエクスプローラー</li>
+<li><strong>GraphQL Code Generator</strong> - 型の自動生成</li>
+<li><strong>Apollo DevTools</strong> - デバッグツール</li>
+<li><strong>Hasura Console</strong> - 管理画面</li>
+</ul>
+
+</Admonition>
 
 ## まとめ
 
@@ -633,5 +637,6 @@ Svelte + GraphQLの組み合わせは以下のケースに最適です。
 - ✅ **複雑なデータ** - ネストした関連データも一度に取得
 
 他のアーキテクチャパターンも参考にしてください。
+
 - [Firebase統合](/svelte/architecture/spa-patterns/firebase/)
 - [Supabase統合](/svelte/architecture/spa-patterns/supabase/)

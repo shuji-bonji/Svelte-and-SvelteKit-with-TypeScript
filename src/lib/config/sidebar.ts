@@ -1,6 +1,6 @@
 // Shared sidebar configuration
 // This is the single source of truth for sidebar structure
-// Used by both vite.config.ts and navigation utilities
+// Used by Sidebar component and navigation utilities
 
 export interface SidebarItem {
   title: string;
@@ -8,6 +8,34 @@ export interface SidebarItem {
   items?: SidebarItem[];
   collapsible?: boolean;
   collapsed?: boolean;
+}
+
+// sidebar設定からフラットなページリストを生成（前後ナビゲーション用）
+export interface FlatPage {
+  title: string;
+  path: string;
+}
+
+function flattenItems(items: SidebarItem[]): FlatPage[] {
+  const result: FlatPage[] = [];
+  for (const item of items) {
+    result.push({ title: item.title, path: item.to });
+    if (item.items) {
+      result.push(...flattenItems(item.items));
+    }
+  }
+  return result;
+}
+
+export function getNavigation(currentPath: string): { prev?: FlatPage; next?: FlatPage } {
+  const allPages = Object.values(sidebarConfig).flatMap(flattenItems);
+  // 重複パスを除去
+  const unique = allPages.filter((page, i, arr) => arr.findIndex((p) => p.path === page.path) === i);
+  const index = unique.findIndex((p) => p.path === currentPath);
+  return {
+    prev: index > 0 ? unique[index - 1] : undefined,
+    next: index < unique.length - 1 ? unique[index + 1] : undefined
+  };
 }
 
 export const sidebarConfig: { [key: string]: SidebarItem[] } = {

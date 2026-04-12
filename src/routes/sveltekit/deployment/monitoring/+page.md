@@ -3,9 +3,12 @@ title: モニタリング
 description: SvelteKitアプリのモニタリングと運用。エラートラッキング、パフォーマンス監視、ログ管理、アラート設定の実装方法
 ---
 
-:::warning[準備中]
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+<Admonition type="warning" title="準備中">
 このページは現在作成中です。基本的な概要と予定コンテンツを掲載しています。
-:::
+</Admonition>
 
 ## 概要
 

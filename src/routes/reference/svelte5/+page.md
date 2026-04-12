@@ -4,20 +4,25 @@ description: Svelte 5の完全リファレンス。Runesシステム、コンポ
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
 </script>
 
-:::tip[AI開発には公式のSvelte MCPサーバーの利用を推奨]
+<Admonition type="tip" title="AI開発には公式のSvelte MCPサーバーの利用を推奨">
 **Claude Code / Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
 
 Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサーバーで、以下の利点があります。
 
-- **常に最新**: Svelte 5とSvelteKitの公式ドキュメントから直接情報を取得
-- **包括的な機能**: ドキュメント検索、コード分析、自動修正提案、Playgroundリンク生成
-- **公式サポート**: Svelteチームによる保守
-- **このリファレンスとの相乗効果**: MCPで最新情報を取得し、このページで体系的な理解を深める
+<ul>
+<li><strong>常に最新</strong>: Svelte 5とSvelteKitの公式ドキュメントから直接情報を取得</li>
+<li><strong>包括的な機能</strong>: ドキュメント検索、コード分析、自動修正提案、Playgroundリンク生成</li>
+<li><strong>公式サポート</strong>: Svelteチームによる保守</li>
+<li><strong>このリファレンスとの相乗効果</strong>: MCPで最新情報を取得し、このページで体系的な理解を深める</li>
+</ul>
 
 #### Claude Code（CLI）でのセットアップ
+
+</Admonition>
 
 ```bash
 # プロジェクトスコープで追加（推奨）
@@ -53,11 +58,11 @@ claude mcp list
 設定後、Claude Desktopを再起動してください。
 
 詳細: [Svelte MCP公式ドキュメント](https://svelte.dev/docs/mcp)
-:::
 
 ## Svelte 5の特徴
 
 ### なぜSvelte 5なのか
+
 - **コンパイル時最適化**: ランタイムオーバーヘッドを最小限に
 - **仮想DOMなし**: 直接DOMを操作し高速なレンダリング
 - **明示的なリアクティビティ**: Runesによる予測可能な状態管理
@@ -79,8 +84,8 @@ let user = $state({
   age: 25,
   preferences: {
     theme: 'dark',
-    language: 'ja'
-  }
+    language: 'ja',
+  },
 });
 
 // 配列
@@ -89,11 +94,11 @@ let todos = $state<Todo[]>([]);
 // クラスインスタンス
 class Counter {
   value = $state(0);
-  
+
   increment() {
     this.value++;
   }
-  
+
   reset() {
     this.value = 0;
   }
@@ -113,7 +118,7 @@ let largeList = $state.raw<Item[]>(fetchedItems);
 // 設定オブジェクト（個別プロパティの変更追跡が不要）
 let config = $state.raw({
   apiUrl: 'https://api.example.com',
-  version: '1.0.0'
+  version: '1.0.0',
 });
 
 // プロパティの変更は追跡されない
@@ -123,9 +128,9 @@ let config = $state.raw({
 config = $state.raw({ ...config, version: '1.0.1' });
 ```
 
-:::warning[$state.frozen は $state.raw にリネーム済み]
+<Admonition type="warning" title="$state.frozen は $state.raw にリネーム済み">
 以前の `$state.frozen` は `$state.raw` にリネームされました。`$state.frozen` を使用している場合は `$state.raw` に置き換えてください。
-:::
+</Admonition>
 
 #### $state.snapshot - スナップショット
 
@@ -154,10 +159,10 @@ let total = $derived(subtotal + tax);
 ```typescript
 let processedItems = $derived.by(() => {
   // フィルタリング
-  let filtered = items.filter(item => 
-    item.name.toLowerCase().includes(filter.toLowerCase())
+  let filtered = items.filter((item) =>
+    item.name.toLowerCase().includes(filter.toLowerCase()),
   );
-  
+
   // ソート
   return filtered.sort((a, b) => {
     if (sortBy === 'name') {
@@ -186,7 +191,7 @@ function acceptSuggestion() {
 ```svelte
 <script lang="ts">
   let selected = $state('apple');
-  
+
   // selectedが変更されるたびにリセットされる
   let editableLabel = $derived(selected.toUpperCase());
 </script>
@@ -213,22 +218,22 @@ $effect(() => {
   const timer = setInterval(() => {
     console.log('Tick');
   }, 1000);
-  
+
   return () => clearInterval(timer);
 });
 
 // 非同期処理
 $effect(() => {
   const controller = new AbortController();
-  
+
   fetch(`/api/data?count=${count}`, {
-    signal: controller.signal
+    signal: controller.signal,
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       message = data.message;
     });
-  
+
   return () => controller.abort();
 });
 ```
@@ -252,7 +257,7 @@ $effect(() => {
     console.log('This is reactive');
     console.log(tracked); // 依存関係として追跡される
   }
-  
+
   untrack(() => {
     console.log(untracked); // 追跡されない
   });
@@ -265,18 +270,18 @@ $effect(() => {
 onMount(() => {
   const cleanup = $effect.root(() => {
     let count = $state(0);
-    
+
     $effect(() => {
       console.log(`Count: ${count}`);
     });
-    
+
     const interval = setInterval(() => {
       count++;
     }, 1000);
-    
+
     return () => clearInterval(interval);
   });
-  
+
   return cleanup;
 });
 ```
@@ -297,10 +302,10 @@ $effect(() => {
 });
 ```
 
-:::info[$effect.pending() vs svelte:boundary]
-`<svelte:boundary>` の `pending` snippetは初回ローディングに使用します。
+<Admonition type="info" title="$effect.pending() vs svelte:boundary">
+`&lt;svelte:boundary&gt;` の `pending` snippetは初回ローディングに使用します。
 `$effect.pending()` は後続の非同期更新でのローディング状態の検出に使用します。
-:::
+</Admonition>
 
 ### $props - コンポーネントプロパティ
 
@@ -343,11 +348,11 @@ let { title, children, header, footer }: Props = $props();
   {:else}
     <h1>{title}</h1>
   {/if}
-  
+
   <main>
     {@render children?.()}
   </main>
-  
+
   {#if footer}
     <footer>
       {@render footer()}
@@ -365,10 +370,7 @@ interface Props {
   checked?: boolean;
 }
 
-let { 
-  value = $bindable(''),
-  checked = $bindable(false)
-}: Props = $props();
+let { value = $bindable(''), checked = $bindable(false) }: Props = $props();
 ```
 
 ```svelte
@@ -460,15 +462,17 @@ const user = await hydratable('user', () => getUser());
 
 ```typescript
 // サーバーで生成されたランダム値がクライアントでも同じになる
-const randomId = hydratable('random-id', () => Math.random().toString(36).slice(2));
+const randomId = hydratable('random-id', () =>
+  Math.random().toString(36).slice(2),
+);
 
 // SSR時の時刻がハイドレーション時にも維持される
 const timestamp = hydratable('page-timestamp', () => Date.now());
 ```
 
-:::info[Remote Functionsを推奨]
+<Admonition type="info" title="Remote Functionsを推奨">
 通常の開発では、SvelteKitの[Remote Functions](/sveltekit/server/remote-functions/)がこのAPIを内部的に使用しています。
-:::
+</Admonition>
 
 ### await expressions - 非同期構文（実験的）
 
@@ -519,22 +523,22 @@ $effect(() => {
 <script lang="ts">
   // TypeScriptコード
   import type { Snippet } from 'svelte';
-  
+
   // Props定義
   interface Props {
     title: string;
     count?: number;
     children?: Snippet;
   }
-  
+
   let { title, count = 0, children }: Props = $props();
-  
+
   // リアクティブな状態
   let internalCount = $state(count);
-  
+
   // 計算値
   let doubled = $derived(internalCount * 2);
-  
+
   // メソッド
   function increment() {
     internalCount++;
@@ -546,7 +550,7 @@ $effect(() => {
   <h2>{title}</h2>
   <p>Count: {internalCount}, Doubled: {doubled}</p>
   <button onclick={increment}>Increment</button>
-  
+
   {@render children?.()}
 </div>
 
@@ -566,7 +570,7 @@ $effect(() => {
 <!-- モジュールコンテキスト（一度だけ実行） -->
 <script context="module" lang="ts">
   let totalInstances = 0;
-  
+
   export function resetInstances() {
     totalInstances = 0;
   }
@@ -615,7 +619,7 @@ $effect(() => {
 
 <!-- 空の場合の処理 -->
 {#each items as item}
-  <li>{item}</li>
+  <li>&#123;item&#125;</li>
 {:else}
   <p>アイテムがありません</p>
 {/each}
@@ -660,7 +664,7 @@ $effect(() => {
 
 ### Attachments - リアクティブDOM操作
 
-Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`{@attach}`）です。`use:`アクションと異なり、リアクティブコンテキストで動作します。
+Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`&#123;@attach&#125;`）です。`use:`アクションと異なり、リアクティブコンテキストで動作します。
 
 ```svelte
 <script lang="ts">
@@ -687,11 +691,11 @@ Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`{@at
 
 #### use:アクションとの違い
 
-| 機能 | `use:action` | `{@attach}` |
-|------|-------------|-------------|
-| リアクティビティ | パラメータ変更でupdate() | 自動再実行 |
-| 実行タイミング | マウント時のみ | リアクティブ値変更時 |
-| クリーンアップ | destroy() | 戻り値の関数 |
+| 機能             | `use:action`             | `&#123;@attach&#125;` |
+| ---------------- | ------------------------ | --------------------- |
+| リアクティビティ | パラメータ変更でupdate() | 自動再実行            |
+| 実行タイミング   | マウント時のみ           | リアクティブ値変更時  |
+| クリーンアップ   | destroy()                | 戻り値の関数          |
 
 #### 外部ライブラリとの統合
 
@@ -733,10 +737,10 @@ Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`{@at
 </form>
 ```
 
-:::caution[Svelte 5ではイベント修飾子構文は非サポート]
+<Admonition type="caution" title="Svelte 5ではイベント修飾子構文は非サポート">
 Svelte 4の `on:click|preventDefault|stopPropagation` のような修飾子構文は使用できません。
 `e.preventDefault()` や `e.stopPropagation()` を関数内で直接呼び出してください。
-:::
+</Admonition>
 
 ### コンポーネントイベント（コールバックProps）
 
@@ -823,8 +827,8 @@ $effect(() => {
 </div>
 
 <!-- ウィンドウバインディング -->
-<svelte:window 
-  bind:innerWidth 
+<svelte:window
+  bind:innerWidth
   bind:innerHeight
   bind:scrollY
 />
@@ -840,12 +844,12 @@ $effect(() => {
   p {
     color: purple;
   }
-  
+
   /* グローバルスタイル */
   :global(body) {
     margin: 0;
   }
-  
+
   /* 子要素のグローバルスタイル */
   div :global(strong) {
     color: red;
@@ -880,7 +884,7 @@ $effect(() => {
 </div>
 
 <!-- class:name={value} -->
-<div 
+<div
   class:active={isActive}
   class:disabled={!enabled}
 >
@@ -916,13 +920,13 @@ import { quintOut } from 'svelte/easing';
 function typewriter(node: HTMLElement, { speed = 1 }) {
   const text = node.textContent!;
   const duration = text.length / (speed * 0.01);
-  
+
   return {
     duration,
     tick: (t: number) => {
       const i = Math.trunc(text.length * t);
       node.textContent = text.slice(0, i);
-    }
+    },
   };
 }
 ```
@@ -945,14 +949,17 @@ import { flip } from 'svelte/animate';
 import { spring, tweened } from 'svelte/motion';
 import { cubicOut } from 'svelte/easing';
 
-const coords = spring({ x: 0, y: 0 }, {
-  stiffness: 0.1,
-  damping: 0.25
-});
+const coords = spring(
+  { x: 0, y: 0 },
+  {
+    stiffness: 0.1,
+    damping: 0.25,
+  },
+);
 
 const progress = tweened(0, {
   duration: 400,
-  easing: cubicOut
+  easing: cubicOut,
 });
 ```
 
@@ -965,28 +972,28 @@ function tooltip(node: HTMLElement, text: string) {
   const tooltipEl = document.createElement('div');
   tooltipEl.textContent = text;
   tooltipEl.className = 'tooltip';
-  
+
   function show() {
     document.body.appendChild(tooltipEl);
   }
-  
+
   function hide() {
     tooltipEl.remove();
   }
-  
+
   node.addEventListener('mouseenter', show);
   node.addEventListener('mouseleave', hide);
-  
+
   return {
     update(newText: string) {
       tooltipEl.textContent = newText;
     },
-    
+
     destroy() {
       node.removeEventListener('mouseenter', show);
       node.removeEventListener('mouseleave', hide);
       tooltipEl.remove();
-    }
+    },
   };
 }
 ```
@@ -1008,19 +1015,19 @@ function tooltip(node: HTMLElement, text: string) {
     name: string;
     children?: TreeNode[];
   }
-  
+
   let { node }: { node: TreeNode } = $props();
 </script>
 
 <li>
-  {node.name}
-  {#if node.children}
+  &#123;node.name&#125;
+  &#123;#if node.children&#125;
     <ul>
-      {#each node.children as child}
-        <svelte:self node={child} />
-      {/each}
+      &#123;#each node.children as child&#125;
+        <svelte:self node=&#123;child&#125; />
+      &#123;/each&#125;
     </ul>
-  {/if}
+  &#123;/if&#125;
 </li>
 ```
 
@@ -1029,7 +1036,7 @@ function tooltip(node: HTMLElement, text: string) {
 ```svelte
 <script lang="ts">
   import type { Component } from 'svelte';
-  
+
   let currentComponent: Component = $state(ComponentA);
 </script>
 
@@ -1037,9 +1044,9 @@ function tooltip(node: HTMLElement, text: string) {
 <svelte:component this={currentComponent} {...componentProps} />
 ```
 
-:::tip[Svelte 5での動的コンポーネント]
-Svelte 5では `<svelte:component>` なしで直接 `<currentComponent />` と書くこともできます（変数名が大文字始まりの場合）。
-:::
+<Admonition type="tip" title="Svelte 5での動的コンポーネント">
+Svelte 5では `&lt;svelte:component&gt;` なしで直接 `<currentComponent />` と書くこともできます（変数名が大文字始まりの場合）。
+</Admonition>
 
 ### svelte:element - 動的要素
 
@@ -1085,9 +1092,9 @@ type CustomButtonProps = ComponentProps<'button'> & {
 };
 ```
 
-:::info[Component型について]
+<Admonition type="info" title="Component型について">
 Svelte 5では `Component` 型を使用します。`SvelteComponent` / `ComponentType` はレガシー互換です。
-:::
+</Admonition>
 
 ### ジェネリックコンポーネント
 
@@ -1134,7 +1141,7 @@ import { untrack } from 'svelte';
 
 $effect(() => {
   console.log('Trigger:', trigger);
-  
+
   // unrelated の変更では再実行されない
   untrack(() => {
     console.log('Unrelated:', unrelated);
@@ -1149,23 +1156,23 @@ const cache = new Map();
 
 let filteredItems = $derived.by(() => {
   const key = `${searchTerm}-${items.length}`;
-  
+
   if (cache.has(key)) {
     return cache.get(key);
   }
-  
-  const result = items.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+
+  const result = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-  
+
   cache.set(key, result);
-  
+
   // キャッシュサイズ制限
   if (cache.size > 10) {
     const firstKey = cache.keys().next().value;
     cache.delete(firstKey);
   }
-  
+
   return result;
 });
 ```
@@ -1180,7 +1187,7 @@ $effect(() => {
       searchResults = await res.json();
     }
   }, 300);
-  
+
   return () => clearTimeout(timer);
 });
 ```
@@ -1202,9 +1209,10 @@ function increment() {
 }
 ```
 
-:::warning[使用は最小限に]
+<Admonition type="warning" title="使用は最小限に">
 `flushSync` は測定やスクロール位置の調整など、DOM更新の即時反映が必要な場合に限定してください。通常の更新はSvelteのバッチ処理に任せる方がパフォーマンスが良好です。
-:::
+
+</Admonition>
 
 ### 遅延読み込み
 
@@ -1231,24 +1239,24 @@ import Button from './Button.svelte';
 
 test('renders button with text', () => {
   const { getByText } = render(Button, {
-    props: { text: 'Click me' }
+    props: { text: 'Click me' },
   });
-  
+
   expect(getByText('Click me')).toBeInTheDocument();
 });
 
 test('calls onclick handler', async () => {
   const handleClick = vi.fn();
   const { getByRole } = render(Button, {
-    props: { 
+    props: {
       text: 'Click me',
-      onclick: handleClick
-    }
+      onclick: handleClick,
+    },
   });
-  
+
   const button = getByRole('button');
   await fireEvent.click(button);
-  
+
   expect(handleClick).toHaveBeenCalledTimes(1);
 });
 ```
@@ -1287,7 +1295,7 @@ let { prop }: { prop: string } = $props();
 - [ ] `let` 宣言を `$state()` に変更
 - [ ] `$:` リアクティブ文を `$derived` または `$effect` に変更
 - [ ] `export let` を `$props()` に変更
-- [ ] `<slot />` を `{@render children?.()}` に変更
+- [ ] `<slot />` を `&#123;@render children?.()&#125;` に変更
 - [ ] ストアの `$` プレフィックスを削除
 - [ ] `on:event` を `onevent` に変更（例: `on:click` → `onclick`）
 - [ ] `createEventDispatcher` をコールバックpropsに変更

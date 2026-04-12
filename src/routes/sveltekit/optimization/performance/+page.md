@@ -3,9 +3,12 @@ title: パフォーマンス最適化
 description: SvelteKitアプリのパフォーマンス最適化。Core Web Vitals改善、レンダリング最適化、バンドルサイズ削減をTypeScriptで実装
 ---
 
-:::warning[準備中]
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+<Admonition type="warning" title="準備中">
 このページは現在作成中です。基本的な概要と予定コンテンツを掲載しています。
-:::
+</Admonition>
 
 ## 概要
 

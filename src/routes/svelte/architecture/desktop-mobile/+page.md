@@ -3,17 +3,21 @@ title: デスクトップ・モバイルアプリ
 description: SvelteとTauri/Electron/Capacitorでデスクトップ・モバイルアプリを構築する方法をTypeScriptで解説。ビルド設定、ネイティブAPI連携、更新配信やセキュリティ、UI共有戦略とストア設計まで実践的にまとめたロードマップ。配布チャネル選定のポイント付き。詳しい手順とチェックリスト付き
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+
 Svelteは、TauriやElectronを使用したデスクトップアプリ、Capacitorを使用したモバイルアプリの開発にも最適です。Webの技術でネイティブアプリケーションを構築できます。
 
 ## プラットフォーム比較
 
 Svelteでクロスプラットフォーム開発を行う際、目的に応じて最適なフレームワークを選択することが重要です。デスクトップアプリには**Tauri**または**Electron**、モバイルアプリには**Capacitor**が主な選択肢となります。
 
-| プラットフォーム | 用途 | 特徴 | バンドルサイズ |
-|--------------|------|------|--------------|
-| **Tauri** | デスクトップ | Rust製、高速・軽量 | 10MB〜 |
-| **Electron** | デスクトップ | 成熟したエコシステム | 50MB〜 |
-| **Capacitor** | モバイル | iOS/Android対応 | アプリサイズに依存 |
+| プラットフォーム | 用途         | 特徴                 | バンドルサイズ     |
+| ---------------- | ------------ | -------------------- | ------------------ |
+| **Tauri**        | デスクトップ | Rust製、高速・軽量   | 10MB〜             |
+| **Electron**     | デスクトップ | 成熟したエコシステム | 50MB〜             |
+| **Capacitor**    | モバイル     | iOS/Android対応      | アプリサイズに依存 |
 
 ## Tauri統合
 
@@ -49,10 +53,12 @@ export async function greet(name: string): Promise<string> {
 export async function selectFile() {
   const selected = await open({
     multiple: false,
-    filters: [{
-      name: 'テキスト',
-      extensions: ['txt', 'md']
-    }]
+    filters: [
+      {
+        name: 'テキスト',
+        extensions: ['txt', 'md'],
+      },
+    ],
   });
   return selected;
 }
@@ -62,10 +68,10 @@ export async function selectFile() {
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
   import { greet, selectFile } from '$lib/tauri';
-  
+
   let name = $state('');
   let greeting = $state('');
-  
+
   async function handleGreet() {
     greeting = await greet(name);
   }
@@ -112,8 +118,8 @@ function createWindow() {
     height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true
-    }
+      contextIsolation: true,
+    },
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -130,14 +136,14 @@ ipcMain.handle('get-system-info', async () => {
   return {
     platform: process.platform,
     version: process.version,
-    memory: process.memoryUsage()
+    memory: process.memoryUsage(),
   };
 });
 ```
 
-:::note[セキュリティに関する注意]
+<Admonition type="note" title="セキュリティに関する注意">
 Electronでは`contextIsolation: true`と`preload`スクリプトを使用してセキュリティを確保することが重要です。レンダラープロセスから直接Node.js APIにアクセスさせず、必要な機能のみをpreloadスクリプト経由で公開します。
-:::
+</Admonition>
 
 ## Capacitor統合（モバイル）
 
@@ -169,9 +175,9 @@ export async function takePicture() {
   const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
-    resultType: CameraResultType.Uri
+    resultType: CameraResultType.Uri,
   });
-  
+
   return image.webPath;
 }
 
@@ -180,7 +186,7 @@ export async function getCurrentPosition() {
   const coordinates = await Geolocation.getCurrentPosition();
   return {
     lat: coordinates.coords.latitude,
-    lng: coordinates.coords.longitude
+    lng: coordinates.coords.longitude,
   };
 }
 
@@ -188,7 +194,7 @@ export async function getCurrentPosition() {
 export async function saveData(key: string, value: any) {
   await Storage.set({
     key,
-    value: JSON.stringify(value)
+    value: JSON.stringify(value),
   });
 }
 ```
@@ -207,29 +213,29 @@ export function getPlatform() {
   if (typeof window === 'undefined') {
     return 'server';
   }
-  
+
   // Tauri
   if (window.__TAURI__) {
     return 'tauri';
   }
-  
+
   // Electron
   if (window.electron) {
     return 'electron';
   }
-  
+
   // Capacitor
   if (window.Capacitor) {
     return 'capacitor';
   }
-  
+
   return 'web';
 }
 
 // 条件付き機能実装
 export async function saveFile(content: string) {
   const platform = getPlatform();
-  
+
   switch (platform) {
     case 'tauri':
       // Tauri APIを使用
@@ -254,7 +260,7 @@ export async function saveFile(content: string) {
 ```svelte
 <script lang="ts">
   import { getPlatform } from '$lib/platform';
-  
+
   const platform = getPlatform();
   const isMobile = platform === 'capacitor';
   const isDesktop = ['tauri', 'electron'].includes(platform);
@@ -265,11 +271,11 @@ export async function saveFile(content: string) {
     <!-- デスクトップ用UI -->
     <nav class="sidebar">...</nav>
   {/if}
-  
+
   <main>
     <!-- 共通コンテンツ -->
   </main>
-  
+
   {#if isMobile}
     <!-- モバイル用ボトムナビゲーション -->
     <nav class="bottom-nav">...</nav>
@@ -280,7 +286,7 @@ export async function saveFile(content: string) {
   .app.mobile {
     padding-bottom: 60px; /* ボトムナビ分 */
   }
-  
+
   .app.desktop {
     display: grid;
     grid-template-columns: 250px 1fr;
@@ -298,15 +304,15 @@ export async function saveFile(content: string) {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    
+
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    
+
     "electron": "electron .",
     "electron:dev": "concurrently \\"npm run dev\\" \\"electron .\\"",
     "electron:build": "npm run build && electron-builder",
-    
+
     "cap:sync": "cap sync",
     "cap:ios": "cap open ios",
     "cap:android": "cap open android"
@@ -322,12 +328,12 @@ export async function saveFile(content: string) {
 
 各プラットフォームでアプリを配布するための要件は以下の通りです。開発者アカウントの取得と証明書の発行が必要になります。
 
-| プラットフォーム | 配布方法 | 署名要件 |
-|--------------|----------|---------|
-| **macOS** | App Store、DMG | Apple Developer ID |
-| **Windows** | Microsoft Store、MSI/EXE | コード署名証明書 |
-| **iOS** | App Store | Apple Developer Program |
-| **Android** | Google Play | Play Console |
+| プラットフォーム | 配布方法                 | 署名要件                |
+| ---------------- | ------------------------ | ----------------------- |
+| **macOS**        | App Store、DMG           | Apple Developer ID      |
+| **Windows**      | Microsoft Store、MSI/EXE | コード署名証明書        |
+| **iOS**          | App Store                | Apple Developer Program |
+| **Android**      | Google Play              | Play Console            |
 
 ### 自動アップデート
 
@@ -345,11 +351,14 @@ async function checkForUpdates() {
 }
 ```
 
-:::tip[選択のポイント]
-- **Tauri**: 軽量・高速を求める場合
-- **Electron**: 豊富なプラグインが必要な場合
-- **Capacitor**: iOS/Androidアプリを作る場合
-:::
+<Admonition type="tip" title="選択のポイント">
+<ul>
+<li><strong>Tauri</strong>: 軽量・高速を求める場合</li>
+<li><strong>Electron</strong>: 豊富なプラグインが必要な場合</li>
+<li><strong>Capacitor</strong>: iOS/Androidアプリを作る場合</li>
+</ul>
+
+</Admonition>
 
 ## まとめ
 

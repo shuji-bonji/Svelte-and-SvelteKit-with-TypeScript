@@ -4,6 +4,7 @@ description: SvelteとSupabaseでリアルタイムWebアプリを構築する�
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
@@ -72,16 +73,12 @@ import type { Database } from './database.types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient<Database>(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true
-    }
-  }
-);
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
 ```
 
 ### 3. 型定義の生成
@@ -104,7 +101,7 @@ class AuthStore {
   user = $state<User | null>(null);
   session = $state<Session | null>(null);
   loading = $state(true);
-  
+
   constructor() {
     // 初期セッション取得
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -112,41 +109,41 @@ class AuthStore {
       this.user = session?.user ?? null;
       this.loading = false;
     });
-    
+
     // 認証状態の監視
     supabase.auth.onAuthStateChange((_event, session) => {
       this.session = session;
       this.user = session?.user ?? null;
     });
   }
-  
+
   async signInWithEmail(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     });
-    
+
     if (error) throw error;
     return data;
   }
-  
+
   async signInWithOAuth(provider: 'google' | 'github') {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
-      }
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
-    
+
     if (error) throw error;
     return data;
   }
-  
+
   async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   }
-  
+
   get isAuthenticated() {
     return !!this.user;
   }
@@ -161,13 +158,13 @@ export const authStore = new AuthStore();
 <!-- src/lib/components/AuthForm.svelte -->
 <script lang="ts">
   import { authStore } from '$lib/stores/auth.svelte';
-  
+
   let email = $state('');
   let password = $state('');
   let isSignUp = $state(false);
   let error = $state<string | null>(null);
   let loading = $state(false);
-  
+
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     loading = true;
@@ -185,7 +182,7 @@ export const authStore = new AuthStore();
       loading = false;
     }
   }
-  
+
   async function handleOAuth(provider: 'google' | 'github') {
     try {
       await authStore.signInWithOAuth(provider);
@@ -214,20 +211,20 @@ export const authStore = new AuthStore();
       placeholder="パスワード"
       required
     />
-    
+
     {#if error}
       <p class="error">{error}</p>
     {/if}
-    
+
     <button type="submit" disabled={loading}>
       {isSignUp ? 'サインアップ' : 'ログイン'}
     </button>
-    
+
     <button type="button" onclick={() => isSignUp = !isSignUp}>
       {isSignUp ? 'ログインに切り替え' : 'サインアップに切り替え'}
     </button>
   </form>
-  
+
   <div class="oauth-buttons">
     <button onclick={() => handleOAuth('google')}>
       Googleでログイン
@@ -259,70 +256,64 @@ interface Todo {
 class TodoStore {
   todos = $state<Todo[]>([]);
   loading = $state(false);
-  
+
   constructor() {
     // リアルタイム購読の設定
     this.subscribeToChanges();
   }
-  
+
   async fetchTodos() {
     if (!authStore.user) return;
-    
+
     this.loading = true;
     const { data, error } = await supabase
       .from('todos')
       .select('*')
       .eq('user_id', authStore.user.id)
       .order('created_at', { ascending: false });
-    
+
     if (!error && data) {
       this.todos = data;
     }
     this.loading = false;
   }
-  
+
   async addTodo(text: string) {
     if (!authStore.user) return;
-    
+
     const { data, error } = await supabase
       .from('todos')
       .insert({
         text,
         user_id: authStore.user.id,
-        completed: false
+        completed: false,
       })
       .select()
       .single();
-    
+
     if (!error && data) {
       this.todos = [data, ...this.todos];
     }
   }
-  
+
   async updateTodo(id: string, updates: Partial<Todo>) {
-    const { error } = await supabase
-      .from('todos')
-      .update(updates)
-      .eq('id', id);
-    
+    const { error } = await supabase.from('todos').update(updates).eq('id', id);
+
     if (!error) {
-      this.todos = this.todos.map(todo =>
-        todo.id === id ? { ...todo, ...updates } : todo
+      this.todos = this.todos.map((todo) =>
+        todo.id === id ? { ...todo, ...updates } : todo,
       );
     }
   }
-  
+
   async deleteTodo(id: string) {
-    const { error } = await supabase
-      .from('todos')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabase.from('todos').delete().eq('id', id);
+
     if (!error) {
-      this.todos = this.todos.filter(todo => todo.id !== id);
+      this.todos = this.todos.filter((todo) => todo.id !== id);
     }
   }
-  
+
   private subscribeToChanges() {
     supabase
       .channel('todos_changes')
@@ -332,22 +323,22 @@ class TodoStore {
           event: '*',
           schema: 'public',
           table: 'todos',
-          filter: `user_id=eq.${authStore.user?.id}`
+          filter: `user_id=eq.${authStore.user?.id}`,
         },
         (payload) => {
           // リアルタイム更新の処理
           if (payload.eventType === 'INSERT' && payload.new) {
             this.todos = [payload.new as Todo, ...this.todos];
           } else if (payload.eventType === 'UPDATE' && payload.new) {
-            this.todos = this.todos.map(todo =>
-              todo.id === payload.new!.id ? payload.new as Todo : todo
+            this.todos = this.todos.map((todo) =>
+              todo.id === payload.new!.id ? (payload.new as Todo) : todo,
             );
           } else if (payload.eventType === 'DELETE' && payload.old) {
-            this.todos = this.todos.filter(todo => 
-              todo.id !== (payload.old as Todo).id
+            this.todos = this.todos.filter(
+              (todo) => todo.id !== (payload.old as Todo).id,
             );
           }
-        }
+        },
       )
       .subscribe();
   }
@@ -392,30 +383,28 @@ import { supabase } from '$lib/supabase';
 export async function uploadAvatar(file: File, userId: string) {
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}/${Date.now()}.${fileExt}`;
-  
+
   const { data, error } = await supabase.storage
     .from('avatars')
     .upload(fileName, file, {
       cacheControl: '3600',
-      upsert: false
+      upsert: false,
     });
-  
+
   if (error) throw error;
-  
+
   // 公開URLの取得
-  const { data: { publicUrl } } = supabase.storage
-    .from('avatars')
-    .getPublicUrl(fileName);
-  
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from('avatars').getPublicUrl(fileName);
+
   return publicUrl;
 }
 
 // 画像削除
 export async function deleteAvatar(path: string) {
-  const { error } = await supabase.storage
-    .from('avatars')
-    .remove([path]);
-  
+  const { error } = await supabase.storage.from('avatars').remove([path]);
+
   if (error) throw error;
 }
 ```
@@ -431,32 +420,31 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 serve(async (req: Request) => {
   const { email, subject, message } = await req.json();
-  
+
   // Supabaseクライアントの初期化
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   );
-  
+
   // メール送信処理（例：Resend API）
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       from: 'noreply@example.com',
       to: email,
       subject,
-      html: message
-    })
+      html: message,
+    }),
   });
-  
-  return new Response(
-    JSON.stringify({ success: response.ok }),
-    { headers: { 'Content-Type': 'application/json' } }
-  );
+
+  return new Response(JSON.stringify({ success: response.ok }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
 });
 ```
 
@@ -469,12 +457,12 @@ import { supabase } from '$lib/supabase';
 export async function sendEmail(
   email: string,
   subject: string,
-  message: string
+  message: string,
 ) {
   const { data, error } = await supabase.functions.invoke('send-email', {
-    body: { email, subject, message }
+    body: { email, subject, message },
   });
-  
+
   if (error) throw error;
   return data;
 }
@@ -498,16 +486,16 @@ import { PostgrestError } from '@supabase/supabase-js';
 
 export function handleSupabaseError(error: PostgrestError | null): string {
   if (!error) return '';
-  
+
   // 一般的なエラーコード
   const errorMessages: Record<string, string> = {
     '23505': '既に登録されています',
     '23503': '参照エラー：関連データが存在しません',
     '22P02': '不正な入力形式です',
-    'PGRST301': '認証が必要です',
-    'PGRST204': 'データが見つかりません'
+    PGRST301: '認証が必要です',
+    PGRST204: 'データが見つかりません',
   };
-  
+
   return errorMessages[error.code] || error.message;
 }
 ```
@@ -521,12 +509,12 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 
 class RealtimeManager {
   channels = new Map<string, RealtimeChannel>();
-  
+
   subscribe(name: string, channel: RealtimeChannel) {
     this.channels.set(name, channel);
     return channel.subscribe();
   }
-  
+
   unsubscribe(name: string) {
     const channel = this.channels.get(name);
     if (channel) {
@@ -534,9 +522,9 @@ class RealtimeManager {
       this.channels.delete(name);
     }
   }
-  
+
   unsubscribeAll() {
-    this.channels.forEach(channel => {
+    this.channels.forEach((channel) => {
       supabase.removeChannel(channel);
     });
     this.channels.clear();
@@ -546,12 +534,15 @@ class RealtimeManager {
 export const realtimeManager = new RealtimeManager();
 ```
 
-:::tip[Supabaseの強み]
-- PostgreSQLの全機能が使える（トリガー、関数、ビュー）
-- RLSによる強力なセキュリティ
-- リアルタイムが標準機能
-- セルフホスティング可能
-:::
+<Admonition type="tip" title="Supabaseの強み">
+<ul>
+<li>PostgreSQLの全機能が使える（トリガー、関数、ビュー）</li>
+<li>RLSによる強力なセキュリティ</li>
+<li>リアルタイムが標準機能</li>
+<li>セルフホスティング可能</li>
+</ul>
+
+</Admonition>
 
 ## まとめ
 

@@ -633,7 +633,6 @@ function handleStatus(status: Status) {
 ```svelte
 <!-- SearchableTable.svelte -->
 <script lang="ts" generics="T extends { id: string }">
-  import { createEventDispatcher } from 'svelte';
   import type { Snippet } from 'svelte';
   
   // 高度な型定義
@@ -654,6 +653,9 @@ function handleStatus(status: Status) {
     pageSize?: number;
     onRowClick?: (item: T) => void;
     onSelectionChange?: (selected: T[]) => void;
+    onSort?: (column: keyof T, direction: 'asc' | 'desc') => void;
+    onSearch?: (query: string) => void;
+    onPageChange?: (page: number) => void;
     rowSlot?: Snippet<[T, number]>;
   }
   
@@ -666,6 +668,9 @@ function handleStatus(status: Status) {
     pageSize = 10,
     onRowClick,
     onSelectionChange,
+    onSort,
+    onSearch,
+    onPageChange,
     rowSlot
   }: Props<T> = $props();
   
@@ -724,14 +729,7 @@ function handleStatus(status: Status) {
     data.filter(item => selected.has(item.id))
   );
   
-  // イベントディスパッチ
-  const dispatch = createEventDispatcher<{
-    sort: { column: keyof T; direction: 'asc' | 'desc' };
-    search: { query: string };
-    pageChange: { page: number };
-  }>();
-  
-  // ハンドラー
+  // ハンドラー（コールバック props で親に通知）
   function handleSort(column: keyof T) {
     if (!sortable) return;
     
@@ -742,7 +740,7 @@ function handleStatus(status: Status) {
       sortDirection = 'asc';
     }
     
-    dispatch('sort', { column, direction: sortDirection });
+    onSort?.(column, sortDirection);
   }
   
   function handleSelectAll(event: Event & {

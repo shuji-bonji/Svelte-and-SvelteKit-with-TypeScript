@@ -3,6 +3,12 @@ title: 特別な要素
 description: Svelte5の特別な要素（svelte:element、svelte:window、svelte:boundaryなど）をTypeScriptで活用。動的要素作成、イベントバインディング、エラー処理の実装パターンを解説
 ---
 
+<script>
+	import { base } from '$app/paths';
+	import Admonition from '$lib/components/Admonition.svelte';
+	import LiveCode from '$lib/components/LiveCode.svelte';
+</script>
+
 Svelteには、`svelte:`プレフィックスを持つ特別な要素があります。これらは通常のHTML要素ではなく、Svelteコンパイラによって特別に処理される要素で、動的な要素作成、グローバルイベントの処理、エラーハンドリングなど、高度な機能を提供します。
 
 ## 特別な要素一覧
@@ -11,43 +17,45 @@ Svelteが提供する特別な要素は以下の通りです。
 
 ### 現在も推奨される要素
 
-| 要素 | 用途 | 主な使用場面 |
-|-----|------|------------|
-| [`svelte:element`](#svelte-element---動的要素の作成) | タグを動的に決定 | 権限に応じた要素の切り替え、CMSコンテンツ |
-| [`svelte:window`](#svelte-window---ウィンドウイベントのバインディング) | windowイベント・プロパティ | スクロール位置、リサイズ、キーボードショートカット |
-| [`svelte:document`](#svelte-document---document要素へのイベントバインディング) | documentイベント・プロパティ | ページ表示状態、テキスト選択、フルスクリーン |
-| [`svelte:body`](#svelte-body---body要素へのイベントバインディング) | bodyイベント | マウストラッキング、ドラッグ&ドロップ |
-| [`svelte:head`](#svelte-head---head要素への要素追加) | `<head>`に要素を追加 | SEO、メタタグ、外部リソース |
-| [`svelte:options`](#svelte-options---コンポーネントオプション) | コンパイラオプション | Web Components、不変性、名前空間 |
-| [`svelte:boundary`](#svelte-boundary---エラーバウンダリ) | エラーのキャッチ | エラーハンドリング、フォールバックUI |
+| 要素                                                                           | 用途                         | 主な使用場面                                       |
+| ------------------------------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
+| [`svelte:element`](#svelte-element---動的要素の作成)                           | タグを動的に決定             | 権限に応じた要素の切り替え、CMSコンテンツ          |
+| [`svelte:window`](#svelte-window---ウィンドウイベントのバインディング)         | windowイベント・プロパティ   | スクロール位置、リサイズ、キーボードショートカット |
+| [`svelte:document`](#svelte-document---document要素へのイベントバインディング) | documentイベント・プロパティ | ページ表示状態、テキスト選択、フルスクリーン       |
+| [`svelte:body`](#svelte-body---body要素へのイベントバインディング)             | bodyイベント                 | マウストラッキング、ドラッグ&ドロップ              |
+| [`svelte:head`](#svelte-head---head要素への要素追加)                           | `<head>`に要素を追加         | SEO、メタタグ、外部リソース                        |
+| [`svelte:options`](#svelte-options---コンポーネントオプション)                 | コンパイラオプション         | Web Components、不変性、名前空間                   |
+| [`svelte:boundary`](#svelte-boundary---エラーバウンダリ)                       | エラーのキャッチ             | エラーハンドリング、フォールバックUI               |
 
 ### レガシー要素（Svelte 5では代替方法を推奨）
 
-| 要素 | 状態 | 代替方法 |
-|-----|------|--------|
+| 要素                                                                     | 状態     | 代替方法                                                        |
+| ------------------------------------------------------------------------ | -------- | --------------------------------------------------------------- |
 | [`svelte:component`](#svelte-component---動的コンポーネント（レガシー）) | レガシー | Runesモードでは通常のコンポーネント変数で自動的に再レンダリング |
-| [`svelte:fragment`](#svelte-fragment---グループ化要素（レガシー）) | レガシー | Svelte 5のSnippetsは余計なラッパー要素を作らない |
-| [`svelte:self`](#svelte-self---再帰的コンポーネント（レガシー）) | レガシー | コンポーネント自体をimportして使用 |
+| [`svelte:fragment`](#svelte-fragment---グループ化要素（レガシー）)       | レガシー | Svelte 5のSnippetsは余計なラッパー要素を作らない                |
+| [`svelte:self`](#svelte-self---再帰的コンポーネント（レガシー）)         | レガシー | コンポーネント自体をimportして使用                              |
 
-:::tip[使い分けのポイント]
-- **DOM操作系**: `svelte:window`、`svelte:document`、`svelte:body`、`svelte:head`
-- **動的制御系**: `svelte:element`
-- **設定系**: `svelte:options`、`svelte:boundary`
-:::
+<Admonition type="tip" title="使い分けのポイント">
+<ul>
+<li><strong>DOM操作系</strong>: <code>svelte:window</code>、<code>svelte:document</code>、<code>svelte:body</code>、<code>svelte:head</code></li>
+<li><strong>動的制御系</strong>: <code>svelte:element</code></li>
+<li><strong>設定系</strong>: <code>svelte:options</code>、<code>svelte:boundary</code></li>
+</ul>
 
-:::warning[Svelte 5での重要な変更]
+</Admonition>
+<Admonition type="warning" title="Svelte 5での重要な変更">
 Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガシー機能となりました。新しいプロジェクトではこれらの代替方法を使用することを推奨します。
-:::
+</Admonition>
 
 ## `svelte:element` - 動的要素の作成
 
-`<svelte:element>`は、実行時に要素のタグを動的に決定できる特別な要素です。ユーザーの権限やコンテンツタイプに応じて、異なるHTML要素を使い分ける場合に便利です。
+`&lt;svelte:element&gt;`は、実行時に要素のタグを動的に決定できる特別な要素です。ユーザーの権限やコンテンツタイプに応じて、異なるHTML要素を使い分ける場合に便利です。
 
 ```svelte live
 <script lang="ts">
   let tag = $state('div');
   let href = $state('https://svelte.dev');
-  
+
   // タグの選択肢
   const tags = ['div', 'section', 'article', 'a', 'button'];
 </script>
@@ -61,7 +69,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
       <option value={t}>{t}</option>
     {/each}
   </select>
-  
+
   <!-- 動的にタグが変わる -->
   <svelte:element
     this={tag}
@@ -71,7 +79,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   >
     私は{tag}要素です
   </svelte:element>
-  
+
   <div style="margin-top: 1rem; color: #333; padding: 0.5rem; background: #e8f5e9; border-radius: 4px;">
     <strong>現在のHTML:</strong>
     <code style="color: #333;">&lt;{tag}&gt;私は{tag}要素です&lt;/{tag}&gt;</code>
@@ -84,10 +92,10 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 ```svelte
 <script lang="ts">
   type UserRole = 'admin' | 'user' | 'guest';
-  
+
   let userRole: UserRole = $state('user');
   let action = $state('');
-  
+
   // 権限に応じて要素を変える
   function getElementTag(role: UserRole) {
     switch (role) {
@@ -96,7 +104,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
       case 'guest': return 'span';
     }
   }
-  
+
   function handleAction() {
     action = `${userRole}がアクションを実行しました`;
   }
@@ -114,15 +122,15 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:window` - ウィンドウイベントのバインディング
 
-`<svelte:window>`は、windowオブジェクトのイベントやプロパティにバインドできる特別な要素です。スクロール位置、ウィンドウサイズ、キーボードイベントなどを簡単に扱えます。
+`&lt;svelte:window&gt;`は、windowオブジェクトのイベントやプロパティにバインドできる特別な要素です。スクロール位置、ウィンドウサイズ、キーボードイベントなどを簡単に扱えます。
 
-```svelte live
+```svelte live console
 <script lang="ts">
   let scrollY = $state(0);
   let innerWidth = $state(0);
   let innerHeight = $state(0);
   let online = $state(true);
-  
+
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       console.log('Escapeキーが押されました');
@@ -145,7 +153,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     <div>📜 スクロール位置: {scrollY}px</div>
     <div>🌐 オンライン状態: {online ? '接続中' : 'オフライン'}</div>
   </div>
-  
+
   <div style="margin-top: 1rem; padding: 0.5rem; background: #f0f0f0; border-radius: 4px; color: #666;">
     ※ Escapeキーを押すとコンソールにログが出力されます
   </div>
@@ -182,13 +190,13 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:body` - body要素へのイベントバインディング
 
-`<svelte:body>`は、body要素のイベントにバインドできます。マウストラッキングやドラッグ&ドロップなど、ページ全体での操作を扱う際に使用します。
+`&lt;svelte:body&gt;`は、body要素のイベントにバインドできます。マウストラッキングやドラッグ&ドロップなど、ページ全体での操作を扱う際に使用します。
 
 ```svelte
 <script lang="ts">
   let mouseX = $state(0);
   let mouseY = $state(0);
-  
+
   function handleMouseMove(event: MouseEvent) {
     mouseX = event.clientX;
     mouseY = event.clientY;
@@ -202,27 +210,27 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </div>
 
 <!-- カスタムカーソルの実装 -->
-<div 
-  class="custom-cursor" 
+<div
+  class="custom-cursor"
   style="left: {mouseX}px; top: {mouseY}px;"
 />
 ```
 
 ## `svelte:document` - document要素へのイベントバインディング
 
-`<svelte:document>`は、documentオブジェクトのイベントやプロパティにバインドできます。ページの表示状態、テキスト選択、フルスクリーン状態などを監視できます。
+`&lt;svelte:document&gt;`は、documentオブジェクトのイベントやプロパティにバインドできます。ページの表示状態、テキスト選択、フルスクリーン状態などを監視できます。
 
 ```svelte live
 <script lang="ts">
   let visibilityState = $state('visible');
   let fullscreen = $state(false);
   let selectionText = $state('');
-  
+
   function handleSelectionChange() {
     const selection = window.getSelection();
     selectionText = selection?.toString() || '';
   }
-  
+
   function handleVisibilityChange() {
     visibilityState = document.visibilityState;
   }
@@ -241,7 +249,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     <div>🖥️ フルスクリーン: {fullscreen ? 'ON' : 'OFF'}</div>
     <div>✏️ 選択テキスト: {selectionText || '(なし)'}</div>
   </div>
-  
+
   <p style="margin-top: 1rem; padding: 0.5rem; background: #fff3e0; border-radius: 4px; color: #666;">
     このテキストを選択すると、選択内容が上に表示されます。
   </p>
@@ -250,7 +258,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:head` - head要素への要素追加
 
-`<svelte:head>`は、documentのhead要素に要素を追加できます。SEO対策、メタタグの設定、外部スタイルシートの読み込みなどに使用します。
+`&lt;svelte:head&gt;`は、documentのhead要素に要素を追加できます。SEO対策、メタタグの設定、外部スタイルシートの読み込みなどに使用します。
 
 ```svelte
 <script lang="ts">
@@ -262,18 +270,18 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   <title>{pageTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href="https://example.com/page" />
-  
+
   <!-- Open Graphタグ -->
   <meta property="og:title" content={pageTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content="https://example.com/image.jpg" />
   <meta property="og:type" content="website" />
-  
+
   <!-- Twitter Cardタグ -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={pageTitle} />
   <meta name="twitter:description" content={description} />
-  
+
   <!-- 構造化データ -->
   {@html `<script type="application/ld+json">
     ${JSON.stringify({
@@ -288,7 +296,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:options` - コンポーネントオプション
 
-`<svelte:options>`は、コンポーネントのコンパイラオプションを設定します。Web Components化、不変性の宣言、名前空間の指定などができます。
+`&lt;svelte:options&gt;`は、コンポーネントのコンパイラオプションを設定します。Web Components化、不変性の宣言、名前空間の指定などができます。
 
 ```svelte
 <!-- immutableオプション：プロパティが不変であることを宣言 -->
@@ -326,9 +334,9 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 }} />
 
 <script lang="ts">
-  let { 
+  let {
     variant = 'primary',
-    disabled = false 
+    disabled = false
   }: {
     variant?: 'primary' | 'secondary';
     disabled?: boolean;
@@ -342,12 +350,12 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:boundary` - エラーバウンダリ
 
-`<svelte:boundary>`は、子コンポーネントで発生したエラーをキャッチし、フォールバックUIを表示できます。アプリケーション全体のクラッシュを防ぎ、ユーザーに適切なエラーメッセージを表示できます。
+`&lt;svelte:boundary&gt;`は、子コンポーネントで発生したエラーをキャッチし、フォールバックUIを表示できます。アプリケーション全体のクラッシュを防ぎ、ユーザーに適切なエラーメッセージを表示できます。
 
 ```svelte live
 <script lang="ts">
   let shouldError = $state(false);
-  
+
   // エラーを発生させるコンポーネントのシミュレーション
   function ErrorComponent() {
     if (shouldError) {
@@ -362,18 +370,18 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     <input type="checkbox" bind:checked={shouldError} />
     <span>エラーを発生させる</span>
   </label>
-  
+
   <svelte:boundary>
     <div style="padding: 1rem; background: #e8f5e9; border-radius: 4px; color: #2e7d32;">
       ✅ {ErrorComponent()}
     </div>
-    
-    {#snippet failed(error)}
+
+    {#snippet failed(error, reset)}
       <div style="padding: 1rem; background: #ffebee; border-radius: 4px; color: #c62828;">
         <strong>⚠️ エラーが発生しました:</strong>
         <pre style="margin: 0.5rem 0 0; font-size: 0.9em;">{error.message}</pre>
-        <button 
-          onclick={() => shouldError = false}
+        <button
+          onclick={() => { shouldError = false; reset(); }}
           style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: white; border: 1px solid #c62828; border-radius: 4px; color: #c62828; cursor: pointer;"
         >
           リトライ
@@ -389,11 +397,11 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 ```svelte
 <script lang="ts">
   import { reportError } from './error-reporter';
-  
+
   async function handleError(error: Error) {
     // エラーレポートサービスに送信
     await reportError(error);
-    
+
     // ユーザーに通知
     console.error('エラーが発生しました:', error);
   }
@@ -402,7 +410,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 <svelte:boundary>
   <!-- メインアプリケーション -->
   <App />
-  
+
   {#snippet failed(error, reset)}
     <div class="error-container">
       <h2>申し訳ございません</h2>
@@ -424,7 +432,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `pending` snippet — 非同期ローディング表示
 
-`<svelte:boundary>` は `await expressions` と連携し、初回の非同期データ解決中にローディングUIを表示できます。
+`&lt;svelte:boundary&gt;` は `await expressions` と連携し、初回の非同期データ解決中にローディングUIを表示できます。
 
 ```svelte
 <svelte:boundary>
@@ -449,9 +457,9 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </svelte:boundary>
 ```
 
-:::tip[pending vs $effect.pending()]
+<Admonition type="tip" title="pending vs $effect.pending()">
 `pending` snippetは**初回ローディング時**のみ表示されます。後続の非同期更新でのローディング状態は `$effect.pending()` で検出します。
-:::
+</Admonition>
 
 ### `onerror` プロパティ
 
@@ -473,19 +481,22 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### プロパティ一覧
 
-| プロパティ | 型 | 説明 |
-|-----------|------|------|
-| `failed` | `Snippet<[Error, () => void]>` | エラー時のフォールバックUI |
-| `pending` | `Snippet` | 非同期解決待ちのローディングUI |
-| `onerror` | `(error: Error, reset: () => void) => void` | エラー発生時のコールバック |
+| プロパティ | 型                                          | 説明                           |
+| ---------- | ------------------------------------------- | ------------------------------ |
+| `failed`   | `Snippet<[Error, () => void]>`              | エラー時のフォールバックUI     |
+| `pending`  | `Snippet`                                   | 非同期解決待ちのローディングUI |
+| `onerror`  | `(error: Error, reset: () => void) => void` | エラー発生時のコールバック     |
 
-:::info[svelte:boundaryの利点]
-- **エラーの局所化**: エラーがアプリケーション全体に影響しない
-- **非同期ローディング**: `pending` snippetでawait式のローディング状態を表示
-- **ユーザー体験の向上**: エラー時でも適切なフィードバックを表示
-- **デバッグの簡易化**: エラーの発生箇所を特定しやすい
-- **プロダクション対応**: 本番環境でのエラーを優雅に処理
-:::
+<Admonition type="info" title="svelte:boundaryの利点">
+<ul>
+<li><strong>エラーの局所化</strong>: エラーがアプリケーション全体に影響しない</li>
+<li><strong>非同期ローディング</strong>: <code>pending</code> snippetでawait式のローディング状態を表示</li>
+<li><strong>ユーザー体験の向上</strong>: エラー時でも適切なフィードバックを表示</li>
+<li><strong>デバッグの簡易化</strong>: エラーの発生箇所を特定しやすい</li>
+<li><strong>プロダクション対応</strong>: 本番環境でのエラーを優雅に処理</li>
+</ul>
+
+</Admonition>
 
 ## ベストプラクティス
 
@@ -512,7 +523,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 <!-- ✅ 良い例：デバウンスで最適化 -->
 <script>
   import { debounce } from 'lodash-es';
-  
+
   const handleResize = debounce(() => {
     updateLayout();
   }, 100);
@@ -531,7 +542,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   <meta property="og:title" content={pageTitle} />
   <meta property="og:image" content={ogImage} />
   <link rel="canonical" href={canonicalUrl} />
-  
+
   <!-- プリロード最適化 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin />
@@ -564,11 +575,10 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `svelte:fragment` - グループ化要素（レガシー）
 
-:::warning[Svelte 5での変更]
-`<svelte:fragment>`はSvelte 5でレガシー機能となりました。Svelte 5のSnippetsは自動的に余計なラッパー要素を作らないため、この要素は不要になりました。
-:::
-
-`<svelte:fragment>`は、DOM要素を追加せずに複数の要素をグループ化できる要素でした。以下は従来の使用例です。
+<Admonition type="warning" title="Svelte 5での変更">
+`&lt;svelte:fragment&gt;`はSvelte 5でレガシー機能となりました。Svelte 5のSnippetsは自動的に余計なラッパー要素を作らないため、この要素は不要になりました。
+</Admonition>
+`&lt;svelte:fragment&gt;`は、DOM要素を追加せずに複数の要素をグループ化できる要素でした。以下は従来の使用例です。
 
 ```svelte
 <script lang="ts">
@@ -595,7 +605,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     <h1>タイトル</h1>
     <nav>ナビゲーション</nav>
   </svelte:fragment>
-  
+
   <svelte:fragment slot="content">
     <p>コンテンツ1</p>
     <p>コンテンツ2</p>
@@ -605,9 +615,9 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `svelte:component` - 動的コンポーネント（レガシー）
 
-:::warning[Svelte 5での変更]
-`<svelte:component>`はSvelte 5のRunesモードではレガシー機能です。Runesモードでは、コンポーネント変数が変更されると自動的に再レンダリングされるため、この要素は不要になりました。
-:::
+<Admonition type="warning" title="Svelte 5での変更">
+`&lt;svelte:component&gt;`はSvelte 5のRunesモードではレガシー機能です。Runesモードでは、コンポーネント変数が変更されると自動的に再レンダリングされるため、この要素は不要になりました。
+</Admonition>
 
 #### Svelte 5での推奨方法
 
@@ -617,7 +627,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   import ComponentB from './ComponentB.svelte';
   import ComponentC from './ComponentC.svelte';
   import type { ComponentType } from 'svelte';
-  
+
   let currentComponent = $state<ComponentType>(ComponentA);
   let componentProps = $state({ message: 'Hello!' });
 </script>
@@ -631,7 +641,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 #### レガシーモードでの使用（互換性のため）
 
-`<svelte:component>`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
+`&lt;svelte:component&gt;`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
 
 ```svelte
 <script lang="ts">
@@ -639,10 +649,10 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   import ComponentB from './ComponentB.svelte';
   import ComponentC from './ComponentC.svelte';
   import type { ComponentType } from 'svelte';
-  
+
   let selectedComponent = $state<ComponentType>(ComponentA);
   let componentProps = $state({ message: 'Hello!' });
-  
+
   const components = [
     { name: 'Component A', component: ComponentA },
     { name: 'Component B', component: ComponentB },
@@ -669,9 +679,9 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `svelte:self` - 再帰的コンポーネント（レガシー）
 
-:::warning[Svelte 5での変更]
-`<svelte:self>`はSvelte 5でレガシー機能となりました。代わりにコンポーネント自体をimportして使用することが推奨されています。
-:::
+<Admonition type="warning" title="Svelte 5での変更">
+`&lt;svelte:self&gt;`はSvelte 5でレガシー機能となりました。代わりにコンポーネント自体をimportして使用することが推奨されています。
+</Admonition>
 
 #### Svelte 5での推奨方法
 
@@ -679,12 +689,12 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 <!-- TreeNode.svelte -->
 <script lang="ts">
   import TreeNode from './TreeNode.svelte'; // 自分自身をimport
-  
+
   type TreeNodeData = {
     name: string;
     children?: TreeNodeData[];
   };
-  
+
   let { node }: { node: TreeNodeData } = $props();
   let expanded = $state(false);
 </script>
@@ -693,13 +703,13 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   <button onclick={() => expanded = !expanded}>
     {expanded ? '▼' : '▶'} {node.name}
   </button>
-  
+
   {#if expanded && node.children}
     <ul>
       {#each node.children as child}
         <li>
           <!-- 自分自身を直接使用 -->
-          <TreeNode node={child} />
+          <TreeNode node=&#123;child&#125; />
         </li>
       {/each}
     </ul>
@@ -709,7 +719,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 #### レガシーモードでの使用（互換性のため）
 
-`<svelte:self>`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
+`&lt;svelte:self&gt;`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
 
 ```svelte
 <!-- TreeNode.svelte -->
@@ -718,13 +728,13 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     name: string;
     children?: TreeNode[];
   };
-  
+
   let { node }: { node: TreeNode } = $props();
   let expanded = $state(false);
 </script>
 
 <div class="tree-node">
-  <button 
+  <button
     class="toggle-btn"
     onclick={() => expanded = !expanded}
     disabled={!node.children?.length}
@@ -736,13 +746,13 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     {/if}
     {node.name}
   </button>
-  
+
   {#if expanded && node.children}
     <ul class="children">
       {#each node.children as child}
         <li>
           <!-- 自分自身を再帰的にレンダリング -->
-          <svelte:self node={child} />
+          <svelte:self node=&#123;child&#125; />
         </li>
       {/each}
     </ul>
@@ -772,23 +782,27 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 Svelteの特別な要素は、通常のHTML要素では実現できない高度な機能を提供します。
 
 **現在推奨される要素：**
-- **動的制御**: `<svelte:element>`
-- **グローバルイベント**: `<svelte:window>`、`<svelte:body>`、`<svelte:document>`
-- **メタ情報**: `<svelte:head>`
-- **エラー処理**: `<svelte:boundary>`
-- **設定**: `<svelte:options>`
+
+- **動的制御**: `&lt;svelte:element&gt;`
+- **グローバルイベント**: `&lt;svelte:window&gt;`、`&lt;svelte:body&gt;`、`&lt;svelte:document&gt;`
+- **メタ情報**: `&lt;svelte:head&gt;`
+- **エラー処理**: `&lt;svelte:boundary&gt;`
+- **設定**: `&lt;svelte:options&gt;`
 
 **レガシー要素（Svelte 5では代替方法を推奨）：**
-- **`<svelte:component>`**: コンポーネント変数で自動再レンダリング
-- **`<svelte:fragment>`**: Snippetsは自動的にラッパー要素を作らない
-- **`<svelte:self>`**: コンポーネント自体をimportして使用
+
+- **`&lt;svelte:component&gt;`**: コンポーネント変数で自動再レンダリング
+- **`&lt;svelte:fragment&gt;`**: Snippetsは自動的にラッパー要素を作らない
+- **`&lt;svelte:self&gt;`**: コンポーネント自体をimportして使用
 
 これらの要素を適切に使用することで、より柔軟で堅牢なアプリケーションを構築できます。
 
-:::info[関連リンク]
-- [テンプレート構文](/svelte/basics/template-syntax/) - 基本的なテンプレート機能
-- [コンポーネントの基本](/svelte/basics/component-basics/) - コンポーネントの基礎
-- [コンポーネントライフサイクル](/svelte/basics/component-lifecycle/) - ライフサイクルイベント
-:::
+<Admonition type="info" title="関連リンク">
+<ul>
+<li><a href="{base}/svelte/basics/template-syntax/">テンプレート構文</a> - 基本的なテンプレート機能</li>
+<li><a href="{base}/svelte/basics/component-basics/">コンポーネントの基本</a> - コンポーネントの基礎</li>
+<li><a href="{base}/svelte/basics/component-lifecycle/">コンポーネントライフサイクル</a> - ライフサイクルイベント</li>
+</ul>
 
+</Admonition>
 次は[コンポーネントライフサイクル](/svelte/basics/component-lifecycle/)で、コンポーネントの生成から破棄までの流れについて学びましょう。

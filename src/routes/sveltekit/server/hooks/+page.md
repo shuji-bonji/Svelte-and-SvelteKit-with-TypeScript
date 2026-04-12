@@ -4,6 +4,8 @@ description: SvelteKitのHooksシステムを完全理解 - handle、handleFetch
 ---
 
 <script>
+	import { base } from '$app/paths';
+	import Admonition from '$lib/components/Admonition.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const hooksFlowChart = `graph LR
@@ -124,11 +126,11 @@ Hooksは、すべてのリクエストが通過するミドルウェアのよう
 
 <Mermaid chart={hooksFlowChart} />
 
-| Hook | 役割 | 実行タイミング |
-|------|------|------------|
-| **handle** | リクエスト/レスポンスの処理 | すべてのリクエスト |
-| **handleFetch** | fetch関数のカスタマイズ | サーバーサイドfetch時 |
-| **handleError** | エラー処理 | 未処理エラー発生時 |
+| Hook                      | 役割                                     | 実行タイミング           |
+| ------------------------- | ---------------------------------------- | ------------------------ |
+| **handle**                | リクエスト/レスポンスの処理              | すべてのリクエスト       |
+| **handleFetch**           | fetch関数のカスタマイズ                  | サーバーサイドfetch時    |
+| **handleError**           | エラー処理                               | 未処理エラー発生時       |
 | **handleValidationError** | Remote Functionsバリデーションエラー処理 | 引数バリデーション失敗時 |
 
 これらのHooksを適切に組み合わせることで、認証、ロギング、セキュリティヘッダー、国際化など、アプリケーション全体に影響する機能を効率的に実装できます。
@@ -171,11 +173,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 <Mermaid chart={handleAuthFlow} />
 
-:::info[実践例]
+<Admonition type="info" title="実践例">
 Hooksを使用した認証実装の完全なコード例は以下で確認できます。
-- **[Cookie/Session認証](/examples/auth-cookie-session/)** - hooks.server.tsでの認証実装
-- **[セッション管理と認証戦略](/sveltekit/application/session/)** - 認証戦略の詳細
-:::
+<ul>
+<li><strong><a href="{base}/examples/auth-cookie-session/">Cookie/Session認証</a></strong> - hooks.server.tsでの認証実装</li>
+<li><strong><a href="{base}/sveltekit/application/session/">セッション管理と認証戦略</a></strong> - 認証戦略の詳細</li>
+</ul>
+
+</Admonition>
 
 #### 実装コード
 
@@ -194,7 +199,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       // セッションの検証
       const session = await db.session.findUnique({
         where: { id: sessionId },
-        include: { user: true }
+        include: { user: true },
       });
 
       if (session && session.expiresAt > new Date()) {
@@ -216,7 +221,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET!) as any;
       const user = await db.user.findUnique({
-        where: { id: payload.userId }
+        where: { id: payload.userId },
       });
       if (user) {
         event.locals.user = user;
@@ -264,7 +269,9 @@ const logging: Handle = async ({ event, resolve }) => {
   const start = performance.now();
 
   // リクエストログ
-  console.log(`[${new Date().toISOString()}] ${event.request.method} ${event.url.pathname}`);
+  console.log(
+    `[${new Date().toISOString()}] ${event.request.method} ${event.url.pathname}`,
+  );
 
   const response = await resolve(event);
 
@@ -288,7 +295,7 @@ const security: Handle = async ({ event, resolve }) => {
   if (!event.url.pathname.startsWith('/admin')) {
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
     );
   }
 
@@ -324,10 +331,7 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
   if (request.url.startsWith('http://localhost:5173/api/')) {
     // HTTPリクエストをスキップして直接関数を呼び出す
     const url = new URL(request.url);
-    request = new Request(
-      url.origin + url.pathname + url.search,
-      request
-    );
+    request = new Request(url.origin + url.pathname + url.search, request);
   }
 
   // 外部APIへの認証ヘッダー追加
@@ -335,8 +339,8 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
     request = new Request(request, {
       headers: {
         ...Object.fromEntries(request.headers),
-        'Authorization': `Bearer ${process.env.EXTERNAL_API_KEY}`
-      }
+        Authorization: `Bearer ${process.env.EXTERNAL_API_KEY}`,
+      },
     });
   }
 
@@ -363,9 +367,9 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
     request = new Request(githubUrl, {
       headers: {
         ...Object.fromEntries(request.headers),
-        'Authorization': `token ${process.env.GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
     });
   }
 
@@ -380,7 +384,7 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
         const delay = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * (i + 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         continue;
       }
 
@@ -388,7 +392,7 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
     } catch (error) {
       lastError = error;
       // ネットワークエラーの場合はリトライ
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
     }
   }
 
@@ -417,7 +421,12 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
 import type { HandleServerError } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 
-export const handleError: HandleServerError = async ({ error, event, status, message }) => {
+export const handleError: HandleServerError = async ({
+  error,
+  event,
+  status,
+  message,
+}) => {
   // エラーID生成
   const errorId = crypto.randomUUID();
 
@@ -431,11 +440,14 @@ export const handleError: HandleServerError = async ({ error, event, status, mes
     method: event.request.method,
     userAgent: event.request.headers.get('user-agent'),
     userId: event.locals.user?.id,
-    error: error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    } : error
+    error:
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+        : error,
   };
 
   // コンソールにログ出力
@@ -451,7 +463,7 @@ export const handleError: HandleServerError = async ({ error, event, status, mes
   return {
     message: dev ? message : 'Internal Server Error',
     errorId,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 };
 
@@ -463,9 +475,9 @@ async function sendErrorNotification(errorLog: any) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `DSN ${process.env.SENTRY_DSN}`
+        Authorization: `DSN ${process.env.SENTRY_DSN}`,
       },
-      body: JSON.stringify(errorLog)
+      body: JSON.stringify(errorLog),
     });
   } catch (e) {
     console.error('エラー通知の送信に失敗:', e);
@@ -476,7 +488,7 @@ async function sendErrorNotification(errorLog: any) {
 async function logToDatabase(errorLog: any) {
   try {
     await db.errorLog.create({
-      data: errorLog
+      data: errorLog,
     });
   } catch (e) {
     console.error('エラーログの保存に失敗:', e);
@@ -494,24 +506,28 @@ async function logToDatabase(errorLog: any) {
 // src/hooks.server.ts
 import type { HandleValidationError } from '@sveltejs/kit';
 
-export const handleValidationError: HandleValidationError = ({ event, issues }) => {
+export const handleValidationError: HandleValidationError = ({
+  event,
+  issues,
+}) => {
   // issuesにはStandard Schemaのバリデーションエラー情報が含まれる
   console.warn('バリデーションエラー:', {
     path: event.url.pathname,
     ip: event.getClientAddress(),
-    issues: issues.map(i => i.message)
+    issues: issues.map((i) => i.message),
   });
 
   // App.Error型のオブジェクトを返す
   return {
-    message: '不正なリクエストです'
+    message: '不正なリクエストです',
   };
 };
 ```
 
-:::tip[handleError との違い]
+<Admonition type="tip" title="handleError との違い">
 `handleError` はアプリケーション内の**未処理エラー**（予期しないエラー）を処理します。一方、`handleValidationError` はRemote Functionsへの**バリデーション失敗**（400エラー）を処理します。両者は独立したフックで、それぞれ異なるエラーカテゴリを担当します。
-:::
+
+</Admonition>
 
 ## 実践的な例
 
@@ -536,11 +552,14 @@ const rateLimitHandle: Handle = async ({ event, resolve }) => {
 
   // レート制限の設定（1分間に60リクエストまで）
   if (!limiters.has(ip)) {
-    limiters.set(ip, new RateLimiter({
-      tokensPerInterval: 60,
-      interval: 'minute',
-      fireImmediately: true
-    }));
+    limiters.set(
+      ip,
+      new RateLimiter({
+        tokensPerInterval: 60,
+        interval: 'minute',
+        fireImmediately: true,
+      }),
+    );
   }
 
   const limiter = limiters.get(ip)!;
@@ -551,8 +570,8 @@ const rateLimitHandle: Handle = async ({ event, resolve }) => {
     return new Response('Too Many Requests', {
       status: 429,
       headers: {
-        'Retry-After': '60'
-      }
+        'Retry-After': '60',
+      },
     });
   }
 
@@ -583,9 +602,10 @@ const i18nHandle: Handle = async ({ event, resolve }) => {
   // 2. Cookie
   // 3. Accept-Languageヘッダー
 
-  let locale = event.url.searchParams.get('lang') ||
-               event.cookies.get('locale') ||
-               parseAcceptLanguage(event.request.headers.get('accept-language'));
+  let locale =
+    event.url.searchParams.get('lang') ||
+    event.cookies.get('locale') ||
+    parseAcceptLanguage(event.request.headers.get('accept-language'));
 
   // サポートされている言語
   const supportedLocales = ['ja', 'en', 'zh'];
@@ -607,11 +627,14 @@ const i18nHandle: Handle = async ({ event, resolve }) => {
     transformPageChunk: ({ html }) => {
       // HTMLのlang属性を設定
       return html.replace('<html', `<html lang="${locale}"`);
-    }
+    },
   });
 
   // 言語設定をCookieに保存
-  response.headers.set('Set-Cookie', `locale=${locale}; Path=/; Max-Age=31536000`);
+  response.headers.set(
+    'Set-Cookie',
+    `locale=${locale}; Path=/; Max-Age=31536000`,
+  );
 
   return response;
 };
@@ -619,7 +642,7 @@ const i18nHandle: Handle = async ({ event, resolve }) => {
 function parseAcceptLanguage(header: string | null): string {
   if (!header) return 'ja';
 
-  const languages = header.split(',').map(lang => {
+  const languages = header.split(',').map((lang) => {
     const [locale, q = '1'] = lang.trim().split(';q=');
     return { locale: locale.split('-')[0], quality: parseFloat(q) };
   });
@@ -656,16 +679,19 @@ const maintenanceHandle: Handle = async ({ event, resolve }) => {
 
     if (!isAdmin && !isStaticFile) {
       if (isApi) {
-        return new Response(JSON.stringify({
-          error: 'Service Unavailable',
-          message: 'メンテナンス中です'
-        }), {
-          status: 503,
-          headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': '3600'
-          }
-        });
+        return new Response(
+          JSON.stringify({
+            error: 'Service Unavailable',
+            message: 'メンテナンス中です',
+          }),
+          {
+            status: 503,
+            headers: {
+              'Content-Type': 'application/json',
+              'Retry-After': '3600',
+            },
+          },
+        );
       }
 
       // メンテナンスページを表示
@@ -673,8 +699,8 @@ const maintenanceHandle: Handle = async ({ event, resolve }) => {
         status: 503,
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
-          'Retry-After': '3600'
-        }
+          'Retry-After': '3600',
+        },
       });
     }
   }
@@ -807,7 +833,7 @@ const tracingHandle: Handle = async ({ event, resolve }) => {
         };
       }
       return value;
-    }
+    },
   });
 
   const response = await resolve(event);

@@ -3,9 +3,12 @@ title: 認証・認可
 description: SvelteKitでの認証・認可システム実装。セッション管理、JWT、OAuth連携、ロールベースアクセス制御をTypeScriptで解説
 ---
 
-:::warning[準備中]
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+<Admonition type="warning" title="準備中">
 このページは現在作成中です。基本的な概要と予定コンテンツを掲載しています。
-:::
+</Admonition>
 
 ## 概要
 

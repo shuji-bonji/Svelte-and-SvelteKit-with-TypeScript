@@ -1,562 +1,312 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
 	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { icons } from './icons';
 
-	let searchContainer = $state<HTMLDivElement>();
-	let isOpen = $state(false);
-	let pagefindUI: any;
-	let pagefindLoaded = false;
-	let loadingError = $state<string | null>(null);
+	let open = $state(false);
+	let query = $state('');
+	let results = $state<Array<{ url: string; title: string; excerpt: string }>>([]);
+	let selectedIndex = $state(0);
+	let inputEl: HTMLInputElement | undefined = $state();
+	let pagefind: any = $state(null);
 
-	async function loadPagefindUI() {
-		if (pagefindLoaded || typeof window === 'undefined') return;
+	let pagefindUnavailable = $state(false);
 
-		console.log('Loading Pagefind UI...');
-		console.log('Base path:', base);
-		
+	async function initPagefind() {
+		if (pagefind || pagefindUnavailable) return;
 		try {
-			// Pagefind UIのCSSを読み込み
-			const cssPath = `${base}/pagefind/pagefind-ui.css`;
-			console.log('Loading CSS from:', cssPath);
-			
-			if (!document.querySelector(`link[href="${cssPath}"]`)) {
-				const link = document.createElement('link');
-				link.rel = 'stylesheet';
-				link.href = cssPath;
-				document.head.appendChild(link);
+			// pagefind-entry.json で存在チェック（devモードではpagefindが存在しない）
+			// Vite devサーバーはJSに200を返すが、JSONは実在しなければ404になる
+			const metaCheck = await fetch(`${base}/pagefind/pagefind-entry.json`, { method: 'HEAD' });
+			if (!metaCheck.ok) {
+				pagefindUnavailable = true;
+				return;
 			}
 
-			// Pagefind UIのJSを動的に読み込み
-			const jsPath = `${base}/pagefind/pagefind-ui.js`;
-			console.log('Loading JS from:', jsPath);
-			
-			if (!(window as any).PagefindUI) {
-				const script = document.createElement('script');
-				script.src = jsPath;
-				await new Promise((resolve, reject) => {
-					script.onload = () => {
-						console.log('Pagefind script loaded successfully');
-						resolve(true);
-					};
-					script.onerror = (error) => {
-						console.error('Failed to load Pagefind script:', error);
-						reject(error);
-					};
-					document.head.appendChild(script);
-				});
-			}
-
-			pagefindLoaded = true;
-			console.log('Pagefind loaded, PagefindUI available:', !!(window as any).PagefindUI);
-		} catch (error) {
-			console.error('Failed to load Pagefind:', error);
-			loadingError = 'Pagefindの読み込みに失敗しました。ページをリロードしてください。';
+			const module = await import(/* @vite-ignore */ `${base}/pagefind/pagefind.js`);
+			pagefind = module?.search ? module : module?.default;
+			await pagefind?.init?.();
+		} catch {
+			pagefindUnavailable = true;
 		}
 	}
 
-	async function initializePagefind() {
-		if (!searchContainer || pagefindUI) {
-			console.log('Skip initialization - container:', !!searchContainer, 'UI:', !!pagefindUI);
+	async function search(q: string) {
+		if (!q.trim() || !pagefind) {
+			results = [];
 			return;
 		}
+		const searchResult = await pagefind.search(q);
+		const items = await Promise.all(
+			searchResult.results.slice(0, 8).map(async (r: any) => {
+				const data = await r.data();
+				return {
+					url: data.url,
+					title: data.meta?.title ?? data.url,
+					excerpt: data.excerpt ?? ''
+				};
+			})
+		);
+		results = items;
+		selectedIndex = 0;
+	}
 
-		console.log('Initializing Pagefind UI...');
-		
-		// Pagefind UIを読み込み
-		await loadPagefindUI();
+	function openSearch() {
+		open = true;
+		initPagefind();
+		// 次のフレームでinputにフォーカス
+		requestAnimationFrame(() => inputEl?.focus());
+	}
 
-		// PagefindUIがグローバルで利用可能になったら初期化
-		if ((window as any).PagefindUI) {
-			const PagefindUI = (window as any).PagefindUI;
-			console.log('Creating PagefindUI instance...');
-			
-			try {
-				pagefindUI = new PagefindUI({
-					element: searchContainer,
-					baseUrl: base + '/',
-					bundlePath: base + '/pagefind/',
-					showSubResults: true,
-					showImages: false,
-					translations: {
-						placeholder: 'サイト内を検索...',
-						zero_results: '「[SEARCH_TERM]」の検索結果が見つかりませんでした',
-						many_results: '[COUNT]件の検索結果が見つかりました',
-						clear_search: '検索をクリア'
-					},
-					processResult: (result: any) => {
-						if (result.url) {
-							// .html拡張子を削除
-							let url = result.url;
-							if (url.endsWith('.html')) {
-								url = url.slice(0, -5);
-							}
-							// index.htmlの場合は/にする
-							if (url.endsWith('/index')) {
-								url = url.slice(0, -6) || '/';
-							}
-							// ベースパスを追加
-							if (!url.startsWith(base)) {
-								url = base + url;
-							}
-							result.url = url;
-						}
-						return result;
-					}
-				});
-				console.log('PagefindUI initialized successfully');
-				
-				// 検索結果のリンククリック処理を追加
-				setTimeout(() => {
-					const handleResultClick = (e: Event) => {
-						const target = e.target as HTMLElement;
-						if (target.classList.contains('pagefind-ui__result-link')) {
-							e.preventDefault();
-							let href = target.getAttribute('href');
-							if (href) {
-								// .html拡張子を削除
-								if (href.endsWith('.html')) {
-									href = href.slice(0, -5);
-								}
-								// index.htmlの場合は/にする
-								if (href.endsWith('/index')) {
-									href = href.slice(0, -6) || '/';
-								}
-								// 末尾にスラッシュを追加（ルートページ以外）
-								if (!href.endsWith('/') && href !== '/') {
-									href = href + '/';
-								}
-								// ベースパスを考慮したURLに遷移
-								const fullUrl = href.startsWith(base) ? href : base + href;
-								window.location.href = fullUrl;
-								// モーダルを閉じる
-								toggleSearch();
-							}
-						}
-					};
-					
-					searchContainer?.addEventListener('click', handleResultClick);
-				}, 100);
-			} catch (error) {
-				console.error('Failed to initialize Pagefind UI:', error);
-				loadingError = 'Pagefind UIの初期化に失敗しました。';
-			}
-		} else {
-			console.error('PagefindUI is not available on window');
-			loadingError = 'Pagefind UIが利用できません。ビルド済みのサイトで実行してください。';
+	function closeSearch() {
+		open = false;
+		query = '';
+		results = [];
+	}
+
+	function navigate(url: string) {
+		closeSearch();
+		goto(url);
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			selectedIndex = Math.max(selectedIndex - 1, 0);
+		} else if (e.key === 'Enter' && results[selectedIndex]) {
+			e.preventDefault();
+			navigate(results[selectedIndex].url);
+		} else if (e.key === 'Escape') {
+			closeSearch();
 		}
 	}
 
-	export async function openSearch() {
-		isOpen = true;
-		loadingError = null;
-		// DOMの更新を待つ
-		await tick();
-		// Pagefind UIを初期化
-		await initializePagefind();
-		// フォーカスを設定
-		setTimeout(() => {
-			const input = searchContainer?.querySelector('input');
-			if (input) {
-				input.focus();
-				console.log('Input focused');
-			} else {
-				console.log('Input element not found');
-			}
-		}, 200);
-	}
-
-	async function toggleSearch() {
-		isOpen = !isOpen;
-		if (isOpen) {
-			await openSearch();
-		} else {
-			// モーダルを閉じる時にクリーンアップ
-			if (pagefindUI) {
-				pagefindUI.destroy?.();
-				pagefindUI = null;
-			}
+	// グローバルショートカット: Ctrl+K / Cmd+K
+	function handleGlobalKeydown(e: KeyboardEvent) {
+		if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+			e.preventDefault();
+			if (open) closeSearch();
+			else openSearch();
 		}
 	}
 
-	function handleKeydown(event: KeyboardEvent) {
-		// Cmd/Ctrl + K で検索を開く
-		if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-			event.preventDefault();
-			toggleSearch();
-		}
-		// ESCで検索を閉じる
-		if (event.key === 'Escape' && isOpen) {
-			isOpen = false;
-			if (pagefindUI) {
-				pagefindUI.destroy?.();
-				pagefindUI = null;
-			}
-		}
-	}
-
-	// グローバルイベントリスナーの初回登録のためonMountを使用
-	// $effectではbaseの変更などで再実行されるため不適切
-	onMount(() => {
-		document.addEventListener('keydown', handleKeydown);
-
-		// デバッグ情報
-		console.log('Search component mounted');
-		console.log('Current URL:', window.location.href);
-		console.log('Base path:', base);
-
-		return () => {
-			document.removeEventListener('keydown', handleKeydown);
-			if (pagefindUI) {
-				pagefindUI.destroy?.();
-			}
-		};
+	// queryの変更を監視して検索実行
+	$effect(() => {
+		search(query);
 	});
 </script>
 
+<svelte:window onkeydown={handleGlobalKeydown} />
+
+<!-- 検索ボタン -->
+<button class="search-trigger" onclick={openSearch} aria-label="検索">
+	{@html icons.search}
+	<span class="search-shortcut">
+		<kbd>⌘</kbd><kbd>K</kbd>
+	</span>
+</button>
+
 <!-- 検索モーダル -->
-{#if isOpen}
-	<div class="search-modal" onclick={toggleSearch} onkeydown={(e) => e.key === 'Escape' && toggleSearch()} role="button" tabindex="-1" aria-label="モーダルを閉じる">
-		<div class="search-modal-content" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.key === 'Escape' && e.stopPropagation()} role="dialog" aria-modal="true" tabindex="0">
-			<div class="search-header">
-				<h2>サイト内検索</h2>
-				<button onclick={toggleSearch} class="close-button" aria-label="閉じる">
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<line x1="18" y1="6" x2="6" y2="18"></line>
-						<line x1="6" y1="6" x2="18" y2="18"></line>
-					</svg>
+{#if open}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="search-overlay" onclick={closeSearch} onkeydown={() => {}}>
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="search-modal" onclick={(e) => e.stopPropagation()} onkeydown={() => {}}>
+			<div class="search-input-wrapper">
+				{@html icons.search}
+				<input
+					bind:this={inputEl}
+					bind:value={query}
+					onkeydown={handleKeydown}
+					type="text"
+					placeholder="ドキュメントを検索..."
+					class="search-input"
+					spellcheck="false"
+				/>
+				<button class="search-close" onclick={closeSearch}>
+					<kbd>Esc</kbd>
 				</button>
 			</div>
-			<div bind:this={searchContainer} class="pagefind-container">
-				{#if loadingError}
-					<div class="error-message">
-						<p>{loadingError}</p>
-						<p class="error-note">注意: 検索機能は本番ビルド（npm run build）後のみ動作します。</p>
-					</div>
-				{/if}
-			</div>
+
+			{#if results.length > 0}
+				<ul class="search-results">
+					{#each results as result, i}
+						<li>
+							<button
+								class="search-result"
+								class:selected={i === selectedIndex}
+								onclick={() => navigate(result.url)}
+								onmouseenter={() => { selectedIndex = i; }}
+							>
+								<span class="result-title">{result.title}</span>
+								<span class="result-excerpt">{@html result.excerpt}</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{:else if query.trim()}
+				<div class="search-empty">該当する結果がありません</div>
+			{/if}
 		</div>
 	</div>
 {/if}
 
 <style>
-	.search-modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		backdrop-filter: blur(4px);
-		display: flex;
-		align-items: flex-start;
-		justify-content: center;
-		padding-top: 10vh;
-		z-index: 9999;
-		animation: fadeIn 0.2s ease;
-		cursor: default;
-	}
-
-	.search-modal-content {
-		background: var(--sp-c-bg, white);
-		border-radius: 12px;
-		width: 90%;
-		max-width: 700px;
-		max-height: 70vh;
-		overflow: hidden;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-		animation: slideUp 0.2s ease;
-	}
-
-	.search-header {
+	.search-trigger {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		padding: 1rem 1.5rem;
-		border-bottom: 1px solid var(--sp-c-divider-light, #e5e5e5);
-	}
-
-	.search-header h2 {
-		margin: 0;
-		font-size: 1.125rem;
-		font-weight: 600;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #feca57 75%, #48c6ef 100%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 200% 200%;
-		animation: gradient-animation 3s ease infinite;
-	}
-
-	.close-button {
-		background: none;
-		border: none;
+		gap: 0.5rem;
+		padding: 0.375rem 0.625rem;
+		background: var(--color-bg-secondary);
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		color: var(--color-text-muted);
 		cursor: pointer;
-		padding: 0.25rem;
-		color: var(--sp-c-text-3, #8e8e93);
-		transition: color 0.2s;
+		font-size: 0.8125rem;
+		transition: border-color 0.15s, color 0.15s;
 	}
 
-	.close-button:hover {
-		color: var(--sp-c-text-1, #1a1a1e);
+	.search-trigger:hover {
+		border-color: var(--color-text-muted);
+		color: var(--color-text);
 	}
 
-	.pagefind-container {
-		padding: 1rem;
-		max-height: calc(70vh - 4rem);
-		overflow-y: auto;
-		min-height: 200px;
-		position: relative;
+	.search-shortcut {
+		display: flex;
+		gap: 0.125rem;
 	}
 
-	.error-message {
-		padding: 2rem;
-		text-align: center;
-		color: var(--sp-c-text-2, #3c3c43);
-	}
-
-	.error-message p {
-		margin: 0.5rem 0;
-	}
-
-	.error-note {
-		font-size: 0.875rem;
-		color: var(--sp-c-text-3, #8e8e93);
-		margin-top: 1rem !important;
-	}
-
-	/* Pagefind UIのスタイル調整 */
-	:global(.pagefind-ui) {
+	.search-shortcut kbd {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 1.25rem;
+		height: 1.25rem;
+		padding: 0 0.25rem;
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		font-size: 0.6875rem;
 		font-family: inherit;
 	}
 
-	/* 検索フォームのレイアウト修正 */
-	:global(.pagefind-ui__form) {
-		position: relative !important;
+	.search-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding-top: 15vh;
 	}
 
-	:global(.pagefind-ui__search-input) {
-		font-size: 16px !important;
-		padding: 0.75rem !important;
-		padding-left: 2.5rem !important; /* 検索アイコンのスペース */
-		padding-right: 2.5rem !important; /* クリアボタンのスペース */
-		border-radius: 8px !important;
-		border: 1px solid var(--sp-c-divider-light, #e5e5e5) !important;
-		background-color: var(--sp-c-bg, white) !important;
-		color: var(--sp-c-text-1, #1a1a1e) !important;
-		width: 100% !important;
+	.search-modal {
+		width: min(36rem, 90vw);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		overflow: hidden;
 	}
 
-	/* Pagefindのクリアボタンを入力フィールド内に配置 */
-	:global(.pagefind-ui__search-clear) {
-		position: absolute !important;
-		right: 10px !important;
-		top: 12px !important; /* 入力フィールドの中央付近に固定配置 */
-		background: transparent !important;
-		border: none !important;
-		padding: 4px !important;
-		margin: 0 !important;
-		width: 24px !important;
-		height: 24px !important;
-		display: flex !important;
-		align-items: center !important;
-		justify-content: center !important;
-		cursor: pointer !important;
-		opacity: 0.6 !important;
-		transition: opacity 0.2s ease !important;
-		z-index: 10 !important;
-		font-size: 0 !important; /* テキストを隠す */
+	.search-input-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.875rem 1rem;
+		border-bottom: 1px solid var(--color-border);
+		color: var(--color-text-muted);
 	}
 
-	:global(.pagefind-ui__search-clear::before) {
-		content: '×' !important;
-		font-size: 20px !important;
-		color: var(--sp-c-text-2, #3c3c43) !important;
-		font-weight: bold !important;
-		line-height: 1 !important;
+	.search-input {
+		flex: 1;
+		background: none;
+		border: none;
+		outline: none;
+		font-size: 1rem;
+		color: var(--color-text);
 	}
 
-	:global(.pagefind-ui__search-clear:hover) {
-		opacity: 1 !important;
+	.search-input::placeholder {
+		color: var(--color-text-muted);
 	}
 
-	:global(.pagefind-ui__search-input:focus) {
-		outline: none !important;
-		border-color: var(--sp-c-brand, #42b883) !important;
-		box-shadow: 0 0 0 3px rgba(66, 184, 131, 0.1) !important;
+	.search-close kbd {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.125rem 0.375rem;
+		background: var(--color-bg-secondary);
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		font-size: 0.6875rem;
+		font-family: inherit;
+		color: var(--color-text-muted);
+		cursor: pointer;
 	}
 
-	:global(.pagefind-ui__result) {
-		border: 1px solid var(--sp-c-divider-light, #e5e5e5) !important;
-		border-radius: 8px !important;
-		padding: 1rem !important;
-		margin-bottom: 0.75rem !important;
+	.search-results {
+		list-style: none;
+		padding: 0.5rem;
+		margin: 0;
+		max-height: 50vh;
+		overflow-y: auto;
 	}
 
-	:global(.pagefind-ui__result-link) {
-		color: var(--sp-c-brand, #42b883) !important;
-		font-weight: 600 !important;
-		text-decoration: none !important;
-		cursor: pointer !important;
+	.search-result {
+		display: block;
+		width: 100%;
+		text-align: left;
+		padding: 0.625rem 0.75rem;
+		border: none;
+		background: none;
+		border-radius: 0.5rem;
+		cursor: pointer;
+		transition: background 0.1s;
 	}
 
-	:global(.pagefind-ui__result-link:hover) {
-		text-decoration: underline !important;
-		color: var(--sp-c-brand-dark, #33a06f) !important;
+	.search-result:hover,
+	.search-result.selected {
+		background: var(--color-bg-secondary);
 	}
 
-	:global(.pagefind-ui__result-excerpt) {
-		color: var(--sp-c-text-2, #3c3c43) !important;
-		line-height: 1.6 !important;
+	.result-title {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-primary);
 	}
 
-	/* 検索結果がない時のメッセージスタイル */
-	:global(.pagefind-ui__message) {
-		padding: 0.5rem !important;
-		text-align: center !important;
-		color: var(--sp-c-text-3, #8e8e93) !important;
-		font-size: 0.875rem !important;
+	.result-excerpt {
+		display: block;
+		font-size: 0.8125rem;
+		color: var(--color-text-muted);
+		margin-top: 0.25rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
-	/* 「次を読み込む」ボタンのスタイル修正 */
-	:global(.pagefind-ui__button) {
-		margin: 1rem 0 2rem 0 !important;
-		padding: 0.75rem 1.5rem !important;
-		background: var(--sp-c-brand, #42b883) !important;
-		color: white !important;
-		border: none !important;
-		border-radius: 8px !important;
-		cursor: pointer !important;
-		font-weight: 500 !important;
-		transition: background 0.2s !important;
+	.result-excerpt :global(mark) {
+		background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+		color: var(--color-text);
+		border-radius: 0.125rem;
+		padding: 0 0.125rem;
 	}
 
-	:global(.pagefind-ui__button:hover) {
-		background: var(--sp-c-brand-dark, #33a06f) !important;
+	.search-empty {
+		padding: 2rem;
+		text-align: center;
+		color: var(--color-text-muted);
+		font-size: 0.875rem;
 	}
 
-	/* 検索結果エリアのパディング調整 */
-	:global(.pagefind-ui__results-area) {
-		padding-bottom: 2rem !important;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-
-	@keyframes slideUp {
-		from {
-			transform: translateY(20px);
-			opacity: 0;
-		}
-		to {
-			transform: translateY(0);
-			opacity: 1;
-		}
-	}
-
-	/* グラデーションアニメーション */
-	@keyframes gradient-animation {
-		0% {
-			background-position: 0% 50%;
-		}
-		50% {
-			background-position: 100% 50%;
-		}
-		100% {
-			background-position: 0% 50%;
-		}
-	}
-
-	/* ダークモード対応 */
-	:global(.dark) .search-modal {
-		background: rgba(0, 0, 0, 0.7);
-	}
-
-	:global(.dark) .search-modal-content {
-		background: #1a1a1a;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-	}
-
-	:global(.dark) .search-header {
-		border-bottom-color: rgba(82, 82, 89, 0.3);
-	}
-
-	:global(.dark) .close-button {
-		color: rgba(142, 142, 147, 0.9);
-	}
-
-	:global(.dark) .close-button:hover {
-		color: rgba(235, 235, 245, 0.9);
-	}
-
-	/* Pagefind UIのダークモード対応 */
-	:global(.dark .pagefind-ui__search-input) {
-		background-color: rgba(30, 30, 32, 0.8) !important;
-		border-color: rgba(82, 82, 89, 0.5) !important;
-		color: rgba(235, 235, 245, 0.9) !important;
-	}
-
-	:global(.dark .pagefind-ui__search-clear::before) {
-		color: rgba(235, 235, 245, 0.6) !important;
-	}
-
-	:global(.dark .pagefind-ui__search-clear:hover::before) {
-		color: rgba(235, 235, 245, 0.9) !important;
-	}
-
-	:global(.dark .pagefind-ui__search-input:focus) {
-		border-color: var(--sp-c-brand, #42b883) !important;
-		box-shadow: 0 0 0 3px rgba(66, 184, 131, 0.2) !important;
-	}
-
-	:global(.dark .pagefind-ui__result) {
-		background: rgba(30, 30, 32, 0.5) !important;
-		border-color: rgba(82, 82, 89, 0.3) !important;
-	}
-
-	:global(.dark .pagefind-ui__result-link) {
-		color: #42b883 !important;
-	}
-
-	:global(.dark .pagefind-ui__result-link:hover) {
-		color: #5ecfa5 !important;
-	}
-
-	:global(.dark .pagefind-ui__result-excerpt) {
-		color: rgba(235, 235, 245, 0.7) !important;
-	}
-
-	:global(.dark .pagefind-ui__message) {
-		color: rgba(235, 235, 245, 0.6) !important;
-	}
-
-	:global(.dark .error-message) {
-		color: rgba(235, 235, 245, 0.7);
-	}
-
-	:global(.dark .error-note) {
-		color: rgba(142, 142, 147, 0.8);
-	}
-
-	/* モバイル対応 */
 	@media (max-width: 768px) {
-		.search-modal-content {
-			width: 95%;
-			margin-top: 2rem;
+		.search-shortcut {
+			display: none;
 		}
 	}
 </style>

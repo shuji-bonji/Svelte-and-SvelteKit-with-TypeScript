@@ -2,6 +2,104 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-17] - Svelte公式Playground embed統合・LiveCode刷新
+
+### 変更（LiveCodeの実装方式刷新）
+- **LiveCodes → svelte.dev公式Playground embed iframe 移行**: サードパーティ依存（`livecodes@0.13.0`）を廃止し、[svelte.dev/playground/[id]/embed](https://svelte.dev/playground) の公式埋め込みに全面刷新
+- **URLハッシュ方式**: Svelte公式Playgroundと同じ `gzip + base64url` 圧縮方式（`CompressionStream`）でコード→URLハッシュを生成（ブラウザ側で完結）
+- **デフォルトを`outputOnly=true`に変更**: Playgroundでは「コードに戻る」機能があるため、初期表示はResult全画面の方が学習体験として最適
+
+### 追加
+- **`src/lib/utils/playground-url.ts`**: コードからPlayground互換URLハッシュを生成するユーティリティ（新規）
+- **`svelte.config.js` mdsvex highlighter拡張**: コードブロックのmeta（` ```svelte live console ` 等）を解析し、`console`キーワードでブロック単位の`outputOnly={false}`を切り替え
+- **`LiveCode.svelte` 全面書き換え**: iframe埋め込み、`outputOnly`、`version`、`sandbox` 属性、JSDocコメント整備
+
+### 更新（14ファイル・14ブロックに `console` メタ付与）
+Consoleログを使用する実行可能コード例を対象に、ブロック単位で`live console`に変更しConsoleパネルを表示：
+
+- `svelte/basics/component-lifecycle/+page.md`（3ブロック）
+- `svelte/basics/component-basics/+page.md`（1ブロック）
+- `svelte/basics/actions/+page.md`（1ブロック）
+- `svelte/basics/special-elements/+page.md`（1ブロック）
+- `svelte/basics/typescript-integration/+page.md`（1ブロック）
+- `svelte/runes/state/+page.md`（1ブロック）
+- `svelte/runes/effect/+page.md`（4ブロック）
+- `svelte/runes/inspect/+page.md`（1ブロック）
+- `svelte/runes/runes-introduction/+page.md`（1ブロック）
+
+### 修正
+- **`component-basics/+page.md` postMessage エラー修正**: `console.log('...', event)` でMouseEvent全体を渡すとPlayground iframeへの`postMessage`時に「Message could not be cloned」が発生。プリミティブ値（`type`、`clientX`、`clientY`）に分解するパターンに修正
+- **`runes/state/+page.md` プリミティブboolean demoのUX改善**: チェックボックスでtrue/false切り替え時に視覚的な変化が無かったため、`{#if isActive}`で✅有効状態/⛔無効状態のステータスパネルを追加
+
+### 削除
+- **`package.json`から`livecodes`依存削除**: `livecodes@0.13.0`の削除、および関連するランタイム初期化コードの除去
+
+### 技術的詳細
+- **embed のサポート済みパラメータ**: svelte.dev公式embedは `version` と `output-only` のみサポート（editor表示のON/OFFは存在せず、`output-only`時はViewer.svelteで`{#if !onLog}`によりConsoleも非表示になる）
+- **per-blockオプトインの採用理由**: Consoleが必要なのは全52ライブブロック中14ブロックのみ。デフォルトはResult全画面（最適UX）とし、Consoleが必要な箇所のみ ` ```svelte live console ` でオプトイン
+- **postMessage制約**: DOM Events（MouseEvent/KeyboardEvent等）は構造化クローンアルゴリズムでコピーできないため、Playground内から親へログを送る場合はプリミティブ値への分解が必須
+
+## [2026-04-13] - SveltePress廃止・SvelteKit + mdsvex基盤への全面移行
+
+長年使用してきたSveltePressを廃止し、SvelteKit + mdsvex + Shiki + Tailwind CSS v4 による独自ドキュメント基盤に全面刷新。レンダリング、テーマ、ナビゲーション、検索、コードハイライトを自前のコンポーネントで構築することで、Svelte 5への追従性とカスタマイズ性を大幅に向上。
+
+### 削除（SveltePress関連依存・実装）
+- **`@sveltepress/theme-default`、`@sveltepress/vite` 依存を削除**
+- **`src/lib/components/CustomNavbar.svelte`** — SveltePress用カスタムナビゲーション（306行）を削除
+- **`src/styles/theme.css`** — SveltePressテーマスタイル（199行）を削除
+- **`vite.config.ts`** — SveltePressプラグイン統合設定（87行）を削除し、`vite.config.js` にスリム化
+- **`src/routes/+page.md`** — SveltePress形式のホームページmdを削除（`+page.svelte` に置き換え）
+
+### 追加（新ドキュメント基盤）
+- **mdsvex + Shiki 統合** (`svelte.config.js`): Markdown + Svelte の前処理と、コードブロックのShikiハイライト（`github-dark` / `github-light` 対応、14言語サポート）
+- **`rehype-slug` / `rehype-autolink-headings`** — 見出しID自動付与とアンカーリンク
+- **`@tailwindcss/vite` / `@tailwindcss/typography`** (v4.2.2) — ユーティリティCSSと`prose`クラスによる記事スタイル
+- **`svelte-check` (v4.4.6)** — 型チェックコマンド（`pnpm check` / `pnpm check:watch`）
+- **`pagefind` 検索統合更新** — `--force-language ja` で日本語全文検索対応
+
+### 追加（新規コンポーネント・レイアウト）
+- **`src/lib/components/Admonition.svelte`** — `:::note` / `:::tip` / `:::warning` / `:::caution` / `:::info` を描画する強調表示コンポーネント
+- **`src/lib/components/Navbar.svelte`** — ヘッダーナビゲーション（旧CustomNavbarの後継）
+- **`src/lib/components/Sidebar.svelte`** — サイドバー（レスポンシブ対応・開閉制御）
+- **`src/lib/components/TableOfContents.svelte`** — ページ内目次（見出し自動抽出・スクロール追従）
+- **`src/lib/components/LiveCode.svelte`** — 実行可能コード例の表示コンポーネント（初期版、2026-04-17 で Playground embed へ刷新）
+- **`src/lib/components/icons.ts`** — アイコン定義
+- **`src/lib/layouts/DocLayout.svelte`** — ドキュメントページ共通レイアウト
+
+### 追加（ストア・ユーティリティ）
+- **`src/lib/stores/sidebar.svelte.ts`** — サイドバー開閉状態を管理するRunesストア
+- **`src/lib/stores/theme.svelte.ts`** — ダークモード切り替え（`prefers-color-scheme` 自動追従、`localStorage` 永続化）
+- **`src/lib/utils/playground-url.ts`** — svelte.dev Playground互換URLハッシュ生成（gzip + base64url）
+
+### 更新（レイアウト・エントリポイント）
+- **`src/routes/+layout.svelte`** — 新レイアウト基盤へ大幅書き換え（Sidebar/Navbar/TableOfContents統合、ダークモード切り替え、pagefind検索統合）
+- **`src/app.html`** — SveltePress前提から脱却し、Tailwind CSS v4 と新レイアウトに合わせて書き換え
+- **`src/app.css`** — Tailwind CSS v4 ベースのグローバルスタイル（`@theme`、`prose` カスタマイズを含む新規作成、210行）
+- **`src/routes/+page.svelte`** — ホームページを`.md`から`.svelte`に変更し、リッチなランディングページに刷新（237行）
+- **`tsconfig.json`** — SveltePress参照を除去し、SvelteKit + mdsvex 標準構成に統一
+
+### 更新（全コンテンツページ）
+約150のMarkdownページ（`src/routes/**/*/+page.md`）を新基盤に対応。主な調整点：
+- `# {title}` 見出しをfrontmatterに統一（mdsvex + `+layout.svelte` で自動描画）
+- SveltePress独自構文（旧LiveCode、旧Admonition等）を新コンポーネント向けに置換
+- Shikiでのシンタックスハイライト対応のためのコードブロックlang属性明示
+- 一部ページ（`derived-vs-effect-vs-derived-by`、`sveltekit-placeholders`、`blog-system`、`rendering-strategies`、`data-loading/basic` 等）は内容の大規模見直しも同時実施
+
+### 技術スタック変更
+| 項目 | 変更前 | 変更後 |
+|---|---|---|
+| ドキュメント基盤 | `@sveltepress/vite` 1.3.8 / `@sveltepress/theme-default` 7.2.2 | `mdsvex` 0.12.7 + `shiki` 4.0.2 |
+| CSS | SveltePressテーマCSS | `tailwindcss` 4.2.2 + `@tailwindcss/typography` 0.5.19 |
+| Vite設定 | TypeScript (`vite.config.ts`) | JavaScript (`vite.config.js`) |
+| 型チェック | 未導入 | `svelte-check` 4.4.6 |
+| 検索 | `pagefind` | `pagefind --force-language ja` |
+
+### 移行の効果
+- **Svelte 5への追従性向上**: SveltePressのテーマに縛られず、Runes/Snippetsを全コンポーネントで即時採用可能
+- **ビルド・プレビューの高速化**: SveltePressの内部レイヤーが消え、素のSvelteKit + mdsvexで最短経路のビルド
+- **デザインのフルカスタマイズ**: Tailwind v4 + 自前コンポーネントで、ダークモード・タイポグラフィ・レイアウトを完全制御
+- **依存削減**: `package-lock.json` が -17,000行級で大幅スリム化
+
 ## [2026-04-12] - コンテンツ検証・不備修正・最新API対応
 
 ### 修正（コンテンツ検証による7件の不備修正）

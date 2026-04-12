@@ -6,17 +6,17 @@ description: SveltePressの豊富な機能を紹介
 ## カードレイアウト
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-8">
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+  <div class="content-card p-4">
     <div class="text-3xl mb-2">🚀</div>
     <h3 class="font-bold text-lg mb-2">高速</h3>
     <p class="text-sm text-gray-5 dark:text-gray-4">Viteによる高速な開発体験とビルド</p>
   </div>
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+  <div class="content-card p-4">
     <div class="text-3xl mb-2">📝</div>
     <h3 class="font-bold text-lg mb-2">Markdown</h3>
     <p class="text-sm text-gray-5 dark:text-gray-4">拡張Markdown記法でリッチなコンテンツ</p>
   </div>
-  <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+  <div class="content-card p-4">
     <div class="text-3xl mb-2">🎨</div>
     <h3 class="font-bold text-lg mb-2">カスタマイズ</h3>
     <p class="text-sm text-gray-5 dark:text-gray-4">テーマとスタイルを自由にカスタマイズ</p>
@@ -94,7 +94,7 @@ function greet(name: string): string {
 
 ## アコーディオン風セクション
 
-<details class="border border-gray-2 dark:border-gray-7 rounded-lg p-4 my-4">
+<details class="content-card p-4 my-4">
   <summary class="cursor-pointer font-bold hover:text-svp-primary transition">
     クリックして詳細を表示
   </summary>
@@ -107,19 +107,19 @@ function greet(name: string): string {
 ## 統計カード
 
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 my-8">
-  <div class="text-center p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="content-card p-4 text-center">
     <div class="text-3xl font-bold text-svp-primary">100+</div>
     <div class="text-sm text-gray-5">コンポーネント</div>
   </div>
-  <div class="text-center p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="content-card p-4 text-center">
     <div class="text-3xl font-bold text-svp-primary">5ms</div>
     <div class="text-sm text-gray-5">ビルド時間</div>
   </div>
-  <div class="text-center p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="content-card p-4 text-center">
     <div class="text-3xl font-bold text-svp-primary">TypeScript</div>
     <div class="text-sm text-gray-5">完全対応</div>
   </div>
-  <div class="text-center p-4 border border-gray-2 dark:border-gray-7 rounded-lg">
+  <div class="content-card p-4 text-center">
     <div class="text-3xl font-bold text-svp-primary">PWA</div>
     <div class="text-sm text-gray-5">対応可能</div>
   </div>

@@ -593,7 +593,7 @@ cat .svelte-kit/types/src/routes/$types.d.ts
 | `Property 'xxx' does not exist on type 'Locals'` | app.d.tsでの型定義漏れ | `src/app.d.ts`のApp.Localsインターフェースに型定義を追加 |
 | `Argument of type 'xxx' is not assignable...` | パラメータの型不一致 | 動的ルートのパラメータ名とアクセスしている名前が一致するか確認 |
 | `Type 'Actions' is not assignable...` | Actionsの構造が不正 | defaultまたは名前付きアクションが正しく定義されているか確認 |
-| `Cannot find name 'PageData'` | インポート漏れ | `import type { PageData } from './$types'`を追加 |
+| `Cannot find name 'PageData'` | インポート漏れ | `import type &#123; PageData &#125; from './$types'`を追加 |
 
 ## まとめ
 

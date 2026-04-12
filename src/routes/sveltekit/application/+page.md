@@ -2,10 +2,11 @@
 title: SvelteKit アプリケーション構築編  
 description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 認証・認可、セッション管理、データベース統合、環境変数管理、エラーハンドリング、テスト戦略、デプロイを実例を交えて体系的かつ実践的に詳しく解説します
 ---
-:::caution[タイトル]
+<Admonition type="caution" title="タイトル">
 執筆中
-:::
+</Admonition>
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
 </script>
 
@@ -26,15 +27,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/sveltekit/application/authentication/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/authentication/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔐</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         認証・認可 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">セキュアな認証システムの実装方法を学びます。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">セキュアな認証システムの実装方法を学びます。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>Lucia Auth</strong>: SvelteKit用認証ライブラリ</li>
         <li><strong>OAuth 2.0</strong>: Google/GitHub認証</li>
         <li><strong>セッション管理</strong>: セキュアな実装</li>
@@ -44,15 +45,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/session/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/session/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🎫</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         セッション管理と認証戦略
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">TypeScriptで実装する様々な認証パターンとセッション管理手法を習得します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">TypeScriptで実装する様々な認証パターンとセッション管理手法を習得します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>クッキーベース認証</strong>: セッションストア実装</li>
         <li><strong>JWT認証</strong>: ステートレスな認証</li>
         <li><strong>リフレッシュトークン</strong>: 自動更新の仕組み</li>
@@ -62,15 +63,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/auth-best-practices/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/auth-best-practices/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">📘</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         認証ベストプラクティス
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">SvelteKitの認証・認可パターンのベストプラクティスを実装例とともに解説します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">SvelteKitの認証・認可パターンのベストプラクティスを実装例とともに解説します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>3層認証アーキテクチャ</strong>: hooks→groups→pages</li>
         <li><strong>ヘルパー関数</strong>: DRY原則の実践</li>
         <li><strong>他フレームワーク比較</strong>: Angular/NestJS/Vue</li>
@@ -80,15 +81,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/database/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/database/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🗄️</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         データベース統合 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">データベースとの効率的な連携方法を習得します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">データベースとの効率的な連携方法を習得します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>Prisma</strong>: 型安全なORM</li>
         <li><strong>Drizzle ORM</strong>: 軽量で高速</li>
         <li><strong>PostgreSQL</strong>: 本番向けDB</li>
@@ -98,15 +99,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/environment/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/environment/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         環境変数管理 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">セキュアな設定管理とシークレット保護を実装します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">セキュアな設定管理とシークレット保護を実装します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>$env/static</strong>: ビルド時変数</li>
         <li><strong>$env/dynamic</strong>: ランタイム変数</li>
         <li><strong>シークレット管理</strong>: APIキー保護</li>
@@ -116,15 +117,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/error-handling/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/error-handling/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🚨</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         エラーハンドリング <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">堅牢なエラー処理とユーザー体験の向上を実現します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">堅牢なエラー処理とユーザー体験の向上を実現します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>エラー境界</strong>: +error.svelte</li>
         <li><strong>グローバルエラー</strong>: handleError hook</li>
         <li><strong>ロギング</strong>: Sentry/LogRocket統合</li>
@@ -134,15 +135,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/testing/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/testing/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🧪</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         テスト戦略
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">包括的なテスト戦略で品質を保証します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">包括的なテスト戦略で品質を保証します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>単体テスト</strong>: Vitestでのコンポーネントテスト</li>
         <li><strong>統合テスト</strong>: Load関数とActionのテスト</li>
         <li><strong>E2Eテスト</strong>: Playwrightでのシナリオテスト</li>
@@ -152,15 +153,15 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     </div>
   </a>
   
-  <a href="{base}/sveltekit/application/state-management/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-purple-400 dark:hover:border-purple-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/application/state-management/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🏛️</div>
-      <h3 class="font-bold text-lg mb-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         状態管理パターン
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">アプリケーション規模に応じた状態管理を実装します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">アプリケーション規模に応じた状態管理を実装します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>.svelte.ts</strong>: Svelte 5の新しいストア</li>
         <li><strong>Context API</strong>: コンポーネント間共有</li>
         <li><strong>ステートマシン</strong>: 複雑な状態管理</li>
@@ -232,10 +233,10 @@ export const app = new AppState();
 
 アプリケーション構築編を習得したら、[最適化編](/sveltekit/optimization/)でパフォーマンスチューニングを学びましょう。
 
-:::tip[実践的な学習]
+<Admonition type="tip" title="実践的な学習">
 このセクションでは、実際のプロダクション環境で使われるパターンや技術を学びます。小規模なプロジェクトから始めて、徐々に複雑な機能を追加していくことをお勧めします。
-:::
-
-:::warning[セキュリティの重要性]
+</Admonition>
+<Admonition type="warning" title="セキュリティの重要性">
 認証・認可の実装では、OWASP Top 10などのセキュリティベストプラクティスに従うことが重要です。常に最新のセキュリティ情報をチェックしてください。
-:::
+
+</Admonition>

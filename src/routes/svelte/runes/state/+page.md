@@ -354,21 +354,6 @@ await fetch('/api/save', {
 `$state.snapshot()`は静的なコピーを返すため、返されたオブジェクトを変更しても UI は更新されません。デバッグやデータ送信時に使用してください。
 :::
 
-## $state.is - 参照の比較
-
-`$state.is(a, b)`は、2 つの値が同じであるかを比較します。Proxy 経由でも正しく比較できます。
-
-```typescript
-let obj = $state({ name: 'Alice' });
-
-// 通常の比較は Proxy のため false になることがある
-console.log(obj === obj); // true（同じProxy参照）
-
-// $state.is を使うと安全に比較
-const copy = obj;
-console.log($state.is(obj, copy)); // true
-```
-
 ## $state.eager - 非同期操作中の即時UI更新
 
 `$state.eager()` は、非同期操作の完了を待たずに即座に UI を更新するための機能です。

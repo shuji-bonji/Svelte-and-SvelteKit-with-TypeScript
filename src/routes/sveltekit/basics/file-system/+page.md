@@ -436,23 +436,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 **エラーページ** - エラー発生時のカスタム表示。
 
 - **実行環境**: クライアント（ブラウザ）
-- **アクセス可能**: `$page.status`、`$page.error`
+- **アクセス可能**: `page.status`、`page.error`
 - **用途**: 404、500などのエラー表示
 
 <Expansion title="コード例">
 
 ```svelte
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
 </script>
 
-<h1>{$page.status}</h1>
-<p>{$page.error?.message}</p>
+<h1>{page.status}</h1>
+<p>{page.error?.message}</p>
 
-{#if $page.status === 404}
+{#if page.status === 404}
   <p>ページが見つかりません</p>
   <a href="/">ホームに戻る</a>
-{:else if $page.status === 500}
+{:else if page.status === 500}
   <p>サーバーエラーが発生しました</p>
 {/if}
 ```

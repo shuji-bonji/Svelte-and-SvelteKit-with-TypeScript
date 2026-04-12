@@ -184,7 +184,7 @@ export function getAllTags(): string[] {
 ```svelte
 <!-- src/lib/components/Navigation.svelte -->
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { base, resolve } from '$app/paths';
 
   type NavItem = {
@@ -199,7 +199,7 @@ export function getAllTags(): string[] {
     { href: '/about', label: 'About' }
   ];
 
-  let currentPath = $derived($page.url.pathname);
+  let currentPath = $derived(page.url.pathname);
 
   function isActive(item: NavItem): boolean {
     const path = currentPath.replace(base, '') || '/';
@@ -729,10 +729,10 @@ export const load: PageLoad = async ({ params }) => {
 ```svelte
 <!-- src/routes/+error.svelte -->
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   
-  let status = $derived($page.status);
-  let message = $derived($page.error?.message || 'ページが見つかりませんでした');
+  let status = $derived(page.status);
+  let message = $derived(page.error?.message || 'ページが見つかりませんでした');
 </script>
 
 <div class="error-page">

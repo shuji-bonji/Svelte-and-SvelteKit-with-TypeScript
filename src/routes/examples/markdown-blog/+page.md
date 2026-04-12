@@ -222,7 +222,7 @@ export function createSearchIndex(articles: Article[]) {
   } = $props();
   
   let query = $state('');
-  let debounceTimer: NodeJS.Timeout;
+  let debounceTimer: ReturnType<typeof setTimeout>;
   
   function handleInput() {
     clearTimeout(debounceTimer);

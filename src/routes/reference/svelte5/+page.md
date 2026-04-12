@@ -503,10 +503,8 @@ Svelte 5.36+でサポートされる実験的な非同期構文です。
 #### ローディング状態の検出
 
 ```typescript
-import { pending } from 'svelte';
-
 $effect(() => {
-  if (pending()) {
+  if ($effect.pending()) {
     console.log('非同期処理中...');
   }
 });

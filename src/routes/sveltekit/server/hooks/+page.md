@@ -129,6 +129,7 @@ Hooksは、すべてのリクエストが通過するミドルウェアのよう
 | **handle** | リクエスト/レスポンスの処理 | すべてのリクエスト |
 | **handleFetch** | fetch関数のカスタマイズ | サーバーサイドfetch時 |
 | **handleError** | エラー処理 | 未処理エラー発生時 |
+| **handleValidationError** | Remote Functionsバリデーションエラー処理 | 引数バリデーション失敗時 |
 
 これらのHooksを適切に組み合わせることで、認証、ロギング、セキュリティヘッダー、国際化など、アプリケーション全体に影響する機能を効率的に実装できます。
 
@@ -483,6 +484,35 @@ async function logToDatabase(errorLog: any) {
 }
 ```
 
+## handleValidationError Hook
+
+`handleValidationError`フックは、[Remote Functions](/sveltekit/server/remote-functions/)の引数バリデーションが失敗した際に呼び出されます。デフォルトでは `400 Bad Request` が返されますが、このフックでレスポンスをカスタマイズできます。
+
+バリデーション失敗の主な原因は、デプロイ間のバージョン不一致（ユーザーが古いクライアントコードを実行している場合）や、不正なリクエスト（攻撃的なリクエスト）です。
+
+```typescript
+// src/hooks.server.ts
+import type { HandleValidationError } from '@sveltejs/kit';
+
+export const handleValidationError: HandleValidationError = ({ event, issues }) => {
+  // issuesにはStandard Schemaのバリデーションエラー情報が含まれる
+  console.warn('バリデーションエラー:', {
+    path: event.url.pathname,
+    ip: event.getClientAddress(),
+    issues: issues.map(i => i.message)
+  });
+
+  // App.Error型のオブジェクトを返す
+  return {
+    message: '不正なリクエストです'
+  };
+};
+```
+
+:::tip[handleError との違い]
+`handleError` はアプリケーション内の**未処理エラー**（予期しないエラー）を処理します。一方、`handleValidationError` はRemote Functionsへの**バリデーション失敗**（400エラー）を処理します。両者は独立したフックで、それぞれ異なるエラーカテゴリを担当します。
+:::
+
 ## 実践的な例
 
 Hooksの実践的な使用例を紹介します。これらのパターンは、実際のプロダクション環境で広く使用されています。
@@ -806,7 +836,7 @@ SvelteKitのHooksは、アプリケーション全体に影響する横断的関
 - **効率的**: パフォーマンスへの影響を最小限に
 - **保守的**: 責務の分離により、コードの可読性と保守性が向上
 
-`handle`、`handleFetch`、`handleError`の3つのHooksを適切に組み合わせることで、認証、ログ、セキュリティ、国際化、エラー処理など、エンタープライズグレードのWebアプリケーションに必要な機能をすべて実装できます。
+`handle`、`handleFetch`、`handleError`、`handleValidationError`の4つのHooksを適切に組み合わせることで、認証、ログ、セキュリティ、国際化、エラー処理など、エンタープライズグレードのWebアプリケーションに必要な機能をすべて実装できます。
 
 Hooksは、Express.jsのミドルウェアやASP.NET Coreのミドルウェアパイプラインと同様の概念ですが、SvelteKitの型安全性と統合されており、より堅牢な開発体験を提供します。
 

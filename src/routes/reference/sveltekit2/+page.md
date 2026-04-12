@@ -319,8 +319,8 @@ export const load: PageServerLoad = async () => {
 ```svelte
 <!-- +page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
-  let { data }: { data: PageData } = $props();
+  import type { PageProps } from './$types';
+  let { data }: PageProps = $props();
 </script>
 
 <!-- 即座に表示 -->
@@ -336,14 +336,20 @@ export const load: PageServerLoad = async () => {
 {/await}
 ```
 
-## Remote Functions（実験的）
+## Remote Functions
 
-SvelteKit 2.27+で導入された実験的なサーバー連携機能です。型安全なサーバー関数を簡潔に定義できます。
+SvelteKit 2.27+で導入されたサーバー連携機能です。型安全なサーバー関数を簡潔に定義でき、Standard Schemaによるバリデーション統合を備えます。
+
+:::info[ファイル規約: .remote.ts]
+Remote Functionsは `.remote.ts`（または `.remote.js`）ファイルで定義します。これらのファイルはサーバーサイドでのみ実行され、クライアントからは自動的にRPCコールに変換されます。
+:::
 
 ### query - データ取得
 
+読み取り専用のデータ取得関数です。自動キャッシュ、重複排除が組み込まれています。
+
 ```typescript
-// src/routes/api.server.ts
+// src/routes/users/[id]/page.remote.ts
 import { query } from '$app/server';
 
 export const getUser = query(async (id: string) => {
@@ -353,36 +359,67 @@ export const getUser = query(async (id: string) => {
 ```
 
 ```svelte
-<!-- +page.svelte -->
+<!-- src/routes/users/[id]/+page.svelte -->
 <script lang="ts">
-  import { getUser } from './api.server';
+  import { getUser } from './page.remote';
 
+  // 型安全: userの型はサーバー関数の戻り値から推論
   const user = await getUser('123');
 </script>
 ```
 
-### form - フォーム処理
+#### query.batch() - N+1問題の解決（v2.35+）
+
+複数のクエリをバッチ処理して1つのリクエストにまとめます。
 
 ```typescript
-// src/routes/api.server.ts
-import { form } from '$app/server';
-import { z } from 'zod';
+// src/routes/page.remote.ts
+import { query } from '$app/server';
 
-const schema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8)
+// バッチ対応のクエリ: 複数の呼び出しが1リクエストにまとまる
+export const getUser = query.batch(async (ids: string[]) => {
+  const users = await db.user.findMany({ where: { id: { in: ids } } });
+  // idの順序で結果を返す（Map形式）
+  return new Map(users.map(u => [u.id, u]));
+});
+```
+
+```svelte
+<!-- 各コンポーネントから個別に呼び出してもバッチ処理される -->
+{#each userIds as id}
+  {@const user = await getUser(id)}
+  <UserCard {user} />
+{/each}
+```
+
+### form - フォーム処理
+
+FormDataベースのミューテーション。Progressive Enhancement対応です。
+
+```typescript
+// src/routes/login/page.remote.ts
+import { form } from '$app/server';
+import * as v from 'valibot';
+
+// Standard Schema（Valibot, Zod等）でバリデーション
+const LoginSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  password: v.pipe(v.string(), v.minLength(8))
 });
 
-export const login = form(schema, async (data) => {
+export const login = form(LoginSchema, async (data, { cookies }) => {
   const user = await authenticate(data);
+  cookies.set('session', user.sessionId, { path: '/' });
   return { success: true, user };
 });
 ```
 
-### command - サーバー処理
+### command - サーバーコマンド
+
+イベントハンドラから呼び出す命令型のミューテーションです。
 
 ```typescript
-// src/routes/api.server.ts
+// src/routes/posts/page.remote.ts
 import { command } from '$app/server';
 
 export const deletePost = command(async (id: string) => {
@@ -391,16 +428,63 @@ export const deletePost = command(async (id: string) => {
 });
 ```
 
+```svelte
+<script lang="ts">
+  import { deletePost } from './page.remote';
+</script>
+
+<button onclick={async () => {
+  const result = await deletePost(post.id);
+  if (result.deleted) {
+    // UIを更新
+  }
+}}>
+  削除
+</button>
+```
+
 ### prerender - ビルド時データ生成
 
 ```typescript
-// src/routes/api.server.ts
+// src/routes/page.remote.ts
 import { prerender } from '$app/server';
 
 export const getConfig = prerender(async () => {
   return await fetchConfiguration();
 });
 ```
+
+### Standard Schema バリデーション
+
+Remote Functions は [Standard Schema](https://github.com/standard-schema/standard-schema) をサポートし、Zod、Valibot、ArkType等のバリデーションライブラリと統合できます。
+
+```typescript
+import { query, form } from '$app/server';
+import * as v from 'valibot';
+
+// queryでもスキーマバリデーション可能
+const SearchSchema = v.object({
+  q: v.pipe(v.string(), v.minLength(1)),
+  page: v.pipe(v.number(), v.integer(), v.minValue(1))
+});
+
+export const search = query(SearchSchema, async (params) => {
+  // params は型安全（{ q: string, page: number }）
+  return await db.posts.search(params);
+});
+```
+
+### $app/server エクスポート一覧
+
+| エクスポート | 説明 |
+|-------------|------|
+| `query` | 読み取り専用データ取得（キャッシュ・重複排除付き） |
+| `query.batch` | バッチクエリ（N+1問題解決） |
+| `form` | FormDataベースのミューテーション |
+| `command` | 命令型ミューテーション |
+| `prerender` | ビルド時データ生成 |
+| `getRequestEvent()` | 現在のRequestEventへのアクセス（v2.20+） |
+| `requested()` | クエリのrefresh要求の検出 |
 
 ## Form Actions
 
@@ -742,6 +826,25 @@ export const handleFetch: HandleFetch = async ({ request, fetch }) => {
 };
 ```
 
+### handleValidationError（hooks.server.ts）
+
+Remote Functionsの Standard Schema バリデーションエラーをカスタマイズするフックです。
+
+```typescript
+import type { HandleValidationError } from '@sveltejs/kit';
+
+export const handleValidationError: HandleValidationError = ({ event, reject }) => {
+  // バリデーションエラーをカスタム形式で返す
+  return reject(400, {
+    message: 'バリデーションエラー',
+    errors: event.issues.map(issue => ({
+      path: issue.path,
+      message: issue.message
+    }))
+  });
+};
+```
+
 ### Client Hooks（hooks.client.ts）
 
 ```typescript
@@ -1013,16 +1116,63 @@ export {};
 import type {
   PageLoad,
   PageData,
+  PageProps,          // Svelte 5推奨: data + form を含む
   PageServerLoad,
   PageServerData,
   LayoutLoad,
   LayoutData,
+  LayoutProps,        // Svelte 5推奨: data + children を含む
   LayoutServerLoad,
   LayoutServerData,
   Actions,
   ActionData,
   RequestHandler
 } from './$types';
+```
+
+#### PageProps / LayoutProps（Svelte 5推奨）
+
+Svelte 5では `PageData` の代わりに `PageProps` を使用することが推奨されます。`PageProps` は `data` と `form` をまとめた型です。
+
+```svelte
+<!-- ❌ 旧パターン（動作はする） -->
+<script lang="ts">
+  import type { PageData, ActionData } from './$types';
+  let { data, form }: { data: PageData; form: ActionData } = $props();
+</script>
+
+<!-- ✅ 新パターン（推奨） -->
+<script lang="ts">
+  import type { PageProps } from './$types';
+  let { data, form }: PageProps = $props();
+</script>
+```
+
+```svelte
+<!-- +layout.svelte -->
+<script lang="ts">
+  import type { LayoutProps } from './$types';
+  let { data, children }: LayoutProps = $props();
+</script>
+```
+
+### $app/types - ルート型ユーティリティ（v2.26+）
+
+型安全なルーティングのためのユーティリティ型です。
+
+```typescript
+import type { RouteId, RouteParams, Pathname } from '$app/types';
+
+// すべてのルートIDの合同型
+type AllRoutes = RouteId;
+// 例: '/about' | '/blog/[slug]' | '/users/[id]'
+
+// 特定ルートのパラメータ型を取得
+type BlogParams = RouteParams<'/blog/[slug]'>;
+// { slug: string }
+
+// 型安全なパス名
+const path: Pathname = '/about'; // 存在しないルートはエラー
 ```
 
 ## 環境変数

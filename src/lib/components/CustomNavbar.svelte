@@ -3,7 +3,7 @@
   import themeOptions from 'virtual:sveltepress/theme-default';
   import Discord from '@sveltepress/theme-default/components/icons/Discord.svelte';
   import Github from '@sveltepress/theme-default/components/icons/Github.svelte';
-  import { scrollDirection } from '@sveltepress/theme-default/components/layout';
+  import { scrollDirection, navCollapsed } from '@sveltepress/theme-default/components/layout';
   import Logo from '@sveltepress/theme-default/components/Logo.svelte';
   import MobileSubNav from '@sveltepress/theme-default/components/MobileSubNav.svelte';
   import NavbarMobile from '@sveltepress/theme-default/components/NavbarMobile.svelte';
@@ -14,9 +14,22 @@
   const routeId = $derived($page.route.id);
   const isHome = $derived(routeId === '/');
   const hasError = $derived($page.error);
-  
+
   // Search コンポーネントのインスタンス参照
   let searchInstance: Search;
+
+  // ウィンドウリサイズ時にモバイルサイドバーを自動で閉じる
+  $effect(() => {
+    function handleResize() {
+      if (typeof window !== 'undefined' && window.innerWidth >= 950) {
+        // デスクトップ幅になったらモバイルサイドバーを閉じる
+        $navCollapsed = true;
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
 </script>
 
 <header class="header" class:hidden-in-mobile={$scrollDirection === 'down'}>
@@ -30,16 +43,16 @@
       {/if}
     </div>
 
-    <!-- 検索アイコンボタン（中央） -->
+    <!-- デスクトップ用検索バー -->
     <button
-      class="search-icon-button"
+      class="search-bar"
       onclick={() => searchInstance?.openSearch()}
       aria-label="サイト内検索"
       title="検索 (Cmd/Ctrl + K)"
     >
       <svg
-        width="20"
-        height="20"
+        width="18"
+        height="18"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -50,6 +63,8 @@
         <circle cx="11" cy="11" r="8"></circle>
         <path d="m21 21-4.35-4.35"></path>
       </svg>
+      <span class="search-bar-label">検索</span>
+      <kbd class="search-bar-hotkey">⌘K</kbd>
     </button>
 
     <nav class="nav-links" aria-label="Menu">      
@@ -129,7 +144,7 @@
 </header>
 
 <!-- 検索コンポーネント（非表示、モーダルのみ使用） -->
-<Search bind:this={searchInstance} showButton={false} />
+<Search bind:this={searchInstance} />
 
 <style>
   .header {
@@ -154,44 +169,67 @@
     margin-left: auto;
   }
   
-  /* デスクトップ用検索アイコンボタン（header-inner内） */
-  .search-icon-button {
-    --at-apply: 'flex items-center justify-center';
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
+  /* デスクトップ用検索バー */
+  .search-bar {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background: var(--sp-c-bg-soft, #f6f6f7);
+    border: 1px solid var(--sp-c-divider-light, #e5e5e5);
+    border-radius: 8px;
     cursor: pointer;
     color: var(--sp-c-text-2, #3c3c43);
-    transition: color 0.2s, background 0.2s;
-    border-radius: 8px;
+    transition: all 0.2s;
     margin: 0 0.5rem;
-    /* デスクトップのみ表示 */
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .search-bar:hover {
+    background: var(--sp-c-bg-mute, #ebebec);
+    border-color: var(--sp-c-brand, #42b883);
+  }
+
+  .search-bar-label {
     display: none;
   }
-  
-  .search-icon-button:hover {
-    background: var(--sp-c-bg-soft, #f6f6f7);
-    color: var(--sp-c-brand, #42b883);
+
+  .search-bar-hotkey {
+    display: none;
+    padding: 0.1rem 0.35rem;
+    background: var(--sp-c-bg, white);
+    border: 1px solid var(--sp-c-divider, #e5e5e5);
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--sp-c-text-3, #8e8e93);
   }
-  
-  /* デスクトップでは表示して左側に配置 */
+
+  /* デスクトップ（950px+）: 検索バーをフル表示 */
   @media (min-width: 950px) {
-    .search-icon-button {
+    .search-bar {
       display: flex;
       margin-left: 2rem;
       margin-right: auto;
     }
+    .search-bar-label,
+    .search-bar-hotkey {
+      display: block;
+    }
   }
-  
+
   @media (min-width: 1240px) {
-    .search-icon-button {
+    .search-bar {
       margin-left: 3rem;
     }
   }
   
   /* モバイル/タブレット用検索アイコン（navbar-pc内） */
   .mobile-search-icon {
-    --at-apply: 'flex items-center justify-center';
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem;
     background: transparent;
     border: none;
@@ -199,58 +237,62 @@
     color: var(--sp-c-text-2, #3c3c43);
     transition: color 0.2s, opacity 0.2s;
     border-radius: 8px;
-    /* モバイル/タブレットのみ表示 */
-    display: flex;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
   }
-  
+
   .mobile-search-icon:hover {
     opacity: 0.7;
   }
-  
+
   /* デスクトップでは非表示 */
   @media (min-width: 950px) {
     .mobile-search-icon {
-      display: none;
+      display: none !important;
     }
   }
   
   .navbar-pc {
     --at-apply: 'items-stretch flex gap-2';
   }
-  
-  /* モバイル表示 */
-  @media (max-width: 639px) {
-    .navbar-pc :global(.nav-item:not(.nav-item--icon)),
-    .navbar-pc :global(.nav-item--user-icon) {
-      --at-apply: 'hidden';
-    }
-    
-    /* モバイルではアイコンのみ表示 */
+
+  /* 950px未満: テキストナビ非表示、アイコンのみ表示 */
+  .navbar-pc :global(.nav-item:not(.nav-item--icon)),
+  .navbar-pc :global(.nav-item--user-icon) {
+    display: none;
+  }
+
+  @media (max-width: 949px) {
     .navbar-pc {
       gap: 0.5rem;
     }
   }
-  
-  /* タブレット表示 */
-  @media (min-width: 640px) and (max-width: 949px) {
-    .navbar-pc :global(.nav-item:not(.nav-item--icon)) {
-      --at-apply: 'flex';
+
+  /* デスクトップ（950px+）: テキストナビを表示 */
+  @media (min-width: 950px) {
+    .navbar-pc :global(.nav-item:not(.nav-item--icon)),
+    .navbar-pc :global(.nav-item--user-icon) {
+      display: flex;
     }
   }
-
-  .navbar-pc :global(.nav-item:not(.nav-item--icon)),
-  .navbar-pc :global(.nav-item--user-icon) {
-    --at-apply: 'hidden sm:flex';
-  }
   
-  /* ダークモードの検索アイコン */
-  :global(.dark) .search-icon-button {
+  /* ダークモードの検索バー */
+  :global(.dark) .search-bar {
+    background: rgba(30, 30, 32, 0.6);
+    border-color: rgba(82, 82, 89, 0.5);
     color: rgba(235, 235, 245, 0.6);
   }
-  
-  :global(.dark) .search-icon-button:hover {
+
+  :global(.dark) .search-bar:hover {
+    background: rgba(40, 40, 42, 0.8);
+    border-color: var(--sp-c-brand, #42b883);
+  }
+
+  :global(.dark) .search-bar-hotkey {
     background: rgba(30, 30, 32, 0.8);
-    color: var(--sp-c-brand, #42b883);
+    border-color: rgba(82, 82, 89, 0.5);
+    color: rgba(235, 235, 245, 0.5);
   }
   
   :global(.dark) .mobile-search-icon {

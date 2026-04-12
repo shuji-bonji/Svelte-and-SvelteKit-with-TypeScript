@@ -2,9 +2,6 @@
 	import { onMount, tick } from 'svelte';
 	import { base } from '$app/paths';
 
-	// プロパティ：ボタンを表示するかどうか
-	let { showButton = true }: { showButton?: boolean } = $props();
-
 	let searchContainer = $state<HTMLDivElement>();
 	let isOpen = $state(false);
 	let pagefindUI: any;
@@ -216,35 +213,6 @@
 	});
 </script>
 
-<!-- 検索ボタン（オプション） -->
-{#if showButton}
-	<div class="search-wrapper">
-		<button
-			onclick={toggleSearch}
-			class="search-button"
-			aria-label="サイト内検索"
-			title="検索 (Cmd/Ctrl + K)"
-		>
-			<svg
-				class="search-icon"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<circle cx="11" cy="11" r="8"></circle>
-				<path d="m21 21-4.35-4.35"></path>
-			</svg>
-			<span class="search-label">検索</span>
-			<kbd class="search-hotkey">⌘K</kbd>
-		</button>
-	</div>
-{/if}
-
 <!-- 検索モーダル -->
 {#if isOpen}
 	<div class="search-modal" onclick={toggleSearch} onkeydown={(e) => e.key === 'Escape' && toggleSearch()} role="button" tabindex="-1" aria-label="モーダルを閉じる">
@@ -280,158 +248,6 @@
 {/if}
 
 <style>
-	/* フローティング検索ボタン */
-	.search-wrapper {
-		position: fixed;
-		bottom: 24px;
-		right: 24px;
-		z-index: 900;
-	}
-
-	.search-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 56px;
-		height: 56px;
-		background: rgb(251, 113, 133);
-		border: none;
-		border-radius: 50%;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 12px rgba(251, 113, 133, 0.3);
-		color: white;
-	}
-
-	.search-button:hover {
-		background: rgb(240, 90, 110);
-		transform: scale(1.1);
-		box-shadow: 0 6px 20px rgba(251, 113, 133, 0.4);
-	}
-
-	.search-button:active {
-		transform: scale(0.95);
-	}
-
-	.search-icon {
-		width: 24px;
-		height: 24px;
-		flex-shrink: 0;
-	}
-
-	.search-label,
-	.search-hotkey {
-		display: none;
-	}
-
-	/* デスクトップ: ヘッダーに通常ボタンを表示 */
-	@media (min-width: 950px) {
-		.search-wrapper {
-			position: fixed;
-			top: 18px;
-			left: 260px;
-			bottom: auto;
-			right: auto;
-			z-index: 890;
-		}
-
-		.search-button {
-			width: auto;
-			height: auto;
-			padding: 0.5rem 1rem;
-			background: var(--sp-c-bg-soft, #f6f6f7);
-			border: 1px solid var(--sp-c-divider-light, #e5e5e5);
-			border-radius: 8px;
-			box-shadow: none;
-			color: var(--sp-c-text-2, #3c3c43);
-			gap: 0.5rem;
-		}
-
-		.search-button:hover {
-			background: var(--sp-c-bg-mute, #ebebec);
-			border-color: var(--sp-c-brand, #42b883);
-			transform: none;
-			box-shadow: none;
-		}
-
-		.search-icon {
-			width: 20px;
-			height: 20px;
-		}
-
-		.search-label {
-			display: block;
-			font-weight: 500;
-		}
-
-		.search-hotkey {
-			display: block;
-			padding: 0.125rem 0.375rem;
-			background: var(--sp-c-bg, white);
-			border: 1px solid var(--sp-c-divider, #e5e5e5);
-			border-radius: 4px;
-			font-size: 12px;
-			font-family: monospace;
-		}
-	}
-
-	@media (min-width: 1240px) {
-		.search-wrapper {
-			left: 300px;
-		}
-	}
-
-	/* ホームページでヘッダー内に配置された場合（デスクトップのみ） */
-	@media (min-width: 950px) {
-		:global(.in-header) .search-wrapper {
-			position: static;
-			margin-left: 1.5rem;
-		}
-
-		:global(.in-header) {
-			display: flex;
-			align-items: center;
-		}
-	}
-
-	/* モバイルでは常に固定位置（ホームページでも） */
-	@media (max-width: 949px) {
-		:global(.in-header) .search-wrapper {
-			position: fixed;
-			bottom: 24px;
-			right: 24px;
-			left: auto;
-			margin-left: 0;
-		}
-	}
-
-	/* ダークモードでのフローティングボタン */
-	:global(.dark) .search-button {
-		background: rgb(251, 113, 133);
-		color: white;
-	}
-
-	:global(.dark) .search-button:hover {
-		background: rgb(240, 90, 110);
-	}
-
-	/* デスクトップのダークモード */
-	@media (min-width: 950px) {
-		:global(.dark) .search-button {
-			background: var(--sp-c-bg-soft);
-			color: var(--sp-c-text-2);
-		}
-
-		:global(.dark) .search-button:hover {
-			background: var(--sp-c-bg-mute);
-		}
-
-		:global(.dark) .search-hotkey {
-			background: var(--sp-c-bg);
-			border-color: var(--sp-c-divider);
-		}
-	}
-
 	.search-modal {
 		position: fixed;
 		top: 0;
@@ -666,17 +482,6 @@
 	}
 
 	/* ダークモード対応 */
-	:global(.dark) .search-button {
-		background: rgba(30, 30, 32, 0.8);
-		border-color: rgba(82, 82, 89, 0.5);
-		color: rgba(235, 235, 245, 0.9);
-	}
-
-	:global(.dark) .search-button:hover {
-		background: rgba(40, 40, 42, 0.9);
-		border-color: var(--sp-c-brand, #42b883);
-	}
-
 	:global(.dark) .search-modal {
 		background: rgba(0, 0, 0, 0.7);
 	}
@@ -696,12 +501,6 @@
 
 	:global(.dark) .close-button:hover {
 		color: rgba(235, 235, 245, 0.9);
-	}
-
-	:global(.dark) kbd {
-		background: rgba(30, 30, 32, 0.8);
-		border-color: rgba(82, 82, 89, 0.5);
-		color: rgba(235, 235, 245, 0.6);
 	}
 
 	/* Pagefind UIのダークモード対応 */
@@ -755,14 +554,6 @@
 
 	/* モバイル対応 */
 	@media (max-width: 768px) {
-		.search-button .search-label {
-			display: none;
-		}
-
-		.search-button kbd {
-			display: none;
-		}
-
 		.search-modal-content {
 			width: 95%;
 			margin-top: 2rem;

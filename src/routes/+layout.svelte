@@ -1,13 +1,34 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { base } from '$app/paths';
-  import Search from '$lib/components/Search.svelte';
   import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
+  import Search from '$lib/components/Search.svelte';
   import '../styles/theme.css';
-  // Svelte 5: onMountは不要（$effectを使用）
 
   const { children } = $props();
-  
+
+  // Search コンポーネント参照
+  let searchInstance: Search;
+
+  // 検索トリガーボタンの参照
+  let searchTriggerEl: HTMLButtonElement;
+
+  // 検索アイコンを常にヘッダーの navbar-pc 内（GitHubアイコンの前）に挿入
+  $effect(() => {
+    if (!searchTriggerEl) return;
+
+    const navbarPc = document.querySelector('nav[aria-label="Menu"] .navbar-pc');
+    if (!navbarPc) return;
+
+    // GitHub アイコン（.nav-item--icon）の前に挿入
+    const githubIcon = navbarPc.querySelector('.nav-item--icon');
+    if (githubIcon) {
+      navbarPc.insertBefore(searchTriggerEl, githubIcon);
+    } else {
+      navbarPc.appendChild(searchTriggerEl);
+    }
+  });
+
   // 現在のURLから正規URLを生成（末尾スラッシュを統一）
   const canonicalUrl = $derived(() => {
     const pathname = $page.url.pathname;
@@ -18,41 +39,7 @@
     return `https://shuji-bonji.github.io${normalizedPath}`;
   });
 
-  // ページの状態を判定
-  const routeId = $derived($page.route.id);
-  const isHome = $derived(routeId === '/');
-  const showSearch = $derived($page.url.pathname !== '/search');
-  let mounted = $state(false);
-
   $effect(() => {
-    mounted = true;
-
-    // ホームページでは検索バーをヘッダー内に移動
-    function moveSearchToHeader() {
-      const searchContainer = document.querySelector('.search-container');
-      const header = document.querySelector('.header .header-inner');
-      const logoContainer = header?.querySelector('.left');
-
-      if (!searchContainer || !header || !logoContainer) return;
-
-      if (isHome) {
-        // ホームページ：検索コンテナをロゴの右に移動
-        if (!searchContainer.classList.contains('in-header')) {
-          logoContainer.after(searchContainer);
-          searchContainer.classList.add('in-header');
-        }
-      } else {
-        // 他のページ：検索コンテナを元の位置（body直下）に戻す
-        if (searchContainer.classList.contains('in-header')) {
-          document.body.appendChild(searchContainer);
-          searchContainer.classList.remove('in-header');
-        }
-      }
-    }
-
-    // 初回実行
-    setTimeout(moveSearchToHeader, 100);
-
     // サイドバーのアクティブ状態を修正（7.xの仕様変更対応）
     // 7.xでは子パスもアクティブになるため、完全一致のみをハイライトするよう修正
     function fixActiveLinks() {
@@ -130,7 +117,6 @@
     const unsubscribe = page.subscribe(() => {
       fixActiveLinks();
       scrollToActiveSection();
-      setTimeout(moveSearchToHeader, 100);
     });
 
     return () => {
@@ -147,12 +133,31 @@
   <meta property="og:url" content={canonicalUrl()} />
 </svelte:head>
 
-<!-- カスタム検索コンポーネント -->
-{#if mounted && showSearch}
-  <div class="search-container" class:is-home={isHome}>
-    <Search />
-  </div>
-{/if}
+<!-- 検索トリガー（$effectでnavbar-pc内に動的挿入される） -->
+<button
+  bind:this={searchTriggerEl}
+  class="search-trigger"
+  onclick={() => searchInstance?.openSearch()}
+  aria-label="サイト内検索"
+  title="検索 (Cmd/Ctrl + K)"
+>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="11" cy="11" r="8"></circle>
+    <path d="m21 21-4.35-4.35"></path>
+  </svg>
+</button>
+
+<!-- 検索モーダル（非表示、トリガーで開く） -->
+<Search bind:this={searchInstance} />
 
 <!-- Leave this. Or you can add more content for your custom layout -->
 <div class="layout-wrapper">
@@ -162,6 +167,34 @@
 </div>
 
 <style>
+  /* ===== 検索トリガーボタン（navbar-pc内にDOM挿入される） ===== */
+  .search-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--sp-c-text-2, #3c3c43);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .search-trigger:hover {
+    color: var(--sp-c-text-1, #213547);
+    background: var(--sp-c-bg-soft, rgba(0, 0, 0, 0.05));
+  }
+
+  /* ダークモード */
+  :global(.dark) .search-trigger {
+    color: rgba(235, 235, 245, 0.6);
+  }
+
+  :global(.dark) .search-trigger:hover {
+    color: rgba(235, 235, 245, 0.86);
+    background: rgba(255, 255, 255, 0.08);
+  }
 
   /* ヘッダーのレイアウト調整 */
   :global(.header .header-inner) {
@@ -187,17 +220,17 @@
     align-items: center !important;
   }
 
-  /* 検索ボックスのスタイル調整 */
-  :global(.search-teleport .search-button) {
-    background: var(--color-header-bg) !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid var(--color-border) !important;
+  /* デスクトップ（950px+）: モバイルUIを強制非表示 */
+  @media (min-width: 950px) {
+    :global(.navbar-mobile) {
+      display: none !important;
+    }
+    :global(.nav-trigger) {
+      display: none !important;
+    }
   }
 
-  :global(.dark .search-teleport .search-button) {
-    background: var(--color-header-bg) !important;
-    border: 1px solid var(--color-border) !important;
-  }
+  /* ハンバーガーメニュー: 下部の @media (max-width: 949px) .nav-trigger で display: flex を設定 */
 
   /* サイドバーのパディング調整 */
   :global(.theme-default-sidebar) {
@@ -262,12 +295,6 @@
   :global(.sidebar-group .group-title) {
     font-size: 16px !important;
     font-weight: 600 !important;
-  }
-
-  /* ホームページでのロゴ調整 */
-  :global(.home .header .logo-container) {
-    position: relative !important;
-    z-index: 891 !important; /* 検索ボタンより上に表示 */
   }
 
   /* モバイルサイドバーのスタイル改善 */
@@ -383,9 +410,10 @@
     background: rgba(255, 255, 255, 0.25);
   }
 
-  /* モバイルでハンバーガーメニューボタンをシンプルに */
+  /* 950px未満: ハンバーガーメニューを表示（SveltePressの sm:hidden を上書き） */
   @media (max-width: 949px) {
     :global(.nav-trigger) {
+      display: flex !important;
       background: transparent !important;
       color: var(--color-nav-text) !important;
       padding: 0.5rem !important;

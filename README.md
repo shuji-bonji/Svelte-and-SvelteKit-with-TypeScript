@@ -12,8 +12,8 @@
 > このサイトは今後、MCPでは得られない「実務での設計判断」「フレームワーク比較」などの情報提供にシフトしていく予定です。
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
-[![SveltePress](https://img.shields.io/badge/SveltePress-v7.0-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.49-red?logo=svelte&labelColor=000)](https://svelte.dev/)
+[![SveltePress](https://img.shields.io/badge/SveltePress-v1.3-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.55-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
 [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -54,10 +54,15 @@
 
 ### 認証システム実装例
 
-1. **基本認証** - [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic) ✅ 完成
+1. **Cookie/Session 認証** - [svelte5-auth-basic](https://github.com/shuji-bonji/svelte5-auth-basic) ✅ 完成
    - Cookie + Session 認証の基礎
    - SQLite（Prisma）を使用したユーザー管理
    - [デモサイト](https://svelte5-auth-basic.vercel.app/)
+
+2. **JWT 認証** - [svelte5-auth-jwt](https://github.com/shuji-bonji/svelte5-auth-jwt) ✅ 完成
+   - JSON Web Token ベースの認証
+   - Jose ライブラリによるトークン生成・検証
+   - [デモサイト](https://svelte5-auth-jwt.vercel.app/)
 
 これらのプロジェクトは本ドキュメントの学習内容と連動し、実際に動作するコードとして提供されています。
 
@@ -99,12 +104,15 @@
 - コンポーネントの基本構造
 - テンプレート構文
 - TypeScript 統合
-- Actions
+- Actions / `{@attach}`（Svelte 5.29+）
 - トランジション・アニメーション
+- `svelte/events` モジュール
+- モーション（Spring / Tween）
+- 特殊要素（`<svelte:boundary>` の pending snippet 含む）
 
 ### 3. Runes 基礎編
 
-- `$state` - リアクティブな状態管理（`$state.raw`, `$state.snapshot`, `$state.is`含む）
+- `$state` - リアクティブな状態管理（`$state.raw`, `$state.snapshot`, `$state.eager`含む）
 - `$derived` / `$derived.by()` - 計算値と明示的な派生値（オーバーライド機能対応）
 - `$effect` / `$effect.pre` - 副作用の処理と DOM 更新前実行（`$effect.tracking()`, `$effect.pending()`含む）
 - 他フレームワークとの比較
@@ -120,18 +128,22 @@
 
 - リアクティブストア（.svelte.ts）
 - クラスとリアクティビティ
-- 組み込みリアクティブクラス
+- 組み込みリアクティブクラス（SvelteMap, SvelteSet, SvelteDate, SvelteURL）
 - Snippets 機能
 - コンポーネントパターン
 - TypeScript パターン
 - スクリプトコンテキスト
+- `{@attach}` - リアクティブ DOM 操作（Svelte 5.29+）
+- await expressions - 非同期構文（Svelte 5.36+、実験的）
+- hydratable - SSR ハイドレーション最適化
 
-### 6. Svelte アーキテクチャ（計画中）
+### 6. Svelte アーキテクチャ
 
 - SPA + 既存 API 統合パターン
 - BaaS 統合（Firebase、Supabase）
 - GraphQL 統合
-- マイクロフロントエンド
+- デスクトップ/モバイル開発（Tauri、Capacitor）
+- ハイブリッド統合
 
 ### 7. Svelte MCP
 
@@ -159,8 +171,8 @@
 
 ### 10. SvelteKit データ取得
 
-- Load 関数の基礎（`$app/state`推奨パターン対応）
-- TypeScript 型の自動生成システム
+- Load 関数の基礎（`$app/state` / `PageProps` / `LayoutProps` 推奨パターン対応）
+- TypeScript 型の自動生成システム（PageProps / LayoutProps）
 - データフローの詳細
 - SPA モードとデータ無効化
 - ストリーミング SSR
@@ -184,10 +196,12 @@
   - use:enhance ライフサイクル図
   - バリデーションフロー図
   - ファイルアップロードフロー図
+- Remote Functions（SvelteKit 2.27+）- query / form / command / prerender
 - WebSocket/SSE
-- サーバーサイド処理（準備中）
-- API ルート設計（準備中）
-- Hooks（準備中）
+- サーバーサイド処理
+- API ルート設計（RESTful エンドポイント、レイヤードアーキテクチャ）
+- Hooks（handle / handleFetch / handleError / handleValidationError）
+- Server-only modules
 
 ### 13. SvelteKit アプリケーション構築編
 
@@ -195,10 +209,10 @@
 - 認証ベストプラクティス
 - テスト戦略
 - 状態管理パターン
-- 認証・認可（準備中）
+- 環境変数管理（$env モジュール 4種、.env 設定、セキュリティ）
+- エラーハンドリング（error() / +error.svelte / handleError / App.Error）
+- Snapshots（DOM 状態の保持）
 - データベース統合（準備中）
-- 環境変数管理（準備中）
-- エラーハンドリング（準備中）
 
 ### 14. SvelteKit エンタープライズ開発（計画中）
 
@@ -212,13 +226,16 @@
 
 - ビルド最適化
 - キャッシュ戦略
-- パフォーマンス最適化（準備中）
-- SEO 最適化（準備中）
+- パフォーマンス最適化
+- SEO 最適化（svelte:head / OGP / JSON-LD / サイトマップ / robots.txt）
+- Service Workers / PWA（オフライン対応・キャッシュ戦略）
+- Observability（OpenTelemetry トレーシング）
 
 ### 16. SvelteKit デプロイ・運用編
 
-- プラットフォーム別デプロイ
+- プラットフォーム別デプロイ（準備中）
 - 実行環境とランタイム
+- パッケージング（コンポーネントライブラリ公開）
 - セキュリティ（準備中）
 - モニタリング（準備中）
 
@@ -289,14 +306,14 @@ Svelte 5 の内部実装や高度なトピックを扱います。
 
 ### コア技術
 
-- **Svelte 5** (5.46+) - 最新の Runes システム対応
-- **SvelteKit** (2.49+) - フルスタックフレームワーク
-- **TypeScript** (5.3.3+) - 型安全な開発環境
-- **Vite** (7.0+) - 高速ビルドツール
+- **Svelte 5** (5.53+) - 最新の Runes システム対応
+- **SvelteKit** (2.55+) - フルスタックフレームワーク
+- **TypeScript** (5.9+) - 型安全な開発環境
+- **Vite** (7.3+) - 高速ビルドツール
 
 ### ドキュメント・可視化
 
-- **SveltePress** (7.0+) - 静的サイト生成
+- **SveltePress** (1.3+) - 静的サイト生成
 - **Mermaid** (11.12+) - ダイアグラム描画
 
 ### カスタム機能
@@ -423,4 +440,4 @@ pnpm preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026 年 1 月 11 日 - 全セクションのコードブロック品質改善（Svelte 5 イベント構文統一、SvelteKit インポート補完）
+**Last Updated**: 2026 年 4 月 12 日 - Svelte MCP による全コンテンツ検証・修正、リファレンス最新化、PageProps/LayoutProps 対応

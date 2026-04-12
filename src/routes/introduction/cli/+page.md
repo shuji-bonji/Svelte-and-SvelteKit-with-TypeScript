@@ -181,19 +181,22 @@ Svelte チームが公式にサポートするアドオンです。これらは 
 
 | アドオン            | 説明                               |
 | ------------------- | ---------------------------------- |
-| `eslint`            | ESLint によるコード品質チェック    |
-| `prettier`          | Prettier によるコードフォーマット  |
-| `tailwindcss`       | Tailwind CSS の統合                |
-| `vitest`            | Vitest によるユニットテスト        |
-| `playwright`        | Playwright による E2E テスト       |
+| `better-auth`       | Better Auth による認証システム     |
 | `drizzle`           | Drizzle ORM によるデータベース統合 |
-| `lucia`             | Lucia による認証システム           |
+| `eslint`            | ESLint によるコード品質チェック    |
+| `mcp`               | MCP（Model Context Protocol）統合  |
 | `mdsvex`            | Markdown in Svelte                 |
 | `paraglide`         | 国際化（i18n）サポート             |
+| `playwright`        | Playwright による E2E テスト       |
+| `prettier`          | Prettier によるコードフォーマット  |
 | `storybook`         | Storybook によるコンポーネント開発 |
 | `sveltekit-adapter` | デプロイアダプターの設定           |
-| `devtools-json`     | Chrome DevTools 統合               |
-| `mcp`               | MCP（Model Context Protocol）統合  |
+| `tailwindcss`       | Tailwind CSS の統合                |
+| `vitest`            | Vitest によるユニットテスト        |
+
+:::note[認証アドオンの変更]
+以前の公式アドオンだった `lucia` は `better-auth` に置き換わりました。新規プロジェクトでは `better-auth` の使用を推奨します。
+:::
 
 ### 使用例
 
@@ -207,11 +210,30 @@ npx sv add tailwindcss
 npx sv add vitest playwright
 
 # データベースと認証を追加
-npx sv add drizzle lucia
+npx sv add drizzle better-auth
 
 # 開発ツールをまとめて追加
 npx sv add eslint prettier storybook
 ```
+
+### コミュニティアドオン
+
+公式アドオンに加えて、コミュニティが開発したアドオンも利用できます（実験的機能）。npm パッケージとして公開されており、`@org/sv` の命名規則に従います。
+
+```bash
+# コミュニティアドオンをインストール（組織名を指定）
+npx sv add @supacool
+
+# 公式アドオンとコミュニティアドオンを混在させる
+npx sv add eslint @supacool
+
+# プロジェクト作成時にも指定可能
+npx sv create --add eslint @supacool
+```
+
+:::warning[コミュニティアドオンの注意]
+コミュニティアドオンは Svelte メンテナーによるセキュリティレビューを受けていません。`--no-download-check` オプションは注意して使用してください。
+:::
 
 ## sv check
 

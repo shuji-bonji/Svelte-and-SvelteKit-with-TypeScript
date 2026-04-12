@@ -184,6 +184,30 @@ export const getWeather = query.batch(v.string(), async (cities) => {
 {/each}
 ```
 
+### クエリプロパティ（await の代替）
+
+`await` を使わずに、クエリの状態に応じた表示分岐を行うこともできます。クエリオブジェクトには `loading`、`error`、`current` プロパティがあります。
+
+```svelte
+<script lang="ts">
+  import { getPosts } from './data.remote';
+
+  const query = getPosts();
+</script>
+
+{#if query.error}
+  <p>エラーが発生しました</p>
+{:else if query.loading}
+  <p>読み込み中...</p>
+{:else}
+  <ul>
+    {#each query.current as post}
+      <li><a href="/blog/{post.slug}">{post.title}</a></li>
+    {/each}
+  </ul>
+{/if}
+```
+
 ### クエリの更新
 
 クエリは `refresh()` メソッドで再取得できます。これにより、ユーザーアクションに応じてデータを更新したり、定期的なポーリングを実装したりできます。
@@ -201,6 +225,29 @@ export const getWeather = query.batch(v.string(), async (cities) => {
 :::tip[クエリのキャッシュ]
 クエリはページ上に存在する間キャッシュされます。`getPosts() === getPosts()` は常に `true` です。
 :::
+
+### キャッシュとリアクティブコンテキスト
+
+クエリはメモリリークを防ぐため、リアクティブコンテキスト（`$derived`、`$effect`、コンポーネントテンプレート）内で使用されている間のみキャッシュされます。イベントハンドラ内でキャッシュを経由せずデータを取得したい場合は、`.run()` メソッドを使用します。
+
+```svelte
+<script lang="ts">
+  import { getData } from './data.remote';
+
+  // リアクティブコンテキストに「アンカー」されている - OK
+  const data = getData();
+</script>
+
+<!-- アンカーされたクエリを非リアクティブコンテキストでawaitするのはOK -->
+<button onclick={async () => console.log(await data)}>
+  データ取得
+</button>
+
+<!-- キャッシュをバイパスして直接実行する場合は .run() を使用 -->
+<button onclick={async () => console.log(await getData().run())}>
+  直接実行
+</button>
+```
 
 ## form - フォーム処理の新パターン
 
@@ -335,6 +382,89 @@ export const register = form(
 );
 ```
 
+### クライアントサイドバリデーション（preflight）
+
+`preflight` メソッドでクライアントサイドのバリデーションスキーマを指定できます。サーバーにデータを送信する前に、ブラウザ側でバリデーションを実行します。
+
+```svelte
+<script lang="ts">
+  import * as v from 'valibot';
+  import { createPost } from '../data.remote';
+
+  // クライアントサイドのバリデーションスキーマ
+  const schema = v.object({
+    title: v.pipe(v.string(), v.nonEmpty('タイトルは必須です')),
+    content: v.pipe(v.string(), v.nonEmpty('本文は必須です'))
+  });
+</script>
+
+<!-- preflight でクライアントバリデーションを有効化 -->
+<form {...createPost.preflight(schema)}>
+  <label>
+    <h2>タイトル</h2>
+    {#each createPost.fields.title.issues() as issue}
+      <p class="error">{issue.message}</p>
+    {/each}
+    <input {...createPost.fields.title.as('text')} />
+  </label>
+
+  <button>投稿する</button>
+</form>
+```
+
+:::tip[入力時バリデーション]
+`validate()` を `oninput` や `onchange` と組み合わせると、リアルタイムバリデーションも実現できます。
+
+```svelte
+<form {...createPost} oninput={() => createPost.validate()}>
+  <!-- フォーム内容 -->
+</form>
+```
+:::
+
+### フォームの複数インスタンス（for）
+
+リスト内でフォームを繰り返し使う場合、`for(id)` で各アイテムに独立したフォームインスタンスを作成できます。
+
+```svelte
+<script lang="ts">
+  import { getTodos, modifyTodo } from '../data.remote';
+</script>
+
+<h1>TODOリスト</h1>
+
+{#each await getTodos() as todo}
+  <!-- 各TODOに独立したフォームインスタンスを作成 -->
+  {@const modify = modifyTodo.for(todo.id)}
+  <form {...modify}>
+    <input {...modify.fields.description.as('text', todo.description)} />
+    <button disabled={!!modify.pending}>保存</button>
+  </form>
+{/each}
+```
+
+### 機密データの保護
+
+パスワードなどの機密データは、フィールド名の先頭にアンダースコア（`_`）を付けることで、バリデーション失敗時にクライアントへの送り返しを防止できます。
+
+```svelte
+<form {...register}>
+  <label>
+    ユーザー名
+    <!-- 通常のフィールド: バリデーション失敗時に値が再表示される -->
+    <input {...register.fields.username.as('text')} />
+  </label>
+
+  <label>
+    パスワード
+    <!-- _password: バリデーション失敗時でも値は送り返されない -->
+    <input {...register.fields._password.as('password')} />
+  </label>
+
+  <button>登録</button>
+</form>
+```
+
 ### enhance によるカスタマイズ
 
 `enhance` メソッドでフォーム送信の動作をカスタマイズできます。送信前後の処理、エラーハンドリング、トースト表示などを追加できます。
@@ -360,27 +490,78 @@ export const register = form(
 
 ### Single-flight mutations
 
-フォーム送信後に関連するクエリを自動更新できます。これにより、データの更新とそれに依存する表示の更新を 1 回のリクエストで完結させることができます。
+`form` と `command` によるミューテーション後に、関連するクエリを1回のリクエストで自動更新できます。通常、データ更新後に画面上のクエリを再取得するには2回のラウンドトリップが必要ですが、Single-flight mutationsではこれを1回に削減します。
+
+#### サーバー主導の更新
+
+サーバーハンドラ内で、どのクエリを更新するかを指定します。`refresh()` でサーバー側で再取得、`set()` で値を直接セットできます。
 
 ```typescript
-// サーバー側で更新
 export const createPost = form(schema, async (data) => {
-	// 記事を作成
 	await db.createPost(data);
 
-	// getPosts()を自動的に再取得
-	await getPosts().refresh();
+	// サーバー側で getPosts() を再取得し、結果をクライアントに返す
+	void getPosts().refresh();
+
+	redirect(303, '/blog');
+});
+
+export const updatePost = form(
+	v.object({ id: v.string() }),
+	async (post) => {
+		const result = await externalApi.update(post);
+
+		// APIの戻り値で直接更新（再取得不要）
+		getPost(post.id).set(result);
+	}
+);
+```
+
+#### クライアント主導の更新（requested）
+
+サーバーがどのクエリインスタンスを更新すべきか分からない場合（例: フィルタ付きクエリ）、クライアントから更新を要求し、サーバーで `requested()` を使って受け取ります。
+
+```svelte
+<!-- クライアント側: submit().updates() で更新対象を指定 -->
+<form {...createPost.enhance(async ({ submit }) => {
+  await submit().updates(
+    // getPostsの全アクティブインスタンスを更新要求
+    getPosts,
+    // 特定インスタンスの更新要求
+    getPosts({ filter: 'author:santa' }),
+    // 楽観的更新付き
+    getPosts({ filter: 'recent' }).withOverride((posts) => [newPost, ...posts])
+  );
+})}>
+```
+
+```typescript
+// サーバー側: requested() でクライアントからの要求を受け取る
+import { query, form, requested } from '$app/server';
+
+export const getPosts = query(
+	v.object({ filter: v.string() }),
+	async ({ filter }) => { /* ... */ }
+);
+
+export const createPost = form(schema, async (data) => {
+	await db.createPost(data);
+
+	// クライアントが要求した getPosts インスタンスを最大5件まで再取得
+	for (const arg of requested(getPosts, 5)) {
+		void getPosts(arg).refresh();
+	}
+
+	// 短縮形: 全要求インスタンスを一括refresh
+	// await requested(getPosts, 5).refreshAll();
 
 	redirect(303, '/blog');
 });
 ```
 
-```svelte
-<!-- クライアント側で更新を指定 -->
-<form {...createPost.enhance(async ({ submit }) => {
-  await submit().updates(getPosts());
-})}>
-```
+:::info[requested() の仕組み]
+`requested()` はクライアントが要求したクエリの引数（パース済み）を返します。第2引数の `limit` は返す最大件数で、これを超える要求はエラーになります。パースに失敗した個別の引数はそのクエリだけがエラーになり、全体は失敗しません。
+:::
 
 ## command - サーバーへのデータ書き込み
 
@@ -566,7 +747,34 @@ export const getProfile = query(async () => {
 
 - ヘッダーの設定はできません（Cookie の設定は `form` と `command` 内でのみ可能）
 - `route`, `params`, `url` は Remote Function のエンドポイントではなく、呼び出し元のページの情報です
-  :::
+:::
+
+## バリデーションエラーのハンドリング
+
+Remote Functions の引数バリデーションが失敗した場合（デプロイ間のバージョン不一致や不正なリクエスト）、デフォルトでは `400 Bad Request` が返されます。`handleValidationError` サーバーフックでレスポンスをカスタマイズできます。
+
+```typescript
+// src/hooks.server.ts
+import type { HandleValidationError } from '@sveltejs/kit';
+
+export const handleValidationError: HandleValidationError = ({ event, issues }) => {
+	return {
+		message: '不正なリクエストです'
+	};
+};
+```
+
+### バリデーションの省略
+
+内容を理解した上でバリデーションを省略したい場合は、スキーマの代わりに `'unchecked'` を渡すことができます。ただし、エンドポイントが外部から不正なデータで呼び出されるリスクがあるため、注意が必要です。
+
+```typescript
+import { query } from '$app/server';
+
+export const getStuff = query('unchecked', async ({ id }: { id: string }) => {
+	// TypeScript上の型と実行時の値が一致しない可能性がある
+});
+```
 
 ## まとめ
 

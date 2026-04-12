@@ -102,20 +102,30 @@ class Counter {
 let counter = new Counter();
 ```
 
-#### $state.frozen - 読み取り専用
+#### $state.raw - 非プロキシ状態
+
+`$state.raw` は深いリアクティビティ（Proxy）を適用しない状態を作成します。大きな配列や頻繁に変更されないオブジェクトのパフォーマンス最適化に有効です。
 
 ```typescript
-let config = $state.frozen({
+// 大きなデータセット（Proxyのオーバーヘッドを回避）
+let largeList = $state.raw<Item[]>(fetchedItems);
+
+// 設定オブジェクト（個別プロパティの変更追跡が不要）
+let config = $state.raw({
   apiUrl: 'https://api.example.com',
   version: '1.0.0'
 });
 
-// ❌ エラー: Cannot assign to read only property
-// config.apiUrl = 'new-url';
+// プロパティの変更は追跡されない
+// config.apiUrl = 'new-url'; // UIは更新されない
 
-// ✅ 新しいオブジェクトで置き換える
-config = $state.frozen({ ...config, version: '1.0.1' });
+// ✅ オブジェクト全体を置き換えることでUIを更新
+config = $state.raw({ ...config, version: '1.0.1' });
 ```
+
+:::warning[$state.frozen は $state.raw にリネーム済み]
+以前の `$state.frozen` は `$state.raw` にリネームされました。`$state.frozen` を使用している場合は `$state.raw` に置き換えてください。
+:::
 
 #### $state.snapshot - スナップショット
 
@@ -156,6 +166,37 @@ let processedItems = $derived.by(() => {
     return a.price - b.price;
   });
 });
+```
+
+#### Overridable $derived（Svelte 5.25+）
+
+`$derived` の値を一時的にオーバーライドできます。依存値が変更されると、オーバーライドはリセットされます。
+
+```typescript
+// 検索候補からの入力補完パターン
+let input = $state('');
+let suggestion = $derived(getSuggestion(input));
+
+// ユーザーがTabキーで候補を選択→inputが更新→suggestionがリセット
+function acceptSuggestion() {
+  input = suggestion;
+}
+```
+
+```svelte
+<script lang="ts">
+  let selected = $state('apple');
+  
+  // selectedが変更されるたびにリセットされる
+  let editableLabel = $derived(selected.toUpperCase());
+</script>
+
+<!-- ユーザーが直接編集可能だが、selected変更でリセット -->
+<input bind:value={editableLabel} />
+<select bind:value={selected}>
+  <option value="apple">Apple</option>
+  <option value="banana">Banana</option>
+</select>
 ```
 
 ### $effect - 副作用
@@ -239,6 +280,27 @@ onMount(() => {
   return cleanup;
 });
 ```
+
+#### $effect.pending() - 非同期保留状態の追跡
+
+`$effect.pending()` は、現在のコンポーネント内で非同期操作が保留中かどうかを追跡します。`await expressions` と組み合わせて使用します。
+
+```typescript
+// await expressionsで非同期データを取得するコンポーネント内で
+$effect(() => {
+  if ($effect.pending()) {
+    // ローディングスピナーの表示など
+    showSpinner = true;
+  } else {
+    showSpinner = false;
+  }
+});
+```
+
+:::info[$effect.pending() vs svelte:boundary]
+`<svelte:boundary>` の `pending` snippetは初回ローディングに使用します。
+`$effect.pending()` は後続の非同期更新でのローディング状態の検出に使用します。
+:::
 
 ### $props - コンポーネントプロパティ
 
@@ -664,31 +726,69 @@ Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`{@at
   Click me
 </button>
 
-<!-- イベント修飾子 -->
-<button onclick|preventDefault|stopPropagation={handleClick}>
-  Submit
-</button>
-
-<!-- 一度だけ実行 -->
-<button onclick|once={() => alert('Once!')}>
-  Click Once
-</button>
+<!-- preventDefault等は関数内で呼び出す -->
+<form onsubmit={(e: SubmitEvent) => {
+  e.preventDefault();
+  handleSubmit(e);
+}}>
+  <button type="submit">Submit</button>
+</form>
 ```
 
-### カスタムイベント
+:::caution[Svelte 5ではイベント修飾子構文は非サポート]
+Svelte 4の `on:click|preventDefault|stopPropagation` のような修飾子構文は使用できません。
+`e.preventDefault()` や `e.stopPropagation()` を関数内で直接呼び出してください。
+:::
+
+### コンポーネントイベント（コールバックProps）
+
+Svelte 5ではコールバックpropsパターンが推奨です（`createEventDispatcher` はレガシー）。
 
 ```typescript
 // 子コンポーネント
-import { createEventDispatcher } from 'svelte';
+interface Props {
+  onMessage?: (data: { text: string }) => void;
+  onDelete?: (data: { id: number }) => void;
+}
 
-const dispatch = createEventDispatcher<{
-  message: { text: string };
-  delete: { id: number };
-}>();
+let { onMessage, onDelete }: Props = $props();
 
 function sendMessage() {
-  dispatch('message', { text: 'Hello!' });
+  onMessage?.({ text: 'Hello!' });
 }
+```
+
+```svelte
+<!-- 親コンポーネント -->
+<ChildComponent
+  onMessage={(data) => console.log(data.text)}
+  onDelete={(data) => removeItem(data.id)}
+/>
+```
+
+### svelte/events モジュール
+
+プログラマティックなイベントリスナー登録やメディアクエリの監視に使用します。
+
+```typescript
+import { on, MediaQuery } from 'svelte/events';
+
+// DOM要素にイベントリスナーを追加（クリーンアップ関数を返す）
+const off = on(document, 'click', (e: MouseEvent) => {
+  console.log('Document clicked at', e.clientX, e.clientY);
+});
+
+// 解除
+off();
+
+// メディアクエリのリアクティブ監視
+const isMobile = new MediaQuery('max-width: 768px');
+
+$effect(() => {
+  if (isMobile.current) {
+    console.log('モバイルビュー');
+  }
+});
 ```
 
 ## バインディング
@@ -930,13 +1030,18 @@ function tooltip(node: HTMLElement, text: string) {
 
 ```svelte
 <script lang="ts">
-  import type { ComponentType, SvelteComponent } from 'svelte';
+  import type { Component } from 'svelte';
   
-  let currentComponent = $state<ComponentType<SvelteComponent>>(ComponentA);
+  let currentComponent: Component = $state(ComponentA);
 </script>
 
+<!-- Svelte 5では直接コンポーネントを動的に使用可能 -->
 <svelte:component this={currentComponent} {...componentProps} />
 ```
+
+:::tip[Svelte 5での動的コンポーネント]
+Svelte 5では `<svelte:component>` なしで直接 `<currentComponent />` と書くこともできます（変数名が大文字始まりの場合）。
+:::
 
 ### svelte:element - 動的要素
 
@@ -963,16 +1068,16 @@ function tooltip(node: HTMLElement, text: string) {
 ### コンポーネント型定義
 
 ```typescript
-import type { ComponentType, SvelteComponent, ComponentProps } from 'svelte';
+import type { Component, ComponentProps } from 'svelte';
 
-// コンポーネント型
-type ButtonComponent = ComponentType<SvelteComponent<{
+// Svelte 5のComponent型（推奨）
+type ButtonComponent = Component<{
   variant?: 'primary' | 'secondary';
   disabled?: boolean;
-}>>;
+}>;
 
 // プロパティの抽出
-type ButtonProps = ComponentProps<Button>;
+type ButtonProps = ComponentProps<typeof Button>;
 type NativeButtonProps = ComponentProps<'button'>;
 
 // 組み合わせ
@@ -982,16 +1087,43 @@ type CustomButtonProps = ComponentProps<'button'> & {
 };
 ```
 
+:::info[Component型について]
+Svelte 5では `Component` 型を使用します。`SvelteComponent` / `ComponentType` はレガシー互換です。
+:::
+
+### ジェネリックコンポーネント
+
+`generics` 属性で型パラメータを宣言できます。
+
+```svelte
+<script lang="ts" generics="T extends Record<string, unknown>">
+  interface Props {
+    items: T[];
+    selected?: T;
+    onSelect?: (item: T) => void;
+  }
+
+  let { items, selected, onSelect }: Props = $props();
+</script>
+
+{#each items as item}
+  <button onclick={() => onSelect?.(item)}>
+    {JSON.stringify(item)}
+  </button>
+{/each}
+```
+
 ### イベント型定義
 
 ```typescript
-interface CustomEvents {
-  submit: CustomEvent<{ data: FormData }>;
-  cancel: CustomEvent<void>;
-}
-
 function handleClick(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
   console.log(event.currentTarget.textContent);
+}
+
+// フォームイベント
+function handleSubmit(event: SubmitEvent) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget as HTMLFormElement);
 }
 ```
 
@@ -1055,12 +1187,34 @@ $effect(() => {
 });
 ```
 
+### flushSync - 同期的なDOM更新
+
+```typescript
+import { flushSync } from 'svelte';
+
+let count = $state(0);
+
+function increment() {
+  // 通常はバッチ処理される更新を即座にDOMに反映
+  flushSync(() => {
+    count++;
+  });
+  // ここでDOMは既に更新されている
+  console.log(document.querySelector('#count')?.textContent); // 最新の値
+}
+```
+
+:::warning[使用は最小限に]
+`flushSync` は測定やスクロール位置の調整など、DOM更新の即時反映が必要な場合に限定してください。通常の更新はSvelteのバッチ処理に任せる方がパフォーマンスが良好です。
+:::
+
 ### 遅延読み込み
 
 ```typescript
 import { onMount } from 'svelte';
+import type { Component } from 'svelte';
 
-let HeavyComponent: ComponentType<SvelteComponent> | null = null;
+let HeavyComponent: Component | null = $state(null);
 
 onMount(async () => {
   const module = await import('./HeavyComponent.svelte');
@@ -1137,6 +1291,11 @@ let { prop }: { prop: string } = $props();
 - [ ] `export let` を `$props()` に変更
 - [ ] `<slot />` を `{@render children?.()}` に変更
 - [ ] ストアの `$` プレフィックスを削除
+- [ ] `on:event` を `onevent` に変更（例: `on:click` → `onclick`）
+- [ ] `createEventDispatcher` をコールバックpropsに変更
+- [ ] `on:event|modifier` を関数内での直接呼び出しに変更
+- [ ] `$state.frozen` を `$state.raw` に変更
+- [ ] `ComponentType<SvelteComponent>` を `Component` に変更
 
 ## 関連リソース
 

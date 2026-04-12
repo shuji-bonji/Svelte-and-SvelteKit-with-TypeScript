@@ -422,8 +422,66 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </svelte:boundary>
 ```
 
+### `pending` snippet — 非同期ローディング表示
+
+`<svelte:boundary>` は `await expressions` と連携し、初回の非同期データ解決中にローディングUIを表示できます。
+
+```svelte
+<svelte:boundary>
+  <!-- await expressionsで非同期データを取得 -->
+  <h1>{await fetchPageTitle()}</h1>
+  <p>{await fetchPageContent()}</p>
+
+  {#snippet pending()}
+    <!-- すべてのawaitが解決されるまで表示 -->
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>コンテンツを読み込み中...</p>
+    </div>
+  {/snippet}
+
+  {#snippet failed(error, reset)}
+    <div class="error">
+      <p>読み込みに失敗しました: {error.message}</p>
+      <button onclick={reset}>再試行</button>
+    </div>
+  {/snippet}
+</svelte:boundary>
+```
+
+:::tip[pending vs $effect.pending()]
+`pending` snippetは**初回ローディング時**のみ表示されます。後続の非同期更新でのローディング状態は `$effect.pending()` で検出します。
+:::
+
+### `onerror` プロパティ
+
+`failed` snippetの代わりに、またはそれと併用して `onerror` コールバックを使用できます。
+
+```svelte
+<svelte:boundary onerror={(error, reset) => {
+  // エラーログサービスに送信
+  reportToSentry(error);
+  console.error('Boundary caught:', error);
+}}>
+  <App />
+
+  {#snippet failed(error, reset)}
+    <ErrorFallback {error} {reset} />
+  {/snippet}
+</svelte:boundary>
+```
+
+### プロパティ一覧
+
+| プロパティ | 型 | 説明 |
+|-----------|------|------|
+| `failed` | `Snippet<[Error, () => void]>` | エラー時のフォールバックUI |
+| `pending` | `Snippet` | 非同期解決待ちのローディングUI |
+| `onerror` | `(error: Error, reset: () => void) => void` | エラー発生時のコールバック |
+
 :::info[svelte:boundaryの利点]
 - **エラーの局所化**: エラーがアプリケーション全体に影響しない
+- **非同期ローディング**: `pending` snippetでawait式のローディング状態を表示
 - **ユーザー体験の向上**: エラー時でも適切なフィードバックを表示
 - **デバッグの簡易化**: エラーの発生箇所を特定しやすい
 - **プロダクション対応**: 本番環境でのエラーを優雅に処理

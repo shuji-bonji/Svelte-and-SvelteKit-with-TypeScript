@@ -1,6 +1,6 @@
 ---
 title: $appモジュール
-description: SvelteKitの組み込み$appモジュール完全ガイド - TypeScriptで$app/stores、$app/navigation、$app/environment、$app/pathsを解説
+description: SvelteKitの組み込み$appモジュール完全ガイド - TypeScriptで$app/state、$app/navigation、$app/server、$app/types、$app/environment、$app/pathsを解説
 ---
 
 <script lang="ts">
@@ -15,6 +15,8 @@ description: SvelteKitの組み込み$appモジュール完全ガイド - TypeSc
       environment["$app/environment<br/>実行環境の判定"]
       paths["$app/paths<br/>ベースパスとアセット管理"]
       forms["$app/forms<br/>Progressive Enhancement"]
+      server["$app/server<br/>Remote Functions (2.27+)"]
+      types["$app/types<br/>ルート型ユーティリティ (2.26+)"]
     end
 
     subgraph "使用場所"
@@ -22,6 +24,7 @@ description: SvelteKitの組み込み$appモジュール完全ガイド - TypeSc
       layout["+layout.svelte"]
       component["通常のコンポーネント"]
       universal["+page.ts / +layout.ts"]
+      remote[".remote.ts"]
     end
 
     state --> page
@@ -36,13 +39,18 @@ description: SvelteKitの組み込み$appモジュール完全ガイド - TypeSc
     environment --> component
     paths --> component
     forms --> page
+    server --> remote
+    types --> component
+    types --> universal
 
     style state fill:#22c55e,color:#fff
     style stores fill:#94a3b8,color:#fff
     style navigation fill:#4ecdc4,color:#fff
     style environment fill:#45b7d1,color:#fff
     style paths fill:#96ceb4,color:#fff
-    style forms fill:#ffeaa7,color:#333`;
+    style forms fill:#ffeaa7,color:#333
+    style server fill:#e74c3c,color:#fff
+    style types fill:#9b59b6,color:#fff`;
 </script>
 
 SvelteKitは`$app/`というプレフィックスを持つ組み込みモジュール群を提供しています。これらはSvelteKitアプリケーション内でのみ使用可能な特別なモジュールです。
@@ -509,6 +517,26 @@ export {};
 
 ### 認証状態の管理
 
+#### $app/stateを使用（推奨）
+
+```svelte
+<script lang="ts">
+  import { page } from '$app/state';
+
+  // $derivedでリアクティブに取得
+  let user = $derived(page.data.user);
+  let isAuthenticated = $derived(!!user);
+</script>
+
+{#if isAuthenticated}
+  <p>ようこそ、{user.name}さん</p>
+{:else}
+  <a href="/login">ログイン</a>
+{/if}
+```
+
+#### $app/storesを使用（レガシー）
+
 ```typescript
 // stores/auth.svelte.ts
 import { page } from '$app/stores';
@@ -520,14 +548,16 @@ export const isAuthenticated = derived(user, ($user) => !!$user);
 
 ### ローディング表示
 
+#### $app/stateを使用（推奨）
+
 ```svelte
 <script lang="ts">
-  import { navigating } from '$app/stores';
+  import { navigating } from '$app/state';
   
   let progress = $state(0);
   
   $effect(() => {
-    if ($navigating) {
+    if (navigating) {
       // プログレスバーのシミュレーション
       progress = 0;
       const interval = setInterval(() => {
@@ -739,25 +769,188 @@ $effect(() => {
 3. ストアのサブスクリプションは不要
 :::
 
-### $app/server (2.27+, 実験的)
+### $app/server - Remote Functions (2.27+)
 
-リモート関数機能を提供する新しいモジュールです。クライアントからサーバー関数を型安全に呼び出すことができます。
-
-```typescript
-import { query, command } from '$app/server';
-
-// サーバーでのみ実行されるクエリ
- export const getWeather = query(async () => {
-  const data = await fetchWeatherFromAPI();
-  return data;
-});
-
-// クライアントから呼び出し
-const weather = await getWeather();
-```
+サーバー関数をクライアントから型安全に呼び出す「Remote Functions」を提供するモジュールです。`.remote.ts`ファイルで定義した関数は、サーバーサイドでのみ実行され、クライアントからの呼び出しは自動的にRPC（Remote Procedure Call）に変換されます。
 
 :::warning[実験的機能]
-`$app/server`は実験的機能で、設定で明示的に有効化する必要があります。
+`$app/server`は実験的機能です。`svelte.config.js`で明示的に有効化する必要があります。
+```javascript
+// svelte.config.js
+export default {
+  kit: {
+    experimental: {
+      remoteFunctions: true
+    }
+  }
+};
+```
+:::
+
+:::info[ファイル規約: .remote.ts]
+Remote Functionsは `.remote.ts`（または `.remote.js`）ファイルで定義します。これらのファイルはサーバーサイドでのみ実行され、クライアントからは自動的にRPCコールに変換されます。
+:::
+
+#### query - データ取得
+
+読み取り専用のデータ取得関数です。自動キャッシュと重複排除が組み込まれています。
+
+```typescript
+// src/routes/users/[id]/page.remote.ts
+import { query } from '$app/server';
+
+export const getUser = query(async (id: string) => {
+  const user = await db.user.findUnique({ where: { id } });
+  return user;
+});
+```
+
+```svelte
+<!-- src/routes/users/[id]/+page.svelte -->
+<script lang="ts">
+  import { getUser } from './page.remote';
+
+  // 型安全: userの型はサーバー関数の戻り値から推論
+  const user = await getUser('123');
+</script>
+```
+
+#### query.batch() - N+1問題の解決（v2.35+）
+
+複数のクエリをバッチ処理して1つのリクエストにまとめます。
+
+```typescript
+// src/routes/page.remote.ts
+import { query } from '$app/server';
+
+// バッチ対応のクエリ: 複数の呼び出しが1リクエストにまとまる
+export const getUser = query.batch(async (ids: string[]) => {
+  const users = await db.user.findMany({ where: { id: { in: ids } } });
+  // idの順序で結果を返す（Map形式）
+  return new Map(users.map(u => [u.id, u]));
+});
+```
+
+```svelte
+<!-- 各コンポーネントから個別に呼び出してもバッチ処理される -->
+{#each userIds as id}
+  {@const user = await getUser(id)}
+  <UserCard {user} />
+{/each}
+```
+
+#### form - フォーム処理
+
+FormDataベースのミューテーション。Progressive Enhancement対応です。Standard Schema（Zod、Valibot等）によるバリデーションと統合できます。
+
+```typescript
+// src/routes/login/page.remote.ts
+import { form } from '$app/server';
+import * as v from 'valibot';
+
+// Standard Schema（Valibot）でバリデーション
+const LoginSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  password: v.pipe(v.string(), v.minLength(8))
+});
+
+export const login = form(LoginSchema, async (data, { cookies }) => {
+  const user = await authenticate(data);
+  cookies.set('session', user.sessionId, { path: '/' });
+  return { success: true, user };
+});
+```
+
+#### command - サーバーコマンド
+
+イベントハンドラから呼び出す命令型のミューテーションです。
+
+```typescript
+// src/routes/posts/page.remote.ts
+import { command } from '$app/server';
+
+export const deletePost = command(async (id: string) => {
+  await db.post.delete({ where: { id } });
+  return { deleted: true };
+});
+```
+
+```svelte
+<script lang="ts">
+  import { deletePost } from './page.remote';
+</script>
+
+<button onclick={async () => {
+  const result = await deletePost(post.id);
+  if (result.deleted) {
+    // UIを更新
+  }
+}}>
+  削除
+</button>
+```
+
+#### prerender - ビルド時データ生成
+
+```typescript
+// src/routes/page.remote.ts
+import { prerender } from '$app/server';
+
+export const getConfig = prerender(async () => {
+  return await fetchConfiguration();
+});
+```
+
+#### エクスポート一覧
+
+| エクスポート | 説明 |
+|-------------|------|
+| `query` | 読み取り専用データ取得（キャッシュ・重複排除付き） |
+| `query.batch` | バッチクエリ（N+1問題解決） |
+| `form` | FormDataベースのミューテーション |
+| `command` | 命令型ミューテーション |
+| `prerender` | ビルド時データ生成 |
+| `getRequestEvent()` | 現在のRequestEventへのアクセス（v2.20+） |
+| `requested()` | クエリのrefresh要求の検出 |
+
+### $app/types - ルート型ユーティリティ (2.26+)
+
+型安全なルーティングのためのユーティリティ型を提供するモジュールです。アプリケーションのルート定義から自動生成される型で、リンクやナビゲーションの安全性を高めます。
+
+```typescript
+import type { RouteId, RouteParams, Pathname } from '$app/types';
+
+// すべてのルートIDの合同型
+type AllRoutes = RouteId;
+// 例: '/about' | '/blog/[slug]' | '/users/[id]'
+
+// 特定ルートのパラメータ型を取得
+type BlogParams = RouteParams<'/blog/[slug]'>;
+// { slug: string }
+
+// 型安全なパス名（存在しないルートはコンパイルエラー）
+const path: Pathname = '/about';
+```
+
+#### 使用例: 型安全なリンクコンポーネント
+
+```svelte
+<script lang="ts">
+  import type { Pathname } from '$app/types';
+
+  let { href, children }: {
+    href: Pathname;
+    children: import('svelte').Snippet;
+  } = $props();
+</script>
+
+<a {href}>
+  {@render children()}
+</a>
+```
+
+:::tip[型安全なルーティングの利点]
+`$app/types`を使用すると、存在しないルートへのリンクをコンパイル時に検出できます。ルートの追加・削除時にも、関連するリンクの整合性が自動的にチェックされます。
 :::
 
 ## 次のステップ

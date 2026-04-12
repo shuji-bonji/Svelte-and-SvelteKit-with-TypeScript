@@ -567,9 +567,9 @@ export const actions = {
 <!-- src/routes/posts/[id]/+page.svelte -->
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { PageData, ActionData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data, form }: { data: PageData; form: ActionData } = $props();
+  let { data, form }: PageProps = $props();
 </script>
 
 <!-- 更新フォーム -->
@@ -1148,9 +1148,9 @@ export const actions = {
 ```svelte
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
   
   let todos = $state([...data.todos]);
   let newTodo = $state('');

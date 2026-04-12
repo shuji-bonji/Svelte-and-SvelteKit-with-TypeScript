@@ -348,7 +348,7 @@ description: SvelteKitのデータフェッチング戦略をTypeScriptで完全
     SvelteKit-->>Browser: 初期HTML生成
     Browser->>PageSvelte: コンポーネントマウント
     
-    Note over PageSvelte: let { data }: { data: PageData } = $props()
+    Note over PageSvelte: let { data }: PageProps = $props()
     PageSvelte->>PageSvelte: criticalデータ即座に表示
     Browser->>User: <h1>{data.critical.title}</h1> 表示
     
@@ -758,9 +758,9 @@ export const load: PageServerLoad = async () => {
 <script lang="ts">
   import { invalidate } from '$app/navigation';
   import { onMount } from 'svelte';
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
   
   onMount(() => {
     // 30秒ごとにデータを更新

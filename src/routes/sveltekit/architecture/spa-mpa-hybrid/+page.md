@@ -62,9 +62,9 @@ export const load: PageLoad = async ({ fetch }) => {
 ```svelte
 <!-- src/routes/dashboard/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 
   // クライアントサイドでのみ利用可能なAPI
   let windowWidth = $state(0);

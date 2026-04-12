@@ -516,10 +516,10 @@ export function getAllTags(): string[] {
 ```svelte
 <!-- src/routes/blog/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   import ArticleCard from '$lib/components/ArticleCard.svelte';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 
 <div class="blog-list">
@@ -588,11 +588,11 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
 ```svelte
 <!-- src/routes/blog/[slug]/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   import { marked } from 'marked'; // npm install marked
   import { resolve } from '$app/paths';
 
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 
   function formatDate(dateString: string): string {
     const date = new Date(dateString);

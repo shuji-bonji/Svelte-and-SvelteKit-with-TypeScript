@@ -1,6 +1,6 @@
 ---
 title: TypeScript型の自動生成システム
-description: SvelteKitが自動生成する型システムで型安全なLoad関数とコンポーネントを実装 - PageData、LayoutData、RequestEventなどの型定義とapp.d.tsによる拡張方法をTypeScriptで解説
+description: SvelteKitが自動生成する型システムで型安全なLoad関数とコンポーネントを実装 - PageProps、LayoutProps、PageData、RequestEventなどの型定義とapp.d.tsによる拡張方法をTypeScriptで解説
 ---
 
 <script>
@@ -25,6 +25,8 @@ description: SvelteKitが自動生成する型システムで型安全なLoad関
       LayoutData["LayoutData"]
       PageServerLoad["PageServerLoad"]
       ActionData["ActionData"]
+      PageProps["PageProps ✨"]
+      LayoutProps["LayoutProps ✨"]
     end
 
     subgraph "型の使用"
@@ -43,12 +45,19 @@ description: SvelteKitが自動生成する型システムで型安全なLoad関
     LayoutLoad --> LayoutData
     PageServerLoad --> PageData
 
-    PageData --> props
-    ActionData --> props
+    PageData --> PageProps
+    ActionData --> PageProps
+    LayoutData --> LayoutProps
+
+    PageProps --> props
+    LayoutProps --> props
 
     load --> types
     component --> props
     actions --> ActionData
+
+    style PageProps fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    style LayoutProps fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
   `;
 
   const typeInheritanceDiagram = `graph TB
@@ -68,7 +77,7 @@ description: SvelteKitが自動生成する型システムで型安全なLoad関
     subgraph "Page Component"
       direction TB
       PageComponent["+page.svelte"]
-      Props["let { data } = $props()"]
+      Props["let { data }: PageProps = $props()"]
       FinalData["data: PageData"]
     end
 
@@ -156,11 +165,11 @@ export const load: PageLoad = async ({ fetch }) => {
 ```svelte
 <!-- +page.svelte - ページコンポーネント -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
 
+  // PagePropsはdata: PageDataを含むヘルパー型（SvelteKit 2.16+）
   // PageDataは+page.tsのload関数の戻り値から自動生成
-  // { user: any, timestamp: number } の型を持つ
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 
   // TypeScriptが型チェック：data.timestampはnumber型
   // data.userはany型なので、.nameアクセスでもエラーにならない
@@ -298,12 +307,10 @@ export const actions = {
 ```svelte
 <!-- +page.svelte - Form Actionの結果を表示 -->
 <script lang="ts">
-  import type { PageData, ActionData } from './$types';
+  import type { PageProps } from './$types';
 
-  let { data, form }: {
-    data: PageData;      // Load関数の戻り値
-    form: ActionData;     // Form Actionの戻り値（フォーム送信後）
-  } = $props();
+  // PagePropsはActionsが定義されている場合、form: ActionDataも含む
+  let { data, form }: PageProps = $props();
 
   // formはフォーム送信前はundefined
   // 送信後はcreate actionの戻り値が入る
@@ -322,6 +329,59 @@ export const actions = {
   <button>作成</button>
 </form>
 ```
+
+## PageProps / LayoutProps（推奨パターン）
+
+SvelteKit 2.16.0で追加されたヘルパー型で、コンポーネントの`$props()`を簡潔かつ型安全に記述できます。
+
+### PageProps
+
+`PageProps`は`data: PageData`を含み、Actionsが定義されている場合は`form: ActionData`も自動的に含みます。
+
+```svelte
+<!-- +page.svelte -->
+<script lang="ts">
+  // ✅ 推奨: PagePropsで簡潔に型定義
+  import type { PageProps } from './$types';
+
+  let { data, form }: PageProps = $props();
+  // data: PageData — Load関数の戻り値
+  // form: ActionData — Form Actionsの結果（Actionsがある場合のみ）
+</script>
+```
+
+### LayoutProps
+
+`LayoutProps`は`data: LayoutData`と`children: Snippet`を含みます。レイアウトコンポーネントで使用します。
+
+```svelte
+<!-- +layout.svelte -->
+<script lang="ts">
+  import type { LayoutProps } from './$types';
+
+  // childrenはSnippet型で、子ルートのコンテンツ
+  let { data, children }: LayoutProps = $props();
+</script>
+
+<nav>ユーザー: {data.user?.name}</nav>
+{@render children()}
+```
+
+### 従来のパターンとの比較
+
+```typescript
+// ❌ 旧パターン: 個別の型を手動で組み合わせる（冗長）
+import type { PageData, ActionData } from './$types';
+let { data, form }: { data: PageData; form: ActionData } = $props();
+
+// ✅ 新パターン: PagePropsで一括（SvelteKit 2.16+）
+import type { PageProps } from './$types';
+let { data, form }: PageProps = $props();
+```
+
+:::tip[PagePropsを使う理由]
+`PageProps`は単なるショートカットではありません。Actionsの有無に応じて`form`プロパティが自動的に含まれるため、型の不整合を防げます。また、将来的なプロパティ追加にも自動対応します。
+:::
 
 ## RequestEvent型
 
@@ -584,13 +644,11 @@ export const actions = {
 ```svelte
 <!-- +page.svelte - 記事編集コンポーネント -->
 <script lang="ts">
-  import type { PageData, ActionData } from './$types';
+  import type { PageProps } from './$types';
   import { enhance } from '$app/forms';  // Progressive Enhancement
 
-  let { data, form }: {
-    data: PageData;      // Load関数の戻り値
-    form: ActionData;     // Form Actionの結果
-  } = $props();
+  // PagePropsにdata（Load関数の戻り値）とform（Action結果）が含まれる
+  let { data, form }: PageProps = $props();
 
   // Svelte 5の$derivedでリアクティブな値を定義
   // 型が完全に推論される
@@ -659,6 +717,7 @@ export const load = (async () => {
 SvelteKitの型自動生成システムは、以下の利点を提供します。
 
 - **完全な型安全性** - Load関数からコンポーネントまで一貫した型チェック
+- **PageProps/LayoutProps** - コンポーネントの`$props()`をシンプルかつ正確に型付け（SvelteKit 2.16+）
 - **自動推論** - パラメータや返り値の型を自動的に推論
 - **開発効率の向上** - 型定義の手間を削減
 - **エラーの早期発見** - コンパイル時に型エラーを検出

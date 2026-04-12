@@ -547,9 +547,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 ```svelte
 <!-- src/routes/users/[id]/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 
   // サーバーから取得したデータを同期的に派生
   // 非同期処理は不要！

@@ -344,11 +344,11 @@ export const load: PageLoad = async ({ data, fetch }) => {
 ####  +page.svelte（コンポーネント）
 ```svelte
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
 
   // 4. 最終的にコンポーネントがデータを受け取る
-  // PageDataは自動生成される型で、load関数の戻り値と完全に一致
-  let { data }: { data: PageData } = $props();
+  // PagePropsは自動生成される型で、load関数の戻り値と完全に一致
+  let { data }: PageProps = $props();
 </script>
 
 <div>

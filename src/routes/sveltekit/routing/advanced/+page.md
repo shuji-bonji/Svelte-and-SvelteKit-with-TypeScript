@@ -213,11 +213,10 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 ```svelte
 <!-- src/routes/(protected)/+layout.svelte -->
 <script lang="ts">
-  import type { LayoutData } from './$types';
+  import type { LayoutProps } from './$types';
   import UserMenu from '$lib/components/UserMenu.svelte';
-  import type { Snippet } from 'svelte';
   
-  let { data, children }: { data: LayoutData; children?: Snippet } = $props();
+  let { data, children }: LayoutProps = $props();
 </script>
 
 <div class="app-layout">
@@ -598,11 +597,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 ```svelte
 <!-- src/routes/profile/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   import GuestProfile from './GuestProfile.svelte';
   import UserProfile from './UserProfile.svelte';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 
 {#if data.component === 'authenticated'}

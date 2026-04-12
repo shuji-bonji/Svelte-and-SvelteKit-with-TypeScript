@@ -312,9 +312,9 @@ export type { User, Post } from '@prisma/client';
 <script lang="ts">
   // 型のみのインポートは許可される
   import type { User, Post } from '$lib/server/database';
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 ```
 

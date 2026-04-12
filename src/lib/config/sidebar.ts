@@ -75,6 +75,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/svelte/basics/easing/',
             },
             {
+              title: 'svelte/events',
+              to: '/svelte/basics/events-module/',
+            },
+            {
               title: 'TypeScript統合',
               to: '/svelte/basics/typescript-integration/',
             },

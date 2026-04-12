@@ -195,10 +195,10 @@ export const load: LayoutServerLoad = async (event) => {
 // === +page.svelte ===
 // Svelteコンポーネントでのデータ受け取り
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
   // load関数の戻り値が自動的に型付けされる
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
   
   // dataの中身はload関数の返り値の型と一致
   $effect(() => {

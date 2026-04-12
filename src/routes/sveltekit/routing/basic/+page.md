@@ -139,10 +139,10 @@ src/routes/
 ```svelte
 <!-- src/routes/about/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
   // Load関数からのデータ（もしあれば）
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 
 <h1>About Page</h1>
@@ -176,9 +176,9 @@ Load関数から受け取ったデータをページで使用する例です。�
 ```svelte
 <!-- src/routes/about/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 
 <h1>{data.title}</h1>
@@ -607,9 +607,9 @@ export const load: PageLoad = async ({ fetch }) => {
 ```svelte
 <!-- src/routes/blog/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
 </script>
 
 <h1>Blog Posts</h1>

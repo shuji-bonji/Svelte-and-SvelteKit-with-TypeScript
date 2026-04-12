@@ -961,9 +961,9 @@ export class WebVitalsTracker {
 <!-- +page.svelte - 分析ダッシュボード -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: PageProps = $props();
   
   let chartContainer: HTMLElement;
   let Chart: any;

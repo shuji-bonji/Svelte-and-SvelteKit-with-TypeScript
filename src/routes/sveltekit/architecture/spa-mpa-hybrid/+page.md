@@ -145,7 +145,7 @@ export const csr = true;
 <!-- src/routes/(app)/+layout.svelte -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import AppSidebar from '$lib/components/AppSidebar.svelte';
   import AppHeader from '$lib/components/AppHeader.svelte';
 
@@ -155,7 +155,7 @@ export const csr = true;
 <div class="app-shell">
   <AppHeader />
   <div class="app-content">
-    <AppSidebar currentPath={$page.url.pathname} />
+    <AppSidebar currentPath={page.url.pathname} />
     <main>
       {@render children?.()}
     </main>
@@ -226,7 +226,7 @@ SPAセクションとMPAセクション間のナビゲーションを最適化�
 ```svelte
 <!-- src/lib/components/Navigation.svelte -->
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
   interface NavItem {
@@ -244,8 +244,8 @@ SPAセクションとMPAセクション間のナビゲーションを最適化�
 
   // 現在のセクションを判定
   let currentSection = $derived(
-    $page.url.pathname.startsWith('/dashboard') ||
-    $page.url.pathname.startsWith('/settings')
+    page.url.pathname.startsWith('/dashboard') ||
+    page.url.pathname.startsWith('/settings')
       ? 'app'
       : 'marketing'
   );
@@ -265,7 +265,7 @@ SPAセクションとMPAセクション間のナビゲーションを最適化�
 <nav>
   {#each navItems as item}
     <button
-      class:active={$page.url.pathname === item.href}
+      class:active={page.url.pathname === item.href}
       onclick={() => handleNavigation(item)}
     >
       {item.label}

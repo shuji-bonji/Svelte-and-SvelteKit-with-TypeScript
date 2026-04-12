@@ -4,6 +4,7 @@ description: Svelteで採用できる主要アーキテクチャを俯瞰。SPA/
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
   
@@ -44,14 +45,14 @@ Svelteは柔軟なフレームワークであり、**様々なバックエンド
 ## 主要パターン一覧
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-  <a href="{base}/svelte/architecture/spa-patterns/" class="flex no-underline group">
-    <div class="p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 transition-all">
+  <a href="{base}/svelte/architecture/spa-patterns/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-3">🌐</div>
-      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400">SPA + API構成</h3>
-      <p class="text-sm text-gray-700 dark:text-gray-300">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">SPA + API構成</h3>
+      <p class="text-sm" style="color: var(--color-card-desc);">
         Firebase、Supabase、GraphQLなどのバックエンドとSvelteを組み合わせたSPA構築
       </p>
-      <ul class="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-1">
+      <ul class="text-sm mt-3 space-y-1 list-disc pl-5" style="color: var(--color-card-list);">
         <li>✅ 既存APIの活用</li>
         <li>✅ BaaSとの統合</li>
         <li>✅ リアルタイム機能</li>
@@ -59,14 +60,14 @@ Svelteは柔軟なフレームワークであり、**様々なバックエンド
     </div>
   </a>
 
-  <a href="{base}/svelte/architecture/desktop-mobile/" class="flex no-underline group">
-    <div class="p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 transition-all">
+  <a href="{base}/svelte/architecture/desktop-mobile/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-3">💻</div>
-      <h3 class="font-bold text-xl mb-3 text-orange-600 dark:text-orange-400">デスクトップ・モバイル</h3>
-      <p class="text-sm text-gray-700 dark:text-gray-300">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">デスクトップ・モバイル</h3>
+      <p class="text-sm" style="color: var(--color-card-desc);">
         Tauri、Electron、Capacitorを使用したネイティブアプリ開発
       </p>
-      <ul class="text-sm text-gray-600 dark:text-gray-400 mt-3 space-y-1">
+      <ul class="text-sm mt-3 space-y-1 list-disc pl-5" style="color: var(--color-card-list);">
         <li>✅ クロスプラットフォーム</li>
         <li>✅ ネイティブ機能</li>
         <li>✅ オフライン対応</li>
@@ -109,7 +110,7 @@ Svelteは柔軟なフレームワークであり、**様々なバックエンド
    - 特定のCDNサービスに限定
    - Node.jsランタイムが使えない
 
-:::tip[選択のポイント]
+<Admonition type="tip" title="選択のポイント">
 「SvelteKitは素晴らしいフレームワークですが、すべてのプロジェクトに最適とは限りません」
 プロジェクトの要件、チームのスキル、既存資産を考慮して選択しましょう。
-:::
+</Admonition>

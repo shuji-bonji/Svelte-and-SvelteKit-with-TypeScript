@@ -3,6 +3,11 @@ title: リアクティブストア
 description: Svelte5のリアクティブストアをTypeScriptで完全マスター - .svelte.tsファイル、writable、derived、readonly、custom stores、サブスクリプション管理、自動購読の実装を実例を交えて体系的に詳しく解説します
 ---
 
+<script>
+	import { base } from '$app/paths';
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+
 Svelte 5では、`.svelte.js`および`.svelte.ts`ファイルを使用して、コンポーネント間で共有可能なリアクティブストアを作成できます。これは従来のストアシステムを置き換える、より強力で型安全な方法です。
 
 ## リアクティブストアとは
@@ -19,129 +24,131 @@ Svelte 5では、`.svelte.js`および`.svelte.ts`ファイルを使用して、
 4. **自動リアクティビティ** - subscribe/unsubscribeの管理が不要
 5. **純粋なJavaScript** - テストが簡単で、モックが不要
 
-:::tip[Svelte 4からの移行]
+<Admonition type="tip" title="Svelte 4からの移行">
 Svelte 4の`writable`、`readable`、`derived`ストアは、Svelte 5では`.svelte.js`/`.svelte.ts`ファイルと Runesシステムで置き換えられます。
-:::
+</Admonition>
 
 ## Svelte 4ストアとの違い
 
 従来のストアシステムとSvelte 5のリアクティブストアの違いを詳しく比較します。
 
-<Tabs activeName="Svelte 5（リアクティブストア）">
-  <TabPanel name="Svelte 4（従来のストア）">
+### Svelte 4（従来のストア）
 
+```javascript
+// stores.js - Svelte 4の書き方
+import { writable, derived } from 'svelte/store';
 
-  ```javascript
-  // stores.js - Svelte 4の書き方
-  import { writable, derived } from 'svelte/store';
-  
-  // writableストア
-  export const count = writable(0);
-  
-  // derivedストア  
-  export const doubled = derived(
-    count, 
-    $count => $count * 2
-  );
-  
-  // カスタムストア
-  function createCounter() {
-    const { subscribe, set, update } = writable(0);
-    
-    return {
-      subscribe,
-      increment: () => update(n => n + 1),
-      decrement: () => update(n => n - 1), 
-      reset: () => set(0)
-    };
-  }
-  ```
+// writableストア
+export const count = writable(0);
 
-  **コンポーネントでの使用**
-  ```svelte
-  <script>
-    import { count, doubled } from './stores';
-    
-    // $プレフィックスで自動購読
-    $: console.log($count);
-  </script>
-  
-  <!-- $プレフィックスが必要 -->
-  <p>Count: {$count}</p>
-  <p>Doubled: {$doubled}</p>
-  <button on:click={() => $count++}>
-    Increment
-  </button>
-  ```
+// derivedストア
+export const doubled = derived(count, ($count) => $count * 2);
 
-  **特徴**
-  - `svelte/store`からインポートが必要
-  - `$`プレフィックスで自動購読
-  - subscribe/unsubscribeの管理が必要な場合がある
-  - 型推論が限定的
-  
-  </TabPanel>
-  
-  <TabPanel name="Svelte 5（リアクティブストア）">
-  
+// カスタムストア
+function createCounter() {
+  const { subscribe, set, update } = writable(0);
 
-  ```typescript
-  // counter.svelte.ts - Svelte 5の書き方
-  export function createCounter(initial = 0) {
-    let count = $state(initial);
-    let doubled = $derived(count * 2);
-      
-    return {
-      get value() { return count; },
-      get doubled() { return doubled; },
-      increment() { count++; },
-      decrement() { count--; },
-      reset() { count = initial; }
-    };
-  }
-  ```
+  return {
+    subscribe,
+    increment: () => update((n) => n + 1),
+    decrement: () => update((n) => n - 1),
+    reset: () => set(0),
+  };
+}
+```
 
-  **コンポーネントでの使用**
-  ```svelte
-  <script lang="ts">
-    import { createCounter } from './counter.svelte';
-    
-    const counter = createCounter();
-  </script>
-  
-  <!-- $プレフィックス不要、直接アクセス -->
-  <p>Count: {counter.value}</p>
-  <p>Doubled: {counter.doubled}</p>
-  <button onclick={counter.increment}>
-    Increment
-  </button>
-  ```
+**コンポーネントでの使用**
 
-  **特徴**
-  - `.svelte.js`/`.svelte.ts`ファイルを使用
-  - Runesシステム（`$state`、`$derived`）を活用
-  - `$`プレフィックス不要で直接アクセス
-  - TypeScriptによる完全な型推論
-  - 自動的なメモリ管理
+```svelte
+<script>
+  import { count, doubled } from './stores';
 
+  // $プレフィックスで自動購読
+  $: console.log($count);
+</script>
 
-  </TabPanel>
-</Tabs>
+<!-- $プレフィックスが必要 -->
+<p>Count: {$count}</p>
+<p>Doubled: {$doubled}</p>
+<button on:click={() => $count++}>
+  Increment
+</button>
+```
+
+**特徴**
+
+- `svelte/store`からインポートが必要
+- `$`プレフィックスで自動購読
+- subscribe/unsubscribeの管理が必要な場合がある
+- 型推論が限定的
+
+### Svelte 5（リアクティブストア）
+
+```typescript
+// counter.svelte.ts - Svelte 5の書き方
+export function createCounter(initial = 0) {
+  let count = $state(initial);
+  let doubled = $derived(count * 2);
+
+  return {
+    get value() {
+      return count;
+    },
+    get doubled() {
+      return doubled;
+    },
+    increment() {
+      count++;
+    },
+    decrement() {
+      count--;
+    },
+    reset() {
+      count = initial;
+    },
+  };
+}
+```
+
+**コンポーネントでの使用**
+
+```svelte
+<script lang="ts">
+  import { createCounter } from './counter.svelte';
+
+  const counter = createCounter();
+</script>
+
+<!-- $プレフィックス不要、直接アクセス -->
+<p>Count: {counter.value}</p>
+<p>Doubled: {counter.doubled}</p>
+<button onclick={counter.increment}>
+  Increment
+</button>
+```
+
+**特徴**
+
+- `.svelte.js`/`.svelte.ts`ファイルを使用
+- Runesシステム（`$state`、`$derived`）を活用
+- `$`プレフィックス不要で直接アクセス
+- TypeScriptによる完全な型推論
+- 自動的なメモリ管理
 
 ### 比較表
 
 Svelte 4とSvelte 5のストアシステムの機能差を一覧で比較します。
 
-| 機能 | Svelte 4 ストア | Svelte 5 リアクティブストア |
-|------|----------------|--------------------------|
-| **ファイル拡張子** | `.js`/`.ts` | `.svelte.js`/`.svelte.ts` |
-| **インポート** | `svelte/store`から | 不要（Runesを使用） |
-| **リアクティビティ** | subscribe/unsubscribe | 自動（Runesシステム） |
-| **値へのアクセス** | `$store` | `store.property` |
-| **型推論** | 限定的 | 完全な型推論 |
-| **メモリ管理** | 手動でunsubscribe必要 | 自動管理 |
-| **テスト** | モック必要 | 純粋なJSとしてテスト可能 |
-| **SSR** | メモリリークのリスク | 安全 |
+| 機能                 | Svelte 4 ストア       | Svelte 5 リアクティブストア |
+| -------------------- | --------------------- | --------------------------- |
+| **ファイル拡張子**   | `.js`/`.ts`           | `.svelte.js`/`.svelte.ts`   |
+| **インポート**       | `svelte/store`から    | 不要（Runesを使用）         |
+| **リアクティビティ** | subscribe/unsubscribe | 自動（Runesシステム）       |
+| **値へのアクセス**   | `$store`              | `store.property`            |
+| **型推論**           | 限定的                | 完全な型推論                |
+| **メモリ管理**       | 手動でunsubscribe必要 | 自動管理                    |
+| **テスト**           | モック必要            | 純粋なJSとしてテスト可能    |
+| **SSR**              | メモリリークのリスク  | 安全                        |
 
 ### なぜ変更されたのか？
 
@@ -179,7 +186,7 @@ Svelte 5でストアシステムが大幅に変更された背景と理由を解
 // counter.svelte.ts
 export function createCounter(initial = 0) {
   let count = $state(initial);
-  
+
   return {
     get value() {
       return count;
@@ -192,7 +199,7 @@ export function createCounter(initial = 0) {
     },
     reset() {
       count = initial;
-    }
+    },
   };
 }
 
@@ -207,7 +214,7 @@ export type Counter = ReturnType<typeof createCounter>;
 ```svelte
 <script lang="ts">
   import { createCounter } from './counter.svelte';
-  
+
   const counter = createCounter(10);
 </script>
 
@@ -240,13 +247,13 @@ export const globalStore = {
   },
   setMessage(value: string) {
     message = value;
-  }
+  },
 };
 ```
 
-:::warning[注意点]
+<Admonition type="warning" title="注意点">
 グローバルストアは全てのコンポーネントで同じインスタンスを共有するため、状態の変更が全体に影響します。必要に応じてファクトリー関数を使用して、個別のインスタンスを作成することを検討してください。
-:::
+</Admonition>
 
 ## 高度なパターン
 
@@ -267,17 +274,15 @@ type CartItem = {
 
 export function createCart() {
   let items = $state<CartItem[]>([]);
-  
+
   // 派生値：合計金額（自動的に再計算される）
   let totalPrice = $derived(
-    items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    items.reduce((sum, item) => sum + item.price * item.quantity, 0),
   );
-  
+
   // 派生値：アイテム数（自動的に再計算される）
-  let itemCount = $derived(
-    items.reduce((sum, item) => sum + item.quantity, 0)
-  );
-  
+  let itemCount = $derived(items.reduce((sum, item) => sum + item.quantity, 0));
+
   return {
     get items() {
       return items;
@@ -289,7 +294,7 @@ export function createCart() {
       return itemCount;
     },
     addItem(item: Omit<CartItem, 'quantity'>) {
-      const existing = items.find(i => i.id === item.id);
+      const existing = items.find((i) => i.id === item.id);
       if (existing) {
         existing.quantity++;
       } else {
@@ -297,13 +302,13 @@ export function createCart() {
       }
     },
     removeItem(id: string) {
-      const index = items.findIndex(i => i.id === id);
+      const index = items.findIndex((i) => i.id === id);
       if (index !== -1) {
         items.splice(index, 1);
       }
     },
     updateQuantity(id: string, quantity: number) {
-      const item = items.find(i => i.id === id);
+      const item = items.find((i) => i.id === id);
       if (item) {
         if (quantity <= 0) {
           this.removeItem(id);
@@ -314,16 +319,19 @@ export function createCart() {
     },
     clear() {
       items = [];
-    }
+    },
   };
 }
 ```
 
-:::info[派生値のメリット]
-- **自動更新**: 依存する値が変更されると自動的に再計算
-- **メモ化**: 依存する値が変わらない限り、再計算されない
-- **型推論**: TypeScriptが戻り値の型を自動的に推論
-:::
+<Admonition type="info" title="派生値のメリット">
+<ul>
+<li><strong>自動更新</strong>: 依存する値が変更されると自動的に再計算</li>
+<li><strong>メモ化</strong>: 依存する値が変わらない限り、再計算されない</li>
+<li><strong>型推論</strong>: TypeScriptが戻り値の型を自動的に推論</li>
+</ul>
+
+</Admonition>
 
 ### 非同期データを扱うストア
 
@@ -341,11 +349,11 @@ export function createUserStore() {
   let user = $state<User | null>(null);
   let loading = $state(false);
   let error = $state<string | null>(null);
-  
+
   async function fetchUser(userId: string) {
     loading = true;
     error = null;
-    
+
     try {
       const response = await fetch(`/api/users/${userId}`);
       if (!response.ok) {
@@ -359,7 +367,7 @@ export function createUserStore() {
       loading = false;
     }
   }
-  
+
   return {
     get user() {
       return user;
@@ -374,7 +382,7 @@ export function createUserStore() {
     logout() {
       user = null;
       error = null;
-    }
+    },
   };
 }
 ```
@@ -411,32 +419,31 @@ export function createUserStore() {
 
 ```typescript
 // persistentStore.svelte.ts
-export function createPersistentStore<T>(
-  key: string,
-  initialValue: T
-) {
+export function createPersistentStore<T>(key: string, initialValue: T) {
   // ローカルストレージから初期値を読み込み
-  let value = $state<T>((() => {
-    if (typeof window === 'undefined') return initialValue;
-    
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch {
-        return initialValue;
+  let value = $state<T>(
+    (() => {
+      if (typeof window === 'undefined') return initialValue;
+
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return initialValue;
+        }
       }
-    }
-    return initialValue;
-  })());
-  
+      return initialValue;
+    })(),
+  );
+
   // 値が変更されたらローカルストレージに保存
   $effect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem(key, JSON.stringify(value));
     }
   });
-  
+
   return {
     get value() {
       return value;
@@ -452,7 +459,7 @@ export function createPersistentStore<T>(
       if (typeof window !== 'undefined') {
         localStorage.removeItem(key);
       }
-    }
+    },
   };
 }
 ```
@@ -463,13 +470,13 @@ export function createPersistentStore<T>(
 const theme = createPersistentStore('theme', 'light');
 const settings = createPersistentStore('userSettings', {
   notifications: true,
-  language: 'ja'
+  language: 'ja',
 });
 ```
 
-:::tip[SSRの考慮]
+<Admonition type="tip" title="SSRの考慮">
 `typeof window === 'undefined'`のチェックにより、サーバーサイドレンダリング時のエラーを防いでいます。
-:::
+</Admonition>
 
 ## コンポジションパターン
 
@@ -484,11 +491,17 @@ const settings = createPersistentStore('userSettings', {
 export function createAuthStore() {
   let user = $state<User | null>(null);
   let token = $state<string | null>(null);
-  
+
   return {
-    get user() { return user; },
-    get token() { return token; },
-    get isAuthenticated() { return !!user && !!token; },
+    get user() {
+      return user;
+    },
+    get token() {
+      return token;
+    },
+    get isAuthenticated() {
+      return !!user && !!token;
+    },
     login(userData: User, authToken: string) {
       user = userData;
       token = authToken;
@@ -496,14 +509,16 @@ export function createAuthStore() {
     logout() {
       user = null;
       token = null;
-    }
+    },
   };
 }
 
 // permissions.svelte.ts
-export function createPermissionsStore(auth: ReturnType<typeof createAuthStore>) {
+export function createPermissionsStore(
+  auth: ReturnType<typeof createAuthStore>,
+) {
   let permissions = $state<string[]>([]);
-  
+
   // authストアの変更を監視
   $effect(() => {
     if (auth.isAuthenticated && auth.user) {
@@ -513,23 +528,25 @@ export function createPermissionsStore(auth: ReturnType<typeof createAuthStore>)
       permissions = [];
     }
   });
-  
+
   async function fetchPermissions(userId: string) {
     const response = await fetch(`/api/permissions/${userId}`);
     permissions = await response.json();
   }
-  
+
   return {
-    get permissions() { return permissions; },
+    get permissions() {
+      return permissions;
+    },
     hasPermission(permission: string) {
       return permissions.includes(permission);
     },
     hasAnyPermission(...perms: string[]) {
-      return perms.some(p => permissions.includes(p));
+      return perms.some((p) => permissions.includes(p));
     },
     hasAllPermissions(...perms: string[]) {
-      return perms.every(p => permissions.includes(p));
-    }
+      return perms.every((p) => permissions.includes(p));
+    },
   };
 }
 
@@ -538,12 +555,15 @@ const auth = createAuthStore();
 const permissions = createPermissionsStore(auth);
 ```
 
-:::info[コンポジションの利点]
-- **関心の分離**: 各ストアは単一の責任を持つ
-- **再利用性**: 個別のストアを他のコンテキストで再利用可能
-- **テスタビリティ**: 各ストアを独立してテスト可能
-- **保守性**: 機能ごとに分かれているため、変更が容易
-:::
+<Admonition type="info" title="コンポジションの利点">
+<ul>
+<li><strong>関心の分離</strong>: 各ストアは単一の責任を持つ</li>
+<li><strong>再利用性</strong>: 個別のストアを他のコンテキストで再利用可能</li>
+<li><strong>テスタビリティ</strong>: 各ストアを独立してテスト可能</li>
+<li><strong>保守性</strong>: 機能ごとに分かれているため、変更が容易</li>
+</ul>
+
+</Admonition>
 
 ### ファクトリーパターン
 
@@ -564,7 +584,7 @@ export function createTodoStore(initialTodos: Todo[] = []) {
   let todos = $state<Todo[]>(initialTodos);
   let filter = $state<TodoFilter>('all');
   let searchQuery = $state('');
-  
+
   // フィルタリングされたTODOリスト
   // 複数行の処理には $derived.by() を使用
   let filteredTodos = $derived.by(() => {
@@ -572,15 +592,15 @@ export function createTodoStore(initialTodos: Todo[] = []) {
 
     // フィルター適用
     if (filter === 'active') {
-      result = result.filter(t => !t.completed);
+      result = result.filter((t) => !t.completed);
     } else if (filter === 'completed') {
-      result = result.filter(t => t.completed);
+      result = result.filter((t) => t.completed);
     }
 
     // 検索クエリ適用
     if (searchQuery) {
-      result = result.filter(t =>
-        t.text.toLowerCase().includes(searchQuery.toLowerCase())
+      result = result.filter((t) =>
+        t.text.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -590,50 +610,58 @@ export function createTodoStore(initialTodos: Todo[] = []) {
   // 統計情報
   let stats = $derived.by(() => ({
     total: todos.length,
-    active: todos.filter(t => !t.completed).length,
-    completed: todos.filter(t => t.completed).length
+    active: todos.filter((t) => !t.completed).length,
+    completed: todos.filter((t) => t.completed).length,
   }));
-  
+
   return {
-    get todos() { return filteredTodos; },
-    get filter() { return filter; },
-    get searchQuery() { return searchQuery; },
-    get stats() { return stats; },
-    
+    get todos() {
+      return filteredTodos;
+    },
+    get filter() {
+      return filter;
+    },
+    get searchQuery() {
+      return searchQuery;
+    },
+    get stats() {
+      return stats;
+    },
+
     setFilter(newFilter: TodoFilter) {
       filter = newFilter;
     },
-    
+
     setSearchQuery(query: string) {
       searchQuery = query;
     },
-    
+
     addTodo(text: string) {
       todos.push({
         id: crypto.randomUUID(),
         text,
         completed: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
     },
-    
+
     toggleTodo(id: string) {
-      const todo = todos.find(t => t.id === id);
+      const todo = todos.find((t) => t.id === id);
       if (todo) {
         todo.completed = !todo.completed;
       }
     },
-    
+
     deleteTodo(id: string) {
-      const index = todos.findIndex(t => t.id === id);
+      const index = todos.findIndex((t) => t.id === id);
       if (index !== -1) {
         todos.splice(index, 1);
       }
     },
-    
+
     clearCompleted() {
-      todos = todos.filter(t => !t.completed);
-    }
+      todos = todos.filter((t) => !t.completed);
+    },
   };
 }
 ```
@@ -647,36 +675,36 @@ export function createTodoStore(initialTodos: Todo[] = []) {
 export class ReactiveStore<T> {
   private value = $state<T>();
   private subscribers = new Set<(value: T) => void>();
-  
+
   constructor(initial: T) {
     this.value = initial;
   }
-  
+
   get current() {
     return this.value;
   }
-  
+
   set(newValue: T) {
     this.value = newValue;
     this.notify();
   }
-  
+
   update(updater: (value: T) => T) {
     this.value = updater(this.value);
     this.notify();
   }
-  
+
   subscribe(callback: (value: T) => void) {
     this.subscribers.add(callback);
     callback(this.value); // 初期値を通知
-    
+
     return () => {
       this.subscribers.delete(callback);
     };
   }
-  
+
   private notify() {
-    this.subscribers.forEach(callback => callback(this.value));
+    this.subscribers.forEach((callback) => callback(this.value));
   }
 }
 
@@ -685,10 +713,10 @@ export class NotificationStore extends ReactiveStore<Notification[]> {
   constructor() {
     super([]);
   }
-  
+
   add(notification: Notification) {
-    this.update(notifications => [...notifications, notification]);
-    
+    this.update((notifications) => [...notifications, notification]);
+
     // 自動削除
     if (notification.autoClose) {
       setTimeout(() => {
@@ -696,13 +724,11 @@ export class NotificationStore extends ReactiveStore<Notification[]> {
       }, notification.duration || 3000);
     }
   }
-  
+
   remove(id: string) {
-    this.update(notifications => 
-      notifications.filter(n => n.id !== id)
-    );
+    this.update((notifications) => notifications.filter((n) => n.id !== id));
   }
-  
+
   clear() {
     this.set([]);
   }
@@ -727,33 +753,33 @@ export function createWebSocketStore(url: string) {
   let connected = $state(false);
   let messages = $state<Message[]>([]);
   let error = $state<string | null>(null);
-  
+
   function connect() {
     try {
       socket = new WebSocket(url);
-      
+
       socket.onopen = () => {
         connected = true;
         error = null;
       };
-      
+
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         messages.push({
           ...message,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        
+
         // メッセージ数を制限
         if (messages.length > 100) {
           messages.shift();
         }
       };
-      
+
       socket.onerror = (event) => {
         error = 'WebSocket error occurred';
       };
-      
+
       socket.onclose = () => {
         connected = false;
       };
@@ -761,37 +787,43 @@ export function createWebSocketStore(url: string) {
       error = e instanceof Error ? e.message : 'Failed to connect';
     }
   }
-  
+
   function disconnect() {
     if (socket) {
       socket.close();
       socket = null;
     }
   }
-  
+
   function send(data: any) {
     if (socket && connected) {
       socket.send(JSON.stringify(data));
     }
   }
-  
+
   // コンポーネントがアンマウントされたら切断
   $effect(() => {
     return () => {
       disconnect();
     };
   });
-  
+
   return {
-    get connected() { return connected; },
-    get messages() { return messages; },
-    get error() { return error; },
+    get connected() {
+      return connected;
+    },
+    get messages() {
+      return messages;
+    },
+    get error() {
+      return error;
+    },
     connect,
     disconnect,
     send,
     clearMessages() {
       messages = [];
-    }
+    },
   };
 }
 ```
@@ -959,68 +991,77 @@ type ValidationRules = Record<string, ValidationRule[]>;
 
 export function createFormStore<T extends Record<string, any>>(
   initialValues: T,
-  validationRules: ValidationRules = {}
+  validationRules: ValidationRules = {},
 ) {
   // 各フィールドの状態を初期化
   let fields = $state<FormFields>(
-    Object.entries(initialValues).reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: {
-        value,
-        error: null,
-        touched: false,
-        dirty: false
-      }
-    }), {})
+    Object.entries(initialValues).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: {
+          value,
+          error: null,
+          touched: false,
+          dirty: false,
+        },
+      }),
+      {},
+    ),
   );
-  
+
   let submitting = $state(false);
   let submitted = $state(false);
-  
+
   // フォーム全体の状態を派生
   let isValid = $derived.by(() =>
-    Object.values(fields).every(field => !field.error)
+    Object.values(fields).every((field) => !field.error),
   );
 
   let isDirty = $derived.by(() =>
-    Object.values(fields).some(field => field.dirty)
+    Object.values(fields).some((field) => field.dirty),
   );
 
   let isTouched = $derived.by(() =>
-    Object.values(fields).some(field => field.touched)
+    Object.values(fields).some((field) => field.touched),
   );
 
   // フォームの値を派生
   let values = $derived.by(() =>
-    Object.entries(fields).reduce((acc, [key, field]) => ({
-      ...acc,
-      [key]: field.value
-    }), {} as T)
+    Object.entries(fields).reduce(
+      (acc, [key, field]) => ({
+        ...acc,
+        [key]: field.value,
+      }),
+      {} as T,
+    ),
   );
 
   // エラーのみを抽出
   let errors = $derived.by(() =>
-    Object.entries(fields).reduce((acc, [key, field]) => {
-      if (field.error) {
-        acc[key] = field.error;
-      }
-      return acc;
-    }, {} as Record<string, string>)
+    Object.entries(fields).reduce(
+      (acc, [key, field]) => {
+        if (field.error) {
+          acc[key] = field.error;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
   );
-  
+
   // バリデーション実行
   function validateField(name: string, value: any) {
     const rules = validationRules[name] || [];
-    
+
     for (const rule of rules) {
       if (!rule.validate(value)) {
         return rule.message;
       }
     }
-    
+
     return null;
   }
-  
+
   // フィールド値の更新
   function setFieldValue(name: string, value: any) {
     if (fields[name]) {
@@ -1029,61 +1070,62 @@ export function createFormStore<T extends Record<string, any>>(
       fields[name].error = validateField(name, value);
     }
   }
-  
+
   // フィールドのタッチ状態を更新
   function setFieldTouched(name: string, touched = true) {
     if (fields[name]) {
       fields[name].touched = touched;
     }
   }
-  
+
   // フィールドのエラーを設定
   function setFieldError(name: string, error: string | null) {
     if (fields[name]) {
       fields[name].error = error;
     }
   }
-  
+
   // すべてのフィールドをバリデート
   function validateAll() {
     let hasError = false;
-    
+
     for (const [name, field] of Object.entries(fields)) {
       const error = validateField(name, field.value);
       field.error = error;
       field.touched = true;
       if (error) hasError = true;
     }
-    
+
     return !hasError;
   }
-  
+
   // フォームのリセット
   function reset() {
-    fields = Object.entries(initialValues).reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: {
-        value,
-        error: null,
-        touched: false,
-        dirty: false
-      }
-    }), {});
+    fields = Object.entries(initialValues).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: {
+          value,
+          error: null,
+          touched: false,
+          dirty: false,
+        },
+      }),
+      {},
+    );
     submitted = false;
   }
-  
+
   // フォーム送信
-  async function handleSubmit(
-    onSubmit: (values: T) => Promise<void> | void
-  ) {
+  async function handleSubmit(onSubmit: (values: T) => Promise<void> | void) {
     submitted = true;
-    
+
     if (!validateAll()) {
       return;
     }
-    
+
     submitting = true;
-    
+
     try {
       await onSubmit(values);
       reset();
@@ -1094,23 +1136,39 @@ export function createFormStore<T extends Record<string, any>>(
       submitting = false;
     }
   }
-  
+
   return {
-    get fields() { return fields; },
-    get values() { return values; },
-    get errors() { return errors; },
-    get isValid() { return isValid; },
-    get isDirty() { return isDirty; },
-    get isTouched() { return isTouched; },
-    get submitting() { return submitting; },
-    get submitted() { return submitted; },
+    get fields() {
+      return fields;
+    },
+    get values() {
+      return values;
+    },
+    get errors() {
+      return errors;
+    },
+    get isValid() {
+      return isValid;
+    },
+    get isDirty() {
+      return isDirty;
+    },
+    get isTouched() {
+      return isTouched;
+    },
+    get submitting() {
+      return submitting;
+    },
+    get submitted() {
+      return submitted;
+    },
     setFieldValue,
     setFieldTouched,
     setFieldError,
     validateField,
     validateAll,
     reset,
-    handleSubmit
+    handleSubmit,
   };
 }
 
@@ -1120,42 +1178,43 @@ const registrationForm = createFormStore(
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   },
   {
     username: [
       {
         validate: (value) => value.length >= 3,
-        message: 'ユーザー名は3文字以上必要です'
+        message: 'ユーザー名は3文字以上必要です',
       },
       {
         validate: (value) => /^[a-zA-Z0-9_]+$/.test(value),
-        message: '英数字とアンダースコアのみ使用可能です'
-      }
+        message: '英数字とアンダースコアのみ使用可能です',
+      },
     ],
     email: [
       {
         validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-        message: '有効なメールアドレスを入力してください'
-      }
+        message: '有効なメールアドレスを入力してください',
+      },
     ],
     password: [
       {
         validate: (value) => value.length >= 8,
-        message: 'パスワードは8文字以上必要です'
+        message: 'パスワードは8文字以上必要です',
       },
       {
-        validate: (value) => /[A-Z]/.test(value) && /[a-z]/.test(value) && /[0-9]/.test(value),
-        message: '大文字、小文字、数字を含む必要があります'
-      }
+        validate: (value) =>
+          /[A-Z]/.test(value) && /[a-z]/.test(value) && /[0-9]/.test(value),
+        message: '大文字、小文字、数字を含む必要があります',
+      },
     ],
     confirmPassword: [
       {
         validate: (value) => value === registrationForm.values.password,
-        message: 'パスワードが一致しません'
-      }
-    ]
-  }
+        message: 'パスワードが一致しません',
+      },
+    ],
+  },
 );
 ```
 
@@ -1164,7 +1223,7 @@ const registrationForm = createFormStore(
 ```svelte
 <script lang="ts">
   import { createFormStore } from './formStore.svelte';
-  
+
   const form = createFormStore(
     { email: '', password: '' },
     {
@@ -1178,7 +1237,7 @@ const registrationForm = createFormStore(
       }]
     }
   );
-  
+
   async function handleLogin() {
     await form.handleSubmit(async (values) => {
       // ログイン処理
@@ -1204,7 +1263,7 @@ const registrationForm = createFormStore(
       <span class="error">{form.fields.email.error}</span>
     {/if}
   </div>
-  
+
   <div>
     <input
       type="password"
@@ -1217,9 +1276,9 @@ const registrationForm = createFormStore(
       <span class="error">{form.fields.password.error}</span>
     {/if}
   </div>
-  
-  <button 
-    type="submit" 
+
+  <button
+    type="submit"
     disabled={!form.isValid || form.submitting}
   >
     {form.submitting ? 'ログイン中...' : 'ログイン'}
@@ -1241,7 +1300,7 @@ type SearchResult<T> = {
 
 export function createSearchStore<T>(
   searchFn: (query: string, page: number) => Promise<SearchResult<T>>,
-  debounceMs = 300
+  debounceMs = 300,
 ) {
   let query = $state('');
   let page = $state(1);
@@ -1250,10 +1309,10 @@ export function createSearchStore<T>(
   let error = $state<string | null>(null);
   let totalCount = $state(0);
   let hasMore = $state(false);
-  
+
   let debounceTimer: number | null = null;
   let abortController: AbortController | null = null;
-  
+
   // 検索実行
   async function performSearch() {
     // 空のクエリの場合は検索しない
@@ -1263,27 +1322,27 @@ export function createSearchStore<T>(
       hasMore = false;
       return;
     }
-    
+
     loading = true;
     error = null;
-    
+
     // 前回のリクエストをキャンセル
     if (abortController) {
       abortController.abort();
     }
-    
+
     abortController = new AbortController();
-    
+
     try {
       const searchResult = await searchFn(query, page);
-      
+
       // ページが1の場合は結果をリセット、それ以外は追加
       if (page === 1) {
         results = searchResult.items;
       } else {
         results = [...results, ...searchResult.items];
       }
-      
+
       totalCount = searchResult.totalCount;
       hasMore = searchResult.hasMore;
     } catch (e) {
@@ -1295,24 +1354,24 @@ export function createSearchStore<T>(
       abortController = null;
     }
   }
-  
+
   // デバウンス付き検索
   function debouncedSearch() {
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
-    
+
     debounceTimer = setTimeout(() => {
       page = 1; // 新しい検索はページ1から
       performSearch();
     }, debounceMs);
   }
-  
+
   // クエリの変更を監視
   $effect(() => {
     query; // 依存関係として追跡
     debouncedSearch();
-    
+
     return () => {
       if (debounceTimer) {
         clearTimeout(debounceTimer);
@@ -1322,39 +1381,53 @@ export function createSearchStore<T>(
       }
     };
   });
-  
+
   return {
-    get query() { return query; },
-    get results() { return results; },
-    get loading() { return loading; },
-    get error() { return error; },
-    get totalCount() { return totalCount; },
-    get hasMore() { return hasMore; },
-    get page() { return page; },
-    
+    get query() {
+      return query;
+    },
+    get results() {
+      return results;
+    },
+    get loading() {
+      return loading;
+    },
+    get error() {
+      return error;
+    },
+    get totalCount() {
+      return totalCount;
+    },
+    get hasMore() {
+      return hasMore;
+    },
+    get page() {
+      return page;
+    },
+
     setQuery(newQuery: string) {
       query = newQuery;
     },
-    
+
     loadMore() {
       if (!loading && hasMore) {
         page++;
         performSearch();
       }
     },
-    
+
     refresh() {
       page = 1;
       performSearch();
     },
-    
+
     clear() {
       query = '';
       results = [];
       totalCount = 0;
       hasMore = false;
       page = 1;
-    }
+    },
   };
 }
 
@@ -1362,11 +1435,11 @@ export function createSearchStore<T>(
 const productSearch = createSearchStore<Product>(
   async (query, page) => {
     const response = await fetch(
-      `/api/products/search?q=${encodeURIComponent(query)}&page=${page}`
+      `/api/products/search?q=${encodeURIComponent(query)}&page=${page}`,
     );
     return response.json();
   },
-  500 // 500msのデバウンス
+  500, // 500msのデバウンス
 );
 ```
 
@@ -1395,21 +1468,19 @@ type Notification = {
 export function createNotificationStore() {
   let notifications = $state<Notification[]>([]);
   let timers = new Map<string, number>();
-  
+
   // 通知を追加
-  function add(
-    notification: Omit<Notification, 'id' | 'timestamp'>
-  ): string {
+  function add(notification: Omit<Notification, 'id' | 'timestamp'>): string {
     const id = crypto.randomUUID();
     const newNotification: Notification = {
       ...notification,
       id,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    
+
     // 通知を追加（新しいものを上に）
     notifications = [newNotification, ...notifications];
-    
+
     // 自動削除のタイマーを設定（persistent でない場合）
     if (!notification.persistent) {
       const duration = notification.duration || 5000;
@@ -1418,23 +1489,21 @@ export function createNotificationStore() {
       }, duration);
       timers.set(id, timer);
     }
-    
+
     // 最大表示数を制限（例：5件まで）
     if (notifications.length > 5) {
       // 古い非永続的な通知を削除
-      const toRemove = notifications
-        .filter(n => !n.persistent)
-        .slice(5);
-      toRemove.forEach(n => remove(n.id));
+      const toRemove = notifications.filter((n) => !n.persistent).slice(5);
+      toRemove.forEach((n) => remove(n.id));
     }
-    
+
     return id;
   }
-  
+
   // 通知を削除
   function remove(id: string) {
-    notifications = notifications.filter(n => n.id !== id);
-    
+    notifications = notifications.filter((n) => n.id !== id);
+
     // タイマーをクリア
     const timer = timers.get(id);
     if (timer) {
@@ -1442,43 +1511,43 @@ export function createNotificationStore() {
       timers.delete(id);
     }
   }
-  
+
   // すべての通知をクリア
   function clear(type?: NotificationType) {
     if (type) {
-      notifications = notifications.filter(n => n.type !== type);
+      notifications = notifications.filter((n) => n.type !== type);
     } else {
       notifications = [];
     }
-    
+
     // すべてのタイマーをクリア
-    timers.forEach(timer => clearTimeout(timer));
+    timers.forEach((timer) => clearTimeout(timer));
     timers.clear();
   }
-  
+
   // ヘルパーメソッド
   function success(title: string, message?: string) {
     return add({ type: 'success', title, message });
   }
-  
+
   function error(title: string, message?: string, persistent = false) {
     return add({ type: 'error', title, message, persistent });
   }
-  
+
   function warning(title: string, message?: string) {
     return add({ type: 'warning', title, message });
   }
-  
+
   function info(title: string, message?: string) {
     return add({ type: 'info', title, message });
   }
-  
+
   // 確認ダイアログ風の通知
   function confirm(
     title: string,
     message: string,
     onConfirm: () => void,
-    onCancel?: () => void
+    onCancel?: () => void,
   ) {
     return add({
       type: 'warning',
@@ -1491,33 +1560,35 @@ export function createNotificationStore() {
           action: () => {
             onConfirm();
             remove(id);
-          }
+          },
         },
         {
           label: 'キャンセル',
           action: () => {
             onCancel?.();
             remove(id);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
-    
+
     let id: string;
     id = add(notification);
     return id;
   }
-  
+
   // クリーンアップ
   $effect(() => {
     return () => {
-      timers.forEach(timer => clearTimeout(timer));
+      timers.forEach((timer) => clearTimeout(timer));
       timers.clear();
     };
   });
-  
+
   return {
-    get notifications() { return notifications; },
+    get notifications() {
+      return notifications;
+    },
     add,
     remove,
     clear,
@@ -1525,7 +1596,7 @@ export function createNotificationStore() {
     error,
     warning,
     info,
-    confirm
+    confirm,
   };
 }
 
@@ -1540,7 +1611,7 @@ export const notifications = createNotificationStore();
 <script lang="ts">
   import { notifications } from './notificationStore.svelte';
   import { fly, fade } from 'svelte/transition';
-  
+
   function getIcon(type: string) {
     switch(type) {
       case 'success': return '✅';
@@ -1561,13 +1632,13 @@ export const notifications = createNotificationStore();
       <div class="notification-icon">
         {getIcon(notification.type)}
       </div>
-      
+
       <div class="notification-content">
         <h4>{notification.title}</h4>
         {#if notification.message}
           <p>{notification.message}</p>
         {/if}
-        
+
         {#if notification.actions}
           <div class="notification-actions">
             {#each notification.actions as action}
@@ -1578,7 +1649,7 @@ export const notifications = createNotificationStore();
           </div>
         {/if}
       </div>
-      
+
       {#if !notification.persistent}
         <button
           class="notification-close"
@@ -1601,7 +1672,7 @@ export const notifications = createNotificationStore();
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .notification {
     display: flex;
     align-items: flex-start;
@@ -1613,19 +1684,19 @@ export const notifications = createNotificationStore();
     min-width: 300px;
     max-width: 500px;
   }
-  
+
   .notification-success {
     border-left: 4px solid #10b981;
   }
-  
+
   .notification-error {
     border-left: 4px solid #ef4444;
   }
-  
+
   .notification-warning {
     border-left: 4px solid #f59e0b;
   }
-  
+
   .notification-info {
     border-left: 4px solid #3b82f6;
   }
@@ -1656,12 +1727,12 @@ type ModalConfig = {
 export function createModalStore() {
   let modals = $state<ModalConfig[]>([]);
   let activeModalId = $state<string | null>(null);
-  
+
   // モーダルを開く
   function open(
     component: Component,
     props?: Record<string, any>,
-    options?: ModalConfig['options']
+    options?: ModalConfig['options'],
   ): string {
     const id = crypto.randomUUID();
     const modal: ModalConfig = {
@@ -1673,33 +1744,33 @@ export function createModalStore() {
         closeOnBackdrop: true,
         size: 'md',
         centered: true,
-        ...options
-      }
+        ...options,
+      },
     };
-    
+
     modals = [...modals, modal];
     activeModalId = id;
-    
+
     // bodyのスクロールを無効化
     if (modals.length === 1) {
       document.body.style.overflow = 'hidden';
     }
-    
+
     return id;
   }
-  
+
   // モーダルを閉じる
   function close(id?: string) {
     if (id) {
-      const modal = modals.find(m => m.id === id);
+      const modal = modals.find((m) => m.id === id);
       modal?.onClose?.();
-      modals = modals.filter(m => m.id !== id);
+      modals = modals.filter((m) => m.id !== id);
     } else if (activeModalId) {
-      const modal = modals.find(m => m.id === activeModalId);
+      const modal = modals.find((m) => m.id === activeModalId);
       modal?.onClose?.();
-      modals = modals.filter(m => m.id !== activeModalId);
+      modals = modals.filter((m) => m.id !== activeModalId);
     }
-    
+
     // 最後のモーダルが閉じられたらスクロールを復元
     if (modals.length === 0) {
       document.body.style.overflow = '';
@@ -1708,60 +1779,64 @@ export function createModalStore() {
       activeModalId = modals[modals.length - 1].id;
     }
   }
-  
+
   // すべてのモーダルを閉じる
   function closeAll() {
-    modals.forEach(modal => modal.onClose?.());
+    modals.forEach((modal) => modal.onClose?.());
     modals = [];
     activeModalId = null;
     document.body.style.overflow = '';
   }
-  
+
   // 確認ダイアログ
   async function confirm(
     title: string,
     message: string,
     confirmLabel = '確認',
-    cancelLabel = 'キャンセル'
+    cancelLabel = 'キャンセル',
   ): Promise<boolean> {
     return new Promise((resolve) => {
       // ConfirmDialog コンポーネントを動的にインポート
       import('./ConfirmDialog.svelte').then(({ default: ConfirmDialog }) => {
-        const id = open(ConfirmDialog, {
-          title,
-          message,
-          confirmLabel,
-          cancelLabel,
-          onConfirm: () => {
-            close(id);
-            resolve(true);
+        const id = open(
+          ConfirmDialog,
+          {
+            title,
+            message,
+            confirmLabel,
+            cancelLabel,
+            onConfirm: () => {
+              close(id);
+              resolve(true);
+            },
+            onCancel: () => {
+              close(id);
+              resolve(false);
+            },
           },
-          onCancel: () => {
-            close(id);
-            resolve(false);
-          }
-        }, {
-          size: 'sm',
-          closeOnBackdrop: false,
-          closeOnEscape: false
-        });
+          {
+            size: 'sm',
+            closeOnBackdrop: false,
+            closeOnEscape: false,
+          },
+        );
       });
     });
   }
-  
+
   // ESCキーハンドリング
   $effect(() => {
     function handleEscape(event: KeyboardEvent) {
       if (event.key === 'Escape' && activeModalId) {
-        const modal = modals.find(m => m.id === activeModalId);
+        const modal = modals.find((m) => m.id === activeModalId);
         if (modal?.options?.closeOnEscape) {
           close(activeModalId);
         }
       }
     }
-    
+
     document.addEventListener('keydown', handleEscape);
-    
+
     return () => {
       document.removeEventListener('keydown', handleEscape);
       // クリーンアップ時にスクロールを復元
@@ -1770,15 +1845,21 @@ export function createModalStore() {
       }
     };
   });
-  
+
   return {
-    get modals() { return modals; },
-    get activeModalId() { return activeModalId; },
-    get hasModals() { return modals.length > 0; },
+    get modals() {
+      return modals;
+    },
+    get activeModalId() {
+      return activeModalId;
+    },
+    get hasModals() {
+      return modals.length > 0;
+    },
     open,
     close,
     closeAll,
-    confirm
+    confirm,
   };
 }
 
@@ -1793,11 +1874,15 @@ export const modals = createModalStore();
 ```typescript
 // paginationStore.svelte.ts
 export function createPaginationStore<T>(
-  fetchFn: (page: number, pageSize: number, sort?: string) => Promise<{
+  fetchFn: (
+    page: number,
+    pageSize: number,
+    sort?: string,
+  ) => Promise<{
     items: T[];
     total: number;
   }>,
-  initialPageSize = 20
+  initialPageSize = 20,
 ) {
   let items = $state<T[]>([]);
   let currentPage = $state(1);
@@ -1807,7 +1892,7 @@ export function createPaginationStore<T>(
   let sortOrder = $state<'asc' | 'desc'>('asc');
   let loading = $state(false);
   let error = $state<string | null>(null);
-  
+
   // 派生値
   let totalPages = $derived(Math.ceil(totalItems / pageSize));
 
@@ -1820,7 +1905,7 @@ export function createPaginationStore<T>(
   let pageInfo = $derived.by(() => ({
     from: (currentPage - 1) * pageSize + 1,
     to: Math.min(currentPage * pageSize, totalItems),
-    total: totalItems
+    total: totalItems,
   }));
 
   // ページ番号の配列を生成（ページネーションUI用）
@@ -1848,17 +1933,15 @@ export function createPaginationStore<T>(
 
     return pages;
   });
-  
+
   // データ取得
   async function loadPage() {
     loading = true;
     error = null;
-    
+
     try {
-      const sortParam = sortBy 
-        ? `${sortBy}:${sortOrder}` 
-        : undefined;
-      
+      const sortParam = sortBy ? `${sortBy}:${sortOrder}` : undefined;
+
       const result = await fetchFn(currentPage, pageSize, sortParam);
       items = result.items;
       totalItems = result.total;
@@ -1868,7 +1951,7 @@ export function createPaginationStore<T>(
       loading = false;
     }
   }
-  
+
   // ページ変更時に自動的にデータを取得
   $effect(() => {
     currentPage;
@@ -1877,59 +1960,85 @@ export function createPaginationStore<T>(
     sortOrder;
     loadPage();
   });
-  
+
   return {
-    get items() { return items; },
-    get currentPage() { return currentPage; },
-    get pageSize() { return pageSize; },
-    get totalItems() { return totalItems; },
-    get totalPages() { return totalPages; },
-    get hasNextPage() { return hasNextPage; },
-    get hasPreviousPage() { return hasPreviousPage; },
-    get pageInfo() { return pageInfo; },
-    get pageNumbers() { return pageNumbers; },
-    get loading() { return loading; },
-    get error() { return error; },
-    get sortBy() { return sortBy; },
-    get sortOrder() { return sortOrder; },
-    
+    get items() {
+      return items;
+    },
+    get currentPage() {
+      return currentPage;
+    },
+    get pageSize() {
+      return pageSize;
+    },
+    get totalItems() {
+      return totalItems;
+    },
+    get totalPages() {
+      return totalPages;
+    },
+    get hasNextPage() {
+      return hasNextPage;
+    },
+    get hasPreviousPage() {
+      return hasPreviousPage;
+    },
+    get pageInfo() {
+      return pageInfo;
+    },
+    get pageNumbers() {
+      return pageNumbers;
+    },
+    get loading() {
+      return loading;
+    },
+    get error() {
+      return error;
+    },
+    get sortBy() {
+      return sortBy;
+    },
+    get sortOrder() {
+      return sortOrder;
+    },
+
     goToPage(page: number) {
       if (page >= 1 && page <= totalPages) {
         currentPage = page;
       }
     },
-    
+
     nextPage() {
       if (hasNextPage) {
         currentPage++;
       }
     },
-    
+
     previousPage() {
       if (hasPreviousPage) {
         currentPage--;
       }
     },
-    
+
     firstPage() {
       currentPage = 1;
     },
-    
+
     lastPage() {
       currentPage = totalPages;
     },
-    
+
     setPageSize(size: number) {
       pageSize = size;
       currentPage = 1; // ページサイズ変更時は最初のページに戻る
     },
-    
+
     setSorting(field: string | null, order: 'asc' | 'desc' = 'asc') {
       sortBy = field;
       sortOrder = order;
       currentPage = 1; // ソート変更時は最初のページに戻る
     },
-    
+
     toggleSort(field: string) {
       if (sortBy === field) {
         sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -1939,10 +2048,10 @@ export function createPaginationStore<T>(
       }
       currentPage = 1;
     },
-    
+
     refresh() {
       loadPage();
-    }
+    },
   };
 }
 ```
@@ -1961,13 +2070,13 @@ describe('Counter Store', () => {
     const counter = createCounter(10);
     expect(counter.value).toBe(10);
   });
-  
+
   it('increment が正しく動作する', () => {
     const counter = createCounter(0);
     counter.increment();
     expect(counter.value).toBe(1);
   });
-  
+
   it('reset が初期値に戻す', () => {
     const counter = createCounter(5);
     counter.increment();
@@ -1990,31 +2099,35 @@ describe('Counter Store', () => {
 // optimizedStore.svelte.ts
 export function createOptimizedStore<T>(
   initialData: T[],
-  expensiveComputation: (data: T[]) => any
+  expensiveComputation: (data: T[]) => any,
 ) {
   let data = $state(initialData);
   let computationCache = new Map();
-  
+
   // 遅延評価される派生値
   let computed = $derived.by(() => {
     const key = JSON.stringify(data);
-    
+
     if (!computationCache.has(key)) {
       computationCache.set(key, expensiveComputation(data));
     }
-    
+
     return computationCache.get(key);
   });
-  
+
   return {
-    get data() { return data; },
-    get computed() { return computed; },
+    get data() {
+      return data;
+    },
+    get computed() {
+      return computed;
+    },
     updateData(newData: T[]) {
       data = newData;
     },
     clearCache() {
       computationCache.clear();
-    }
+    },
   };
 }
 ```
@@ -2029,37 +2142,39 @@ export function createBatchStore<T>() {
   let items = $state<T[]>([]);
   let pendingUpdates: (() => void)[] = [];
   let updateScheduled = false;
-  
+
   function scheduleUpdate() {
     if (!updateScheduled) {
       updateScheduled = true;
       queueMicrotask(() => {
-        pendingUpdates.forEach(update => update());
+        pendingUpdates.forEach((update) => update());
         pendingUpdates = [];
         updateScheduled = false;
       });
     }
   }
-  
+
   return {
-    get items() { return items; },
-    
+    get items() {
+      return items;
+    },
+
     add(item: T) {
       pendingUpdates.push(() => items.push(item));
       scheduleUpdate();
     },
-    
+
     remove(index: number) {
       pendingUpdates.push(() => items.splice(index, 1));
       scheduleUpdate();
     },
-    
+
     batchUpdate(updates: T[]) {
       pendingUpdates.push(() => {
         items = [...items, ...updates];
       });
       scheduleUpdate();
-    }
+    },
   };
 }
 ```
@@ -2074,10 +2189,12 @@ export function createBatchStore<T>() {
 4. **パフォーマンス** - 必要な部分のみが更新される効率的なリアクティビティ
 5. **柔軟性** - 様々なパターンとの組み合わせが可能
 
-:::info[関連リンク]
-- [クラスとリアクティビティ](/svelte/advanced/class-reactivity/) - クラスベースのパターン
-- [組み込みリアクティブクラス](/svelte/advanced/built-in-classes/) - SvelteMap、SvelteSetなど
-- [$stateルーン](/svelte/runes/state/) - 基本的なリアクティビティ
-:::
+<Admonition type="info" title="関連リンク">
+<ul>
+<li><a href="{base}/svelte/advanced/class-reactivity/">クラスとリアクティビティ</a> - クラスベースのパターン</li>
+<li><a href="{base}/svelte/advanced/built-in-classes/">組み込みリアクティブクラス</a> - SvelteMap、SvelteSetなど</li>
+<li><a href="{base}/svelte/runes/state/">$stateルーン</a> - 基本的なリアクティビティ</li>
+</ul>
 
-次は[クラスとリアクティビティ](/svelte/advanced/class-reactivity/)で、クラスベースのリアクティブパターンを学びましょう。
+</Admonition>
+次は<a href="{base}/svelte/advanced/class-reactivity/">クラスとリアクティビティ</a>で、クラスベースのリアクティブパターンを学びましょう。

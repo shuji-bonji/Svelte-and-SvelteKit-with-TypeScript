@@ -3,6 +3,10 @@ title: use:アクション
 description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - DOM要素へのカスタム動作追加、パラメータ設定、update・destroy処理、Tippy.js統合などの実践的なアクション作成方法を実例を交えて詳しく解説します
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+	import LiveCode from '$lib/components/LiveCode.svelte';
+</script>
 <style>
   .aside-box {
     background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
@@ -42,11 +46,14 @@ description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - D
 
 `use:action`は、DOM要素に対して直接的な操作を行うための強力な機能です。要素のライフサイクルにフックして、初期化、更新、クリーンアップの処理を実行できます。
 
-:::tip[React/Vue経験者向け]
-- React の `useRef` + `useEffect` の組み合わせに相当
-- Vue の `カスタムディレクティブ` に相当
-- ただし、Svelteのアクションはよりシンプルで直感的
-:::
+<Admonition type="tip" title="React/Vue経験者向け">
+<ul>
+<li>React の <code>useRef</code> + <code>useEffect</code> の組み合わせに相当</li>
+<li>Vue の <code>カスタムディレクティブ</code> に相当</li>
+<li>ただし、Svelteのアクションはよりシンプルで直感的</li>
+</ul>
+
+</Admonition>
 
 ## アクションとは
 
@@ -57,23 +64,24 @@ description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - D
 ```typescript
 function myAction(node: HTMLElement, parameter?: any) {
   // 初期化処理
-  
+
   return {
     update(newParameter?: any) {
       // パラメータが変更された時の処理
     },
     destroy() {
       // クリーンアップ処理
-    }
+    },
   };
 }
 ```
 
 ## いつ実行されるか
 
-:::warning[重要な実行タイミング]
+<Admonition type="warning" title="重要な実行タイミング">
 アクションは**要素がDOMにマウントされた時**に実行されます。クリックやフォーカスなどのユーザー操作では実行されません。
-:::
+
+</Admonition>
 
 ### ライフサイクル
 
@@ -81,15 +89,15 @@ function myAction(node: HTMLElement, parameter?: any) {
 2. **更新時**: パラメータが変更された時に`update`メソッドが呼ばれる
 3. **アンマウント時**: 要素がDOMから削除される時に`destroy`メソッドが呼ばれる
 
-```svelte live
+```svelte live console
 <script lang="ts">
   let showElement = $state(true);
   let parameter = $state('初期値');
-  
+
   function lifecycleAction(node: HTMLElement, param: string) {
     console.log(`アクション実行: ${param}`);
     node.style.backgroundColor = '#ffe4e1';
-    
+
     return {
       update(newParam: string) {
         console.log(`アクション更新: ${newParam}`);
@@ -106,17 +114,17 @@ function myAction(node: HTMLElement, parameter?: any) {
   <button onclick={() => showElement = !showElement}>
     要素を{showElement ? '削除' : '表示'}
   </button>
-  
+
   <button onclick={() => parameter = parameter === '初期値' ? '変更後' : '初期値'}>
     パラメータ変更: {parameter}
   </button>
-  
+
   {#if showElement}
     <div use:lifecycleAction={parameter} class="target" >
       この要素にアクションが適用されています
     </div>
   {/if}
-  
+
   <div class="log">
     <small>コンソールを確認してライフサイクルを観察してください</small>
   </div>
@@ -129,19 +137,19 @@ function myAction(node: HTMLElement, parameter?: any) {
     background: #ccc;
     border-radius: 8px;
   }
-  
+
   button {
     margin-right: 0.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .target {
     color: #333;
     padding: 1rem;
     border-radius: 4px;
     transition: background-color 0.3s;
   }
-  
+
   .log {
     margin-top: 1rem;
     color: #666;
@@ -155,12 +163,12 @@ function myAction(node: HTMLElement, parameter?: any) {
 
 ### 主な違い
 
-| 特徴 | use:アクション | イベントハンドラ |
-|------|--------------|----------------|
-| **引数** | DOM要素（node） | イベントオブジェクト |
-| **実行タイミング** | 要素のマウント時 | ユーザー操作時 |
-| **主な用途** | DOM操作・初期化 | アプリケーションロジック |
-| **戻り値** | update/destroyメソッド | なし |
+| 特徴               | use:アクション         | イベントハンドラ         |
+| ------------------ | ---------------------- | ------------------------ |
+| **引数**           | DOM要素（node）        | イベントオブジェクト     |
+| **実行タイミング** | 要素のマウント時       | ユーザー操作時           |
+| **主な用途**       | DOM操作・初期化        | アプリケーションロジック |
+| **戻り値**         | update/destroyメソッド | なし                     |
 
 ### 使い分けのガイドライン
 
@@ -190,7 +198,7 @@ function myAction(node: HTMLElement, parameter?: any) {
       node.select();
     }
   }
-  
+
   let showInput = $state(false);
 </script>
 
@@ -199,9 +207,9 @@ function myAction(node: HTMLElement, parameter?: any) {
 </button>
 
 {#if showInput}
-  <input 
+  <input
     use:autofocus
-    type="text" 
+    type="text"
     placeholder="自動的にフォーカスされます"
     value="選択されたテキスト"
   />
@@ -218,16 +226,16 @@ function myAction(node: HTMLElement, parameter?: any) {
         callback();
       }
     }
-    
+
     document.addEventListener('click', handleClick, true);
-    
+
     return {
       destroy() {
         document.removeEventListener('click', handleClick, true);
       }
     };
   }
-  
+
   let isOpen = $state(false);
   let count = $state(0);
 </script>
@@ -236,9 +244,9 @@ function myAction(node: HTMLElement, parameter?: any) {
   <button onclick={() => isOpen = !isOpen}>
     メニューを開く
   </button>
-  
+
   {#if isOpen}
-    <div 
+    <div
       use:clickOutside={() => {
         isOpen = false;
         count++;
@@ -259,7 +267,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     background: #ccc;
     min-height: 200px;
   }
-  
+
   .menu {
 
     color: #ddd;
@@ -281,30 +289,30 @@ function myAction(node: HTMLElement, parameter?: any) {
 <script lang="ts">
   function tooltip(node: HTMLElement, text: string) {
     let tooltipElement: HTMLDivElement;
-    
+
     function showTooltip() {
       tooltipElement = document.createElement('div');
       tooltipElement.textContent = text;
       tooltipElement.className = 'tooltip';
-      
+
       const rect = node.getBoundingClientRect();
       tooltipElement.style.position = 'fixed';
       tooltipElement.style.top = `${rect.top - 30}px`;
       tooltipElement.style.left = `${rect.left + rect.width / 2}px`;
       tooltipElement.style.transform = 'translateX(-50%)';
-      
+
       document.body.appendChild(tooltipElement);
     }
-    
+
     function hideTooltip() {
       if (tooltipElement) {
         tooltipElement.remove();
       }
     }
-    
+
     node.addEventListener('mouseenter', showTooltip);
     node.addEventListener('mouseleave', hideTooltip);
-    
+
     return {
       update(newText: string) {
         text = newText;
@@ -319,21 +327,21 @@ function myAction(node: HTMLElement, parameter?: any) {
       }
     };
   }
-  
+
   let tooltipText = $state('これはツールチップです');
 </script>
 
 <div class="demo">
-  <input 
+  <input
     bind:value={tooltipText}
     placeholder="ツールチップテキストを編集"
   />
-  
+
   <div class="buttons">
     <button use:tooltip={tooltipText}>
       ホバーしてください
     </button>
-    
+
     <button use:tooltip={'別のツールチップ'}>
       こちらも試してください
     </button>
@@ -345,13 +353,13 @@ function myAction(node: HTMLElement, parameter?: any) {
     padding: 2rem;
     background: #f5f5f5;
   }
-  
+
   .buttons {
     margin-top: 2rem;
     display: flex;
     gap: 1rem;
   }
-  
+
   :global(.tooltip) {
     background: #333;
     color: white;
@@ -373,7 +381,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     node.style.opacity = '0';
     node.style.transform = 'translateY(20px)';
     node.style.transition = 'all 0.5s ease';
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
@@ -386,21 +394,21 @@ function myAction(node: HTMLElement, parameter?: any) {
           }
         });
       },
-      { 
+      {
         threshold: options.threshold || 0.1,
         rootMargin: '0px 0px -50px 0px' // 少し早めに発火
       }
     );
-    
+
     observer.observe(node);
-    
+
     return {
       destroy() {
         observer.disconnect();
       }
     };
   }
-  
+
   // デモ用にアイテムを多めに作成
   const items = Array(8).fill(null).map((_, i) => ({
     id: i + 1,
@@ -414,9 +422,9 @@ function myAction(node: HTMLElement, parameter?: any) {
     <p>📜 下にスクロールしてください</p>
     <p class="hint">要素が表示領域に入るとアニメーションします</p>
   </div>
-  
+
   {#each items as item}
-    <div 
+    <div
       use:lazyLoad={{ threshold: 0.3 }}
       class="lazy-item"
     >
@@ -425,7 +433,7 @@ function myAction(node: HTMLElement, parameter?: any) {
       <div class="meta">ID: {item.id}</div>
     </div>
   {/each}
-  
+
   <div class="footer">
     <p>🎉 全ての要素が表示されました！</p>
   </div>
@@ -441,7 +449,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     border-radius: 8px;
     position: relative;
   }
-  
+
   .header {
     text-align: center;
     padding: 1rem;
@@ -450,13 +458,13 @@ function myAction(node: HTMLElement, parameter?: any) {
     margin-bottom: 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-  
+
   .header .hint {
     font-size: 0.875rem;
     color: #666;
     margin-top: 0.5rem;
   }
-  
+
   .lazy-item {
     margin: 1.5rem 0;
     padding: 1.5rem;
@@ -465,18 +473,18 @@ function myAction(node: HTMLElement, parameter?: any) {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-left: 4px solid #ff3e00;
   }
-  
+
   .lazy-item h3 {
     margin: 0 0 0.5rem 0;
     color: #ff3e00;
   }
-  
+
   .lazy-item p {
     margin: 0.5rem 0;
     line-height: 1.6;
     color: #333;
   }
-  
+
   .meta {
     font-size: 0.75rem;
     color: #999;
@@ -484,7 +492,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     padding-top: 1rem;
     border-top: 1px solid #eee;
   }
-  
+
   .footer {
     text-align: center;
     padding: 2rem;
@@ -494,22 +502,22 @@ function myAction(node: HTMLElement, parameter?: any) {
     margin-top: 2rem;
     font-weight: bold;
   }
-  
+
   /* スクロールバーのスタイリング */
   .scroll-container::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   .scroll-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
   }
-  
+
   .scroll-container::-webkit-scrollbar-thumb {
     background: #ff3e00;
     border-radius: 4px;
   }
-  
+
   .scroll-container::-webkit-scrollbar-thumb:hover {
     background: #e03500;
   }
@@ -524,7 +532,7 @@ function myAction(node: HTMLElement, parameter?: any) {
 // アクションの型定義
 type Action<T = any> = (
   node: HTMLElement,
-  parameter?: T
+  parameter?: T,
 ) => {
   update?: (parameter: T) => void;
   destroy?: () => void;
@@ -533,13 +541,13 @@ type Action<T = any> = (
 // 具体的な実装例
 const typedAction: Action<{ duration: number; color: string }> = (
   node,
-  options
+  options,
 ) => {
   const { duration = 300, color = 'red' } = options || {};
-  
+
   node.style.transition = `background-color ${duration}ms`;
   node.style.backgroundColor = color;
-  
+
   return {
     update(newOptions) {
       const { duration = 300, color = 'red' } = newOptions || {};
@@ -549,7 +557,7 @@ const typedAction: Action<{ duration: number; color: string }> = (
     destroy() {
       node.style.transition = '';
       node.style.backgroundColor = '';
-    }
+    },
   };
 };
 ```
@@ -560,7 +568,7 @@ const typedAction: Action<{ duration: number; color: string }> = (
 function inputAction(node: HTMLInputElement, config: { maxLength: number }) {
   // HTMLInputElement固有のプロパティにアクセス可能
   node.maxLength = config.maxLength;
-  
+
   const handleInput = () => {
     if (node.value.length >= config.maxLength) {
       node.style.borderColor = 'red';
@@ -568,13 +576,13 @@ function inputAction(node: HTMLInputElement, config: { maxLength: number }) {
       node.style.borderColor = '';
     }
   };
-  
+
   node.addEventListener('input', handleInput);
-  
+
   return {
     destroy() {
       node.removeEventListener('input', handleInput);
-    }
+    },
   };
 }
 ```
@@ -588,11 +596,11 @@ function inputAction(node: HTMLInputElement, config: { maxLength: number }) {
 function goodAction(node: HTMLElement) {
   const handler = () => console.log('clicked');
   node.addEventListener('click', handler);
-  
+
   return {
     destroy() {
       node.removeEventListener('click', handler);
-    }
+    },
   };
 }
 
@@ -609,11 +617,11 @@ function badAction(node: HTMLElement) {
 // ✅ パラメータの変更に対応
 function responsiveAction(node: HTMLElement, value: number) {
   node.textContent = String(value);
-  
+
   return {
     update(newValue: number) {
       node.textContent = String(newValue);
-    }
+    },
   };
 }
 ```
@@ -624,16 +632,18 @@ function responsiveAction(node: HTMLElement, value: number) {
 // ✅ 条件に応じた処理
 function conditionalAction(node: HTMLElement, enabled: boolean) {
   let cleanup: (() => void) | null = null;
-  
+
   function setup() {
     if (enabled) {
       // 有効時の処理
-      cleanup = () => { /* クリーンアップ */ };
+      cleanup = () => {
+        /* クリーンアップ */
+      };
     }
   }
-  
+
   setup();
-  
+
   return {
     update(newEnabled: boolean) {
       cleanup?.();
@@ -642,7 +652,7 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
     },
     destroy() {
       cleanup?.();
-    }
+    },
   };
 }
 ```
@@ -665,15 +675,18 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 ## 関連リソース
 
 ### 関連ページ
+
 - [コンポーネントの基本](/svelte/basics/component-basics/) - イベントハンドリングの基礎
 - [$effectルーン](/svelte/runes/effect/) - リアクティブな副作用の処理
 - [TypeScript統合](/svelte/basics/typescript-integration/) - アクションの型定義
 
 ### 公式ドキュメント
+
 - [Svelte公式: use directive](https://svelte.dev/docs/element-directives#use-action)
 - [Svelte公式: Actions](https://svelte.dev/docs/svelte-action)
 
 ### よくある質問
+
 - **Q: `use:action`と`$effect`の違いは？**
   - A: `use:action`はDOM要素に対して、`$effect`はリアクティブな値に対して使用します
 - **Q: 複数のアクションを1つの要素に適用できる？**

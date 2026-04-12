@@ -3,6 +3,10 @@ title: TypeScript設定
 description: Svelte 5とSvelteKitのTypeScript環境構築手順を網羅。sv createの推奨選択、tsconfigと環境変数の設定、ESLint/Prettier/VitestやVS Code拡張の導入、型チェックやスニペット活用まで段階的に解説する実践入門。コマンド例と推奨設定付き。導入時の確認リストを収録
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+
 TypeScriptを使用したSvelte 5プロジェクトのセットアップ方法と、最適な設定について解説します。プロジェクトの作成から、tsconfig.jsonの設定、VSCodeの設定まで、実践的な環境構築を行います。
 
 ## プロジェクトのセットアップ
@@ -52,12 +56,15 @@ deno run npm:sv create my-app
 └ Your project is ready!
 ```
 
-:::tip[推奨オプション]
-- **TypeScript syntax**: 必須。型安全な開発のため
-- **ESLint**: 推奨。コード品質の維持
-- **Prettier**: 推奨。一貫したコードスタイル
-- **Vitest**: テストを書く場合は推奨
-:::
+<Admonition type="tip" title="推奨オプション">
+<ul>
+<li><strong>TypeScript syntax</strong>: 必須。型安全な開発のため</li>
+<li><strong>ESLint</strong>: 推奨。コード品質の維持</li>
+<li><strong>Prettier</strong>: 推奨。一貫したコードスタイル</li>
+<li><strong>Vitest</strong>: テストを書く場合は推奨</li>
+</ul>
+
+</Admonition>
 
 ### パッケージマネージャの選択
 
@@ -85,12 +92,15 @@ bun install
 bun dev
 ```
 
-:::note[パッケージマネージャの違い]
-- **pnpm**: ディスク容量を節約し、高速。モノレポに最適
-- **npm**: Node.js標準。最も広くサポート
-- **yarn**: npmの改良版。ワークスペース機能が充実
-- **bun**: 最新のランタイム。非常に高速だが成熟度は低い
-:::
+<Admonition type="note" title="パッケージマネージャの違い">
+<ul>
+<li><strong>pnpm</strong>: ディスク容量を節約し、高速。モノレポに最適</li>
+<li><strong>npm</strong>: Node.js標準。最も広くサポート</li>
+<li><strong>yarn</strong>: npmの改良版。ワークスペース機能が充実</li>
+<li><strong>bun</strong>: 最新のランタイム。非常に高速だが成熟度は低い</li>
+</ul>
+
+</Admonition>
 
 ### プロジェクト構造の確認
 
@@ -169,19 +179,19 @@ Svelte 5プロジェクトに最適化された`tsconfig.json`の推奨設定を
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    
+
     // 追加の型チェック
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    
+
     // モジュール解決
     "moduleResolution": "bundler",
     "target": "ESNext",
     "module": "ESNext",
-    
+
     // パスエイリアス
     "paths": {
       "$lib": ["./src/lib"],
@@ -260,7 +270,7 @@ declare global {
       message: string;
       code?: string;
     }
-    
+
     // ローカル変数（サーバーサイドで使用）
     interface Locals {
       user?: {
@@ -269,7 +279,7 @@ declare global {
         role: 'admin' | 'user';
       };
     }
-    
+
     // ページデータ
     interface PageData {
       flash?: {
@@ -277,12 +287,12 @@ declare global {
         message: string;
       };
     }
-    
+
     // ページ状態
     interface PageState {
       selected?: string;
     }
-    
+
     // プラットフォーム固有の設定
     interface Platform {}
   }
@@ -305,7 +315,7 @@ declare global {
     email: string;
     createdAt: Date;
   }
-  
+
   interface Post {
     id: string;
     title: string;
@@ -313,7 +323,7 @@ declare global {
     authorId: string;
     publishedAt?: Date;
   }
-  
+
   // 環境変数の型定義
   namespace NodeJS {
     interface ProcessEnv {
@@ -433,25 +443,25 @@ on:
 jobs:
   type-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'pnpm'
-      
+
       - run: pnpm install
-      
+
       - run: pnpm check
-      
+
       - run: pnpm lint
-      
+
       - run: pnpm test:unit
 ```
 
@@ -522,10 +532,10 @@ VS Codeで詳細なTypeScriptログを確認できます。
 
 ```typescript
 // VS Codeでホバーして型を確認
-let value = $state(0);  // ホバーで型を表示
+let value = $state(0); // ホバーで型を表示
 
 // 明示的な型チェック
-type Check = typeof value;  // number
+type Check = typeof value; // number
 ```
 
 ## まとめ

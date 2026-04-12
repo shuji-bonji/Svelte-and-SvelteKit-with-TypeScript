@@ -4,6 +4,7 @@ description: SvelteKitのテスト戦略をTypeScriptで完全実装 - Vitest、
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const testPyramid = `graph BT
@@ -63,18 +64,13 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '*.config.ts',
-        '.svelte-kit/'
-      ]
+      exclude: ['node_modules/', 'src/test/', '*.config.ts', '.svelte-kit/'],
     },
     alias: {
       $lib: '/src/lib',
-      $app: '/src/test/mocks/app'
-    }
-  }
+      $app: '/src/test/mocks/app',
+    },
+  },
 });
 ```
 
@@ -92,7 +88,7 @@ vi.mock('$app/environment', () => ({
   browser: true,
   dev: true,
   building: false,
-  version: 'test'
+  version: 'test',
 }));
 
 vi.mock('$app/navigation', () => ({
@@ -103,12 +99,12 @@ vi.mock('$app/navigation', () => ({
   preloadCode: vi.fn(),
   invalidate: vi.fn(),
   invalidateAll: vi.fn(),
-  afterNavigate: vi.fn()
+  afterNavigate: vi.fn(),
 }));
 
 vi.mock('$app/stores', () => {
   const { readable, writable } = await import('svelte/store');
-  
+
   const page = readable({
     url: new URL('http://localhost'),
     params: {},
@@ -116,12 +112,12 @@ vi.mock('$app/stores', () => {
     status: 200,
     error: null,
     data: {},
-    form: undefined
+    form: undefined,
   });
-  
+
   const navigating = readable(null);
   const updated = { subscribe: vi.fn() };
-  
+
   return { page, navigating, updated };
 });
 ```
@@ -145,25 +141,25 @@ describe('Counter', () => {
     render(Counter, { props: { initial: 5 } });
     expect(screen.getByText('Count: 5')).toBeInTheDocument();
   });
-  
+
   it('インクリメントボタンが機能する', async () => {
     render(Counter, { props: { initial: 0 } });
     const button = screen.getByRole('button', { name: /increment/i });
-    
+
     await fireEvent.click(button);
     expect(screen.getByText('Count: 1')).toBeInTheDocument();
-    
+
     await fireEvent.click(button);
     expect(screen.getByText('Count: 2')).toBeInTheDocument();
   });
-  
+
   it('最大値を超えない', async () => {
     render(Counter, { props: { initial: 9, max: 10 } });
     const button = screen.getByRole('button', { name: /increment/i });
-    
+
     await fireEvent.click(button);
     expect(screen.getByText('Count: 10')).toBeInTheDocument();
-    
+
     await fireEvent.click(button);
     expect(screen.getByText('Count: 10')).toBeInTheDocument();
     expect(button).toBeDisabled();
@@ -183,40 +179,40 @@ import { createAuthStore } from './auth.svelte';
 
 describe('AuthStore', () => {
   let authStore: ReturnType<typeof createAuthStore>;
-  
+
   beforeEach(() => {
     authStore = createAuthStore();
   });
-  
+
   it('初期状態では未認証', () => {
     expect(authStore.isAuthenticated).toBe(false);
     expect(authStore.user).toBeNull();
   });
-  
+
   it('ログインが成功する', async () => {
     const credentials = {
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     };
-    
+
     await authStore.login(credentials);
-    
+
     expect(authStore.isAuthenticated).toBe(true);
     expect(authStore.user).toEqual({
       id: '1',
       email: 'test@example.com',
-      name: 'Test User'
+      name: 'Test User',
     });
   });
-  
+
   it('ログアウトが機能する', async () => {
     await authStore.login({
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     });
-    
+
     authStore.logout();
-    
+
     expect(authStore.isAuthenticated).toBe(false);
     expect(authStore.user).toBeNull();
   });
@@ -238,22 +234,22 @@ describe('Validation Utils', () => {
       expect(validateEmail('test@example.com')).toBe(true);
       expect(validateEmail('user.name+tag@example.co.jp')).toBe(true);
     });
-    
+
     it('無効なメールアドレスを拒否', () => {
       expect(validateEmail('invalid')).toBe(false);
       expect(validateEmail('@example.com')).toBe(false);
       expect(validateEmail('test@')).toBe(false);
     });
   });
-  
+
   describe('validatePassword', () => {
     it('強度の高いパスワードを検証', () => {
       expect(validatePassword('Abc123!@#')).toEqual({
         valid: true,
-        errors: []
+        errors: [],
       });
     });
-    
+
     it('弱いパスワードにエラーを返す', () => {
       const result = validatePassword('abc');
       expect(result.valid).toBe(false);
@@ -282,9 +278,9 @@ import type { PageServerLoad } from './$types';
 vi.mock('$lib/server/database', () => ({
   db: {
     post: {
-      findUnique: vi.fn()
-    }
-  }
+      findUnique: vi.fn(),
+    },
+  },
 }));
 
 describe('Post Page Load Function', () => {
@@ -293,29 +289,29 @@ describe('Post Page Load Function', () => {
       id: '1',
       title: 'Test Post',
       content: 'Test content',
-      authorId: 'user1'
+      authorId: 'user1',
     };
-    
+
     const { db } = await import('$lib/server/database');
     vi.mocked(db.post.findUnique).mockResolvedValue(mockPost);
-    
+
     const result = await load({
       params: { id: '1' },
-      locals: { user: { id: 'user1' } }
+      locals: { user: { id: 'user1' } },
     } as Parameters<PageServerLoad>[0]);
-    
+
     expect(result).toEqual({ post: mockPost });
   });
-  
+
   it('投稿が見つからない場合404エラー', async () => {
     const { db } = await import('$lib/server/database');
     vi.mocked(db.post.findUnique).mockResolvedValue(null);
-    
+
     await expect(
       load({
         params: { id: '999' },
-        locals: { user: { id: 'user1' } }
-      } as Parameters<PageServerLoad>[0])
+        locals: { user: { id: 'user1' } },
+      } as Parameters<PageServerLoad>[0]),
     ).rejects.toThrow('Not found');
   });
 });
@@ -337,36 +333,36 @@ describe('Contact Form Actions', () => {
     formData.append('name', 'John Doe');
     formData.append('email', 'john@example.com');
     formData.append('message', 'Test message');
-    
+
     const mockRequest = {
       formData: async () => formData,
-      locals: {}
+      locals: {},
     } as RequestEvent;
-    
+
     const result = await actions.submit(mockRequest);
-    
+
     expect(result).toEqual({
       type: 'success',
       status: 200,
       data: {
-        message: 'お問い合わせを受け付けました'
-      }
+        message: 'お問い合わせを受け付けました',
+      },
     });
   });
-  
+
   it('バリデーションエラーを返す', async () => {
     const formData = new FormData();
     formData.append('name', '');
     formData.append('email', 'invalid-email');
     formData.append('message', '');
-    
+
     const mockRequest = {
       formData: async () => formData,
-      locals: {}
+      locals: {},
     } as RequestEvent;
-    
+
     const result = await actions.submit(mockRequest);
-    
+
     expect(result).toEqual({
       type: 'failure',
       status: 400,
@@ -374,9 +370,9 @@ describe('Contact Form Actions', () => {
         errors: {
           name: '名前は必須です',
           email: '有効なメールアドレスを入力してください',
-          message: 'メッセージは必須です'
-        }
-      }
+          message: 'メッセージは必須です',
+        },
+      },
     });
   });
 });
@@ -406,31 +402,31 @@ const config: PlaywrightTestConfig = {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    video: 'retain-on-failure',
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
+      use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
+      use: { ...devices['Desktop Safari'] },
     },
     {
       name: 'mobile',
-      use: { ...devices['iPhone 13'] }
-    }
+      use: { ...devices['iPhone 13'] },
+    },
   ],
   webServer: {
     command: 'pnpm build && pnpm preview',
     port: 4173,
-    reuseExistingServer: !process.env.CI
-  }
+    reuseExistingServer: !process.env.CI,
+  },
 };
 
 export default config;
@@ -448,42 +444,42 @@ test.describe('認証フロー', () => {
   test('ユーザー登録からログインまで', async ({ page }) => {
     // 登録ページへ移動
     await page.goto('/register');
-    
+
     // フォーム入力
     await page.fill('[name="email"]', 'newuser@example.com');
     await page.fill('[name="password"]', 'SecurePass123!');
     await page.fill('[name="confirmPassword"]', 'SecurePass123!');
-    
+
     // 送信
     await page.click('button[type="submit"]');
-    
+
     // 成功メッセージを確認
     await expect(page.locator('.success-message')).toContainText(
-      '登録が完了しました'
+      '登録が完了しました',
     );
-    
+
     // ログインページへリダイレクト
     await expect(page).toHaveURL('/login');
-    
+
     // ログイン
     await page.fill('[name="email"]', 'newuser@example.com');
     await page.fill('[name="password"]', 'SecurePass123!');
     await page.click('button[type="submit"]');
-    
+
     // ダッシュボードへ遷移
     await expect(page).toHaveURL('/dashboard');
     await expect(page.locator('h1')).toContainText('ダッシュボード');
   });
-  
+
   test('無効な認証情報でエラー表示', async ({ page }) => {
     await page.goto('/login');
-    
+
     await page.fill('[name="email"]', 'wrong@example.com');
     await page.fill('[name="password"]', 'wrongpass');
     await page.click('button[type="submit"]');
-    
+
     await expect(page.locator('.error-message')).toContainText(
-      'メールアドレスまたはパスワードが正しくありません'
+      'メールアドレスまたはパスワードが正しくありません',
     );
   });
 });
@@ -502,19 +498,19 @@ test.describe('ビジュアルリグレッション', () => {
     await page.goto('/');
     await expect(page).toHaveScreenshot('homepage.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
-  
+
   test('ダークモードの表示', async ({ page }) => {
     await page.goto('/');
-    
+
     // ダークモード切り替え
     await page.click('[data-testid="theme-toggle"]');
-    
+
     await expect(page).toHaveScreenshot('homepage-dark.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -539,14 +535,14 @@ export const handlers = [
       ctx.json({
         id: '1',
         name: 'Test User',
-        email: 'test@example.com'
-      })
+        email: 'test@example.com',
+      }),
     );
   }),
-  
+
   rest.post('/api/login', async (req, res, ctx) => {
     const { email, password } = await req.json();
-    
+
     if (email === 'test@example.com' && password === 'password') {
       return res(
         ctx.status(200),
@@ -554,17 +550,14 @@ export const handlers = [
           token: 'mock-jwt-token',
           user: {
             id: '1',
-            email: 'test@example.com'
-          }
-        })
+            email: 'test@example.com',
+          },
+        }),
       );
     }
-    
-    return res(
-      ctx.status(401),
-      ctx.json({ error: 'Invalid credentials' })
-    );
-  })
+
+    return res(ctx.status(401), ctx.json({ error: 'Invalid credentials' }));
+  }),
 ];
 ```
 
@@ -588,50 +581,50 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18, 20]
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - uses: actions/setup-node@v3
         with:
-          node-version: 20  # matrixの値を使用
+          node-version: 20 # matrixの値を使用
           cache: 'pnpm'
-      
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Type check
         run: pnpm check
-      
+
       - name: Lint
         run: pnpm lint
-      
+
       - name: Unit tests
         run: pnpm test:unit --coverage
-      
+
       - name: Build
         run: pnpm build
-      
+
       - name: E2E tests
         run: pnpm test:e2e
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/coverage-final.json
 ```
 
-:::tip[GitHub Actions変数]
+<Admonition type="tip" title="GitHub Actions変数">
 実際の設定では、`node-version`の値にGitHub Actions変数（matrix.node-versionなど）を使用してMatrix戦略を活用できます。
-:::
+</Admonition>
 
 ## まとめ
 

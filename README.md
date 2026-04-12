@@ -12,7 +12,7 @@
 > このサイトは今後、MCPでは得られない「実務での設計判断」「フレームワーク比較」などの情報提供にシフトしていく予定です。
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
-[![SveltePress](https://img.shields.io/badge/SveltePress-v1.3-blue?logo=svelte&logoColor=white)](https://sveltepress.site/)
+[![mdsvex](https://img.shields.io/badge/mdsvex-v0.12-orange?logo=svelte&logoColor=white)](https://mdsvex.pngwn.io/)
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.55-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
@@ -313,7 +313,9 @@ Svelte 5 の内部実装や高度なトピックを扱います。
 
 ### ドキュメント・可視化
 
-- **SveltePress** (1.3+) - 静的サイト生成
+- **mdsvex** (0.12+) - Markdown + Svelte プロセッサ
+- **Shiki** - シンタックスハイライト
+- **svelte.dev Playground embed** - 実行可能なコード例（iframe埋め込み）
 - **Mermaid** (11.12+) - ダイアグラム描画
 
 ### カスタム機能
@@ -351,7 +353,7 @@ pnpm dev
 
 ### 自動ナビゲーションシステム
 
-本プロジェクトでは SveltePress の標準機能に加えて、独自の自動ナビゲーションシステムを実装しています。
+本プロジェクトでは SvelteKit + mdsvex の構成上で、独自の自動ナビゲーションシステムを実装しています。
 
 #### 特徴
 
@@ -364,6 +366,14 @@ pnpm dev
 - `src/lib/components/AutoPageNavigation.svelte` - ナビゲーション表示コンポーネント
 - `src/lib/utils/navigation-from-config.ts` - sidebar.ts から構造を生成するユーティリティ
 - `src/lib/config/sidebar.ts` - サイドバー構造の単一情報源（Single Source of Truth）
+
+### 実行可能なコード例（LiveCode）
+
+本プロジェクトでは、Markdown内のコードブロックに `live` キーワードを付けることで、[svelte.dev/playground](https://svelte.dev/playground) の公式 embed iframe による実行可能なサンプルを自動挿入しています。
+
+- デフォルトは Result 全画面（`output-only`）
+- Consoleログを確認したいコード例は ` ```svelte live console ` のように `console` キーワードを付けることで Console パネル付きの完全な Playground に切り替わります
+- 実装: `svelte.config.js` の mdsvex highlighter、`src/lib/components/LiveCode.svelte`、`src/lib/utils/playground-url.ts`
 
 詳細は[CLAUDE.md](./CLAUDE.md#自動ナビゲーションシステム)を参照してください。
 
@@ -426,7 +436,8 @@ pnpm preview
 
 - [Svelte](https://svelte.dev/) - The Svelte contributors
 - [SvelteKit](https://kit.svelte.dev/) - The SvelteKit team
-- [SveltePress](https://sveltepress.site/) - Documentation framework
+- [mdsvex](https://mdsvex.pngwn.io/) - Markdown preprocessor for Svelte
+- [svelte.dev Playground](https://svelte.dev/playground) - 実行可能なコード例の提供
 - [Mermaid](https://mermaid.js.org/) - Diagramming and charting tool
 
 ## 📬 連絡先
@@ -440,4 +451,4 @@ pnpm preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026 年 4 月 12 日 - Svelte MCP による全コンテンツ検証・修正、リファレンス最新化、PageProps/LayoutProps 対応
+**Last Updated**: 2026 年 4 月 17 日 - svelte.dev 公式 Playground embed 統合、LiveCode 刷新、`live console` メタ対応

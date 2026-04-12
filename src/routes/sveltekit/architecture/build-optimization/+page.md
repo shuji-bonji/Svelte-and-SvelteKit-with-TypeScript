@@ -4,39 +4,45 @@ description: SvelteKitのビルド最適化をTypeScriptで実践する完全ガ
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
 </script>
 
-:::warning[準備中]
+<Admonition type="warning" title="準備中">
 このページは現在準備中です。SvelteKitのビルド最適化について、以下の内容を解説予定です。
-:::
+</Admonition>
 
 ## 解説予定の内容
 
 ### 静的解析
+
 - プリレンダリング対象の自動検出
 - 依存関係グラフの構築
 - 未使用コードの特定と削除
 
 ### コード分割戦略
+
 - ルートベースの自動分割
 - 動的インポートの最適化
 - チャンク生成戦略
 - 共通チャンクの抽出
 
 ### アセット最適化
+
 - 画像の最適化とフォーマット変換
 - CSSの最小化とPurge
 - JavaScriptの圧縮とツリーシェイキング
 - フォントのサブセット化
 
 ### Service Worker
+
 - オフライン対応の実装
 - キャッシュ戦略の設定
 - プリキャッシングの最適化
 - 更新戦略の実装
 
 ### ビルドパフォーマンス
+
 - ビルド時間の短縮方法
 - インクリメンタルビルド
 - 並列処理の活用

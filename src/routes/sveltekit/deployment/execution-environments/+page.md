@@ -3,6 +3,10 @@ title: 実行環境とランタイム
 description: SvelteKitが動作する様々な実行環境とランタイムをTypeScriptで理解。Node.js、Edge Runtime、Cloudflare Workers、ブラウザ環境での動作とアダプターの仕組みを解説
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+
 SvelteKitは様々な実行環境で動作するように設計されており、それぞれの環境に最適化されたコードを生成します。このページでは、サーバーランタイム、クライアントランタイム、アダプターの仕組み、環境変数の処理について詳しく解説します。
 
 ## サーバーランタイム
@@ -26,11 +30,11 @@ export const load: PageServerLoad = async () => {
   const dataPath = join(process.cwd(), 'data', 'posts.json');
   const fileContent = await readFile(dataPath, 'utf-8');
   const posts = JSON.parse(fileContent);
-  
+
   return {
     posts,
     runtime: 'Node.js',
-    version: process.version
+    version: process.version,
   };
 };
 ```
@@ -46,26 +50,29 @@ Edge Runtimeは、エッジロケーションで実行される軽量なJavaScri
 import type { RequestHandler } from './$types';
 
 export const config = {
-  runtime: 'edge' // Edge Runtimeを指定
+  runtime: 'edge', // Edge Runtimeを指定
 };
 
 export const GET: RequestHandler = async ({ url, platform }) => {
   // Edge RuntimeではWeb標準APIのみ使用可能
   // fs、path、processなどのNode.js APIは使用不可
-  
+
   const response = await fetch('https://api.example.com/data');
   const data = await response.json();
-  
-  return new Response(JSON.stringify({
-    data,
-    runtime: 'Edge',
-    region: platform?.env?.REGION || 'unknown'
-  }), {
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 's-maxage=60'
-    }
-  });
+
+  return new Response(
+    JSON.stringify({
+      data,
+      runtime: 'Edge',
+      region: platform?.env?.REGION || 'unknown',
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 's-maxage=60',
+      },
+    },
+  );
 };
 ```
 
@@ -82,30 +89,30 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ platform }) => {
   // Cloudflare KVストアへのアクセス
   const kv = platform?.env?.MY_KV_NAMESPACE;
-  
+
   if (kv) {
     // KVストアからデータを取得
     const cachedData = await kv.get('posts', 'json');
-    
+
     if (cachedData) {
       return {
         posts: cachedData,
-        source: 'KV Cache'
+        source: 'KV Cache',
       };
     }
   }
-  
+
   // キャッシュがない場合はAPIから取得
   const response = await fetch('https://api.example.com/posts');
   const posts = await response.json();
-  
+
   // KVストアにキャッシュ（1時間）
   if (kv) {
     await kv.put('posts', JSON.stringify(posts), {
-      expirationTtl: 3600
+      expirationTtl: 3600,
     });
   }
-  
+
   return { posts, source: 'API' };
 };
 ```
@@ -125,7 +132,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
   let userData = null;
-  
+
   if (browser) {
     // ブラウザ環境でのみ実行
     // LocalStorageへのアクセス
@@ -133,7 +140,7 @@ export const load: PageLoad = async () => {
     if (savedUser) {
       userData = JSON.parse(savedUser);
     }
-    
+
     // ブラウザAPIの使用
     console.log('User Agent:', navigator.userAgent);
     console.log('Screen Size:', `${screen.width}x${screen.height}`);
@@ -141,10 +148,10 @@ export const load: PageLoad = async () => {
     // サーバー環境での処理
     console.log('Running on server');
   }
-  
+
   return {
     userData,
-    isClient: browser
+    isClient: browser,
   };
 };
 ```
@@ -158,10 +165,10 @@ export const load: PageLoad = async () => {
 <script lang="ts">
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  
+
   let geolocation = $state<GeolocationPosition | null>(null);
   let webglSupported = $state(false);
-  
+
   onMount(() => {
     // onMount内はクライアントのみで実行
     if ('geolocation' in navigator) {
@@ -174,13 +181,13 @@ export const load: PageLoad = async () => {
         }
       );
     }
-    
+
     // WebGLサポートチェック
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     webglSupported = !!gl;
   });
-  
+
   // 条件付きインポート
   $effect(() => {
     if (browser && webglSupported) {
@@ -213,8 +220,8 @@ export default {
       out: 'build',
       precompress: true,
       envPrefix: 'APP_',
-    })
-  }
+    }),
+  },
 };
 ```
 
@@ -231,9 +238,9 @@ export default {
     adapter: adapter({
       runtime: 'edge', // または 'nodejs18.x'
       regions: ['iad1'], // エッジリージョンの指定
-      split: true // ルートごとに関数を分割
-    })
-  }
+      split: true, // ルートごとに関数を分割
+    }),
+  },
 };
 ```
 
@@ -250,10 +257,10 @@ export default {
     adapter: adapter({
       routes: {
         include: ['/*'],
-        exclude: ['<all>']
-      }
-    })
-  }
+        exclude: ['<all>'],
+      },
+    }),
+  },
 };
 ```
 
@@ -269,24 +276,24 @@ export default function myAdapter(options = {}) {
     async adapt(builder) {
       // ビルダーAPIを使用してファイルを生成
       builder.log.minor('Generating custom output...');
-      
+
       // アプリケーションのビルド
       const tmp = builder.getBuildDirectory('my-adapter');
       builder.rimraf(tmp);
       builder.mkdirp(tmp);
-      
+
       // サーバーコードの生成
       builder.writeServer(tmp);
-      
+
       // クライアントアセットのコピー
       builder.writeClient(`${tmp}/public`);
-      
+
       // プリレンダリングされたページの処理
       builder.writePrerendered(`${tmp}/prerendered`);
-      
+
       // カスタム設定ファイルの生成
       builder.copy('my-adapter/template', tmp);
-    }
+    },
   };
 }
 ```
@@ -311,11 +318,11 @@ export const load = async () => {
   // サーバー側でのみアクセス可能
   const apiKey = env.SECRET_API_KEY;
   const dbUrl = DATABASE_URL;
-  
+
   // データベース接続
   const db = await connectDB(dbUrl);
   const data = await db.query('SELECT * FROM posts');
-  
+
   return {
     posts: data,
     // 注意: apiKeyをreturnしてはいけない（クライアントに露出する）
@@ -337,10 +344,10 @@ export const load = async ({ fetch }) => {
   // クライアント側でもアクセス可能
   const response = await fetch(`${PUBLIC_API_URL}/posts`);
   const posts = await response.json();
-  
+
   return {
     posts,
-    siteName: PUBLIC_SITE_NAME
+    siteName: PUBLIC_SITE_NAME,
   };
 };
 ```
@@ -363,7 +370,6 @@ PUBLIC_API_URL=https://api.example.com
 PUBLIC_SITE_NAME="My Production Site"
 ```
 
-
 ## プラットフォーム固有の最適化
 
 ### Vercel環境での最適化
@@ -379,12 +385,14 @@ export const GET = async ({ platform }) => {
   // Vercel固有の環境変数
   const region = platform?.env?.VERCEL_REGION;
   const url = platform?.env?.VERCEL_URL;
-  
-  return new Response(JSON.stringify({
-    region,
-    url,
-    timestamp: Date.now()
-  }));
+
+  return new Response(
+    JSON.stringify({
+      region,
+      url,
+      timestamp: Date.now(),
+    }),
+  );
 };
 ```
 
@@ -395,17 +403,17 @@ export const GET = async ({ platform }) => {
 export const load = async ({ platform }) => {
   const kv = platform?.env?.KV_NAMESPACE;
   const durableObject = platform?.env?.DURABLE_OBJECT;
-  
+
   // Durable Objectsを使用した状態管理
   if (durableObject) {
     const id = durableObject.idFromName('session');
     const stub = durableObject.get(id);
     const response = await stub.fetch('https://internal/session');
     const session = await response.json();
-    
+
     return { session };
   }
-  
+
   return { session: null };
 };
 ```
@@ -429,7 +437,7 @@ export function getRuntime() {
 
 export function hasCapability(capability: string): boolean {
   const runtime = getRuntime();
-  
+
   switch (capability) {
     case 'fs':
       return runtime === 'node';
@@ -458,7 +466,7 @@ export interface StorageAdapter {
 // Node.js実装
 export class NodeStorage implements StorageAdapter {
   private cache = new Map<string, { value: string; expires?: number }>();
-  
+
   async get(key: string) {
     const item = this.cache.get(key);
     if (!item) return null;
@@ -468,14 +476,14 @@ export class NodeStorage implements StorageAdapter {
     }
     return item.value;
   }
-  
+
   async set(key: string, value: string, ttl?: number) {
     this.cache.set(key, {
       value,
-      expires: ttl ? Date.now() + ttl * 1000 : undefined
+      expires: ttl ? Date.now() + ttl * 1000 : undefined,
     });
   }
-  
+
   async delete(key: string) {
     this.cache.delete(key);
   }
@@ -484,17 +492,17 @@ export class NodeStorage implements StorageAdapter {
 // Cloudflare KV実装
 export class KVStorage implements StorageAdapter {
   constructor(private kv: KVNamespace) {}
-  
+
   async get(key: string) {
     return await this.kv.get(key);
   }
-  
+
   async set(key: string, value: string, ttl?: number) {
     await this.kv.put(key, value, {
-      expirationTtl: ttl
+      expirationTtl: ttl,
     });
   }
-  
+
   async delete(key: string) {
     await this.kv.delete(key);
   }
@@ -503,13 +511,13 @@ export class KVStorage implements StorageAdapter {
 
 ### 3. 重要指標の定義と測定
 
-| 指標 | SSR | SSG | SPA | 推奨用途 |
-|---|---|---|---|---|
-| **ページビュー追跡** | ◎ | △ | ✗ | コンテンツサイト |
-| **ユーザーフロー分析** | ◎ | △ | ✗ | ECサイト |
-| **リアルタイム分析** | ◎ | ✗ | △ | ダッシュボード |
-| **SEOパフォーマンス** | ◎ | ◎ | ✗ | マーケティングサイト |
-| **サーバー負荷** | ✗ | ◎ | ◎ | 高トラフィックサイト |
+| 指標                   | SSR | SSG | SPA | 推奨用途             |
+| ---------------------- | --- | --- | --- | -------------------- |
+| **ページビュー追跡**   | ◎   | △   | ✗   | コンテンツサイト     |
+| **ユーザーフロー分析** | ◎   | △   | ✗   | ECサイト             |
+| **リアルタイム分析**   | ◎   | ✗   | △   | ダッシュボード       |
+| **SEOパフォーマンス**  | ◎   | ◎   | ✗   | マーケティングサイト |
+| **サーバー負荷**       | ✗   | ◎   | ◎   | 高トラフィックサイト |
 
 ### 4. セキュリティ監査への配慮
 
@@ -519,21 +527,21 @@ export const handle: Handle = async ({ event, resolve }) => {
   // 疑わしいアクセスパターンの検出
   const ip = event.getClientAddress();
   const userAgent = event.request.headers.get('user-agent');
-  
+
   // レート制限チェック
   if (await isRateLimited(ip)) {
     return new Response('Too Many Requests', { status: 429 });
   }
-  
+
   // アクセスログ記録
   await logAccess({
     ip,
     path: event.url.pathname,
     method: event.request.method,
     userAgent,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
-  
+
   return resolve(event);
 };
 ```
@@ -544,12 +552,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 各ランタイム環境には固有の最適化手法があり、適切に活用することでパフォーマンスを大幅に改善できます。
 
-| ランタイム | 最適化手法 | 注意点 |
-|-----------|----------|--------|
-| **Node.js** | Worker Threads、Cluster | メモリ使用量 |
-| **Edge Runtime** | Response Streaming、Cache API | API制限 |
-| **Cloudflare Workers** | KV Cache、Durable Objects | CPU時間制限 |
-| **ブラウザ** | Code Splitting、Lazy Loading | バンドルサイズ |
+| ランタイム             | 最適化手法                    | 注意点         |
+| ---------------------- | ----------------------------- | -------------- |
+| **Node.js**            | Worker Threads、Cluster       | メモリ使用量   |
+| **Edge Runtime**       | Response Streaming、Cache API | API制限        |
+| **Cloudflare Workers** | KV Cache、Durable Objects     | CPU時間制限    |
+| **ブラウザ**           | Code Splitting、Lazy Loading  | バンドルサイズ |
 
 ### パフォーマンス測定の実装
 
@@ -559,17 +567,17 @@ import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
   const start = performance.now();
-  
+
   const response = await resolve(event);
-  
+
   const duration = performance.now() - start;
-  
+
   // Server-Timingヘッダーで測定結果を送信
   response.headers.set(
     'Server-Timing',
-    `sveltekit;dur=${duration};desc="Total SvelteKit processing"`
+    `sveltekit;dur=${duration};desc="Total SvelteKit processing"`,
   );
-  
+
   return response;
 };
 ```
@@ -578,13 +586,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 SvelteKitの実行環境とランタイムを理解することで、アプリケーションを最適な環境にデプロイし、パフォーマンスを最大化できます。各ランタイムの特性を理解し、適切なアダプターを選択することが重要です。
 
-:::tip[重要なポイント]
-- **Node.js**: フルスタック機能が必要な場合
-- **Edge Runtime**: 低レイテンシーとグローバル配信が必要な場合
-- **Cloudflare Workers**: KVストアやDurable Objectsを活用する場合
-- **環境変数**: PUBLIC_プレフィックスでクライアント露出を制御
-- **アダプター**: デプロイ先に応じて適切に選択
-:::
+<Admonition type="tip" title="重要なポイント">
+<ul>
+<li><strong>Node.js</strong>: フルスタック機能が必要な場合</li>
+<li><strong>Edge Runtime</strong>: 低レイテンシーとグローバル配信が必要な場合</li>
+<li><strong>Cloudflare Workers</strong>: KVストアやDurable Objectsを活用する場合</li>
+<li><strong>環境変数</strong>: PUBLIC_プレフィックスでクライアント露出を制御</li>
+<li><strong>アダプター</strong>: デプロイ先に応じて適切に選択</li>
+</ul>
+
+</Admonition>
 
 ## 関連情報
 

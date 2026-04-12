@@ -1,0 +1,210 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* ダークモード対応のベーステーマ */
+:root {
+	--color-bg: #ffffff;
+	--color-bg-secondary: #f9fafb;
+	--color-text: #1e293b;
+	--color-text-muted: #64748b;
+	--color-border: #e5e7eb;
+	--color-primary: #ff3e00;
+	--color-primary-light: #ff6b35;
+	--color-sidebar-bg: #ffffff;
+	--color-sidebar-active: #fff7ed;
+	--color-sidebar-active-border: #ff3e00;
+	--color-code-bg: #f6f8fa;
+	--color-admonition-note: #3b82f6;
+	--color-admonition-tip: #22c55e;
+	--color-admonition-warning: #f59e0b;
+	--color-admonition-caution: #ef4444;
+	--color-admonition-info: #8b5cf6;
+	--color-card-title: #ff3e00;
+	--color-card-desc: #1e293b;
+	--color-card-list: #4b8fce;
+}
+
+.dark {
+	--color-bg: #1c1e22;
+	--color-bg-secondary: #22252a;
+	--color-text: #e0e2e6;
+	--color-text-muted: #9ca0a8;
+	--color-border: #2e3138;
+	--color-primary: #ff6b35;
+	--color-primary-light: #ff8c5a;
+	--color-sidebar-bg: #1c1e22;
+	--color-sidebar-active: #26292e;
+	--color-sidebar-active-border: #ff6b35;
+	--color-code-bg: #22252a;
+	--color-admonition-note: #60a5fa;
+	--color-admonition-tip: #4ade80;
+	--color-admonition-warning: #fbbf24;
+	--color-admonition-caution: #f87171;
+	--color-admonition-info: #a78bfa;
+	--color-card-title: #ff6b35;
+	--color-card-desc: #e0e2e6;
+	--color-card-list: #58a6ff;
+}
+
+body {
+	font-family: 'Inter', system-ui, -apple-system, sans-serif;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+}
+
+/* Prose カスタマイズ — すべてのCSS変数をテーマに統一 */
+.prose {
+	--tw-prose-body: var(--color-text);
+	--tw-prose-headings: var(--color-text);
+	--tw-prose-bold: var(--color-text);
+	--tw-prose-links: var(--color-primary);
+	--tw-prose-code: var(--color-text);
+	--tw-prose-counters: var(--color-text-muted);
+	--tw-prose-bullets: var(--color-text-muted);
+	--tw-prose-hr: var(--color-border);
+	--tw-prose-quotes: var(--color-text);
+	--tw-prose-quote-borders: var(--color-border);
+	--tw-prose-captions: var(--color-text-muted);
+	--tw-prose-th-borders: var(--color-border);
+	--tw-prose-td-borders: var(--color-border);
+	max-width: 80ch;
+}
+
+/* インラインコード */
+.prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)):not(pre code) {
+	background-color: var(--color-code-bg);
+	padding: 0.125rem 0.375rem;
+	border-radius: 0.25rem;
+	font-size: 0.875em;
+	border: 1px solid var(--color-border);
+}
+
+/* コードブロック（pre） */
+.prose :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+	border-radius: 0.5rem;
+	border: 1px solid var(--color-border);
+	padding: 1rem 1.25rem;
+	overflow-x: auto;
+	font-size: 0.875rem;
+	line-height: 1.7;
+}
+
+/* shiki デュアルテーマ対応
+   shikiは github-light をデフォルトcolor/bgに、github-dark を --shiki-dark / --shiki-dark-bg に出力する */
+
+/* ライトモード: shikiデフォルト（インラインstyle）をそのまま使用 */
+.shiki span {
+	background-color: transparent !important;
+}
+
+/* ダークモード: CSS変数で切り替え */
+.dark .shiki {
+	background-color: var(--shiki-dark-bg, #22252a) !important;
+	color: var(--shiki-dark, #e1e4e8) !important;
+}
+
+.dark .shiki span {
+	color: var(--shiki-dark) !important;
+	background-color: transparent !important;
+}
+
+/* pre 要素のテーマ背景 */
+pre.shiki {
+	background-color: #f6f8fa !important;
+}
+
+.dark pre.shiki {
+	background-color: #22252a !important;
+}
+
+/* Admonitions (:::note, :::tip, etc.) */
+.admonition {
+	border-left: 4px solid;
+	border-radius: 0.5rem;
+	padding: 1rem 1.25rem;
+	margin: 1.5rem 0;
+}
+
+.admonition-title {
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.admonition-note { border-color: var(--color-admonition-note); background: color-mix(in srgb, var(--color-admonition-note) 8%, transparent); }
+.admonition-tip { border-color: var(--color-admonition-tip); background: color-mix(in srgb, var(--color-admonition-tip) 8%, transparent); }
+.admonition-warning { border-color: var(--color-admonition-warning); background: color-mix(in srgb, var(--color-admonition-warning) 8%, transparent); }
+.admonition-caution { border-color: var(--color-admonition-caution); background: color-mix(in srgb, var(--color-admonition-caution) 8%, transparent); }
+.admonition-info { border-color: var(--color-admonition-info); background: color-mix(in srgb, var(--color-admonition-info) 8%, transparent); }
+
+/* 本文中のカード（枠線なし / 背景色で差別化）
+   padding は呼び出し側で p-4 / p-6 などを指定する
+   リンクでないカードはこのクラスに統一する */
+.content-card {
+	background-color: var(--color-bg-secondary);
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.content-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+.dark .content-card {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.dark .content-card:hover {
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* セクションカード（インデックスページのリンクカード用・枠線なし / 背景で差別化）
+   content-card と同じ配色方針だが、リンクカード向けに強めの hover 効果を持つ */
+.section-card {
+	background-color: var(--color-bg-secondary);
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.section-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.section-card:active {
+	transform: translateY(1px);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.dark .section-card {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.dark .section-card:hover {
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.dark .section-card:active {
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* スクロールバーのテーマ対応 */
+* {
+	scrollbar-color: var(--color-border) transparent;
+	scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--color-border);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--color-text-muted);
+}

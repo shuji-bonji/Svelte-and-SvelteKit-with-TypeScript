@@ -4,6 +4,7 @@ description: Svelte/SvelteKitの公式CLIツール（sv）の完全ガイド。s
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
   const svCheckDiagram = `flowchart TB
@@ -50,10 +51,10 @@ pnpx sv <command> <args>
 yarn dlx sv <command> <args>
 ```
 
-:::tip[ローカルインストール不要]
+<Admonition type="tip" title="ローカルインストール不要">
 `sv` はプロジェクト内にインストールされていない場合でも、最新版が自動的にダウンロードされて実行されます。
 特に `sv create` は常に最新版を使用することをお勧めします。
-:::
+</Admonition>
 
 ## sv create
 
@@ -194,9 +195,9 @@ Svelte チームが公式にサポートするアドオンです。これらは 
 | `tailwindcss`       | Tailwind CSS の統合                |
 | `vitest`            | Vitest によるユニットテスト        |
 
-:::note[認証アドオンの変更]
+<Admonition type="note" title="認証アドオンの変更">
 以前の公式アドオンだった `lucia` は `better-auth` に置き換わりました。新規プロジェクトでは `better-auth` の使用を推奨します。
-:::
+</Admonition>
 
 ### 使用例
 
@@ -231,9 +232,9 @@ npx sv add eslint @supacool
 npx sv create --add eslint @supacool
 ```
 
-:::warning[コミュニティアドオンの注意]
+<Admonition type="warning" title="コミュニティアドオンの注意">
 コミュニティアドオンは Svelte メンテナーによるセキュリティレビューを受けていません。`--no-download-check` オプションは注意して使用してください。
-:::
+</Admonition>
 
 ## sv check
 
@@ -461,15 +462,15 @@ grep -r "@migration" src/
 
 ```json
 {
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
-	}
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  }
 }
 ```
 
@@ -488,10 +489,11 @@ npx sv check --ignore "node_modules,dist,build,.svelte-kit"
 
 ### 特定のファイルのみチェックしたい場合
 
-:::warning[全体チェックが必要]
+<Admonition type="warning" title="全体チェックが必要">
 `sv check` はプロジェクト全体を見る必要があります。
 変更されたファイルのみをチェックすると、他のファイルでの参照エラーを見逃す可能性があります。
-:::
+
+</Admonition>
 
 ### マイグレーションが失敗する場合
 

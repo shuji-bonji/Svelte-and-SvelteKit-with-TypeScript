@@ -571,7 +571,7 @@ src/routes/
 ```typescript
 // src/routes/(auth)/+layout.svelte
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import type { Snippet } from 'svelte';
@@ -580,7 +580,7 @@ src/routes/
 
   // すでにログイン済みの場合はダッシュボードへリダイレクト
   $effect(() => {
-    if ($page.data.user) {
+    if (page.data.user) {
       // resolveを使用してbase pathを考慮
       goto(resolve('/dashboard'));
     }

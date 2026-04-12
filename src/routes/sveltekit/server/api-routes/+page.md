@@ -4,6 +4,7 @@ description: SvelteKitでRESTful APIを構築するための設計ガイド。+s
 ---
 
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
   import Mermaid from '$lib/components/Mermaid.svelte';
 
@@ -409,13 +410,15 @@ export const GET: RequestHandler = async ({ params }) => {
 
 APIルートでは、認証（ユーザーの身元確認）と認可（アクセス権限の確認）を実装することが重要です。一般的にはBearerトークン（JWT）を使用した認証が用いられ、リクエストヘッダーからトークンを取得して検証します。
 
-:::info[関連情報]
+<Admonition type="info" title="関連情報">
 APIエンドポイントの認証は、アプリケーション全体の認証戦略の一部です。以下のページも参照してください。
-- **[Hooks]({base}/sveltekit/server/hooks/)** - handleフックでのグローバル認証実装
-- **[セッション管理と認証戦略]({base}/sveltekit/application/session/)** - Cookie/Session、JWT認証の詳細
-- **[認証ベストプラクティス]({base}/sveltekit/application/auth-best-practices/)** - セキュリティ対策とベストプラクティス
-:::
+<ul>
+<li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバル認証実装</li>
+<li><strong><a href="{base}/sveltekit/application/session/">セッション管理と認証戦略</a></strong> - Cookie/Session、JWT認証の詳細</li>
+<li><strong><a href="{base}/sveltekit/application/auth-best-practices/">認証ベストプラクティス</a></strong> - セキュリティ対策とベストプラクティス</li>
+</ul>
 
+</Admonition>
 以下のシーケンス図は、JWT認証の流れを示しています。トークンが有効な場合はデータを返し、無効な場合は401エラーを返します。
 
 <Mermaid chart={authFlow} />
@@ -459,11 +462,13 @@ export const GET: RequestHandler = async (event) => {
 
 CORS（Cross-Origin Resource Sharing）設定は、異なるドメインからのAPIアクセスを許可するために必要です。特に、フロントエンドとバックエンドを別々のドメインでホストする場合や、外部のクライアントからAPIを利用する場合に重要です。
 
-:::info[関連情報]
+<Admonition type="info" title="関連情報">
 CORS設定は通常、Hooksで一元管理します。以下のページも参照してください。
-- **[Hooks]({base}/sveltekit/server/hooks/)** - handleフックでのグローバルCORS設定
-:::
+<ul>
+<li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバルCORS設定</li>
+</ul>
 
+</Admonition>
 以下では、**個別のAPIエンドポイントでのCORS設定**を解説します。アプリケーション全体のCORS設定はHooksで行い、特定のエンドポイントのみ異なる設定が必要な場合にこのパターンを使用します。
 
 ### CORSリクエストの流れ
@@ -508,11 +513,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 レート制限は、APIの過負荷を防ぎ、悪意のある攻撃（DDoS攻撃など）からシステムを保護するための重要なセキュリティ対策です。IPアドレスごとに一定時間内のリクエスト回数を制限することで、公平なリソース利用を実現します。
 
-:::info[関連情報]
+<Admonition type="info" title="関連情報">
 レート制限はアプリケーション全体に適用することも可能です。
-- **[Hooks]({base}/sveltekit/server/hooks/)** - handleフックでのグローバルレート制限実装
-:::
+<ul>
+<li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバルレート制限実装</li>
+</ul>
 
+</Admonition>
 以下では、**特定のAPIエンドポイントのみにレート制限を適用する**パターンを示します。シンプルなメモリベースの実装ですが、本番環境ではRedisなどの永続ストレージを使用することを推奨します。
 
 ### レート制限の動作フロー

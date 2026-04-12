@@ -1,2 +1,2 @@
-export const prerender = true
-export const trailingSlash = 'always'
+// 全ページをプレレンダリング（静的サイト生成）
+export const prerender = true;

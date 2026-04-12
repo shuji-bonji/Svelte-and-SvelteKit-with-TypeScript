@@ -3,6 +3,10 @@ title: Svelte + Firebase
 description: SvelteとFirebaseでリアルタイムWebアプリを構築。認証、Firestore、Cloud Storageの統合をTypeScriptで実装する方法を実践的なコード例で解説
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
+
 FirebaseはGoogleが提供するBaaS（Backend as a Service）で、認証、データベース、ストレージなどの機能を提供します。Svelteと組み合わせることで、バックエンド開発なしに高機能なWebアプリを構築できます。
 
 ## セットアップ
@@ -30,7 +34,7 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Firebaseアプリの初期化
@@ -52,20 +56,20 @@ export const storage = getStorage(app);
   import { signInWithPopup, GoogleAuthProvider, signOut, type User } from 'firebase/auth';
   import { auth } from '$lib/firebase';
   import { onMount } from 'svelte';
-  
+
   let user = $state<User | null>(null);
   let loading = $state(true);
-  
+
   onMount(() => {
     // 認証状態の監視
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       user = currentUser;
       loading = false;
     });
-    
+
     return unsubscribe;
   });
-  
+
   async function handleGoogleLogin() {
     const provider = new GoogleAuthProvider();
     try {
@@ -75,7 +79,7 @@ export const storage = getStorage(app);
       console.error('ログインエラー:', error);
     }
   }
-  
+
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -104,7 +108,7 @@ export const storage = getStorage(app);
     align-items: center;
     gap: 1rem;
   }
-  
+
   img {
     width: 40px;
     height: 40px;
@@ -120,20 +124,20 @@ export const storage = getStorage(app);
 ```svelte
 <!-- src/lib/components/TodoList.svelte -->
 <script lang="ts">
-  import { 
-    collection, 
-    addDoc, 
-    deleteDoc, 
-    doc, 
+  import {
+    collection,
+    addDoc,
+    deleteDoc,
+    doc,
     onSnapshot,
     query,
     orderBy,
     serverTimestamp,
-    type DocumentData 
+    type DocumentData
   } from 'firebase/firestore';
   import { db, auth } from '$lib/firebase';
   import { onMount } from 'svelte';
-  
+
   interface Todo {
     id: string;
     text: string;
@@ -141,35 +145,35 @@ export const storage = getStorage(app);
     createdAt: Date;
     userId: string;
   }
-  
+
   let todos = $state<Todo[]>([]);
   let newTodo = $state('');
   let unsubscribe: (() => void) | null = null;
-  
+
   onMount(() => {
     if (!auth.currentUser) return;
-    
+
     // リアルタイム更新の購読
     const q = query(
       collection(db, 'todos'),
       orderBy('createdAt', 'desc')
     );
-    
+
     unsubscribe = onSnapshot(q, (snapshot) => {
       todos = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Todo));
     });
-    
+
     return () => {
       unsubscribe?.();
     };
   });
-  
+
   async function addTodo() {
     if (!newTodo.trim() || !auth.currentUser) return;
-    
+
     try {
       await addDoc(collection(db, 'todos'), {
         text: newTodo,
@@ -182,7 +186,7 @@ export const storage = getStorage(app);
       console.error('追加エラー:', error);
     }
   }
-  
+
   async function deleteTodo(id: string) {
     try {
       await deleteDoc(doc(db, 'todos', id));
@@ -200,12 +204,12 @@ export const storage = getStorage(app);
     />
     <button type="submit">追加</button>
   </form>
-  
+
   <ul>
     {#each todos as todo (todo.id)}
       <li>
-        <span>{todo.text}</span>
-        <button onclick={() => deleteTodo(todo.id)}>削除</button>
+        <span>&#123;todo.text&#125;</span>
+        <button onclick=&#123;() => deleteTodo(todo.id)&#125;>削除</button>
       </li>
     {/each}
   </ul>
@@ -219,10 +223,7 @@ export const storage = getStorage(app);
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '$lib/firebase';
 
-export async function uploadFile(
-  file: File, 
-  path: string
-): Promise<string> {
+export async function uploadFile(file: File, path: string): Promise<string> {
   const storageRef = ref(storage, path);
   const snapshot = await uploadBytes(storageRef, file);
   return getDownloadURL(snapshot.ref);
@@ -232,10 +233,10 @@ export async function uploadFile(
 async function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement;
   if (!input.files?.[0]) return;
-  
+
   const file = input.files[0];
   const path = `uploads/${Date.now()}_${file.name}`;
-  
+
   try {
     const url = await uploadFile(file, path);
     console.log('アップロード完了:', url);
@@ -274,9 +275,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // ユーザーが自分のTODOのみアクセス可能
     match /todos/{todoId} {
-      allow read, write: if request.auth != null 
+      allow read, write: if request.auth != null
         && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null 
+      allow create: if request.auth != null
         && request.auth.uid == request.resource.data.userId;
     }
   }
@@ -305,14 +306,14 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 class AuthStore {
   user = $state<User | null>(null);
   loading = $state(true);
-  
+
   constructor() {
     onAuthStateChanged(auth, (user) => {
       this.user = user;
       this.loading = false;
     });
   }
-  
+
   get isAuthenticated() {
     return !!this.user;
   }
@@ -327,7 +328,7 @@ export const authStore = new AuthStore();
 // src/lib/utils/firebase-errors.ts
 export function getErrorMessage(error: any): string {
   const errorCode = error?.code || 'unknown';
-  
+
   const messages: Record<string, string> = {
     'auth/user-not-found': 'ユーザーが見つかりません',
     'auth/wrong-password': 'パスワードが間違っています',
@@ -335,23 +336,25 @@ export function getErrorMessage(error: any): string {
     'auth/weak-password': 'パスワードが弱すぎます',
     'auth/invalid-email': 'メールアドレスが無効です',
     'permission-denied': 'アクセス権限がありません',
-    'unknown': '予期しないエラーが発生しました'
+    unknown: '予期しないエラーが発生しました',
   };
-  
+
   return messages[errorCode] || messages.unknown;
 }
 ```
 
-:::warning[注意点]
+<Admonition type="warning" title="注意点">
 Firebaseの設定情報は公開されても問題ありませんが、セキュリティルールの設定が重要です。
 必ずFirestoreとStorageのルールを適切に設定してください。
-:::
+</Admonition>
+<Admonition type="tip" title="パフォーマンス最適化">
+<ul>
+<li>Firestoreのクエリにはインデックスを設定</li>
+<li>画像はCloud Storageにアップロード前にリサイズ</li>
+<li>リアルタイム更新は必要な箇所のみで使用</li>
+</ul>
 
-:::tip[パフォーマンス最適化]
-- Firestoreのクエリにはインデックスを設定
-- 画像はCloud Storageにアップロード前にリサイズ
-- リアルタイム更新は必要な箇所のみで使用
-:::
+</Admonition>
 
 ## まとめ
 

@@ -2,10 +2,11 @@
 title: SvelteKit 最適化編
 description: SvelteKitでパフォーマンスを極限まで高めるための総合ガイド。バンドル削減、画像とフォント最適化、ハイドレーション戦略、計測とプロファイル手順、CIでの検証フローまで実践的なチューニング道筋を提示し、チェックリストも付属。改善優先度も示す。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
-:::caution[タイトル]
+<Admonition type="caution" title="タイトル">
 一部、執筆中
-:::
+</Admonition>
 <script>
+	import Admonition from '$lib/components/Admonition.svelte';
   import { base } from '$app/paths';
 </script>
 
@@ -26,15 +27,15 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
 ## このセクションで学ぶこと
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 auto-rows-[1fr]">
-  <a href="{base}/sveltekit/optimization/performance/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/optimization/performance/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚡</div>
-      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         パフォーマンス最適化 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">Core Web Vitalsを改善し、高速なUXを実現します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">Core Web Vitalsを改善し、高速なUXを実現します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>LCP最適化</strong>: 2.5秒以内の表示</li>
         <li><strong>FID改善</strong>: 100ms以内の応答</li>
         <li><strong>CLS削減</strong>: レイアウトシフト防止</li>
@@ -44,15 +45,15 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
-  <a href="{base}/sveltekit/optimization/build-optimization/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/optimization/build-optimization/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🚀</div>
-      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         ビルド最適化
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">ビルドプロセスを最適化し、バンドルサイズを削減します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">ビルドプロセスを最適化し、バンドルサイズを削減します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>コード分割</strong>: 動的インポート戦略</li>
         <li><strong>Tree Shaking</strong>: 不要コードの除去</li>
         <li><strong>バンドル分析</strong>: Bundle Analyzer</li>
@@ -62,15 +63,15 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
-  <a href="{base}/sveltekit/optimization/caching/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/optimization/caching/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">💾</div>
-      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         キャッシュ戦略 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">効果的なキャッシュ戦略で高速化とコスト削減を実現します。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">効果的なキャッシュ戦略で高速化とコスト削減を実現します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>ブラウザキャッシュ</strong>: Cache-Control最適化</li>
         <li><strong>CDNキャッシュ</strong>: エッジ配信</li>
         <li><strong>Service Worker</strong>: オフライン対応</li>
@@ -80,15 +81,15 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
-  <a href="{base}/sveltekit/optimization/seo/" class="flex no-underline group h-full">
-    <div class="p-4 border border-gray-2 dark:border-gray-7 rounded-lg shadow-md hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-400 transition-all cursor-pointer flex flex-col w-full">
+  <a href="{base}/sveltekit/optimization/seo/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔍</div>
-      <h3 class="font-bold text-lg mb-2 text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
         SEO最適化 <span class="text-xs">(準備中)</span>
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3 text-gray-7 dark:text-gray-3">検索エンジン最適化で可視性を向上させます。</p>
-      <ul class="text-sm text-gray-6 dark:text-gray-4 space-y-1 flex-grow">
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">検索エンジン最適化で可視性を向上させます。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>メタタグ管理</strong>: 動的なSEOタグ</li>
         <li><strong>構造化データ</strong>: JSON-LD実装</li>
         <li><strong>サイトマップ</strong>: 自動生成</li>
@@ -105,11 +106,11 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
 
 | 指標 | 良好 | 改善が必要 | 悪い |
 |------|------|----------|------|
-| **LCP** | < 2.5s | 2.5s - 4s | > 4s |
-| **FID** | < 100ms | 100ms - 300ms | > 300ms |
-| **CLS** | < 0.1 | 0.1 - 0.25 | > 0.25 |
-| **FCP** | < 1.8s | 1.8s - 3s | > 3s |
-| **TTI** | < 3.8s | 3.8s - 7.3s | > 7.3s |
+| **LCP** | &lt; 2.5s | 2.5s - 4s | &gt; 4s |
+| **FID** | &lt; 100ms | 100ms - 300ms | &gt; 300ms |
+| **CLS** | &lt; 0.1 | 0.1 - 0.25 | &gt; 0.25 |
+| **FCP** | &lt; 1.8s | 1.8s - 3s | &gt; 3s |
+| **TTI** | &lt; 3.8s | 3.8s - 7.3s | &gt; 7.3s |
 
 ### 最適化チェックリスト
 
@@ -190,10 +191,10 @@ export default defineConfig({
 
 最適化編を習得したら、[デプロイ・運用編](/sveltekit/deployment/)で本番環境への展開を学びましょう。
 
-:::tip[継続的な最適化]
+<Admonition type="tip" title="継続的な最適化">
 パフォーマンス最適化は一度きりの作業ではありません。定期的な測定と改善のサイクルを回すことで、常に高いパフォーマンスを維持できます。
-:::
-
-:::warning[過度な最適化に注意]
+</Admonition>
+<Admonition type="warning" title="過度な最適化に注意">
 最適化は重要ですが、過度な最適化は開発速度を低下させます。まず測定して、本当に必要な最適化に集中しましょう。
-:::
+
+</Admonition>

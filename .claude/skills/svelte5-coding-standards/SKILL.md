@@ -314,6 +314,34 @@ throw redirect(302, '/login');
 5. **完全なコード**: そのままコピー&ペーストで動作する
 6. **インポートを省略しない**: `error`、`redirect`、型定義のインポートを必ず記述
 
+### LiveCode（実行可能コード例）固有のルール
+
+このプロジェクトの ` ```svelte live ` コードブロックは svelte.dev Playground の embed iframe で実行される。以下の制約がある：
+
+- **Console を使うブロックには `console` メタを付ける**:
+  デフォルトは `outputOnly=true`（Result全画面）で Console パネルが非表示。`console.log` を使う例では ` ```svelte live console ` として Console 付きの完全な Playground に切り替える。
+
+- **DOM Events を `console.log` に直接渡さない**:
+  Playground iframe 内から親ウィンドウへログを送る際 `postMessage` が使われる。MouseEvent、KeyboardEvent 等の DOM Events は **構造化クローンアルゴリズムでクローンできず**、「Message could not be cloned. Open devtools to see it」エラーとなる。必要なプロパティをプリミティブ値に分解すること。
+
+  ```ts
+  // NG: MouseEvent全体を渡す → postMessage失敗
+  function handleClick(event: MouseEvent) {
+    console.log('clicked', event);
+  }
+
+  // OK: 必要なフィールドだけプリミティブに分解
+  function handleClick(event: MouseEvent) {
+    console.log('clicked', {
+      type: event.type,
+      x: event.clientX,
+      y: event.clientY
+    });
+  }
+  ```
+
+  この制約は `HTMLElement`、`Event` 派生型、`Node`、`Window` など DOM 由来のオブジェクト全般に及ぶ。
+
 ### meta description テンプレート
 
 ```

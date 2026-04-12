@@ -1,93 +1,109 @@
-import adapter from '@sveltejs/adapter-static'
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import adapter from '@sveltejs/adapter-static';
+import { mdsvex } from 'mdsvex';
+import { createHighlighter } from 'shiki';
+import rehypeSlug from 'rehype-slug';
 
-/**
- * @type {import('@sveltejs/kit').Config}
- */
+// shikiハイライターの事前作成
+const highlighter = await createHighlighter({
+	themes: ['github-dark', 'github-light'],
+	langs: [
+		'svelte',
+		'typescript',
+		'javascript',
+		'html',
+		'css',
+		'scss',
+		'json',
+		'bash',
+		'sh',
+		'sql',
+		'yaml',
+		'toml',
+		'diff',
+		'markdown'
+	]
+});
+
+/** @type {import('mdsvex').MdsvexOptions} */
+const mdsvexOptions = {
+	extensions: ['.md'],
+	highlight: {
+		highlighter: (code, lang, meta) => {
+			// mermaidコードブロック: Mermaidコンポーネントで描画
+			if (lang?.trim() === 'mermaid') {
+				const encodedCode = btoa(encodeURIComponent(code));
+				return `<Mermaid code={"${encodedCode}"} />`;
+			}
+
+			// mdsvexは ````svelte live` を lang="svelte", meta="live" として分割する
+			const isLive = meta?.includes('live');
+			// ````svelte live console` のように console キーワードがあると、
+			// Playground embed を output-only ではなくフルモードで開いて Console パネルを利用可能にする。
+			// $inspect や console.log の出力を確認させたいコード例に使う。
+			const needsConsole = meta?.includes('console');
+			const actualLang = lang?.trim() || 'text';
+
+			try {
+				let html = highlighter.codeToHtml(code, {
+					lang: actualLang,
+					themes: { dark: 'github-dark', light: 'github-light' }
+				});
+
+				// shikiのHTMLに含まれる { } をエスケープしてSvelteの解釈を防ぐ
+				html = html.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+				// </script> と </style> をエスケープしてSvelteの誤認を防ぐ
+				html = html.replace(/<\/script>/g, '&lt;/script&gt;');
+				html = html.replace(/<\/style>/g, '&lt;/style&gt;');
+
+				if (isLive) {
+					// ライブコードブロック: LiveCodeコンポーネントで包む
+					const encodedCode = btoa(encodeURIComponent(code));
+					// console キーワードがあれば outputOnly=false（エディタ+Result+Console表示）
+					const outputOnlyAttr = needsConsole ? ' outputOnly={false}' : '';
+					return `<LiveCode code={"${encodedCode}"} lang="${actualLang}"${outputOnlyAttr}>{@html \`${html.replace(/`/g, '\\`')}\`}</LiveCode>`;
+				}
+
+				// 通常のコードブロック: {@html}で安全にレンダリング
+				return `{@html \`${html.replace(/`/g, '\\`')}\`}`;
+			} catch {
+				return `<pre><code>${code}</code></pre>`;
+			}
+		}
+	},
+	rehypePlugins: [rehypeSlug],
+	layout: {
+		_: new URL('./src/lib/layouts/DocLayout.svelte', import.meta.url).pathname
+	}
+};
+
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.md'],
-	preprocess: [vitePreprocess()],
-	onwarn: (warning, handler) => {
-		// .sveltepress/live-code内の自動生成ファイルの警告を抑制
-		if (warning.filename && warning.filename.includes('.sveltepress/live-code/')) {
-			return; // live-code内のすべての警告を無視
-		}
-		// その他の警告は通常通り処理
-		handler(warning);
-	},
+	preprocess: [mdsvex(mdsvexOptions)],
 	compilerOptions: {
-		// ビルド時の警告制御
-		warningFilter: (warning) => {
-			// .sveltepress/live-code内の警告をフィルタ
-			if (warning.filename && warning.filename.includes('.sveltepress/live-code/')) {
-				return false; // 警告を表示しない
-			}
-			return true; // その他の警告は表示
+		// mdsvexが生成するコードは$$propsを使うためrunesモードを無効にする
+		runes: ({ filename }) => {
+			if (filename?.endsWith('.md')) return false;
+			if (filename?.split(/[/\\]/).includes('node_modules')) return undefined;
+			return true;
 		}
 	},
 	kit: {
 		adapter: adapter({
 			pages: 'dist',
 			assets: 'dist',
-			fallback: '404.html', // 404ページをフォールバックとして使用
+			fallback: '404.html',
 			precompress: false,
-			strict: false // strictモードを無効化してエラーを回避
+			strict: false
 		}),
-		paths: {
-			base: '/Svelte-and-SvelteKit-with-TypeScript'
-		},
+		// paths: { base: '/Svelte-and-SvelteKit-with-TypeScript' },  // デプロイ時に有効化
 		prerender: {
 			entries: ['*'],
 			crawl: true,
 			handleMissingId: 'warn',
-			handleHttpError: ({ path, referrer, message }) => {
-				// 準備中のページへのリンクは警告のみ
-				const pendingPages = [
-					// アーキテクチャ詳解
-					'/sveltekit/architecture/execution-environments/',
-					'/sveltekit/architecture/file-structure/',
-					'/sveltekit/architecture/data-loading/',
-					'/sveltekit/architecture/rendering-pipeline/',
-					// サーバーサイド編
-					'/sveltekit/server/server-side/',
-					'/sveltekit/server/api-routes/',
-					'/sveltekit/server/hooks/',
-					// アプリケーション構築編
-					'/sveltekit/application/authentication/',
-					'/sveltekit/application/database/',
-					'/sveltekit/application/environment/',
-					'/sveltekit/application/error-handling/',
-					// 最適化編
-					'/sveltekit/optimization/performance/',
-					'/sveltekit/optimization/caching/',
-					'/sveltekit/optimization/seo/',
-					// デプロイ・運用編
-					'/sveltekit/deployment/security/',
-					'/sveltekit/deployment/monitoring/',
-					// その他
-					'/guide'
-				];
-				
-				// ベースパスを含むフルパスでチェック
-				const fullPath = path.includes('/Svelte-and-SvelteKit-with-TypeScript') 
-					? path.replace('/Svelte-and-SvelteKit-with-TypeScript', '') 
-					: path;
-				
-				if (pendingPages.some(pending => fullPath.includes(pending))) {
-					console.warn(`Warning: Pending page ${path} referenced from ${referrer}`);
-					return;
-				}
-				
-				// Markdownファイル内のリンクエラーを無視
-				if (path.startsWith('/') && !path.startsWith('/Svelte-and-SvelteKit-with-TypeScript')) {
-					console.warn(`Warning: Link ${path} from ${referrer} needs base path`);
-					return;
-				}
-				// その他のエラーはそのままスロー
-				throw new Error(message);
-			}
+			handleHttpError: 'warn'
 		}
-	},
-}
+	}
+};
 
-export default config
+export default config;

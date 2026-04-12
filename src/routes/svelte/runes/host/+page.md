@@ -3,6 +3,9 @@ title: $host - カスタムエレメント
 description: Svelte5の$hostルーンを使ったTypeScriptによるWeb Components開発を実現 - カスタムエレメント作成、Shadow DOM操作、プロパティ定義、イベント発火、ライフサイクル管理の実装方法を実例を交えて詳しく解説します
 ---
 
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+</script>
 
 `$host`ルーンは、Svelte 5で導入された、カスタムエレメント（Web Components）内でホスト要素にアクセスするための特別なルーンです。
 
@@ -10,19 +13,25 @@ description: Svelte5の$hostルーンを使ったTypeScriptによるWeb Componen
 
 カスタムエレメント（Web Components）は、再利用可能なカスタムHTML要素を定義するWeb標準技術です。Svelteコンポーネントをカスタムエレメントとしてコンパイルすることで、Svelte以外の環境でも使用できるようになります。
 
-:::info[さらに詳しく学ぶ]
+<Admonition type="info" title="さらに詳しく学ぶ">
 カスタムエレメント（Web Components）についての詳細は、以下のリソースをご参照ください。
 
 **MDN Web Docs**
-- 📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)
-- 📖 [カスタムエレメントの使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_custom_elements)
-- 📖 [Shadow DOM の使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_shadow_DOM)
-- 📖 [HTMLElement | MDN](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement)
+
+<ul>
+<li>📖 [Web Components | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components)</li>
+<li>📖 [カスタムエレメントの使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_custom_elements)</li>
+<li>📖 [Shadow DOM の使用 | MDN](https://developer.mozilla.org/ja/docs/Web/API/Web_components/Using_shadow_DOM)</li>
+<li>📖 [HTMLElement | MDN](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement)</li>
+</ul>
 
 **TypeScriptでのWebComponentsの学習リソース**
-- 🎓 [WebComponents完全ガイド - TypeScriptで学ぶWebComponents](https://shuji-bonji.github.io/WebComponents-with-TypeScript/concepts/webcomponents-overview.html)
 
-:::
+<ul>
+<li>🎓 [WebComponents完全ガイド - TypeScriptで学ぶWebComponents](https://shuji-bonji.github.io/WebComponents-with-TypeScript/concepts/webcomponents-overview.html)</li>
+</ul>
+
+</Admonition>
 
 ### カスタムエレメントの定義
 
@@ -33,7 +42,7 @@ description: Svelte5の$hostルーンを使ったTypeScriptによるWeb Componen
 <script lang="ts">
   let { initial = 0 } = $props();
   let count = $state(initial);
-  
+
   function increment() {
     count++;
     // カウント変更をカスタムイベントで通知
@@ -69,15 +78,15 @@ function App() {
     const handleCountChange = (e) => {
       console.log('Count:', e.detail.count);
     };
-    
+
     const counter = document.getElementById('counter');
     counter?.addEventListener('countchange', handleCountChange);
-    
+
     return () => {
       counter?.removeEventListener('countchange', handleCountChange);
     };
   }, []);
-  
+
   // JSXで使用
   return React.createElement('my-counter', { id: 'counter', initial: '10' });
 }
@@ -87,22 +96,19 @@ function App() {
 <!-- Vue.jsでの使用例 -->
 <!-- Template部分 -->
 <div id="app">
-  <my-counter 
-    :initial="10" 
-    @countchange="handleCountChange">
-  </my-counter>
+  <my-counter :initial="10" @countchange="handleCountChange"> </my-counter>
 </div>
 
 <!-- Script部分 -->
 <script>
-new Vue({
-  el: '#app',
-  methods: {
-    handleCountChange(event) {
-      console.log('Count:', event.detail.count);
-    }
-  }
-});
+  new Vue({
+    el: '#app',
+    methods: {
+      handleCountChange(event) {
+        console.log('Count:', event.detail.count);
+      },
+    },
+  });
 </script>
 ```
 
@@ -212,7 +218,7 @@ mkdir src/lib/components
     // ホスト要素（<my-button>）にカスタムイベントをディスパッチ
     $host().dispatchEvent(
       new CustomEvent('boom', {
-        detail: { 
+        detail: {
           message: `Button "${label}" was clicked!`,
           timestamp: Date.now()
         },
@@ -220,13 +226,13 @@ mkdir src/lib/components
         composed: true // Shadow DOMの境界を越えてバブリング
       })
     );
-    
+
     // ホスト要素にアニメーションクラスを追加
     const host = $host();
     host.classList.add('clicked');
     setTimeout(() => host.classList.remove('clicked'), 300);
   }
-  
+
   // ホスト要素の初期設定
   $effect(() => {
     const host = $host();
@@ -236,7 +242,7 @@ mkdir src/lib/components
   });
 </script>
 
-<button 
+<button
   onclick={handleClick}
   class="btn btn-{variant}"
 >
@@ -252,30 +258,30 @@ mkdir src/lib/components
     font-size: 16px;
     transition: all 0.3s ease;
   }
-  
+
   .btn-primary {
     background: #007bff;
     color: white;
   }
-  
+
   .btn-primary:hover {
     background: #0056b3;
   }
-  
+
   .btn-secondary {
     background: #6c757d;
     color: white;
   }
-  
+
   .btn-danger {
     background: #dc3545;
     color: white;
   }
-  
+
   :global(.clicked) {
     animation: pulse 0.3s ease;
   }
-  
+
   @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(0.95); }
@@ -295,21 +301,21 @@ mkdir src/lib/components
     initial?: number | string;
     step?: number | string;
   } = $props();
-  
+
   // 文字列の場合は数値に変換
   let count = $state(Number(initial));
   let stepValue = Number(step);
-  
+
   function increment() {
     count += stepValue;
     notifyChange();
   }
-  
+
   function decrement() {
     count -= stepValue;
     notifyChange();
   }
-  
+
   function notifyChange() {
     $host().dispatchEvent(
       new CustomEvent('countchange', {
@@ -318,7 +324,7 @@ mkdir src/lib/components
       })
     );
   }
-  
+
   // ホスト要素の初期設定
   $effect(() => {
     const host = $host();
@@ -341,7 +347,7 @@ mkdir src/lib/components
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-  
+
   button {
     width: 30px;
     height: 30px;
@@ -352,11 +358,11 @@ mkdir src/lib/components
     cursor: pointer;
     font-size: 18px;
   }
-  
+
   button:hover {
     background: #0056b3;
   }
-  
+
   .count {
     min-width: 40px;
     text-align: center;
@@ -396,8 +402,8 @@ export default defineConfig({
     svelte({
       compilerOptions: {
         customElement: true,
-      }
-    })
+      },
+    }),
   ],
   build: {
     lib: {
@@ -405,35 +411,37 @@ export default defineConfig({
       name: 'MyCustomElements',
       // UMDは使用しない（ES moduleのみ）
       formats: ['es'],
-      fileName: 'custom-elements'
+      fileName: 'custom-elements',
     },
     rollupOptions: {
       // 必要に応じて外部依存を追加
       external: [],
-    }
-  }
+    },
+  },
 });
 ```
 
-:::warning[IDEの警告について]
-VSCodeやWebStormで`<svelte:options customElement="..."`に対して警告が表示される場合があります。
+<Admonition type="warning" title="IDEの警告について">
+VSCodeやWebStormで`&lt;svelte:options customElement="..."&gt;`に対して警告が表示される場合があります。
 
-- **警告内容**: "The customElement option is used when generating a custom element. Did you forget the customElement: true compile option?"
-- **原因**: IDE用の設定（svelte.config.js）とビルド用の設定（vite.lib.config.ts）が異なるため
-- **対処**: この警告は無視して問題ありません。ビルド時は正常に動作します。
+<ul>
+<li><strong>警告内容</strong>: "The customElement option is used when generating a custom element. Did you forget the customElement: true compile option?"</li>
+<li><strong>原因</strong>: IDE用の設定（svelte.config.js）とビルド用の設定（vite.lib.config.ts）が異なるため</li>
+<li><strong>対処</strong>: この警告は無視して問題ありません。ビルド時は正常に動作します。</li>
+</ul>
 
 もし警告を消したい場合は、`svelte.config.js`に以下を追加
+</Admonition>
 
 ```javascript
 // svelte.config.js (オプション)
 export default {
   // ... 既存の設定
   compilerOptions: {
-    customElement: true // IDE警告を消す場合のみ
-  }
+    customElement: true, // IDE警告を消す場合のみ
+  },
 };
 ```
-:::
 
 package.jsonにビルドスクリプトを追加
 
@@ -442,7 +450,7 @@ package.jsonにビルドスクリプトを追加
 {
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build", 
+    "build": "vite build",
     "build:lib": "vite build --config vite.lib.config.ts",
     "preview": "vite preview"
   }
@@ -469,26 +477,26 @@ npm run build:lib
 <!-- static/demo-dev.html -->
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カスタムエレメントデモ（開発用）</title>
-  <!-- 開発サーバーから直接読み込み -->
-  <script type="module" src="/src/lib/components/index.ts"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-  </style>
-</head>
-<body>
-  <h1>カスタムエレメントデモ</h1>
-  <my-button label="テストボタン"></my-button>
-  <my-counter initial="5"></my-counter>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カスタムエレメントデモ（開発用）</title>
+    <!-- 開発サーバーから直接読み込み -->
+    <script type="module" src="/src/lib/components/index.ts"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>カスタムエレメントデモ</h1>
+    <my-button label="テストボタン"></my-button>
+    <my-counter initial="5"></my-counter>
+  </body>
 </html>
 ```
 
@@ -498,90 +506,92 @@ npm run build:lib
 <!-- static/demo.html -->
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カスタムエレメントデモ</title>
-  <!-- ビルド後のファイルを参照 -->
-  <script type="module" src="./custom-elements.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    h1 { color: #333; }
-    
-    .demo-section {
-      margin: 30px 0;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-    
-    .output {
-      margin-top: 20px;
-      padding: 10px;
-      background: #f0f0f0;
-      border-radius: 4px;
-      font-family: monospace;
-    }
-  </style>
-</head>
-<body>
-  <h1>Svelteカスタムエレメントデモ</h1>
-  
-  <div class="demo-section">
-    <h2>ボタンコンポーネント</h2>
-    <my-button label="Primary Button" variant="primary"></my-button>
-    <my-button label="Secondary" variant="secondary"></my-button>
-    <my-button label="Danger!" variant="danger"></my-button>
-    
-    <div id="button-output" class="output">
-      ボタンをクリックしてください...
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カスタムエレメントデモ</title>
+    <!-- ビルド後のファイルを参照 -->
+    <script type="module" src="./custom-elements.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      .demo-section {
+        margin: 30px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+
+      .output {
+        margin-top: 20px;
+        padding: 10px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Svelteカスタムエレメントデモ</h1>
+
+    <div class="demo-section">
+      <h2>ボタンコンポーネント</h2>
+      <my-button label="Primary Button" variant="primary"></my-button>
+      <my-button label="Secondary" variant="secondary"></my-button>
+      <my-button label="Danger!" variant="danger"></my-button>
+
+      <div id="button-output" class="output">
+        ボタンをクリックしてください...
+      </div>
     </div>
-  </div>
-  
-  <div class="demo-section">
-    <h2>カウンターコンポーネント</h2>
-    <my-counter initial="10" step="5"></my-counter>
-    <my-counter initial="0" step="1"></my-counter>
-    
-    <div id="counter-output" class="output">
-      カウンターの値が変更されると表示されます...
+
+    <div class="demo-section">
+      <h2>カウンターコンポーネント</h2>
+      <my-counter initial="10" step="5"></my-counter>
+      <my-counter initial="0" step="1"></my-counter>
+
+      <div id="counter-output" class="output">
+        カウンターの値が変更されると表示されます...
+      </div>
     </div>
-  </div>
-  
-  <script>
-    // カスタムエレメントが定義されるまで待つ
-    Promise.all([
-      customElements.whenDefined('my-button'),
-      customElements.whenDefined('my-counter')
-    ]).then(() => {
-      // ボタンのイベントリスナー
-      const buttons = document.querySelectorAll('my-button');
-      const buttonOutput = document.getElementById('button-output');
-      
-      buttons.forEach(btn => {
-        btn.addEventListener('boom', (e) => {
-          buttonOutput.textContent = `Event: ${e.detail.message} at ${new Date(e.detail.timestamp).toLocaleTimeString()}`;
+
+    <script>
+      // カスタムエレメントが定義されるまで待つ
+      Promise.all([
+        customElements.whenDefined('my-button'),
+        customElements.whenDefined('my-counter'),
+      ]).then(() => {
+        // ボタンのイベントリスナー
+        const buttons = document.querySelectorAll('my-button');
+        const buttonOutput = document.getElementById('button-output');
+
+        buttons.forEach((btn) => {
+          btn.addEventListener('boom', (e) => {
+            buttonOutput.textContent = `Event: ${e.detail.message} at ${new Date(e.detail.timestamp).toLocaleTimeString()}`;
+          });
+        });
+
+        // カウンターのイベントリスナー
+        const counters = document.querySelectorAll('my-counter');
+        const counterOutput = document.getElementById('counter-output');
+
+        counters.forEach((counter) => {
+          counter.addEventListener('countchange', (e) => {
+            counterOutput.textContent = `Counter changed: ${e.detail.count} (step: ${e.detail.step})`;
+          });
         });
       });
-      
-      // カウンターのイベントリスナー
-      const counters = document.querySelectorAll('my-counter');
-      const counterOutput = document.getElementById('counter-output');
-      
-      counters.forEach(counter => {
-        counter.addEventListener('countchange', (e) => {
-          counterOutput.textContent = `Counter changed: ${e.detail.count} (step: ${e.detail.step})`;
-        });
-      });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
 ```
 
@@ -599,18 +609,23 @@ npm run dev
 
 開発サーバーではTypeScriptファイルが直接読み込まれ、ホットリロードも動作します。
 
-:::tip[動作確認]
+<Admonition type="tip" title="動作確認">
 ブラウザのDevToolsで要素を確認すると、カスタムエレメントが正しく登録されているのが確認できます。
+</Admonition>
 
 ```html
-<my-button label="テストボタン" role="button" tabindex="0" style="display: inline-block;">
+<my-button
+  label="テストボタン"
+  role="button"
+  tabindex="0"
+  style="display: inline-block;"
+>
   #shadow-root (open)
-    <button class="btn btn-primary">テストボタン</button>
+  <button class="btn btn-primary">テストボタン</button>
 </my-button>
 ```
 
 カウンターをクリックすると、`data-count`属性が更新されるのも確認できます。
-:::
 
 #### 方法2: ビルド後の確認
 
@@ -628,19 +643,24 @@ npm run dev
 # http://localhost:5173/demo.html
 ```
 
-:::note[npm run buildとpreviewについて]
+<Admonition type="note" title="npm run buildとpreviewについて">
 **`npm run build`** はSvelteKitアプリケーション用のビルドコマンドです。
-- `.svelte-kit/output/`にSvelteKitアプリをビルド
-- カスタムエレメントのビルドには使用しません
-- カスタムエレメントには`npm run build:lib`を使用
+<ul>
+<li><code>.svelte-kit/output/</code>にSvelteKitアプリをビルド</li>
+<li>カスタムエレメントのビルドには使用しません</li>
+<li>カスタムエレメントには<code>npm run build:lib</code>を使用</li>
+</ul>
 
 **`npm run preview`** はSvelteKitアプリのプレビュー用です。
-- `npm run build`後のSvelteKitアプリをプレビュー
-- `http://localhost:4173/`でアクセス
-- カスタムエレメントのテストには使用しません
+
+<ul>
+<li><code>npm run build</code>後のSvelteKitアプリをプレビュー</li>
+<li><code>http://localhost:4173/</code>でアクセス</li>
+<li>カスタムエレメントのテストには使用しません</li>
+</ul>
 
 カスタムエレメントのテストは`npm run dev`と`demo-dev.html`を使用してください。
-:::
+</Admonition>
 
 ### トラブルシューティング
 
@@ -651,7 +671,7 @@ npm run dev
    - 解決: 別のvite.lib.config.tsファイルを使用し、formatを`['es']`のみに設定
 
 2. **カスタムエレメントが登録されない**
-   - 原因: `<svelte:options customElement="...">`の記述漏れ
+   - 原因: `&lt;svelte:options customElement="..."&gt;`の記述漏れ
    - 解決: 各コンポーネントファイルの先頭に追加
 
 3. **スタイルが適用されない**
@@ -660,11 +680,11 @@ npm run dev
 
 4. **`$host()`が使えない**
    - 原因: 通常のSvelteコンポーネントで使用している
-   - 解決: `<svelte:options customElement="...">`を追加
+   - 解決: `&lt;svelte:options customElement="..."&gt;`を追加
 
 5. **403 Forbidden エラー（demo.html）**
    - 原因: Viteの開発サーバーが`/dist`ディレクトリへのアクセスを禁止
-   - 解決: 
+   - 解決:
      - 開発時: `/src/lib/components/index.ts`を直接インポート
      - ビルド後: ビルドファイルを`static`ディレクトリにコピー
 
@@ -718,7 +738,7 @@ import 'my-svelte-components';
 <script lang="ts">
   function emitCustomEvent(eventName: string, data: any) {
     $host().dispatchEvent(
-      new CustomEvent(eventName, { 
+      new CustomEvent(eventName, {
         detail: data,
         bubbles: true,     // 親要素へバブリング
         composed: true,    // Shadow DOMを越える
@@ -736,16 +756,16 @@ import 'my-svelte-components';
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+
   let expanded = $state(false);
-  
+
   $effect(() => {
     // 状態変化に応じてホスト要素の属性を更新
     const host = $host();
     host.setAttribute('aria-expanded', String(expanded));
     host.classList.toggle('expanded', expanded);
   });
-  
+
   onMount(() => {
     // 初期化時の処理
     const host = $host();
@@ -766,10 +786,10 @@ import 'my-svelte-components';
 
 <script lang="ts">
   let { theme = 'light' } = $props();
-  
+
   $effect(() => {
     const host = $host();
-    
+
     // テーマに応じたスタイルを適用
     if (theme === 'dark') {
       host.style.backgroundColor = '#1a1a1a';
@@ -778,7 +798,7 @@ import 'my-svelte-components';
       host.style.backgroundColor = '#ffffff';
       host.style.color = '#000000';
     }
-    
+
     // 共通スタイル
     host.style.display = 'block';
     host.style.padding = '20px';
@@ -794,16 +814,16 @@ import 'my-svelte-components';
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+
   onMount(() => {
     const host = $host();
-    
+
     // ホスト要素の各種情報を取得
     console.log('タグ名:', host.tagName);           // "INFO-ELEMENT"
     console.log('ID:', host.id);                    // 設定されたID
     console.log('クラス:', host.className);         // 設定されたクラス
     console.log('親要素:', host.parentElement);     // 親要素への参照
-    
+
     // カスタム属性の取得
     const customAttr = host.getAttribute('data-custom');
     console.log('カスタム属性:', customAttr);
@@ -815,16 +835,16 @@ import 'my-svelte-components';
 
 ### 比較表
 
-| 観点 | 通常のSvelteコンポーネント | カスタムエレメント |
-|-----|-------------------------|------------------|
-| **使用場所** | Svelteアプリ内のみ | 任意のHTML/JavaScript環境 |
-| **Props受け渡し** | TypeScript型付きprops | HTML属性またはプロパティ |
-| **イベント** | コンポーネントイベント | CustomEvent（DOMイベント） |
-| **スタイリング** | スコープ付きCSS | Shadow DOM（カプセル化） |
-| **SSR対応** | ✅ 完全対応 | ❌ 非対応 |
-| **型安全性** | ✅ TypeScript完全対応 | ⚠️ 限定的 |
-| **バンドルサイズ** | 最適化される | Svelteランタイム含む |
-| **$host使用** | ❌ 使用不可 | ✅ 使用可能 |
+| 観点               | 通常のSvelteコンポーネント | カスタムエレメント         |
+| ------------------ | -------------------------- | -------------------------- |
+| **使用場所**       | Svelteアプリ内のみ         | 任意のHTML/JavaScript環境  |
+| **Props受け渡し**  | TypeScript型付きprops      | HTML属性またはプロパティ   |
+| **イベント**       | コンポーネントイベント     | CustomEvent（DOMイベント） |
+| **スタイリング**   | スコープ付きCSS            | Shadow DOM（カプセル化）   |
+| **SSR対応**        | ✅ 完全対応                | ❌ 非対応                  |
+| **型安全性**       | ✅ TypeScript完全対応      | ⚠️ 限定的                  |
+| **バンドルサイズ** | 最適化される               | Svelteランタイム含む       |
+| **$host使用**      | ❌ 使用不可                | ✅ 使用可能                |
 
 ### 使い分けの指針
 
@@ -836,22 +856,25 @@ import Button from './Button.svelte';
 <my-button text="Click me"></my-button>
 ```
 
-| 用途 | 推奨 |
-|-----|-----|
-| Svelteアプリ内での再利用 | 通常のコンポーネント |
-| 他フレームワークとの共有 | カスタムエレメント |
-| SSR/SSGが必要 | 通常のコンポーネント |
-| WordPressなどCMSへの埋め込み | カスタムエレメント |
-| マイクロフロントエンド | カスタムエレメント |
+| 用途                         | 推奨                 |
+| ---------------------------- | -------------------- |
+| Svelteアプリ内での再利用     | 通常のコンポーネント |
+| 他フレームワークとの共有     | カスタムエレメント   |
+| SSR/SSGが必要                | 通常のコンポーネント |
+| WordPressなどCMSへの埋め込み | カスタムエレメント   |
+| マイクロフロントエンド       | カスタムエレメント   |
 
 ## 制限事項と注意点
 
-:::warning[重要な制限]
-- `$host()`は**カスタムエレメント内でのみ**使用可能
-- 通常のSvelteコンポーネントで使用するとコンパイルエラー
-- `<svelte:options customElement="...">`の指定が必須
-- SSR（サーバーサイドレンダリング）は非対応
-:::
+<Admonition type="warning" title="重要な制限">
+<ul>
+<li><code>$host()</code>は<strong>カスタムエレメント内でのみ</strong>使用可能</li>
+<li>通常のSvelteコンポーネントで使用するとコンパイルエラー</li>
+<li><code>&lt;svelte:options customElement="..."&gt;</code>の指定が必須</li>
+<li>SSR（サーバーサイドレンダリング）は非対応</li>
+</ul>
+
+</Admonition>
 
 ### コンパイル設定
 
@@ -861,11 +884,11 @@ export default {
   plugins: [
     svelte({
       compilerOptions: {
-        customElement: true // すべてをカスタムエレメントとしてコンパイル
-      }
-    })
-  ]
-}
+        customElement: true, // すべてをカスタムエレメントとしてコンパイル
+      },
+    }),
+  ],
+};
 ```
 
 #### または、個別に指定
@@ -902,4 +925,3 @@ export default {
 ## 次のステップ
 
 `$host`の基本を理解したら、次はデバッグに便利な[$inspect](/svelte/runes/inspect/)ルーンについて学びましょう。
-

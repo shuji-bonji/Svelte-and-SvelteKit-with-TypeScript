@@ -2,6 +2,45 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-12] - コンテンツ検証・不備修正・最新API対応
+
+### 修正（コンテンツ検証による7件の不備修正）
+- **`$app/stores` → `$app/state` 移行**: `error-pages`（8箇所）、`file-system`（3箇所）、`blog-system`（2箇所）でレガシーAPIを新APIに統一
+- **`$state.is()` 削除**: `state/+page.md` から公式ドキュメントに存在しないAPIセクションを削除
+- **`import { pending }` 修正**: `reference/svelte5/+page.md` の不正確なインポートを `$effect.pending()` に統一
+- **イベントハンドラ説明文更新**: `component-basics/+page.md` の説明をSvelte 5標準構文に合わせて更新
+- **TypeScript型修正**: `markdown-blog/+page.md` の `NodeJS.Timeout` を `ReturnType<typeof setTimeout>` に修正
+
+### 追加（リファレンス・ドキュメント最新化）
+- **CONTENT-VALIDATION-REPORT-2026-04.md**: Svelte MCPによる143ファイルのAPI/構文検証レポート
+- **DIFF-REPORT-2026-04.md**: 2026年4月の全セクション差分レポート
+- **UPDATE-PLAN-2026-04.md**: 刷新計画書（残作業一覧）
+- **svelte5-coding-standards Skill**: `.claude/skills/svelte5-coding-standards/SKILL.md` — コーディング規約のSkill化（331行）
+
+### 更新（リファレンス最新化）
+- **Svelte 5リファレンス** (`reference/svelte5/+page.md`): `$state.raw`、overridable `$derived`、`$effect.pending()`、Svelte 5イベント構文、`Component`型対応を追加
+- **SvelteKit 2.xリファレンス** (`reference/sveltekit2/+page.md`): Remote Functions拡充（`query.batch()`、Standard Schema）、`/types`、`PageProps`/`LayoutProps`、`handleValidationError`を追加
+
+### 更新（コンテンツページ）
+- **Remote Functions** (`server/remote-functions/+page.md`): `requested()`、`preflight`、`for()`、機密データ保護、`unchecked`を追加
+- **Hooks** (`server/hooks/+page.md`): `handleValidationError`フックを追加
+- **エラーハンドリング** (`application/error-handling/+page.md`): 大幅加筆（+549行）
+- **環境変数** (`application/environment/+page.md`): 大幅加筆（+310行）
+- **SEO** (`optimization/seo/+page.md`): 大幅加筆（+430行）
+- **$appモジュール** (`basics/app-modules/+page.md`): `$app/state` と `$app/stores` の比較セクション充実（+223行）
+- **イベントモジュール** (`basics/events-module/+page.md`): 新規作成（442行）
+- **特殊要素** (`basics/special-elements/+page.md`): `<svelte:boundary>` の `pending` snippet追加
+- **データ取得型** (`data-loading/typescript-types/+page.md`): `PageProps`/`LayoutProps`専用セクション追加
+- **CLIツール** (`introduction/cli/+page.md`): `better-auth`対応、`mcp`アドオン追加
+
+### 更新（型パターン一括変更）
+- 約25ファイルで `{ data: PageData }` → `PageProps` パターンに一括更新
+- `LayoutData` → `LayoutProps` を3ファイルで更新
+- Mermaidダイアグラム内の型表記も更新
+
+### リファクタリング
+- **CLAUDE.md**: 2124行 → 222行に大幅スリム化。コーディング規約をSkill（`.claude/skills/svelte5-coding-standards/SKILL.md`）として分離
+
 ## [2026-01-12] - 新規ドキュメントページ追加・Mermaid修正
 
 ### 追加

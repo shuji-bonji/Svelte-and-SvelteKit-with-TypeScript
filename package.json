@@ -17,6 +17,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.1.1",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.2.2",
+		"@types/node": "^22.0.0",
 		"mdsvex": "^0.12.7",
 		"pagefind": "^1.5.2",
 		"shiki": "^4.0.2",

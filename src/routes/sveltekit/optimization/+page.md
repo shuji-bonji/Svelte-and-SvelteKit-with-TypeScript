@@ -2,15 +2,16 @@
 title: SvelteKit 最適化編
 description: SvelteKitでパフォーマンスを極限まで高めるための総合ガイド。バンドル削減、画像とフォント最適化、ハイドレーション戦略、計測とプロファイル手順、CIでの検証フローまで実践的なチューニング道筋を提示し、チェックリストも付属。改善優先度も示す。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+  import { base } from '$app/paths';
+</script>
+
 <Admonition type="caution" title="タイトル">
 
 一部、執筆中
 
 </Admonition>
-<script>
-	import Admonition from '$lib/components/Admonition.svelte';
-  import { base } from '$app/paths';
-</script>
 
 SvelteKitアプリケーションの**パフォーマンスを最大限に引き出す**ための最適化技術を学びます。Core Web Vitals の改善、バンドルサイズの削減、レンダリング最適化など、実践的な手法を網羅します。
 

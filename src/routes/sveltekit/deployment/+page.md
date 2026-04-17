@@ -2,16 +2,16 @@
 title: SvelteKit デプロイ・運用編
 description: 本番環境への展開と安定運用のための実践ガイド
 ---
+<script>
+	import Admonition from '$lib/components/Admonition.svelte';
+  import { base } from '$app/paths';
+</script>
 
 <Admonition type="caution" title="タイトル">
 
 執筆中
 
 </Admonition>
-<script>
-	import Admonition from '$lib/components/Admonition.svelte';
-  import { base } from '$app/paths';
-</script>
 
 SvelteKitアプリケーションを**本番環境で安定稼働**させるための、デプロイメント戦略と運用ノウハウを体系的に学びます。各種プラットフォームへの展開から、監視、スケーリングまでを網羅します。
 

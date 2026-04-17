@@ -9,7 +9,9 @@ description: SvelteKitのビルド最適化をTypeScriptで実践する完全ガ
 </script>
 
 <Admonition type="warning" title="準備中">
+
 このページは現在準備中です。SvelteKitのビルド最適化について、以下の内容を解説予定です。
+
 </Admonition>
 
 ## 解説予定の内容

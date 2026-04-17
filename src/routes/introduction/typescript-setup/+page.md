@@ -57,6 +57,7 @@ deno run npm:sv create my-app
 ```
 
 <Admonition type="tip" title="推奨オプション">
+
 <ul>
 <li><strong>TypeScript syntax</strong>: 必須。型安全な開発のため</li>
 <li><strong>ESLint</strong>: 推奨。コード品質の維持</li>
@@ -93,6 +94,7 @@ bun dev
 ```
 
 <Admonition type="note" title="パッケージマネージャの違い">
+
 <ul>
 <li><strong>pnpm</strong>: ディスク容量を節約し、高速。モノレポに最適</li>
 <li><strong>npm</strong>: Node.js標準。最も広くサポート</li>

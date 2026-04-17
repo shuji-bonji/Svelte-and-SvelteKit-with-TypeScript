@@ -587,7 +587,9 @@ console.log(files); // staticディレクトリのファイルは利用可能
 ```
 
 <Admonition type="warning" title="モジュールサポート">
+
 開発時は [Service Workers でのモジュール](https://web.dev/es-modules-in-sw) をサポートするブラウザでのみ動作します。
+
 </Admonition>
 
 ### デバッグ方法

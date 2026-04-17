@@ -686,6 +686,7 @@ measurePerformance('http://localhost:5173');
 ビルド最適化は、アプリケーションのパフォーマンスを左右する重要な要素です。Viteの設定、コード分割、Tree Shaking、圧縮戦略を適切に組み合わせることで、高速で効率的なアプリケーションを実現できます。
 
 <Admonition type="tip" title="重要なポイント">
+
 <ul>
 <li><strong>測定なくして最適化なし</strong> - 常にパフォーマンスを測定し、効果を検証</li>
 <li><strong>段階的な最適化</strong> - 一度にすべてを最適化せず、効果の高いものから実施</li>

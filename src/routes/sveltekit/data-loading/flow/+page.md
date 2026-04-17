@@ -126,6 +126,7 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
 </script>
 
 <Admonition type="info" title="関連ページ">
+
 このページは**Load関数の基本的な実行順序とデータの流れ**を解説しています。
 
 <ul>
@@ -135,6 +136,7 @@ description: SvelteKitのLoad関数実行順序、データの流れ、並列処
 </ul>
 
 **学習パス**: 基本的な流れを理解 → 実践パターンを学ぶ → 内部実装を理解
+
 </Admonition>
 SvelteKitのデータフローは、サーバーサイドとクライアントサイドで異なる動作をします。このページでは、Load関数の実行順序、データの流れ、並列処理の仕組みを詳しく解説します。
 
@@ -316,6 +318,7 @@ export const prerender = false;
 ```
 
 <Admonition type="warning" title="SPAモードの注意点">
+
 SPAモードでは以下の制限があります。
 <ul>
 <li>Server Load関数（<code>+page.server.ts</code>）は一切実行されない</li>
@@ -400,7 +403,9 @@ export const load: PageServerLoad = async ({ fetch }) => {
 SvelteKitでは、`invalidate()`と`depends()`を使用してLoad関数を選択的に再実行できます。これにより、ページ全体をリロードすることなく、必要なデータのみを効率的に更新できます。
 
 <Admonition type="info" title="詳細な解説">
+
 データ無効化の詳細な仕組み、`depends()`と`invalidate()`の使い方、SPAモードでの動作については、<a href="{base}/sveltekit/data-loading/spa-invalidation/">SPAモードとデータ無効化</a>の専用ページで包括的に解説しています。
+
 </Admonition>
 
 ## ストリーミングSSR
@@ -408,6 +413,7 @@ SvelteKitでは、`invalidate()`と`depends()`を使用してLoad関数を選択
 ストリーミングSSRを使用すると、重要なコンテンツを即座に表示しながら、時間のかかるデータを後から段階的に送信できます。
 
 <Admonition type="info" title="詳細な実装方法">
+
 ストリーミングSSRの仕組み、実装パターン、最適化手法、エラーハンドリングについては、<a href="{base}/sveltekit/data-loading/streaming/">ストリーミングSSR</a>の専用ページで包括的に解説しています。
 
 </Admonition>

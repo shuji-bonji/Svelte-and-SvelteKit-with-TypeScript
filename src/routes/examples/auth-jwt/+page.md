@@ -104,6 +104,7 @@ JWT認証システムの完全な実装例を準備中です。
 - **ソースコード**: [https://github.com/shuji-bonji/svelte5-auth-jwt](https://github.com/shuji-bonji/svelte5-auth-jwt)（準備中）
 
 <Admonition type="info" title="実装予定の機能">
+
 <ul>
 <li>JWTトークンによる認証</li>
 <li>アクセストークン + リフレッシュトークン</li>
@@ -534,6 +535,7 @@ async function isTokenBlacklisted(token: string): Promise<boolean> {
 ### よくある間違い
 
 <Admonition type="warning" title="セキュリティリスク">
+
 <ol>
 <li><strong>秘密鍵の管理</strong> - 環境変数で管理し、絶対にクライアントに露出させない</li>
 <li><strong>ペイロードの内容</strong> - 機密情報を含めない（パスワード、個人情報など）</li>

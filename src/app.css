@@ -117,6 +117,32 @@ pre.shiki {
 	background-color: #22252a !important;
 }
 
+/* 見出しアンカー（rehype-autolink-headings 由来）
+   - 通常時は薄く、見出しホバー時に濃く表示
+   - スティッキーヘッダー（高さ 3.75rem）に隠れないよう scroll-margin-top を設定 */
+.prose :where(h1, h2, h3, h4, h5, h6) {
+	scroll-margin-top: 4.5rem;
+	position: relative;
+}
+
+.prose .heading-anchor {
+	margin-left: 0.5rem;
+	color: var(--color-text-muted);
+	text-decoration: none;
+	font-weight: 400;
+	opacity: 0;
+	transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose .heading-anchor:focus {
+	opacity: 1;
+}
+
+.prose .heading-anchor:hover {
+	color: var(--color-primary);
+}
+
 /* Admonitions (:::note, :::tip, etc.) */
 .admonition {
 	border-left: 4px solid;

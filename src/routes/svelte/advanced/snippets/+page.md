@@ -24,6 +24,7 @@ Snippetsの重要な特徴を理解して、効果的に活用しましょう。
 5. **スロットとの連携** - スロットにSnippetを渡すことも可能
 
 <Admonition type="tip" title="React/Vue経験者向け">
+
 <ul>
 <li>ReactのRender Props やコンポーネント内の関数に似た概念</li>
 <li>Vueのscoped slotsと似ているが、より柔軟</li>
@@ -1235,6 +1236,7 @@ Snippetsを効果的に活用するための要点をまとめます。
 - [リアクティブストア](/svelte/advanced/reactive-stores/)と組み合わせた状態管理
 
 <Admonition type="info" title="関連リソース">
+
 <ul>
 <li><a href="https://svelte.dev/docs/svelte/snippet">Svelte 5公式ドキュメント - Snippets</a></li>
 <li><a href="https://github.com/sveltejs/rfcs/pull/68">RFC: Snippets</a></li>

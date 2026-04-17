@@ -521,6 +521,7 @@ export function updateMetaTags(data: {
 ```
 
 <Admonition type="tip" title="パフォーマンス最適化">
+
 <ul>
 <li>コード分割でバンドルサイズを削減</li>
 <li>遅延読み込みで初期表示を高速化</li>

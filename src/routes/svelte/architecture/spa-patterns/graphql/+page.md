@@ -618,6 +618,7 @@ class PaginationStore {
 ```
 
 <Admonition type="tip" title="GraphQLツール">
+
 <ul>
 <li><strong>GraphQL Playground</strong> - APIエクスプローラー</li>
 <li><strong>GraphQL Code Generator</strong> - 型の自動生成</li>

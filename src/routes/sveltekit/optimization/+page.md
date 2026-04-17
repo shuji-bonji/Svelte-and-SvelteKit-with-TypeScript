@@ -3,7 +3,9 @@ title: SvelteKit 最適化編
 description: SvelteKitでパフォーマンスを極限まで高めるための総合ガイド。バンドル削減、画像とフォント最適化、ハイドレーション戦略、計測とプロファイル手順、CIでの検証フローまで実践的なチューニング道筋を提示し、チェックリストも付属。改善優先度も示す。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
 ---
 <Admonition type="caution" title="タイトル">
+
 一部、執筆中
+
 </Admonition>
 <script>
 	import Admonition from '$lib/components/Admonition.svelte';
@@ -192,9 +194,12 @@ export default defineConfig({
 最適化編を習得したら、[デプロイ・運用編](/sveltekit/deployment/)で本番環境への展開を学びましょう。
 
 <Admonition type="tip" title="継続的な最適化">
+
 パフォーマンス最適化は一度きりの作業ではありません。定期的な測定と改善のサイクルを回すことで、常に高いパフォーマンスを維持できます。
+
 </Admonition>
 <Admonition type="warning" title="過度な最適化に注意">
+
 最適化は重要ですが、過度な最適化は開発速度を低下させます。まず測定して、本当に必要な最適化に集中しましょう。
 
 </Admonition>

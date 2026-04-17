@@ -820,11 +820,17 @@ src/
 ---
 
 <Admonition type="tip" title="学習のコツ">
+
 SvelteKitは「規約重視」のフレームワークです。まずファイル構造と命名規約を理解することが、効率的な学習の鍵となります。
+
 </Admonition>
 <Admonition type="info" title="TypeScript推奨">
+
 このガイドは全てTypeScriptで記述されています。型安全性を最大限活用することで、エンタープライズレベルの堅牢なアプリケーションが構築できます。
+
 </Admonition>
 <Admonition type="warning" title="Svelte 5前提">
+
 このガイドはSvelte 5とSvelteKit 2.x以降を前提としています。古いバージョンを使用している場合は、まず[Svelte 5完全ガイド](/svelte/)で最新のRunesシステムを学習してください。
+
 </Admonition>

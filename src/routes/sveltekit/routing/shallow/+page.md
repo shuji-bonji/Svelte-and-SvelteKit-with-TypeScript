@@ -184,6 +184,7 @@ replaceState('', {
 ```
 
 <Admonition type="tip" title="pushState vs replaceState">
+
 <ul>
 <li><strong>pushState</strong>: 新しい履歴エントリを作成（「戻る」で元に戻れる）</li>
 <li><strong>replaceState</strong>: 現在の履歴エントリを置き換え（「戻る」で前のページに戻る）</li>

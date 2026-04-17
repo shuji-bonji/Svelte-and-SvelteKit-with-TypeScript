@@ -18,6 +18,7 @@ Markdownファイルで記事を管理し、全文検索とタグフィルタリ
 - **ソースコード**: [https://github.com/shuji-bonji/svelte5-blog-markdown](https://github.com/shuji-bonji/svelte5-blog-markdown)
 
 <Admonition type="info" title="このページで学べること">
+
 <ul>
 <li>Viteのglob importによるMarkdownファイルの自動読み込み</li>
 <li>MiniSearchを使った全文検索の実装</li>
@@ -215,8 +216,10 @@ export function parseMarkdown(slug: string, markdown: string): Article {
 ```
 
 <Admonition type="tip" title="本文先頭の h1 二重表示を防ぐ">
+
 Markdown 記事の先頭に慣習で `# タイトル` を書く執筆者は多いですが、frontmatter にも `title` があり、ページ側で `<h1>` としてレンダリングすると **同じタイトルが二回表示**されてしまいます。
 `stripLeadingH1` は「本文の最初の非空行が `# タイトル` かつ frontmatter の `title` と一致する場合のみ除去」します。h2 以降や別テキストの `#` は残すので、Markdown 側に書いても書かなくても同じ結果になり、執筆者体験が安定します。
+
 </Admonition>
 
 ### 全文検索の実装
@@ -435,8 +438,10 @@ export function createSearchIndex(articles: Article[]) {
 ## 静的サイト生成での注意点
 
 <Admonition type="tip" title="prerenderingとURLパラメータ">
+
 SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`はビルド時に使用できません。
 そのため、タグフィルタリングなどの動的な機能は、クライアントサイドで実装する必要があります。
+
 </Admonition>
 
 ```typescript

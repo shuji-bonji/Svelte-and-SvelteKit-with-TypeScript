@@ -242,6 +242,7 @@ src/
 ## 実装のヒント
 
 <Admonition type="tip" title="成功のポイント">
+
 <ul>
 <li><strong>段階的に学習</strong> - 簡単な例から始めて徐々に複雑な実装へ</li>
 <li><strong>コードを実際に書く</strong> - 読むだけでなく実際に手を動かす</li>

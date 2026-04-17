@@ -3,7 +3,9 @@ title: SvelteKit アプリケーション構築編
 description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 認証・認可、セッション管理、データベース統合、環境変数管理、エラーハンドリング、テスト戦略、デプロイを実例を交えて体系的かつ実践的に詳しく解説します
 ---
 <Admonition type="caution" title="タイトル">
+
 執筆中
+
 </Admonition>
 <script>
 	import Admonition from '$lib/components/Admonition.svelte';
@@ -234,9 +236,12 @@ export const app = new AppState();
 アプリケーション構築編を習得したら、[最適化編](/sveltekit/optimization/)でパフォーマンスチューニングを学びましょう。
 
 <Admonition type="tip" title="実践的な学習">
+
 このセクションでは、実際のプロダクション環境で使われるパターンや技術を学びます。小規模なプロジェクトから始めて、徐々に複雑な機能を追加していくことをお勧めします。
+
 </Admonition>
 <Admonition type="warning" title="セキュリティの重要性">
+
 認証・認可の実装では、OWASP Top 10などのセキュリティベストプラクティスに従うことが重要です。常に最新のセキュリティ情報をチェックしてください。
 
 </Admonition>

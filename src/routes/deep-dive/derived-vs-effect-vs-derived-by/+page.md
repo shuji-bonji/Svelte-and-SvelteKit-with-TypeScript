@@ -10,6 +10,7 @@ description: Svelte 5のリアクティビティを扱う$derived、$effect、de
 Svelte 5のリアクティビティシステムは、状態の変更を追跡し、UIを自動的に更新する仕組みです。このページでは、リアクティブな値を扱うための3つの主要な方法について、実践的な例を交えながら詳しく解説します。
 
 <Admonition type="tip" title="React/Vue経験者向け">
+
 <ul>
 <li><code>$derived</code> は React の <code>useMemo</code> や Vue の <code>computed</code> に相当</li>
 <li><code>$effect</code> は React の <code>useEffect</code> や Vue の <code>watchEffect</code> に相当</li>

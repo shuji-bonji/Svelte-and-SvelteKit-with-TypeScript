@@ -535,6 +535,7 @@ export const realtimeManager = new RealtimeManager();
 ```
 
 <Admonition type="tip" title="Supabaseの強み">
+
 <ul>
 <li>PostgreSQLの全機能が使える（トリガー、関数、ビュー）</li>
 <li>RLSによる強力なセキュリティ</li>

@@ -52,8 +52,10 @@ yarn dlx sv <command> <args>
 ```
 
 <Admonition type="tip" title="ローカルインストール不要">
+
 `sv` はプロジェクト内にインストールされていない場合でも、最新版が自動的にダウンロードされて実行されます。
 特に `sv create` は常に最新版を使用することをお勧めします。
+
 </Admonition>
 
 ## sv create
@@ -196,7 +198,9 @@ Svelte チームが公式にサポートするアドオンです。これらは 
 | `vitest`            | Vitest によるユニットテスト        |
 
 <Admonition type="note" title="認証アドオンの変更">
+
 以前の公式アドオンだった `lucia` は `better-auth` に置き換わりました。新規プロジェクトでは `better-auth` の使用を推奨します。
+
 </Admonition>
 
 ### 使用例
@@ -233,7 +237,9 @@ npx sv create --add eslint @supacool
 ```
 
 <Admonition type="warning" title="コミュニティアドオンの注意">
+
 コミュニティアドオンは Svelte メンテナーによるセキュリティレビューを受けていません。`--no-download-check` オプションは注意して使用してください。
+
 </Admonition>
 
 ## sv check
@@ -490,6 +496,7 @@ npx sv check --ignore "node_modules,dist,build,.svelte-kit"
 ### 特定のファイルのみチェックしたい場合
 
 <Admonition type="warning" title="全体チェックが必要">
+
 `sv check` はプロジェクト全体を見る必要があります。
 変更されたファイルのみをチェックすると、他のファイルでの参照エラーを見逃す可能性があります。
 

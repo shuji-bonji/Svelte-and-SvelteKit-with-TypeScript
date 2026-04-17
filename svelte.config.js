@@ -2,6 +2,7 @@ import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
 import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 // shikiハイライターの事前作成
 const highlighter = await createHighlighter({
@@ -70,7 +71,27 @@ const mdsvexOptions = {
 			}
 		}
 	},
-	rehypePlugins: [rehypeSlug],
+	rehypePlugins: [
+		rehypeSlug,
+		[
+			rehypeAutolinkHeadings,
+			{
+				// 見出しの末尾にアンカーリンクを追加（クリックで該当見出しの URL をコピー可能にする）
+				behavior: 'append',
+				properties: {
+					className: ['heading-anchor'],
+					ariaHidden: 'true',
+					tabIndex: -1
+				},
+				content: {
+					type: 'element',
+					tagName: 'span',
+					properties: { className: ['heading-anchor-icon'] },
+					children: [{ type: 'text', value: '#' }]
+				}
+			}
+		]
+	],
 	layout: {
 		_: new URL('./src/lib/layouts/DocLayout.svelte', import.meta.url).pathname
 	}

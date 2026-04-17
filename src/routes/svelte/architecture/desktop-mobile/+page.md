@@ -142,7 +142,9 @@ ipcMain.handle('get-system-info', async () => {
 ```
 
 <Admonition type="note" title="セキュリティに関する注意">
+
 Electronでは`contextIsolation: true`と`preload`スクリプトを使用してセキュリティを確保することが重要です。レンダラープロセスから直接Node.js APIにアクセスさせず、必要な機能のみをpreloadスクリプト経由で公開します。
+
 </Admonition>
 
 ## Capacitor統合（モバイル）
@@ -352,6 +354,7 @@ async function checkForUpdates() {
 ```
 
 <Admonition type="tip" title="選択のポイント">
+
 <ul>
 <li><strong>Tauri</strong>: 軽量・高速を求める場合</li>
 <li><strong>Electron</strong>: 豊富なプラグインが必要な場合</li>

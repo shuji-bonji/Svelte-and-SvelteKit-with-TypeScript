@@ -578,6 +578,7 @@ export const load: PageLoad = async ({ params }) => {
 ```
 
 <Admonition type="info" title="実装例を見る">
+
 動的ルーティングを使った実際のブログシステムの実装例があります。
 <ul>
 <li><a href="/examples/blog-system/">ブログシステム（基礎）</a> - 静的データを使った基本実装</li>
@@ -585,6 +586,7 @@ export const load: PageLoad = async ({ params }) => {
 </ul>
 
 特にMarkdownブログでは、`[...slug]`パターンを使って柔軟な記事URLを実現しています。
+
 </Admonition>
 
 ### 多言語対応ルート
@@ -703,6 +705,7 @@ export const load: PageLoad = async ({ params }) => {
 ## トラブルシューティング
 
 <Admonition type="warning" title="パラメータが取得できない">
+
 <ul>
 <li>ディレクトリ名が正しく<code>[param]</code>形式になっているか確認</li>
 <li><code>+page.ts</code>の<code>params</code>オブジェクトを正しく分割代入しているか確認</li>
@@ -710,6 +713,7 @@ export const load: PageLoad = async ({ params }) => {
 
 </Admonition>
 <Admonition type="tip" title="マッチャーが動作しない">
+
 <ul>
 <li><code>src/params/</code>ディレクトリにマッチャーファイルがあるか確認</li>
 <li>マッチャー名とファイル名が一致しているか確認</li>

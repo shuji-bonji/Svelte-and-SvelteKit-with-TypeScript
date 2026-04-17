@@ -623,7 +623,9 @@ jobs:
 ```
 
 <Admonition type="tip" title="GitHub Actions変数">
+
 実際の設定では、`node-version`の値にGitHub Actions変数（matrix.node-versionなど）を使用してMatrix戦略を活用できます。
+
 </Admonition>
 
 ## まとめ

@@ -176,7 +176,9 @@ export const actions = {
 ```
 
 <Admonition type="tip" title="error() と fail() の使い分け">
+
 `error()` はページ全体をエラーページに置き換えます。`fail()` は現在のページを維持したままフォームの状態を返します。バリデーションエラーのように「ユーザーが修正できるエラー」には`fail()`、「修正不可能な致命的エラー」には`error()`を使いましょう。
+
 </Admonition>
 
 ## 予期しないエラー（Unexpected Errors）
@@ -253,7 +255,9 @@ export const load: PageServerLoad = async () => {
 ```
 
 <Admonition type="warning" title="レイアウトのエラーに注意">
+
 `+layout.svelte`や`+layout.server.ts`でエラーが発生した場合、同階層の`+error.svelte`は使用されません。**1つ上**の階層の`+error.svelte`が使われます。ルートレイアウトでエラーが発生した場合は`src/error.html`にフォールバックします。
+
 </Admonition>
 
 ## handleError フック
@@ -428,7 +432,9 @@ export default config;
 ```
 
 <Admonition type="info" title="svelte:boundary との関係">
+
 `&lt;svelte:boundary&gt;`を使えば、コンポーネントレベルでエラーをキャッチすることも可能です。`handleRenderingErrors`が有効な場合、キャッチされたエラーは`handleError`フックを通過してから`&lt;svelte:boundary&gt;`の`failed`スニペットに渡されます。詳しくは[特別な要素](/svelte/basics/special-elements/)を参照してください。
+
 </Admonition>
 
 ## APIルートでのエラー処理

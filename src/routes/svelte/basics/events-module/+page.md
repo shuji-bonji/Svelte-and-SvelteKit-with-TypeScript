@@ -106,7 +106,9 @@ Svelte 5では、イベントハンドリングにイベント委譲（event del
 ```
 
 <Admonition type="tip" title="自動クリーンアップ">
+
 `$effect`内で`on()`を使用すると、effectのクリーンアップ時に自動的にイベントリスナーが解除されます。手動で`cleanup()`を呼ぶ必要はありません。
+
 </Admonition>
 
 ### $effect との組み合わせ
@@ -131,7 +133,9 @@ Svelte 5では、イベントハンドリングにイベント委譲（event del
 ```
 
 <Admonition type="note" title="returnパターン">
+
 `$effect`のreturnに`on()`の戻り値をそのまま返すと、effectの破棄時にイベントリスナーが自動解除されます。`on()`が返すのは`() => void`型のクリーンアップ関数です。
+
 </Admonition>
 
 ### DOM要素への登録
@@ -348,7 +352,9 @@ on(window, 'click', (event) => {
 | Svelte統合           | `$effect`との自然な連携 | 手動管理が必要                         |
 
 <Admonition type="caution" title="addEventListenerとの順序問題">
+
 `addEventListener()`で直接登録したハンドラは、Svelteのイベント委譲システム（`onclick`属性）とは異なるタイミングで実行される可能性があります。同じ要素で両方を使う場合は、`on()`を使って順序を保証してください。
+
 </Admonition>
 
 ## createSubscriber との関連
@@ -382,7 +388,9 @@ class MediaQuery {
 ```
 
 <Admonition type="info" title="MediaQueryクラスについて">
+
 `MediaQuery`クラス自体は`svelte/reactivity`モジュールからインポートします。詳しくは<a href="{base}/svelte/advanced/built-in-classes/">組み込みリアクティブクラス</a>を参照してください。
+
 </Admonition>
 
 ## よくある間違い
@@ -430,7 +438,9 @@ class MediaQuery {
 ```
 
 <Admonition type="tip" title="使い分けの指針">
+
 テンプレート内の`onclick`等の属性で対応できる場合は、宣言的な書き方を優先してください。`on()`は、`window`/`document`へのグローバルイベント、動的に変わるイベント対象、`$effect`内でのプログラム的な管理が必要な場面で使用します。
+
 </Admonition>
 
 ## まとめ

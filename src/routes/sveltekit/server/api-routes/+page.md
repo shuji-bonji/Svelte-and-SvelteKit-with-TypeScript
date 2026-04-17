@@ -416,6 +416,7 @@ export const GET: RequestHandler = async ({ params }) => {
 APIルートでは、認証（ユーザーの身元確認）と認可（アクセス権限の確認）を実装することが重要です。一般的にはBearerトークン（JWT）を使用した認証が用いられ、リクエストヘッダーからトークンを取得して検証します。
 
 <Admonition type="info" title="関連情報">
+
 APIエンドポイントの認証は、アプリケーション全体の認証戦略の一部です。以下のページも参照してください。
 <ul>
 <li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバル認証実装</li>
@@ -471,6 +472,7 @@ export const GET: RequestHandler = async (event) => {
 CORS（Cross-Origin Resource Sharing）設定は、異なるドメインからのAPIアクセスを許可するために必要です。特に、フロントエンドとバックエンドを別々のドメインでホストする場合や、外部のクライアントからAPIを利用する場合に重要です。
 
 <Admonition type="info" title="関連情報">
+
 CORS設定は通常、Hooksで一元管理します。以下のページも参照してください。
 <ul>
 <li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバルCORS設定</li>
@@ -524,6 +526,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 レート制限は、APIの過負荷を防ぎ、悪意のある攻撃（DDoS攻撃など）からシステムを保護するための重要なセキュリティ対策です。IPアドレスごとに一定時間内のリクエスト回数を制限することで、公平なリソース利用を実現します。
 
 <Admonition type="info" title="関連情報">
+
 レート制限はアプリケーション全体に適用することも可能です。
 <ul>
 <li><strong><a href="{base}/sveltekit/server/hooks/">Hooks</a></strong> - handleフックでのグローバルレート制限実装</li>

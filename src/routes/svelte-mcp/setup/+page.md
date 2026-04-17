@@ -11,7 +11,9 @@ Svelte MCP には**Local 版**と**Remote 版**の 2 つのバージョンがあ
 使用する MCP クライアントに応じて適切な設定を行ってください。
 
 <Admonition type="tip" title="おすすめ">
+
 日常的な開発には**Local 版**を推奨します。オフラインでも動作し、レスポンスも高速です。
+
 </Admonition>
 
 ## Local 版のセットアップ

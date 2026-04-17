@@ -68,7 +68,9 @@ Viteの規約に従い、環境別のファイルを設置できます。
 ```
 
 <Admonition type="warning" title=".gitignore に追加">
+
 `.env`や`.env.local`にはシークレットが含まれるため、必ず`.gitignore`に追加してください。`PUBLIC_`プレフィックスの変数のみを含む`.env.example`をリポジトリに含めると、チーム内での共有に便利です。
+
 </Admonition>
 
 ## $env/static/private — ビルド時プライベート変数
@@ -124,7 +126,9 @@ import { PUBLIC_APP_NAME, PUBLIC_API_URL } from '$env/static/public';
 ```
 
 <Admonition type="tip" title="staticを使うメリット">
+
 `$env/static/*`はビルド時に値がインライン化されるため、Viteのツリーシェイキングやデッドコード除去の恩恵を受けられます。値がビルド後に変わることがなければ、staticを使うのがパフォーマンス上有利です。
+
 </Admonition>
 
 ## $env/dynamic/private — 実行時プライベート変数
@@ -151,7 +155,9 @@ export const load: PageServerLoad = async () => {
 ```
 
 <Admonition type="caution" title="staticとの構文の違い">
+
 `$env/static/*`はnamed import（`import &#123; VAR &#125; from ...`）ですが、`$env/dynamic/*`はオブジェクト経由（`env.VAR`）でアクセスします。この違いに注意してください。
+
 </Admonition>
 
 ## $env/dynamic/public — 実行時パブリック変数

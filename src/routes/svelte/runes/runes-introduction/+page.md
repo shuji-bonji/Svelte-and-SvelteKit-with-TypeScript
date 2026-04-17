@@ -534,6 +534,7 @@ Runesは特定の場所（ファイルタイプ）でのみ使用可能です。
 | `.mjs` / `.cjs` |    ❌    | CommonJS/ESモジュール                              |
 
 <Admonition type="tip" title="重要：`.svelte.js` / `.svelte.ts` ファイル">
+
 `.svelte.js`と`.svelte.ts`は、Svelte 5で導入された特別な拡張子で、**コンポーネント外でRunesを使用できる唯一の方法**です。これらのファイルでは、
 <ul>
 <li>グローバルな状態管理（ストア）を作成できる</li>
@@ -542,6 +543,7 @@ Runesは特定の場所（ファイルタイプ）でのみ使用可能です。
 </ul>
 
 **例：グローバルカウンターストア（counter.svelte.ts）**
+
 </Admonition>
 
 ```typescript
@@ -621,6 +623,7 @@ $effect(() => {
 5. [$bindable - 双方向バインディング](/svelte/runes/bindable/)
 
 <Admonition type="info" title="ディープダイブ">
+
 Runesシステムの各機能の詳細な比較と使い分けについては、以下のガイドもご参照ください。
 <ul>
 <li><a href="{base}/deep-dive/derived-vs-effect-vs-derived-by/">$derived vs $effect vs derived.by 完全比較ガイド</a></li>

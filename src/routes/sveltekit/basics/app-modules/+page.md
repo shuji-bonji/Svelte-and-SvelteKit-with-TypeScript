@@ -661,10 +661,14 @@ export const isAuthenticated = derived(user, ($user) => !!$user);
 ## 注意事項
 
 <Admonition type="warning" title="サーバーサイドでの使用制限">
+
 `$app/stores`と`$app/navigation`の多くの機能はブラウザでのみ動作します。サーバーサイドで使用する場合は`browser`チェックが必要です。
+
 </Admonition>
 <Admonition type="tip" title="インポートパスの自動補完">
+
 VS Codeなどのエディタでは、`$app/`で始まるインポートは自動補完されます。TypeScript設定が正しければ型情報も提供されます。
+
 </Admonition>
 
 ## まとめ
@@ -769,6 +773,7 @@ $effect(() => {
 ```
 
 <Admonition type="tip" title="移行のポイント">
+
 `$app/stores`から`$app/state`への移行は、主に以下の変更が必要です。
 <ol>
 <li><code>$</code>プレフィックスを削除</li>
@@ -783,7 +788,9 @@ $effect(() => {
 サーバー関数をクライアントから型安全に呼び出す「Remote Functions」を提供するモジュールです。`.remote.ts`ファイルで定義した関数は、サーバーサイドでのみ実行され、クライアントからの呼び出しは自動的にRPC（Remote Procedure Call）に変換されます。
 
 <Admonition type="warning" title="実験的機能">
+
 `$app/server`は実験的機能です。`svelte.config.js`で明示的に有効化する必要があります。
+
 </Admonition>
 
 ```javascript
@@ -798,7 +805,9 @@ export default {
 ```
 
 <Admonition type="info" title="ファイル規約: .remote.ts">
+
 Remote Functionsは `.remote.ts`（または `.remote.js`）ファイルで定義します。これらのファイルはサーバーサイドでのみ実行され、クライアントからは自動的にRPCコールに変換されます。
+
 </Admonition>
 
 #### query - データ取得
@@ -960,6 +969,7 @@ const path: Pathname = '/about';
 ```
 
 <Admonition type="tip" title="型安全なルーティングの利点">
+
 `$app/types`を使用すると、存在しないルートへのリンクをコンパイル時に検出できます。ルートの追加・削除時にも、関連するリンクの整合性が自動的にチェックされます。
 
 </Admonition>

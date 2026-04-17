@@ -587,6 +587,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 SvelteKitの実行環境とランタイムを理解することで、アプリケーションを最適な環境にデプロイし、パフォーマンスを最大化できます。各ランタイムの特性を理解し、適切なアダプターを選択することが重要です。
 
 <Admonition type="tip" title="重要なポイント">
+
 <ul>
 <li><strong>Node.js</strong>: フルスタック機能が必要な場合</li>
 <li><strong>Edge Runtime</strong>: 低レイテンシーとグローバル配信が必要な場合</li>

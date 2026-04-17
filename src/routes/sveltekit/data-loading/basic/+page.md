@@ -210,9 +210,11 @@ Load 関数は、SvelteKit における**データフェッチングの中心的
 4. **最適化**: SvelteKit が自動的にキャッシュやプリフェッチを最適化
 
 <Admonition type="info" title="「自動実行」の意味">
+
 **自動実行とは「開発者が明示的に呼び出さなくても良い」という意味です。**
 
 React 等では、
+
 </Admonition>
 
 ```javascript

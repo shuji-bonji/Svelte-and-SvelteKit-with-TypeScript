@@ -344,10 +344,13 @@ export function getErrorMessage(error: any): string {
 ```
 
 <Admonition type="warning" title="注意点">
+
 Firebaseの設定情報は公開されても問題ありませんが、セキュリティルールの設定が重要です。
 必ずFirestoreとStorageのルールを適切に設定してください。
+
 </Admonition>
 <Admonition type="tip" title="パフォーマンス最適化">
+
 <ul>
 <li>Firestoreのクエリにはインデックスを設定</li>
 <li>画像はCloud Storageにアップロード前にリサイズ</li>

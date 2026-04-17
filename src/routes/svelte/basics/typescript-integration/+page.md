@@ -613,7 +613,9 @@ let { title }: Props = $props();
 これらの基本を理解することで、型安全なSvelteコンポーネントを作成できます。
 
 <Admonition type="info" title="Actionsの型定義">
+
 DOM要素を直接操作する`use:action`の型定義については、<a href="{base}/svelte/basics/actions/">use:アクション</a>ページのTypeScriptとの統合セクションを参照してください。
+
 </Admonition>
 
 ## 次のステップ

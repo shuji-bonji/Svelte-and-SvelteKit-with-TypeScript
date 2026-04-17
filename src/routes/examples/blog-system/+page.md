@@ -18,6 +18,7 @@ Svelte 5とSvelteKitを使用した、実践的なブログシステムの最小
 - **ソースコード**: [https://github.com/shuji-bonji/svelte5-blog-example](https://github.com/shuji-bonji/svelte5-blog-example)
 
 <Admonition type="info" title="このページで学べること">
+
 <ul>
 <li>ファイルベースルーティングの実践的な活用</li>
 <li>動的ルートを使った記事ページの実装</li>
@@ -584,6 +585,7 @@ export const load: PageLoad = async () => {
 ```
 
 <Admonition type="tip" title="静的サイト生成での注意点">
+
 SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`はビルド時に使用できません。
 タグフィルタリングなどの動的な機能は、クライアントサイドで実装するか、
 タグごとに別ページを生成する必要があります。

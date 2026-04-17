@@ -174,6 +174,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 <Mermaid chart={handleAuthFlow} />
 
 <Admonition type="info" title="実践例">
+
 Hooksを使用した認証実装の完全なコード例は以下で確認できます。
 <ul>
 <li><strong><a href="{base}/examples/auth-cookie-session/">Cookie/Session認証</a></strong> - hooks.server.tsでの認証実装</li>
@@ -525,6 +526,7 @@ export const handleValidationError: HandleValidationError = ({
 ```
 
 <Admonition type="tip" title="handleError との違い">
+
 `handleError` はアプリケーション内の**未処理エラー**（予期しないエラー）を処理します。一方、`handleValidationError` はRemote Functionsへの**バリデーション失敗**（400エラー）を処理します。両者は独立したフックで、それぞれ異なるエラーカテゴリを担当します。
 
 </Admonition>

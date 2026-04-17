@@ -25,7 +25,9 @@ Svelte 5では、`.svelte.js`および`.svelte.ts`ファイルを使用して、
 5. **純粋なJavaScript** - テストが簡単で、モックが不要
 
 <Admonition type="tip" title="Svelte 4からの移行">
+
 Svelte 4の`writable`、`readable`、`derived`ストアは、Svelte 5では`.svelte.js`/`.svelte.ts`ファイルと Runesシステムで置き換えられます。
+
 </Admonition>
 
 ## Svelte 4ストアとの違い
@@ -252,7 +254,9 @@ export const globalStore = {
 ```
 
 <Admonition type="warning" title="注意点">
+
 グローバルストアは全てのコンポーネントで同じインスタンスを共有するため、状態の変更が全体に影響します。必要に応じてファクトリー関数を使用して、個別のインスタンスを作成することを検討してください。
+
 </Admonition>
 
 ## 高度なパターン
@@ -325,6 +329,7 @@ export function createCart() {
 ```
 
 <Admonition type="info" title="派生値のメリット">
+
 <ul>
 <li><strong>自動更新</strong>: 依存する値が変更されると自動的に再計算</li>
 <li><strong>メモ化</strong>: 依存する値が変わらない限り、再計算されない</li>
@@ -475,7 +480,9 @@ const settings = createPersistentStore('userSettings', {
 ```
 
 <Admonition type="tip" title="SSRの考慮">
+
 `typeof window === 'undefined'`のチェックにより、サーバーサイドレンダリング時のエラーを防いでいます。
+
 </Admonition>
 
 ## コンポジションパターン
@@ -556,6 +563,7 @@ const permissions = createPermissionsStore(auth);
 ```
 
 <Admonition type="info" title="コンポジションの利点">
+
 <ul>
 <li><strong>関心の分離</strong>: 各ストアは単一の責任を持つ</li>
 <li><strong>再利用性</strong>: 個別のストアを他のコンテキストで再利用可能</li>
@@ -2190,6 +2198,7 @@ export function createBatchStore<T>() {
 5. **柔軟性** - 様々なパターンとの組み合わせが可能
 
 <Admonition type="info" title="関連リンク">
+
 <ul>
 <li><a href="{base}/svelte/advanced/class-reactivity/">クラスとリアクティビティ</a> - クラスベースのパターン</li>
 <li><a href="{base}/svelte/advanced/built-in-classes/">組み込みリアクティブクラス</a> - SvelteMap、SvelteSetなど</li>

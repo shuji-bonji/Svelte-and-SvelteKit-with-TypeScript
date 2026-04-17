@@ -9,6 +9,7 @@ description: Svelte 5の完全リファレンス。Runesシステム、コンポ
 </script>
 
 <Admonition type="tip" title="AI開発には公式のSvelte MCPサーバーの利用を推奨">
+
 **Claude Code / Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
 
 Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサーバーで、以下の利点があります。
@@ -129,7 +130,9 @@ config = $state.raw({ ...config, version: '1.0.1' });
 ```
 
 <Admonition type="warning" title="$state.frozen は $state.raw にリネーム済み">
+
 以前の `$state.frozen` は `$state.raw` にリネームされました。`$state.frozen` を使用している場合は `$state.raw` に置き換えてください。
+
 </Admonition>
 
 #### $state.snapshot - スナップショット
@@ -303,8 +306,10 @@ $effect(() => {
 ```
 
 <Admonition type="info" title="$effect.pending() vs svelte:boundary">
+
 `&lt;svelte:boundary&gt;` の `pending` snippetは初回ローディングに使用します。
 `$effect.pending()` は後続の非同期更新でのローディング状態の検出に使用します。
+
 </Admonition>
 
 ### $props - コンポーネントプロパティ
@@ -471,7 +476,9 @@ const timestamp = hydratable('page-timestamp', () => Date.now());
 ```
 
 <Admonition type="info" title="Remote Functionsを推奨">
+
 通常の開発では、SvelteKitの[Remote Functions](/sveltekit/server/remote-functions/)がこのAPIを内部的に使用しています。
+
 </Admonition>
 
 ### await expressions - 非同期構文（実験的）
@@ -738,8 +745,10 @@ Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`&#12
 ```
 
 <Admonition type="caution" title="Svelte 5ではイベント修飾子構文は非サポート">
+
 Svelte 4の `on:click|preventDefault|stopPropagation` のような修飾子構文は使用できません。
 `e.preventDefault()` や `e.stopPropagation()` を関数内で直接呼び出してください。
+
 </Admonition>
 
 ### コンポーネントイベント（コールバックProps）
@@ -1045,7 +1054,9 @@ function tooltip(node: HTMLElement, text: string) {
 ```
 
 <Admonition type="tip" title="Svelte 5での動的コンポーネント">
+
 Svelte 5では `&lt;svelte:component&gt;` なしで直接 `<currentComponent />` と書くこともできます（変数名が大文字始まりの場合）。
+
 </Admonition>
 
 ### svelte:element - 動的要素
@@ -1093,7 +1104,9 @@ type CustomButtonProps = ComponentProps<'button'> & {
 ```
 
 <Admonition type="info" title="Component型について">
+
 Svelte 5では `Component` 型を使用します。`SvelteComponent` / `ComponentType` はレガシー互換です。
+
 </Admonition>
 
 ### ジェネリックコンポーネント
@@ -1210,6 +1223,7 @@ function increment() {
 ```
 
 <Admonition type="warning" title="使用は最小限に">
+
 `flushSync` は測定やスクロール位置の調整など、DOM更新の即時反映が必要な場合に限定してください。通常の更新はSvelteのバッチ処理に任せる方がパフォーマンスが良好です。
 
 </Admonition>

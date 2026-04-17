@@ -381,7 +381,9 @@ let { data, form }: PageProps = $props();
 ```
 
 <Admonition type="tip" title="PagePropsを使う理由">
+
 `PageProps`は単なるショートカットではありません。Actionsの有無に応じて`form`プロパティが自動的に含まれるため、型の不整合を防げます。また、将来的なプロパティ追加にも自動対応します。
+
 </Admonition>
 
 ## RequestEvent型
@@ -473,7 +475,9 @@ npx svelte-kit sync
 ```
 
 <Admonition type="warning" title="注意事項">
+
 `.svelte-kit`ディレクトリは自動生成されるため、手動で編集しないでください。変更は`svelte-kit sync`実行時に上書きされます。
+
 </Admonition>
 
 ## カスタム型の拡張

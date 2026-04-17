@@ -9,6 +9,7 @@ description: SvelteKit 2.xの包括的リファレンス - ファイルベース
 </script>
 
 <Admonition type="tip" title="AI開発には公式のSvelte MCPサーバーの利用を推奨">
+
 **Claude Desktop等のLLMを使った開発では、公式の[Svelte MCP](https://svelte.dev/docs/mcp)サーバーの利用を強く推奨します。**
 
 Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサーバーで、以下の利点があります。
@@ -21,6 +22,7 @@ Svelte MCPは、Svelteチームが提供する公式のModel Context Protocolサ
 </ul>
 
 **セットアップ方法**（Claude Desktop）:
+
 </Admonition>
 
 ```js
@@ -347,6 +349,7 @@ export const load: PageServerLoad = async () => {
 SvelteKit 2.27+で導入されたサーバー連携機能です。型安全なサーバー関数を簡潔に定義でき、Standard Schemaによるバリデーション統合を備えます。
 
 <Admonition type="info" title="ファイル規約: .remote.ts">
+
 Remote Functionsは `.remote.ts`（または `.remote.js`）ファイルで定義します。これらのファイルはサーバーサイドでのみ実行され、クライアントからは自動的にRPCコールに変換されます。
 
 </Admonition>

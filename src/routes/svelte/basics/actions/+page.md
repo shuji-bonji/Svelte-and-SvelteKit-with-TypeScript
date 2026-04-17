@@ -47,6 +47,7 @@ description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - D
 `use:action`は、DOM要素に対して直接的な操作を行うための強力な機能です。要素のライフサイクルにフックして、初期化、更新、クリーンアップの処理を実行できます。
 
 <Admonition type="tip" title="React/Vue経験者向け">
+
 <ul>
 <li>React の <code>useRef</code> + <code>useEffect</code> の組み合わせに相当</li>
 <li>Vue の <code>カスタムディレクティブ</code> に相当</li>
@@ -79,6 +80,7 @@ function myAction(node: HTMLElement, parameter?: any) {
 ## いつ実行されるか
 
 <Admonition type="warning" title="重要な実行タイミング">
+
 アクションは**要素がDOMにマウントされた時**に実行されます。クリックやフォーカスなどのユーザー操作では実行されません。
 
 </Admonition>

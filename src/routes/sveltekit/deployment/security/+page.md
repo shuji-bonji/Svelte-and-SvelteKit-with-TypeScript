@@ -7,7 +7,9 @@ description: SvelteKitアプリのセキュリティ対策。XSS、CSRF、SQLイ
 	import Admonition from '$lib/components/Admonition.svelte';
 </script>
 <Admonition type="warning" title="準備中">
+
 このページは現在作成中です。基本的な概要と予定コンテンツを掲載しています。
+
 </Admonition>
 
 ## 概要

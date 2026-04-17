@@ -4,7 +4,9 @@ description: 本番環境への展開と安定運用のための実践ガイド
 ---
 
 <Admonition type="caution" title="タイトル">
+
 執筆中
+
 </Admonition>
 <script>
 	import Admonition from '$lib/components/Admonition.svelte';
@@ -203,9 +205,12 @@ export const monitoring = {
 デプロイ・運用編を習得したら、実際のプロジェクトで本番運用を始めましょう。小規模から始めて、徐々にスケールアップすることをお勧めします。
 
 <Admonition type="tip" title="段階的アプローチ">
+
 まずはVercelやNetlifyなどの管理されたプラットフォームから始めて、要件に応じてより複雑な環境へ移行することをお勧めします。
+
 </Admonition>
 <Admonition type="warning" title="本番環境の責任">
+
 本番環境では、セキュリティ、可用性、パフォーマンスに対する責任が伴います。適切なバックアップとディザスタリカバリ計画を必ず準備してください。
 
 </Admonition>

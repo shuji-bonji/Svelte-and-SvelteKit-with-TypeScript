@@ -19,7 +19,9 @@ Remote Functions は、クライアントとサーバー間の型安全な通信
 - 従来の Load 関数 / Form Actions との比較
 
 <Admonition type="warning" title="実験的機能">
+
 Remote Functions は現在実験的な機能です。`svelte.config.js` で明示的に有効化する必要があります。
+
 </Admonition>
 
 ## 設定
@@ -227,7 +229,9 @@ export const getWeather = query.batch(v.string(), async (cities) => {
 ```
 
 <Admonition type="tip" title="クエリのキャッシュ">
+
 クエリはページ上に存在する間キャッシュされます。`getPosts() === getPosts()` は常に `true` です。
+
 </Admonition>
 
 ### キャッシュとリアクティブコンテキスト
@@ -420,7 +424,9 @@ export const register = form(
 ```
 
 <Admonition type="tip" title="入力時バリデーション">
+
 `validate()` を `oninput` や `onchange` と組み合わせると、リアルタイムバリデーションも実現できます。
+
 </Admonition>
 
 ```svelte
@@ -566,7 +572,9 @@ export const createPost = form(schema, async (data) => {
 ```
 
 <Admonition type="info" title="requested() の仕組み">
+
 `requested()` はクライアントが要求したクエリの引数（パース済み）を返します。第2引数の `limit` は返す最大件数で、これを超える要求はエラーになります。パースに失敗した個別の引数はそのクエリだけがエラーになり、全体は失敗しません。
+
 </Admonition>
 
 ## command - サーバーへのデータ書き込み
@@ -645,7 +653,9 @@ export const addLike = command(v.string(), async (postId) => {
 ```
 
 <Admonition type="warning" title="command の制限">
+
 `command` 内では `redirect()` は使用できません。リダイレクトが必要な場合は、戻り値で `&#123; redirect: '/path' &#125;` を返し、クライアント側で処理してください。
+
 </Admonition>
 
 ## prerender - ビルド時データ取得
@@ -690,7 +700,9 @@ export const getPost = prerender(
 ```
 
 <Admonition type="tip" title="部分プリレンダリング">
+
 `prerender` は動的なページでも使用できます。これにより、一部のデータだけを静的化し、他は動的に取得するパターンが実現できます。
+
 </Admonition>
 
 ## 従来の Load 関数 / Form Actions との比較
@@ -750,6 +762,7 @@ export const getProfile = query(async () => {
 ```
 
 <Admonition type="warning" title="getRequestEvent の注意点">
+
 <ul>
 <li>ヘッダーの設定はできません（Cookie の設定は <code>form</code> と <code>command</code> 内でのみ可能）</li>
 <li><code>route</code>, <code>params</code>, <code>url</code> は Remote Function のエンドポイントではなく、呼び出し元のページの情報です</li>

@@ -125,6 +125,7 @@ Load関数とデータフェッチングを段階的に学習できるよう、6
 </div>
 
 <Admonition type="info" title="関連情報">
+
 <ul>
 <li><strong>ファイルの役割と実行環境</strong>: <a href="{base}/sveltekit/basics/file-system/">特殊ファイルシステム</a>で各ファイルの基本的な役割を解説</li>
 <li><strong>Load関数の詳細な実装</strong>: <a href="{base}/sveltekit/data-loading/basic/">Load関数の基礎</a>で具体的な使い方を解説</li>

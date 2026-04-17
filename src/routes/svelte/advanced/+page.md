@@ -150,6 +150,7 @@ Svelte 5の基本を理解したら、次はより高度な機能とパターン
 この章を効果的に学習するには、以下の知識が必要です。
 
 <Admonition type="tip" title="推奨される学習順序">
+
 <ol>
 <li><a href="/svelte/basics/">Svelteの基本</a> - コンポーネントの基礎</li>
 <li><a href="/svelte/runes/">Runesシステム</a> - リアクティビティの仕組み</li>
@@ -172,6 +173,7 @@ Svelte 5の基本を理解したら、次はより高度な機能とパターン
 基本的な概念を理解したら、<a href="{base}/svelte/advanced/reactive-stores/">リアクティブストア</a>から実践的な内容を学び始めましょう。各トピックは独立しているため、興味のある分野から始めることも可能です。
 
 <Admonition type="info" title="さらに学ぶ">
+
 実践編を終えたら、<a href="{base}/sveltekit/">SvelteKit</a>でフルスタックアプリケーション開発を学び、<a href="{base}/examples/">実装例</a>で実際のプロジェクトの構築方法を習得しましょう。
 
 </Admonition>

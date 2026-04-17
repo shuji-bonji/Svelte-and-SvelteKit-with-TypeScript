@@ -55,6 +55,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         },
         { title: 'TypeScript設定', to: '/introduction/typescript-setup/' },
         { title: 'CLI tools', to: '/introduction/cli/' },
+        {
+          title: 'ESLint + Prettier 設定',
+          to: '/introduction/eslint-prettier/',
+        },
       ],
     },
     {
@@ -527,6 +531,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
         { title: 'ユースケース', to: '/svelte-mcp/usecases/' },
         { title: 'アーキテクチャ', to: '/svelte-mcp/architecture/' },
         { title: '開発環境との統合', to: '/svelte-mcp/integration/' },
+        {
+          title: 'ESLint × typescript-eslint 連携',
+          to: '/svelte-mcp/eslint-integration/',
+        },
         { title: 'エコシステム', to: '/svelte-mcp/ecosystem/' },
       ],
     },

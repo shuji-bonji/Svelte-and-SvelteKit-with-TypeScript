@@ -2,6 +2,51 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - ESLint/Prettier解説追加・sitemap.xml生成復旧
+
+Svelte MCP × ESLint × typescript-eslint の品質保証三点セットを体系的に解説する記事を2本追加。また、SveltePress廃止時に消失していた `sitemap.xml` 生成機能をSvelteKitネイティブの `+server.ts` エンドポイント方式で復旧。
+
+### 追加（ESLint/Prettier解説）
+- **`src/routes/introduction/eslint-prettier/+page.md`**（492行、新規）- 初心者向けESLint + Prettier入門
+  - Prettier（見た目統一）・ESLint（バグ/悪いパターン検出）・svelte-check（型検証）の役割分担を明確化
+  - Mermaid図2点（役割分担・典型ワークフロー）
+  - `npx sv add` によるクイックスタート vs 手動flat config設定の両パターン
+  - `parserOptions.svelteConfig` の指定（Svelte 5 Runes 認識に必須）
+  - `.prettierrc` / `.prettierignore` / `package.json` scripts
+  - VS Code / Cursor の `settings.json` 共有設定
+  - `eslint-config-prettier` による Prettier/ESLint 競合解消
+  - husky + lint-staged によるpre-commit hooks
+- **`src/routes/svelte-mcp/eslint-integration/+page.md`**（585行、新規）- 上級者向けSvelte MCP × eslint-plugin-svelte × typescript-eslint 連携ガイド
+  - Mermaid図3点（役割分担・検出範囲の重なり・CI実行シーケンス）
+  - 2026年4月時点の安定性評価表（三点セットいずれも★★★★★）
+  - `strictTypeChecked` + `stylisticTypeChecked` を含む本番想定のフル設定
+  - Claude Code / Cursor / AGENTS.md 連携
+  - pnpm対応 GitHub Actions ワークフロー例
+  - バージョン固定運用とアップグレードチェックリスト
+  - トラブルシューティング（`.svelte.ts` / Runes が未定義扱い / パフォーマンス）
+
+### 追加（sitemap.xml 生成）
+- **`src/routes/sitemap.xml/+server.ts`**（新規）- SvelteKitネイティブの sitemap 生成エンドポイント
+  - `prerender = true` によりビルド時に `dist/sitemap.xml` として静的出力
+  - `sidebar.ts` を単一情報源として全ページを再帰フラット化
+  - `git log` から `lastmod` を取得（失敗時は `fs.statSync` の mtime にフォールバック）
+  - XMLエスケープ対応
+- **`package.json` に `@types/node@^22.0.0` 追加**: `+server.ts` が `node:fs` / `node:child_process` / `process.cwd()` を使用するため必須
+
+### 更新
+- **`src/lib/config/sidebar.ts`**: 2つの新規記事へのリンクを追加
+  - `{ title: 'ESLint + Prettier 設定', to: '/introduction/eslint-prettier/' }`（「はじめに」配下）
+  - `{ title: 'ESLint × typescript-eslint 連携', to: '/svelte-mcp/eslint-integration/' }`（「Svelte MCP」配下）
+- **`src/routes/svelte-mcp/integration/+page.md`**: 既存「ESLint との連携」セクションを最小構成ベースに再構成し、詳細ガイドへの `Admonition` リンクを追加
+
+### 修正（バージョン表記）
+- **`src/routes/svelte-mcp/eslint-integration/+page.md`**: `svelte-eslint-parser` を `1.4.x` → **`1.6.x`**（2026年3月リリースの最新安定版）に更新。バージョン固定サンプルも `1.4.0` → `1.6.0` へ
+- **`src/routes/svelte-mcp/architecture/+page.md`**: 依存関係サンプルの `svelte-eslint-parser: "^0.x"` → **`"^1.x"`** に修正
+
+### 背景
+- 2026年4月時点で `eslint-plugin-svelte@3.17.x` / `svelte-eslint-parser@1.6.x` / `typescript-eslint@8.x` が実務投入に耐える安定性に到達したため、従来「Svelte ESLint は不安定」と避けていた読者向けに最新情報を提供
+- SveltePress廃止（2026-04-13）で `scripts/generate-sitemap.js` が build パイプラインから外れたまま復旧されていなかったことを発見・対応
+
 ## [2026-04-17] - Svelte公式Playground embed統合・LiveCode刷新
 
 ### 変更（LiveCodeの実装方式刷新）

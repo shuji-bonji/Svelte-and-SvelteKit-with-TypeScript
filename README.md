@@ -97,6 +97,8 @@
 - 環境構築
 - TypeScript 設定
 - 学習パス
+- CLI tools
+- **ESLint + Prettier 設定**（Prettier / ESLint / svelte-check の役割分担、flat config、husky + lint-staged）
 
 ### 2. Svelte の基本
 
@@ -153,6 +155,7 @@
 - ユースケース - 学習支援、コード生成、移行支援、品質保証
 - アーキテクチャ - モノレポ構造、Local/Remote 版の仕組み
 - 開発環境との統合 - ESLint 連携、CI/CD 統合、AGENTS.md 設定
+- **ESLint × typescript-eslint 連携** - Svelte MCP × eslint-plugin-svelte × typescript-eslint 三点セットによる品質保証（2026年4月安定性評価、本番想定のフル flat config、CI/CD統合、バージョン固定運用）
 - エコシステム - 関連ツールとリソース
 
 ### 8. SvelteKit 基礎編
@@ -451,4 +454,4 @@ pnpm preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026 年 4 月 17 日 - svelte.dev 公式 Playground embed 統合、LiveCode 刷新、`live console` メタ対応
+**Last Updated**: 2026 年 4 月 18 日 - ESLint + Prettier 入門記事追加、Svelte MCP × eslint-plugin-svelte × typescript-eslint 連携ガイド追加、`sitemap.xml` 生成を SvelteKit ネイティブ方式で復旧

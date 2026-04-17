@@ -19,21 +19,21 @@ Svelteが提供する特別な要素は以下の通りです。
 
 | 要素                                                                           | 用途                         | 主な使用場面                                       |
 | ------------------------------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
-| [`svelte:element`](#svelte-element---動的要素の作成)                           | タグを動的に決定             | 権限に応じた要素の切り替え、CMSコンテンツ          |
-| [`svelte:window`](#svelte-window---ウィンドウイベントのバインディング)         | windowイベント・プロパティ   | スクロール位置、リサイズ、キーボードショートカット |
-| [`svelte:document`](#svelte-document---document要素へのイベントバインディング) | documentイベント・プロパティ | ページ表示状態、テキスト選択、フルスクリーン       |
-| [`svelte:body`](#svelte-body---body要素へのイベントバインディング)             | bodyイベント                 | マウストラッキング、ドラッグ&ドロップ              |
-| [`svelte:head`](#svelte-head---head要素への要素追加)                           | `<head>`に要素を追加         | SEO、メタタグ、外部リソース                        |
-| [`svelte:options`](#svelte-options---コンポーネントオプション)                 | コンパイラオプション         | Web Components、不変性、名前空間                   |
-| [`svelte:boundary`](#svelte-boundary---エラーバウンダリ)                       | エラーのキャッチ             | エラーハンドリング、フォールバックUI               |
+| [`svelte:element`](#svelteelement---動的要素の作成)                           | タグを動的に決定             | 権限に応じた要素の切り替え、CMSコンテンツ          |
+| [`svelte:window`](#sveltewindow---ウィンドウイベントのバインディング)         | windowイベント・プロパティ   | スクロール位置、リサイズ、キーボードショートカット |
+| [`svelte:document`](#sveltedocument---document要素へのイベントバインディング) | documentイベント・プロパティ | ページ表示状態、テキスト選択、フルスクリーン       |
+| [`svelte:body`](#sveltebody---body要素へのイベントバインディング)             | bodyイベント                 | マウストラッキング、ドラッグ&ドロップ              |
+| [`svelte:head`](#sveltehead---head要素への要素追加)                           | `<head>`に要素を追加         | SEO、メタタグ、外部リソース                        |
+| [`svelte:options`](#svelteoptions---コンポーネントオプション)                 | コンパイラオプション         | Web Components、不変性、名前空間                   |
+| [`svelte:boundary`](#svelteboundary---エラーバウンダリ)                       | エラーのキャッチ             | エラーハンドリング、フォールバックUI               |
 
 ### レガシー要素（Svelte 5では代替方法を推奨）
 
 | 要素                                                                     | 状態     | 代替方法                                                        |
 | ------------------------------------------------------------------------ | -------- | --------------------------------------------------------------- |
-| [`svelte:component`](#svelte-component---動的コンポーネント（レガシー）) | レガシー | Runesモードでは通常のコンポーネント変数で自動的に再レンダリング |
-| [`svelte:fragment`](#svelte-fragment---グループ化要素（レガシー）)       | レガシー | Svelte 5のSnippetsは余計なラッパー要素を作らない                |
-| [`svelte:self`](#svelte-self---再帰的コンポーネント（レガシー）)         | レガシー | コンポーネント自体をimportして使用                              |
+| [`svelte:component`](#sveltecomponent---動的コンポーネントレガシー) | レガシー | Runesモードでは通常のコンポーネント変数で自動的に再レンダリング |
+| [`svelte:fragment`](#sveltefragment---グループ化要素レガシー)       | レガシー | Svelte 5のSnippetsは余計なラッパー要素を作らない                |
+| [`svelte:self`](#svelteself---再帰的コンポーネントレガシー)         | レガシー | コンポーネント自体をimportして使用                              |
 
 <Admonition type="tip" title="使い分けのポイント">
 

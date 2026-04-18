@@ -2,6 +2,74 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - PWA 化（SveltePress 廃止で失われた機能を復活）
+
+### 概要
+SveltePress 時代に備わっていた PWA 機能がコンテンツ刷新（mdsvex 移行）で消失していたため、`vite-plugin-pwa` + Workbox で再実装。インストール可能 / オフライン対応 / 更新通知の三点を復活させた。
+
+### 依存追加
+- `vite-plugin-pwa` ^1.2.0
+- `@vite-pwa/sveltekit` ^1.1.0（SvelteKit 統合）
+- `workbox-window` ^7.4.0（型解決用）
+
+### 設定ファイル
+- **`vite.config.js`**: `SvelteKitPWA` プラグインを追加。以下を設定:
+  - `strategies: 'generateSW'`（Workbox で SW 自動生成）
+  - `base` / `scope`: `process.env.BASE_PATH` 連動で GitHub Pages の `/Svelte-and-SvelteKit-with-TypeScript/` 配下に閉じる
+  - `registerType: 'prompt'`、`injectRegister: false`（登録は `PwaUpdatePrompt` から制御）
+  - `pwaAssets.disabled: true`（既存の `static/icon-*.png` を使うため自動生成は無効）
+  - `kit.outDir: 'dist'` / `kit.trailingSlash: 'always'`（`+layout.ts` と整合）
+- **`manifest` 定義**
+  - `name`: TypeScriptで学ぶ Svelte 5/SvelteKit 完全マスター学習ガイド
+  - `short_name`: `Svelte & Kit Guide`
+  - `display: 'standalone'`、`orientation: 'portrait-primary'`
+  - `theme_color: '#ff3e00'`、`background_color: '#1a1a1a'`
+  - `icons`: `icon-192.png` / `icon-512.png` (purpose=any) ＋ `icon-maskable-512.png` (purpose=maskable)
+  - `categories: ['education', 'developer', 'books']`
+- **`workbox` 設定**
+  - `globPatterns`: 核となる `index.html` / `404.html` / 静的アセットのみ precache（全記事は肥大化するため runtime cache に任せる）
+  - `runtimeCaching`:
+    - HTML ドキュメント（同一オリジン）: `NetworkFirst`、最大 100 件・30 日、3 秒タイムアウト
+    - 画像: `StaleWhileRevalidate`、最大 100 件・60 日
+    - Google Fonts / gstatic: `CacheFirst`、最大 30 件・365 日
+  - `navigateFallback: '${base}/'`（SPA fallback）
+  - `navigateFallbackDenylist`: `/api/`、`sw.js`、`sitemap.xml` を除外
+  - `clientsClaim: false` / `skipWaiting: false`: 更新通知経由でユーザー確認してから切替
+
+### 追加ファイル
+- **`src/lib/components/PwaUpdatePrompt.svelte`**: Svelte 5 runes で書かれた更新通知 UI
+  - `virtual:pwa-register` を dynamic import で読み込み（`@ts-expect-error` 付与。vite が build 時に解決）
+  - `$state` でリアクティブに `needRefresh` / `offlineReady` を管理
+  - 新版 SW 検知時に右下トースト表示（「更新」/「後で」ボタン）
+  - 1 時間ごとに `registration.update()` で更新チェック
+  - SSR 時（`typeof window === 'undefined'`）は何もしない
+  - dev 環境や SW 未対応ブラウザでは `console.warn` で静かに失敗
+- **`src/app.d.ts`**: `virtual:pwa-register` / `virtual:pwa-info` の ambient 型宣言を追加（triple-slash reference で解決できないケースの保険）
+
+### 更新ファイル
+- **`src/app.html`**
+  - `<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />` を追加
+  - iOS 向け: `apple-mobile-web-app-capable` / `apple-mobile-web-app-status-bar-style` (`black-translucent`) / `apple-mobile-web-app-title` (`Svelte & Kit Guide`)
+  - Android 向け: `mobile-web-app-capable`
+  - Windows 向け: `application-name`
+- **`src/routes/+layout.svelte`**: `<PwaUpdatePrompt />` をルートレイアウトに挿入。全ページで SW 登録と更新通知が走る
+
+### Svelte Playground との相性
+Playground の LiveCode iframe は **`svelte.dev/playground` の外部ドメイン**なので、SW 介入の対象外（同一オリジン制約）。Playground 側の独自 SW に委譲される。runtimeCaching で外部ドメインを明示的にキャッシュしていないため、Playground の最新 Svelte 5 での動作保証が崩れる心配はない。
+
+### 検証
+- `npx svelte-check` エラー 0 件
+- Svelte MCP `svelte-autofixer` で `PwaUpdatePrompt.svelte` 検証 → issue なし
+- `vite.config.js` のプラグイン構成を動的 import で確認（`vite-plugin-pwa:sveltekit:build` が正しくロードされる）
+- ※ 本環境のサンドボックス制約で `npm run build` 実機検証は未実施。開発者PCでの `npm run build` で `dist/sw.js` と `dist/manifest.webmanifest` の生成を確認してほしい
+
+### 手動確認手順（ビルド後）
+1. `npm run build && npm run preview`
+2. Chrome DevTools → Application → Manifest でマニフェスト検証
+3. Application → Service Workers で SW 登録確認
+4. Network → Offline でオフライン動作確認
+5. アドレスバーの「インストール」アイコンからホーム画面追加
+
 ## [2026-04-18] - OGP / Twitter Card 整備
 
 ### 概要

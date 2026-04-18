@@ -160,7 +160,13 @@ const config = {
 		paths: {
 			// 本番デプロイ時は GitHub Actions が BASE_PATH=/Svelte-and-SvelteKit-with-TypeScript を渡す。
 			// dev / ローカル build では未設定なので空文字列となり、サブパスなしで動作する。
-			base: process.env.BASE_PATH ?? ''
+			base: process.env.BASE_PATH ?? '',
+			// PWA 対応: navigateFallback で同一の index.html がどのパスからでも返されても
+			// asset 解決が破綻しないよう、絶対パス（base 起点）に揃える。
+			// SvelteKit 2.x デフォルトの relative: true だと、prerendered の各 HTML が
+			// そのページ位置からの ../../ といった相対パスを持つため、SW navigateFallback で
+			// 別パスから返された瞬間に asset 404 が発生する。
+			relative: false
 		},
 		prerender: {
 			entries: ['*'],

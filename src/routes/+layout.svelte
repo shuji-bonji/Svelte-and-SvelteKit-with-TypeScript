@@ -7,6 +7,7 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import AutoPageNavigation from '$lib/components/AutoPageNavigation.svelte';
 	import TableOfContents from '$lib/components/TableOfContents.svelte';
+	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 	import { theme } from '$lib/stores/theme.svelte';
 	import { sidebar } from '$lib/stores/sidebar.svelte';
 
@@ -28,7 +29,7 @@
 	<Navbar />
 
 	{#if isTopPage}
-		<!-- トップページ：サイドバーなし・フルワイド -->
+		<!-- トップページ：デスクトップ幅ではサイドバーなし・フルワイド -->
 		<main class="main-content-full">
 			{@render children()}
 		</main>
@@ -38,15 +39,6 @@
 			<aside class="sidebar-desktop">
 				<Sidebar />
 			</aside>
-
-			<!-- サイドバー（モバイル オーバーレイ） -->
-			{#if sidebar.open}
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="sidebar-overlay" onclick={() => sidebar.close()} onkeydown={() => {}}></div>
-				<aside class="sidebar-mobile">
-					<Sidebar />
-				</aside>
-			{/if}
 
 			<!-- メインコンテンツ -->
 			<main class="main-content">
@@ -58,6 +50,22 @@
 			<TableOfContents />
 		</div>
 	{/if}
+
+	<!--
+		サイドバー（モバイル オーバーレイ）は isTopPage 分岐の外に置く。
+		トップページでもハンバーガーから他セクションへ遷移できるようにするため、
+		モバイル幅では全ページで sidebar.open による開閉を有効にする。
+	-->
+	{#if sidebar.open}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="sidebar-overlay" onclick={() => sidebar.close()} onkeydown={() => {}}></div>
+		<aside class="sidebar-mobile">
+			<Sidebar />
+		</aside>
+	{/if}
+
+	<!-- PWA: 新版検知時にユーザーへ更新確認プロンプトを出す -->
+	<PwaUpdatePrompt />
 </div>
 
 <style>
@@ -107,7 +115,8 @@
 		display: none;
 	}
 
-	@media (max-width: 768px) {
+	/* Navbar のハンバーガー表示ブレークポイント (960px) に揃える */
+	@media (max-width: 960px) {
 		.sidebar-desktop {
 			display: none;
 		}
@@ -132,7 +141,9 @@
 			border-right: 1px solid var(--color-border);
 			overflow-y: auto;
 		}
+	}
 
+	@media (max-width: 768px) {
 		.main-content {
 			padding: 1.5rem 1rem;
 		}

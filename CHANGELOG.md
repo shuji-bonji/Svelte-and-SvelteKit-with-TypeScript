@@ -2,6 +2,30 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - OGP / Twitter Card 整備
+
+### 概要
+これまで OGP 画像はサイトのスクリーンショット（`og-image.png` 2560×1440、`og-image-narrow.png` 1290×2796）を流用しており、SNS カード規格に合っていなかった。1200×630（Retina 2x の 2400×1260）の専用 OGP 画像に差し替え、メタタグも全プラットフォーム対応に再設計。
+
+### 変更
+- **`static/og-image.png`**: 2400×1260（1.91:1、Retina 2x）に差し替え。Svelte オレンジを基調にロゴ／タイトル／キャッチコピーを中央寄せ（X の `summary_large_image` の上下切れにも強い構図）
+- **`static/og-image-narrow.png`**: 削除。OGP 規格に縦長用途は存在しないため
+- **`src/lib/components/SeoMeta.svelte`**: 新規追加。OGP / Twitter Card の集約コンポーネント。`title` / `description` / `type` / `noTitleSuffix` を props で受け取り以下を出力:
+  - `<title>`、`<meta name="description">`、`<link rel="canonical">`
+  - OGP: `og:type` / `og:site_name` / `og:locale` (`ja_JP`) / `og:url` / `og:title` / `og:description` / `og:image` / `og:image:width|height|alt`
+  - Twitter Card: `twitter:card=summary_large_image` / `twitter:title` / `twitter:description` / `twitter:image` / `twitter:image:alt`
+- **`og:image` / `og:url` を絶対 URL で出力**: `page.url.origin + base + '/og-image.png'` で構成し、dev / prod の base 差を吸収
+- **`src/lib/layouts/DocLayout.svelte`**: OGP メタの直接記述を `<SeoMeta>` 利用に置換。`type="article"` を渡す
+- **`src/routes/+page.svelte`**: トップページのメタを `<SeoMeta>` 利用に置換。`type="website"` ＋ `noTitleSuffix`
+
+### 補足
+- `twitter:site` / `twitter:creator` は X アカウント未確認のため未設定。後日アカウント名確定後に追加予定
+- 旧 `og:image=svelteAndTypescript.png`（生ロゴ 1024×1024）の参照を停止
+
+### 検証
+- `npx svelte-check` エラー 0 件
+- Svelte MCP `svelte-autofixer` で `SeoMeta.svelte` 検証 → issue なし
+
 ## [2026-04-18] - robots.txt 刷新・Favicon 整備
 
 ### robots.txt

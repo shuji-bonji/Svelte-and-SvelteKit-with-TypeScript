@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import SeoMeta from '$lib/components/SeoMeta.svelte';
 
 	const features = [
 		{ title: 'Svelte 5 Runes', description: '$state, $derived, $effect など最新のRunesシステムを完全解説', icon: '✨' },
@@ -9,10 +10,12 @@
 	];
 </script>
 
-<svelte:head>
-	<title>TypeScriptで学ぶ Svelte 5/SvelteKit</title>
-	<meta name="description" content="Svelte5とSvelteKitをTypeScriptで学ぶ日本語完全ガイド。Runesシステム、SSR/SSG実装、型安全なコンポーネント開発を実践コードで解説" />
-</svelte:head>
+<SeoMeta
+	title="TypeScriptで学ぶ Svelte 5/SvelteKit"
+	description="Svelte5とSvelteKitをTypeScriptで学ぶ日本語完全ガイド。Runesシステム、SSR/SSG実装、型安全なコンポーネント開発を実践コードで解説"
+	type="website"
+	noTitleSuffix
+/>
 
 <!-- ヒーロー -->
 <section class="hero">

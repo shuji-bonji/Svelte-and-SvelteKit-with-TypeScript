@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
+	import SeoMeta from '$lib/components/SeoMeta.svelte';
 
 	// mdsvexがフロントマターから渡すメタデータ
 	interface Props {
@@ -16,22 +17,7 @@
 	let isTopPage = $derived(page.url.pathname === `${base}/` || page.url.pathname === base);
 </script>
 
-<svelte:head>
-	{#if title && isTopPage}
-		<title>{title}</title>
-	{:else if title}
-		<title>{title} | TypeScriptで学ぶ Svelte 5/SvelteKit</title>
-	{/if}
-	{#if description}
-		<meta name="description" content={description} />
-		<meta property="og:description" content={description} />
-	{/if}
-	{#if title}
-		<meta property="og:title" content={title} />
-	{/if}
-	<meta property="og:type" content="article" />
-	<meta property="og:image" content="{base}/svelteAndTypescript.png" />
-</svelte:head>
+<SeoMeta {title} {description} type="article" />
 
 <article class="prose max-w-none">
 	{#if title && !isTopPage}

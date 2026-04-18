@@ -2,6 +2,29 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - robots.txt 刷新・Favicon 整備
+
+### robots.txt
+旧 URL（`/runes/`、`/basics/`）の `Disallow` を削除。`_redirects`（Netlify 形式）は GitHub Pages 上で動作しないため旧 URL は実質 404 を返しており、`Disallow` があると Google 側から 404 を発見できずインデックスから落ちにくい状態だったため。構造的な `*.html$` と `/404.html` の `Disallow` は維持。
+
+### Favicon 整備
+`static/svelteAndTypescript.png`（1024×1024）をマスターに、favicon セット＋PWA 用アイコンを一括生成。
+
+- **追加ファイル**（`static/` 配下）
+  - `favicon.ico`（16/32/48 マルチ解像度）
+  - `favicon-16.png` / `favicon-32.png`
+  - `apple-touch-icon.png`（180×180、白背景フラット塗り：iOS の透過非対応対策）
+  - `icon-192.png` / `icon-512.png`（PWA any purpose 用）
+  - `icon-maskable-512.png`（PWA maskable 用。中心 80% の安全領域に収めた余白付き）
+- **`src/app.html`**: `<head>` に favicon / apple-touch-icon / `theme-color`（`#ff3e00`、Svelte オレンジ）の link を追加。`%sveltekit.assets%` を使って `paths.base` に追従
+- **メモ**: `svelteAndTypescript.svg`（2MB）は中身が raster PNG を埋め込んだラッパー SVG だったため、favicon.svg としては不採用。将来真の vector SVG を用意したら差し替える
+
+### 検証
+- `npx svelte-check` エラー 0 件（警告 1 件は既存 Mermaid.svelte、本変更と無関係）
+
+### 次フェーズ
+- PWA 化（SveltePress 廃止で失われた機能の復活）で `manifest.webmanifest` と service worker を追加予定。上記アイコンはそのまま再利用する
+
 ## [2026-04-18] - Svelte / SvelteKit ハブページの大改訂（Tier 1）
 
 `svelte/` と `sveltekit/` 配下のハブページ 7 枚を `sidebar.ts` の実態と整合させ、Svelte 5.x / SvelteKit 2.x の新機能（`{@attach}`、`svelte/motion`、`svelte/events`、`hydratable`、`await expressions` 実験的、`svelte/reactivity/window`、Shallow routing、Link options、Server-only modules、Remote Functions 実験的、PWA、Observability、実行環境、Packaging 等）への導線を追加。「Svelte 5 は最新版」といった時限的表現や React 18 / Angular 17 の比較を現行バージョンに更新。

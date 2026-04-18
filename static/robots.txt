@@ -3,10 +3,6 @@ Allow: /
 Disallow: /*.html$
 Disallow: /404.html
 
-# 旧URLを明示的にDisallow（クロール防止）
-Disallow: /runes/
-Disallow: /basics/
-
 # 推奨URL形式
 # Good: /introduction/
 # Bad: /introduction/index.html

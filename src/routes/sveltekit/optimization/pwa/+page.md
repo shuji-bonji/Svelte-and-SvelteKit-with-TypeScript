@@ -438,6 +438,9 @@ export default config;
 <script lang="ts">
   import { onMount } from 'svelte';
   import { dev } from '$app/environment';
+  import type { Snippet } from 'svelte';
+
+  let { children }: { children: Snippet } = $props();
 
   onMount(async () => {
     if ('serviceWorker' in navigator) {
@@ -456,7 +459,7 @@ export default config;
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           newWorker?.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed') {
+            if (newWorker?.state === 'installed') {
               if (navigator.serviceWorker.controller) {
                 // 新しいバージョンが利用可能
                 console.log('New version available!');
@@ -471,7 +474,7 @@ export default config;
   });
 </script>
 
-<slot />
+{@render children()}
 ```
 
 ## オフラインページ

@@ -102,8 +102,32 @@ vi.mock('$app/navigation', () => ({
   afterNavigate: vi.fn(),
 }));
 
-vi.mock('$app/stores', () => {
-  const { readable, writable } = await import('svelte/store');
+// $app/state（SvelteKit 2.12+ 推奨）: オブジェクトとして直接モック
+// Svelte 5 Runes ベースなのでコンポーネント内では `page.url.pathname` のように直接参照する
+vi.mock('$app/state', () => ({
+  page: {
+    url: new URL('http://localhost'),
+    params: {},
+    route: { id: '/' },
+    status: 200,
+    error: null,
+    data: {},
+    form: undefined,
+    state: {},
+  },
+  navigating: {
+    from: null,
+    to: null,
+    type: null,
+    willUnload: false,
+    delta: null,
+  },
+  updated: { current: false, check: vi.fn() },
+}));
+
+// $app/stores（レガシー）: ストアとしてモック。既存コードを段階移行する場合のみ必要
+vi.mock('$app/stores', async () => {
+  const { readable } = await import('svelte/store');
 
   const page = readable({
     url: new URL('http://localhost'),
@@ -121,6 +145,12 @@ vi.mock('$app/stores', () => {
   return { page, navigating, updated };
 });
 ```
+
+<Admonition type="tip" title="$app/state の方がモックは簡単">
+
+`$app/state` は Svelte 5 Runes ベースの **プレーンなオブジェクト** として公開されるため、モックも単なるオブジェクトリテラルで完結します。一方、`$app/stores` は `readable` ストアを返す必要があり記述が冗長です。新規プロジェクトでは `$app/state` のみモックすれば十分です。
+
+</Admonition>
 
 ## 単体テスト
 

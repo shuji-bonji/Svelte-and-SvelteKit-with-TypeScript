@@ -644,37 +644,52 @@ export const match = ((param) => {
 
 これらの指標を収集し、分析することで、実際のユーザー体験を定量的に把握できます。
 
-```typescript
-// hooks.client.ts
-import { navigating } from '$app/stores';
+`$app/state` の `navigating` は Svelte 5 Runes と統合されたリアクティブなオブジェクトです。ナビゲーションの開始/完了を `$effect` で監視することで、ページ遷移にかかった時間を計測できます。
 
-// ナビゲーションパフォーマンスの計測
-let navigationStart: number;
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import { navigating } from '$app/state';
+  import type { Snippet } from 'svelte';
 
-navigating.subscribe((nav) => {
-  if (nav) {
-    // ナビゲーション開始
-    navigationStart = performance.now();
-  } else if (navigationStart) {
-    // ナビゲーション完了
-    const duration = performance.now() - navigationStart;
+  let { children }: { children: Snippet } = $props();
 
-    // パフォーマンスメトリクスの送信
-    sendAnalytics({
-      event: 'navigation',
-      duration,
-      from: nav?.from?.url.pathname,
-      to: nav?.to?.url.pathname
-    });
+  let navigationStart: number | null = null;
 
-    // Core Web Vitals の計測
-    if (window.web-vitals) {
-      getCLS(sendToAnalytics);
-      getFID(sendToAnalytics);
-      getLCP(sendToAnalytics);
+  $effect(() => {
+    if (navigating.to) {
+      // ナビゲーション開始
+      navigationStart = performance.now();
+    } else if (navigationStart !== null) {
+      // ナビゲーション完了
+      const duration = performance.now() - navigationStart;
+
+      sendAnalytics({
+        event: 'navigation',
+        duration,
+        from: navigating.from?.url.pathname,
+        to: navigating.to?.url.pathname
+      });
+
+      navigationStart = null;
     }
-  }
-});
+  });
+</script>
+
+{@render children()}
+```
+
+Core Web Vitals は `web-vitals` パッケージを使って同様にクライアント側で計測します（`onLCP` / `onCLS` / `onINP` などはコールバック形式）。
+
+```typescript
+// src/lib/vitals.ts
+import { onCLS, onLCP, onINP } from 'web-vitals';
+
+export function initVitals(send: (metric: unknown) => void) {
+  onCLS(send);
+  onLCP(send);
+  onINP(send); // FID は廃止、INP が後継
+}
 ```
 
 ## まとめ

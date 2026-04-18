@@ -2,6 +2,21 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - レガシー構文の一括検証と残存箇所の刈り取り
+
+### 概要
+記事コードブロックに対して Svelte 4 系レガシー構文（`export let` / `on:event` / `createEventDispatcher` / `$:` / `<slot />` / `$app/stores` / `$$props`）の横断チェックを実施。ヒットした箇所を「新旧対比として意図的に提示しているもの」と「そのまま放置されていたもの」に分類し、後者 4 箇所を現行仕様に置換。
+
+### 更新
+- **`src/routes/sveltekit/optimization/pwa/+page.md`**: 手動 SW 登録の `+layout.svelte` サンプルから `<slot />` を除去し、`{ children: Snippet } = $props()` + `{@render children()}` に刷新。`newWorker` の optional chaining も漏れていたので併せて修正
+- **`src/routes/reference/sveltekit2/+page.md`**: `+error.svelte` ベストプラクティス例の `import { page } from '$app/stores'` を `$app/state` 版に置換。独自 props で `error` / `status` を受け取る旧パターンをやめ、`page.error` / `page.status` を `$derived` で参照する現行スタイルに統一
+- **`src/routes/sveltekit/architecture/routing-internals/+page.md`**: ナビゲーションパフォーマンス計測を `navigating.subscribe()` から `$app/state` の `navigating` + `$effect` パターンに書き直し。旧サンプルに混入していた `window.web-vitals` / `getFID` の誤記も除去し、`web-vitals` v4 系の `onLCP` / `onCLS` / `onINP` ベースに更新
+- **`src/routes/sveltekit/application/testing/+page.md`**: `vi.mock('$app/stores', ...)` 単独だったモック例を、`$app/state`（プレーンオブジェクト）を主・`$app/stores`（`readable` ストア）を併記という構成に変更。新規プロジェクトでは前者のみで足りる旨を `tip` で補足
+
+### 検証
+- 横断グレップで拾ったレガシー構文ヒット箇所を全数目視確認、対比例として意図的な提示（`reference/svelte5/+page.md` の Svelte 4 ↔ 5 対比表、`runes/props`・`runes/bindable`・`basics/template-syntax` の「Svelte 4 以前の書き方」ブロック、`introduction/hello-world` / `introduction/why-svelte` / `runes/runes-introduction` / `advanced/reactive-stores` / `basics/motion` の新旧比較、`svelte-mcp/tools` / `svelte-mcp/usecases` の MCP 入力サンプル、`introduction/cli` の `sv migrate` 解説、`data-loading/basic` の `$app/state` vs `$app/stores` 比較、`basics/app-modules` のレガシー併記セクション）と区別
+- Svelte MCP `svelte-autofixer` で PWA の `+layout.svelte`、`+error.svelte`、`routing-internals` の新サンプルを検証 → いずれも `issues: []`
+
 ## [2026-04-18] - PWA 化（SveltePress 廃止で失われた機能を復活）
 
 ### 概要

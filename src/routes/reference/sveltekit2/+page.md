@@ -1602,15 +1602,16 @@ export const load: PageServerLoad = async ({ params }) => {
 ```svelte
 <!-- src/routes/+error.svelte -->
 <script lang="ts">
-  import { page } from '$app/stores';
-  import type { PageData } from './$types';
+  import { page } from '$app/state';
 
-  let { error, status }: { error: App.Error; status: number } = $props();
+  // +error.svelte は page.error / page.status を使う（独自 props ではない）
+  const status = $derived(page.status);
+  const error = $derived(page.error);
 </script>
 
 <div class="error-page">
   <h1>{status}</h1>
-  <p>{error.message}</p>
+  <p>{error?.message}</p>
 
   {#if import.meta.env.DEV}
     <pre>{JSON.stringify(error, null, 2)}</pre>

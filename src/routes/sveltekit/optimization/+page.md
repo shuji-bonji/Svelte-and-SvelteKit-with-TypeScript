@@ -84,6 +84,42 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     </div>
   </a>
   
+  <a href="{base}/sveltekit/optimization/pwa/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📱</div>
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
+        Service Workers / PWA
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">オフライン対応とインストール可能なWebアプリを実装します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
+        <li><strong>service-worker.ts</strong>: SvelteKit規約</li>
+        <li><strong>プリキャッシュ</strong>: ビルド成果物</li>
+        <li><strong>ランタイムキャッシュ</strong>: fetchの制御</li>
+        <li><strong>manifest.json</strong>: インストール対応</li>
+        <li><strong>更新戦略</strong>: skipWaiting と通知</li>
+      </ul>
+    </div>
+  </a>
+
+  <a href="{base}/sveltekit/optimization/observability/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">📊</div>
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
+        Observability
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">ログ／メトリクス／トレースで本番環境を計測します。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
+        <li><strong>Web Vitals</strong>: RUM の収集</li>
+        <li><strong>OpenTelemetry</strong>: 分散トレース</li>
+        <li><strong>server hooks</strong>: リクエスト計測</li>
+        <li><strong>Sentry</strong>: エラーモニタリング</li>
+        <li><strong>ダッシュボード</strong>: 可視化戦略</li>
+      </ul>
+    </div>
+  </a>
+
   <a href="{base}/sveltekit/optimization/seo/" class="flex no-underline group h-full not-prose" style="color: inherit;">
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔍</div>
@@ -176,10 +212,12 @@ export default defineConfig({
 
 ### 推奨学習順序
 
-1. **パフォーマンス最適化** - Core Web Vitalsの改善
-2. **キャッシュ戦略** - 効果的なキャッシュ実装
-3. **SEO最適化** - 検索エンジン対策
-4. **モニタリング** - 継続的な改善
+1. **ビルド最適化** - バンドル分析、Tree Shaking、圧縮
+2. **キャッシュ戦略** - HTTP/CDN/Service Worker
+3. **Service Workers / PWA** - オフラインとインストール対応
+4. **Observability** - 本番環境の計測と可視化
+5. **パフォーマンス最適化（準備中）** - Core Web Vitals の改善
+6. **SEO最適化（準備中）** - 検索エンジン対策
 
 ### 学習目標
 

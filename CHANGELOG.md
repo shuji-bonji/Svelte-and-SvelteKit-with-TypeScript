@@ -2,6 +2,40 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-18] - Svelte / SvelteKit ハブページの大改訂（Tier 1）
+
+`svelte/` と `sveltekit/` 配下のハブページ 7 枚を `sidebar.ts` の実態と整合させ、Svelte 5.x / SvelteKit 2.x の新機能（`{@attach}`、`svelte/motion`、`svelte/events`、`hydratable`、`await expressions` 実験的、`svelte/reactivity/window`、Shallow routing、Link options、Server-only modules、Remote Functions 実験的、PWA、Observability、実行環境、Packaging 等）への導線を追加。「Svelte 5 は最新版」といった時限的表現や React 18 / Angular 17 の比較を現行バージョンに更新。
+
+### 更新（Tier 1 ハブ 7 ページ）
+- **`src/routes/svelte/+page.md`**
+  - タイトル変更: 「Svelte 5 Runes完全ガイド - TypeScriptで学ぶモダンUI開発」→「Svelte 5完全ガイド」（sidebar.ts line 69 と整合）
+  - description を Runes 偏重から「Svelte 5 全体」に拡張
+  - 基本編テーブルに 4 記事（`{@attach}` アタッチメント、`svelte/motion`、`svelte/easing`、`svelte/events`）を追加
+  - 実践編テーブルに 3 記事（hydratable、await expressions 実験的、`svelte/reactivity/window`）を追加
+  - 他フレームワーク比較表を React 19 / Angular 19 ベースに更新（バンドルサイズ注記も追加）
+  - 「Svelte 5 は最新版」表現を時限的でない説明に置換、レガシー構文の注記を追加
+  - プロジェクト作成コマンドに `npx sv create`（SvelteKit 推奨）を追記
+- **`src/routes/sveltekit/+page.md`**
+  - ルーティングテーブルにエラーページ、Shallow routing、Link options を追加
+  - サーバーサイド編テーブルに Server-only modules、Remote Functions（実験的）を追加
+  - アプリケーション構築編テーブルに認証ベストプラクティス、Snapshots を追加
+  - 最適化編テーブルにビルド最適化、Service Workers / PWA、Observability を追加
+  - デプロイ・運用編テーブルに実行環境とランタイム、Packaging を追加
+  - CLI コマンドを `npm create svelte@latest` → `npx sv create` に更新（2 箇所）
+  - FAQ 見出しの「A:」重複表示を修正
+- **`src/routes/svelte/basics/+page.md`**: カードを 7 → 11 枚に拡張（`{@attach}`、`svelte/motion`、`svelte/easing`、`svelte/events` を追加）
+- **`src/routes/svelte/advanced/+page.md`**: カードを 7 → 10 枚に拡張（hydratable、await expressions 実験的、`svelte/reactivity/window` を追加）
+- **`src/routes/sveltekit/routing/+page.md`**: カードを 3 → 6 枚に拡張（エラーページ、Shallow routing、Link options を追加）＋ 「6 つのセクション」に冒頭説明を更新
+- **`src/routes/sveltekit/server/+page.md`**: カードを 5 → 7 枚に拡張（Server-only modules、Remote Functions 実験的を追加）＋ 推奨学習順序を 7 ステップに更新
+- **`src/routes/sveltekit/optimization/+page.md`**: カードを 4 → 6 枚に拡張（Service Workers / PWA、Observability を追加）＋ 推奨学習順序を 6 ステップに再整理
+
+### 検証
+- `npx svelte-check` エラー 0 件（警告 1 件は既存 Mermaid.svelte、本変更と無関係）
+
+### 関連
+- 計画書: `UPDATE-PLAN-2026-04.md`
+- 次フェーズ: Tier 2（主要記事の情報精度、約 20 枚）、Tier 3（細部精度、残り約 70 枚）
+
 ## [2026-04-18] - ESLint/Prettier解説追加・sitemap.xml生成復旧
 
 Svelte MCP × ESLint × typescript-eslint の品質保証三点セットを体系的に解説する記事を2本追加。また、SveltePress廃止時に消失していた `sitemap.xml` 生成機能をSvelteKitネイティブの `+server.ts` エンドポイント方式で復旧。

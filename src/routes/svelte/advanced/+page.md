@@ -143,6 +143,60 @@ Svelte 5の基本を理解したら、次はより高度な機能とパターン
       </ul>
     </div>
   </a>
+
+  <a href="{base}/svelte/advanced/hydratable/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">💧</div>
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
+        hydratable
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">SSR で計算した値をクライアントで再利用するための仕組みを学びます。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
+        <li><code>hydratable</code> の基本</li>
+        <li>SSR とクライアントの二重計算防止</li>
+        <li>fetch 結果の再利用</li>
+        <li>SvelteKit での活用</li>
+        <li>実装例と注意点</li>
+      </ul>
+    </div>
+  </a>
+
+  <a href="{base}/svelte/advanced/await-expressions/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">⏳</div>
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
+        await expressions <span class="text-xs opacity-70">（実験的）</span>
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">テンプレートや <code>&lt;script&gt;</code> のトップレベルで直接 <code>await</code> する新機能を学びます。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
+        <li><code>&#123;#await&#125;</code> との違い</li>
+        <li>モジュールトップレベルの <code>await</code></li>
+        <li><code>svelte:boundary</code> との併用</li>
+        <li>SSR との関係</li>
+        <li>有効化方法と現状の制限</li>
+      </ul>
+    </div>
+  </a>
+
+  <a href="{base}/svelte/advanced/reactivity-window/" class="flex no-underline group h-full not-prose" style="color: inherit;">
+    <div class="section-card p-4 cursor-pointer flex flex-col w-full">
+      <div class="text-3xl mb-2">🪟</div>
+      <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
+        svelte/reactivity/window
+        <span class="inline-block ml-1 text-xs opacity-60">→</span>
+      </h3>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">window のサイズ・スクロール・devicePixelRatio などを Runes 的に扱います。</p>
+      <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
+        <li><code>innerWidth / innerHeight</code></li>
+        <li><code>scrollX / scrollY</code></li>
+        <li><code>devicePixelRatio</code></li>
+        <li>SSR セーフな扱い</li>
+        <li>media query 系との比較</li>
+      </ul>
+    </div>
+  </a>
 </div>
 
 ## 前提知識

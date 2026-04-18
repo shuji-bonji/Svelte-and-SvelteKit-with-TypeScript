@@ -60,17 +60,24 @@ export default defineConfig({
 			workbox: {
 				// @vite-pwa/sveltekit は globDirectory をデフォルトで `.svelte-kit/output` にし、
 				// `client/**` と `prerendered/**` プレフィックスで glob を解決する。
-				// その後 manifestTransforms が `prerendered/pages/index.html` → `${base}/` のように
-				// URL を base 起点へ変換するため、ここでは plugin プレフィックス前提で記述する。
+				// その後 manifestTransforms が `prerendered/pages/xxx/index.html` → `${base}/xxx/` のように
+				// URL を base 起点＋trailingSlash 付きに変換する。
 				//
 				// 戦略：
-				//   - JS/CSS/フォント/アイコン等の静的アセット → precache（SW 起動時に必須）
-				//   - 全 prerender ページ HTML → precache すると肥大化するためここでは含めず、
-				//     runtime caching の NetworkFirst (pages-cache) に任せる
+				//   - 全 prerender 済み HTML を precache。
+				//     → 各 URL が「自分用の HTML」を返せるため、記事ページでリロードしても
+				//       navigateFallback（= root index.html）に落ちずに該当ページの内容で起動する。
+				//   - 含めないと: SW が全ナビゲーションに root HTML を返し、SvelteKit の
+				//     ハイドレーションが root 相当で走り、リロード時にトップへ戻る現象が起きる。
+				//   - サイズ増加分は StaleWhileRevalidate 系の runtime cache より大きいが、
+				//     オフライン完全対応と UX の一貫性を優先する。
 				globPatterns: [
 					'client/**/*.{js,css,ico,png,svg,webp,woff,woff2,webmanifest}',
-					'prerendered/pages/index.html' // トップだけ precache（オフライン起動の保険）
+					'prerendered/**/*.html'
 				],
+				// precache サイズの目安を引き上げる（1 ファイルあたりの上限）。
+				// 記事 HTML が大きめになるため 3MiB に拡張しておく。
+				maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
 				globIgnores: ['**/sw*', '**/workbox-*', 'server/**'],
 				// navigateFallback は plugin デフォルト (`adapterFallback ?? base`) に任せる。
 				// `${base}/` (= manifestTransforms 後の index.html URL) に自動で揃うため、

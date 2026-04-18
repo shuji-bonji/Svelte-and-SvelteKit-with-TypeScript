@@ -34,12 +34,57 @@
 	let loading = $state(false);
 	let error = $state<string | undefined>(undefined);
 
+	// ネットワーク状態（online/offline）。SSR では undefined となるため、
+	// $effect 内（クライアントでのみ実行）で初期化する。
+	let isOnline = $state(true);
+
+	$effect(() => {
+		if (typeof navigator === 'undefined' || typeof window === 'undefined') return;
+		isOnline = navigator.onLine;
+		const handleOnline = () => {
+			isOnline = true;
+		};
+		const handleOffline = () => {
+			isOnline = false;
+		};
+		window.addEventListener('online', handleOnline);
+		window.addEventListener('offline', handleOffline);
+		return () => {
+			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('offline', handleOffline);
+		};
+	});
+
 	// Base64+URIエンコードされたコードをデコード
 	function decodeCode(encoded: string): string {
 		try {
 			return decodeURIComponent(atob(encoded));
 		} catch {
 			return encoded;
+		}
+	}
+
+	/**
+	 * オフライン時、svelte.dev 側の SW（別オリジン）がこの URL をキャッシュ済みか軽く確認する。
+	 *
+	 * - mode: 'no-cors' でクロスオリジンの opaque フェッチ
+	 * - svelte.dev 側 SW が cache hit する → resolve（ネットワーク不要）
+	 * - cache miss かつオフライン → TypeError で reject → false
+	 *
+	 * 同一オリジン SW 側では svelte.dev 宛は一切インターセプトしないため、
+	 * この probe はブラウザのネットワークスタックまで下りていく。
+	 */
+	async function probePlaygroundReachable(url: string): Promise<boolean> {
+		try {
+			await fetch(url, {
+				method: 'GET',
+				mode: 'no-cors',
+				cache: 'default',
+				redirect: 'follow'
+			});
+			return true;
+		} catch {
+			return false;
 		}
 	}
 
@@ -50,14 +95,29 @@
 
 		try {
 			const source = decodeCode(code);
-			iframeUrl = await buildPlaygroundEmbedUrl(source, {
+			const url = await buildPlaygroundEmbedUrl(source, {
 				version: svelteVersion,
 				outputOnly
 			});
+
+			// オフライン時のみ、svelte.dev 側 SW キャッシュの有無を事前 probe する。
+			// オンライン時は直接 iframe をマウントして svelte.dev に任せる。
+			if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+				const reachable = await probePlaygroundReachable(url);
+				if (!reachable) {
+					error =
+						'オフラインのため Svelte Playground（svelte.dev）に到達できません。このコード例はまだブラウザにキャッシュされていないため、オンラインに戻ってから再度お試しください。コード自体は上に表示されています。';
+					iframeUrl = url; // 外部リンクだけ使えるよう保持
+					return;
+				}
+			}
+
+			iframeUrl = url;
 			showPlayground = true;
 		} catch (e) {
 			console.error('Playground URL の生成に失敗しました:', e);
-			error = 'プレビューを生成できませんでした。ブラウザが CompressionStream に対応していない可能性があります。';
+			error =
+				'プレビューを生成できませんでした。ブラウザが CompressionStream に対応していない可能性があります。';
 		} finally {
 			loading = false;
 		}
@@ -65,6 +125,10 @@
 
 	function closePlayground() {
 		showPlayground = false;
+	}
+
+	function dismissError() {
+		error = undefined;
 	}
 
 	/**
@@ -98,8 +162,30 @@
 	{/if}
 
 	{#if error}
-		<div class="error-message">
-			{error}
+		<div class="error-message" role="alert">
+			<div class="error-message-body">
+				{error}
+			</div>
+			<div class="error-message-actions">
+				{#if iframeUrl}
+					<a
+						class="action-btn action-btn-sm"
+						href={iframeUrl.replace('/embed', '')}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						svelte.dev で開く ↗
+					</a>
+				{/if}
+				<button
+					type="button"
+					class="action-btn action-btn-sm"
+					onclick={dismissError}
+					aria-label="メッセージを閉じる"
+				>
+					閉じる
+				</button>
+			</div>
 		</div>
 	{/if}
 
@@ -120,6 +206,11 @@
 				コードに戻る
 			</button>
 		{:else}
+			{#if !isOnline}
+				<span class="offline-indicator" title="オフラインです。キャッシュ済みのコード例のみ実行できます。">
+					● オフライン
+				</span>
+			{/if}
 			<button
 				type="button"
 				class="action-btn action-btn-primary"
@@ -172,6 +263,9 @@
 	}
 
 	.error-message {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		padding: 0.75rem 1rem;
 		background: #fef2f2;
 		color: #991b1b;
@@ -179,10 +273,33 @@
 		font-size: 0.875rem;
 	}
 
+	.error-message-body {
+		line-height: 1.5;
+	}
+
+	.error-message-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
+	}
+
 	:global(.dark) .error-message {
 		background: #450a0a;
 		color: #fecaca;
 		border-top-color: #991b1b;
+	}
+
+	.offline-indicator {
+		display: inline-flex;
+		align-items: center;
+		font-size: 0.75rem;
+		color: #b45309;
+		padding: 0 0.5rem;
+		user-select: none;
+	}
+
+	:global(.dark) .offline-indicator {
+		color: #fbbf24;
 	}
 
 	.live-code-actions {
@@ -228,5 +345,10 @@
 	.action-btn:disabled {
 		opacity: 0.6;
 		cursor: wait;
+	}
+
+	.action-btn-sm {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.75rem;
 	}
 </style>

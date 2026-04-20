@@ -278,9 +278,9 @@ let count = $state(0);
 </div>
 ```
 
-<Admonition type="tip" title="Click fold/expand code をクリックするとコードが展開表示されます。">
-
-</Admonition>
+:::tip[コードを動かしてみる]
+コードブロック下の **▶ インタラクティブに試す** を押すと、svelte.dev の Playground が開いて実際に編集・実行できます。
+:::
 
 ## Svelte 5の新機能
 

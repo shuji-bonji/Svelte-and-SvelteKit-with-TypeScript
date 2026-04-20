@@ -56,7 +56,7 @@ npx sv create my-app
 npm create svelte@latest my-app
 ```
 
-:::important
+:::info[重要]
 `npx sv create`は最新のSvelteKit CLIツールで、より洗練されたセットアップ体験を提供します。
 :::
 

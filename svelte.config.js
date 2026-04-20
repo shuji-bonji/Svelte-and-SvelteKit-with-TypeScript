@@ -3,6 +3,7 @@ import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { admonitionPreprocessor } from './markdown-plugins/preprocess-admonition-import.js';
 
 /**
  * Markdown 中の内部絶対リンク `[text](/foo)` に `paths.base` を自動付与する rehype プラグイン。
@@ -140,7 +141,14 @@ const mdsvexOptions = {
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.md'],
-	preprocess: [mdsvex(mdsvexOptions)],
+	preprocess: [
+		// mdsvex より前に走らせる:
+		//   `:::tip[…] … :::` の container directive を `<Admonition>` に書き換え、
+		//   該当ファイルに Admonition コンポーネントの import を自動注入する。
+		//   変換後の Markdown を mdsvex が通常どおり処理する。
+		admonitionPreprocessor(),
+		mdsvex(mdsvexOptions)
+	],
 	compilerOptions: {
 		// mdsvexが生成するコードは$$propsを使うためrunesモードを無効にする
 		runes: ({ filename }) => {

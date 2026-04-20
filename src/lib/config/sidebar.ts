@@ -222,6 +222,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               ],
             },
             {
+              title: '既存システム統合',
+              to: '/svelte/architecture/hybrid-integration/',
+            },
+            {
               title: 'デスクトップ・モバイル',
               to: '/svelte/architecture/desktop-mobile/',
             },

@@ -2,6 +2,49 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-21] - `svelte/architecture/` セクションのハブ同期
+
+### 概要
+`src/routes/svelte/architecture/` 配下には `spa-patterns`（概要・Firebase・Supabase・GraphQL）・`hybrid-integration`・`desktop-mobile` の実ページが存在していたが、`/svelte/+page.md`（ハブ）のカード一覧・学習ロードマップ Mermaid 図・推奨学習順序には反映されておらず、サイドバー側も `hybrid-integration` が未登録だった。サイドバーとハブの案内を実態に合わせて同期。
+
+### 更新
+- **`src/lib/config/sidebar.ts`**: `/svelte/architecture/` 配下に `既存システム統合 → /svelte/architecture/hybrid-integration/` を追加
+- **`src/routes/svelte/+page.md`**
+  - 学習コンテンツカードを 3 枚（基本編・Runes・実践編）→ **4 枚**（+ 🏛️ アーキテクチャ編）に拡張。アーキテクチャ編カードには概要／SPA+API／Firebase／Supabase／GraphQL／既存システム統合／デスクトップ・モバイルの 7 リンクを配置
+  - 学習ロードマップ Mermaid を `Advanced → Choice` から `Advanced → Architecture → Choice` に変更（teal 配色で `Architecture` ノードを追加）
+  - 「推奨学習順序」を 4 項目→**5 項目**に、「学習の始め方」に Step 4（アーキテクチャ選定）を追加
+- **`CLAUDE.md`**: 第2部のカリキュラム記述から「計画中:」表記を除去し、実際のサブトピック（SPA+API、BaaS=Firebase/Supabase、GraphQL、既存システム統合、Tauri/Electron/Capacitor）に差し替え。`hybrid-integration` はスタブである旨を注記
+
+### 未対応（今後の宿題）
+- **`src/routes/svelte/architecture/hybrid-integration/+page.md`**: 32 行のスタブ状態。本文内の「準備中」Admonition 付きで公開。Rails/Laravel/Django への段階導入の具体例を加筆予定
+
+## [2026-04-21] - Admonition ディレクティブ記法（`:::`）を本命ルートに復活
+
+### 概要
+SveltePress 廃止後の mdsvex 移行で機能停止していた `:::note` / `:::tip` / `:::warning` / `:::caution` / `:::info` のディレクティブ記法を復活。原則として `:::` 記法を本命ルートとし、`<Admonition>` コンポーネント直書きは動的プロパティ等の例外用途のみとするルールを CLAUDE.md に明文化した。
+
+### 追加
+- **`markdown-plugins/preprocess-admonition-import.js`**: Svelte preprocessor（`markup` フック）として `mdsvex` の**前段**で走る正規表現ベースの変換器
+  - `:::type[title]` → `<Admonition type="type" title="title">`、対応する `:::` → `</Admonition>` に変換（スタックベースでネスト対応）
+  - コードフェンス（` ``` ` / ` ~~~ `）内の `:::` は変換しない（記法例示に安全）
+  - 先頭インデントを許容（`^\s*` 前置）
+  - 変換を行ったファイルには `import Admonition from '$lib/components/Admonition.svelte'` を自動注入（既存 `<script>` にマージ、無ければフロントマター直後に新規挿入）
+  - Svelte 属性値のサニタイズ（`&` `"` `{` `}` をエスケープ）
+- **`svelte.config.js`**: `preprocess` 配列の先頭に `admonitionPreprocessor()` を配置
+- **CLAUDE.md**: 「情報の強調表示（Admonition）」セクションを全面刷新。原則 `:::` 記法ルール／サポート種別／変換の仕組み／例外ケースを明記。ディレクトリ構造にも `markdown-plugins/` を追記
+
+### 採用しなかったアプローチ
+- **`remark-directive` + `mdast-util-directive`**: mdsvex 0.12.7 が内包する `remark-parse` が v8 系で、`remark-directive` v4 / v1 系いずれも unified 11 系を要求するため互換性が取れず断念。最新 mdsvex で公式対応されるまでは preprocessor アプローチで維持する
+
+### 既存記事の整合修正
+- **`src/routes/introduction/setup/+page.md`**: `:::important` → `:::info[重要]`（`important` は Admonition の `type` に存在しないため）
+- **`src/routes/svelte/basics/attachments/+page.md`**: `:::note[ネストしたエフェクト]` の閉じ `:::` 欠落を補完
+- **`src/routes/svelte/runes/derived/+page.md`**: 複数箇所で `<Admonition>` 直書きと `:::` が混在し対応が取れていなかったのを修正。「オーバーライドの動作」「非同期派生値の注意」ブロックを `:::` 記法に統一
+
+### 検証
+- プロジェクト内で `:::` ディレクティブ記法を使っている全 `.md` ファイルに対し、preprocessor + mdsvex 通過後の `<Admonition>` 開閉タグ数が一致することを確認（archive の `_archive/examples/features-demo/+page.md` を除く）
+- archive 配下の不整合は通常ナビゲーションから隔離されているため優先度低として後日対応
+
 ## [2026-04-18] - レガシー構文の一括検証と残存箇所の刈り取り
 
 ### 概要

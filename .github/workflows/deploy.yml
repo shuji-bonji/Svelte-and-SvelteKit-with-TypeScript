@@ -42,6 +42,7 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
+          include-hidden-files: true   # ← SvelteKit が生成する .nojekyll を落とさないため必須
 
   deploy:
     environment:

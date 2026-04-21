@@ -1,5 +1,5 @@
 ---
-title: ESLint + Prettier 設定 - Svelte 5 / SvelteKit 2.x の静的解析とフォーマッタ
+title: ESLint と Prettier 設定 - Svelte 5 対応
 description: Svelte 5 / SvelteKit 2.x プロジェクトにおける ESLint と Prettier の導入方法を TypeScript 前提で解説。sv add による最速セットアップから手動構成、VS Code 統合、よくあるトラブルシューティングまで網羅。
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: エラーページのカスタマイズ - 404/500をTypeScriptで実装
+title: 404/500 エラーページのカスタマイズ
 description: SvelteKitでカスタム404/500エラーページを実装する方法。+error.svelte、handleError hooks、動的エラーページ、SEO対応を実践コードで解説
 ---
 

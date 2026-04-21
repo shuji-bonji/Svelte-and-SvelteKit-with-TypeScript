@@ -1,5 +1,5 @@
 ---
-title: $state - Svelte 5のリアクティブ状態管理をTypeScriptで完全理解
+title: $state - リアクティブ状態管理
 description: Svelte 5の$stateルーン完全ガイド - TypeScriptでの型安全な状態管理、配列・オブジェクトの操作、$state.raw/$state.snapshot、クラス統合、Reactとの比較を実践コードで解説
 ---
 

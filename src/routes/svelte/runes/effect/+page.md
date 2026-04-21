@@ -1,5 +1,5 @@
 ---
-title: $effect完全ガイド - Svelte 5で副作用処理とuseEffectとの違いを理解
+title: $effect - 副作用処理 vs useEffect
 description: Svelte 5の$effectルーン完全解説 - React useEffectとの違いを比較しながらDOM操作・API呼び出し・クリーンアップ処理をTypeScriptで実装。依存配列不要の自動追跡でバグを削減する実践パターン
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: $derived - Svelte 5の計算プロパティをTypeScriptで完全マスター
+title: $derived - 派生値・計算プロパティ
 description: Svelte 5の$derived/$derived.by完全ガイド - TypeScriptで計算プロパティ・派生値・メモ化を実装。React useMemo/Vue computedとの違い、配列フィルタリング、パフォーマンス最適化を実践コードで解説
 ---
 

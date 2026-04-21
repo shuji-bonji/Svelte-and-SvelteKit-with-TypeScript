@@ -1,5 +1,5 @@
 ---
-title: '$derived vs $effect vs derived.by 完全比較ガイド'
+title: '$derived / $effect / derived.by 比較'
 description: Svelte 5のリアクティビティを扱う$derived、$effect、derived.byの挙動を徹底比較。依存関係追跡やメモ化コスト、購読解除タイミング、適材適所の選択基準をコード例とベンチマークで整理し、設計判断を助ける深掘り解説。実装アンチパターンも共有。詳しい手順とチェックリスト付き。補足
 ---
 

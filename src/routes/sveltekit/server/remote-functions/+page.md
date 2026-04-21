@@ -1,5 +1,5 @@
 ---
-title: Remote Functions - 型安全なクライアント-サーバー通信
+title: Remote Functions - 型安全通信
 description: SvelteKit 2.27+のRemote Functionsで型安全なクライアント-サーバー通信を実現。query、form、command、prerenderの4種類の使い分けとZod/ValibotによるバリデーションをTypeScriptで解説
 ---
 

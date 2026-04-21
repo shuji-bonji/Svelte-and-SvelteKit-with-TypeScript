@@ -1,5 +1,5 @@
 ---
-title: Svelte MCP × ESLint × typescript-eslint 連携ガイド
+title: Svelte MCP × typescript-eslint 連携
 description: Svelte 5 / SvelteKit 2.x における Svelte MCP、eslint-plugin-svelte、typescript-eslint の三点セット連携。役割分担、フル構成のflat config、2026年時点の安定性、CI/CD統合、トラブルシューティングを TypeScript 前提で解説。
 ---
 

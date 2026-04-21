@@ -1,5 +1,5 @@
 ---
-title: HTML <template> と Svelte #snippet の違い
+title: HTML <template> vs Svelte #snippet
 description: Svelte5のHTMLテンプレートとSnippetsをTypeScriptで徹底解説 - Snippets定義方法、パラメータ設定、再利用パターン、スロットとの違い、レンダリング、実践的な活用方法を実例を交えて詳細に解説します
 ---
 

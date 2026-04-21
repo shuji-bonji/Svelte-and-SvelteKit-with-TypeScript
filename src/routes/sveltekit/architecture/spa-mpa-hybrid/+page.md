@@ -1,5 +1,5 @@
 ---
-title: SPA/MPA混在アーキテクチャ - SvelteKitでハイブリッドアプリを構築
+title: SPA/MPA ハイブリッド構築
 description: SvelteKitでSPAとMPAを混在させるハイブリッドアーキテクチャの実装方法。ページごとのレンダリング戦略、CSR/SSR切り替え、パフォーマンス最適化をTypeScript実践コードで解説
 ---
 

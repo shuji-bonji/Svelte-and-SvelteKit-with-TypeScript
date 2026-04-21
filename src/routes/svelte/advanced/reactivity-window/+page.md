@@ -1,5 +1,5 @@
 ---
-title: svelte/reactivity/window - リアクティブなウィンドウ値
+title: svelte/reactivity/window - リアクティブ値
 description: Svelteのsvelte/reactivity/windowモジュールでウィンドウサイズ、スクロール位置、オンライン状態をリアクティブに取得。TypeScriptでの実装を解説
 ---
 

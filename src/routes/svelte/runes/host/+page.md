@@ -1,13 +1,36 @@
 ---
 title: $host - カスタムエレメント
-description: Svelte5の$hostルーンを使ったTypeScriptによるWeb Components開発を実現 - カスタムエレメント作成、Shadow DOM操作、プロパティ定義、イベント発火、ライフサイクル管理の実装方法を実例を交えて詳しく解説します
+description: Svelte 5 の $host() ルーンで Web Components（カスタムエレメント）を開発する TypeScript ガイド。ホスト要素への参照取得、dispatchEvent によるカスタムイベント発火、Shadow DOM・プロパティ定義・ライフサイクル管理を実コードで解説します。
 ---
 
 <script>
 	import Admonition from '$lib/components/Admonition.svelte';
 </script>
 
-`$host`ルーンは、Svelte 5で導入された、カスタムエレメント（Web Components）内でホスト要素にアクセスするための特別なルーンです。
+`$host()` は、Svelte 5 で導入されたルーンで、**カスタムエレメント（Web Components）としてコンパイルされたコンポーネントの内側から、そのホスト要素（DOM ノード）にアクセスする**ために使います。React・Vue・Angular など Svelte の外にあるフレームワークや素の HTML に対して、Web 標準の形でコンポーネントを提供したいときに必要になります。
+
+代表的な用途は、コンポーネントの状態変化を外の世界に通知する **カスタムイベントの発火** です。
+
+```svelte
+<!-- Counter.svelte -->
+<svelte:options customElement="my-counter" />
+
+<script lang="ts">
+  let count = $state(0);
+
+  function increment() {
+    count++;
+    // <my-counter> 自身からカスタムイベントを発火
+    $host().dispatchEvent(
+      new CustomEvent('countchange', { detail: { count } })
+    );
+  }
+</script>
+
+<button onclick={increment}>+{count}</button>
+```
+
+`$host()` は **`<svelte:options customElement="..." />` を指定したコンポーネントの中でのみ使用可能** です。通常の Svelte コンポーネント内で呼び出すとコンパイル時にエラーになります。
 
 ## カスタムエレメントとは
 

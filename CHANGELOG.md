@@ -2,6 +2,49 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-04-21] - SEO 改善：タイトル 70 文字超過 14 ページ修正＋ Tier 1 記事 3 本のリライト
+
+### 概要
+Bing Webmaster Tools の警告（タイトル 70 文字超過）対策として、`<title>` フルレンダリング（`| TypeScriptで学ぶ Svelte 5/SvelteKit` の 35 文字サフィックス込み）が 70 文字を超えていた 14 ページのタイトルを短縮。あわせて、GSC 3 ヶ月分のデータで **高表示・低 CTR** だった Tier 1 の 3 ページをリライトし、タイトル/ディスクリプション/導入部の SEO 最適化を実施。
+
+### タイトル短縮（14 ページ）
+全ページで frontmatter `title` を 35 文字以内に揃え、フルタイトルが 70 文字以下になることを確認（検証スクリプト合格）。
+
+| ページ | Before(full) | After(full) |
+| --- | ---: | ---: |
+| `introduction/eslint-prettier` | 95 | 69 |
+| `svelte/runes/comparison` | 82 | 70 |
+| `svelte/runes/effect` | 81 | 65 |
+| `svelte-mcp/eslint-integration` | 80 | 68 |
+| `svelte/runes/derived` | 80 | 57 |
+| `svelte/runes/state` | 79 | 54 |
+| `deep-dive/derived-vs-effect-vs-derived-by` | 76 | 68 |
+| `svelte/runes/bindable` | 76 | 57 |
+| `sveltekit/architecture/spa-mpa-hybrid` | 76 | 51 |
+| `svelte/advanced/reactivity-window` | 75 | 67 |
+| `deep-dive/html-templates-and-snippets` | 72 | 69 |
+| `sveltekit/routing/error-pages` | 72 | 56 |
+| `svelte/runes/props` | 71 | 57 |
+| `sveltekit/server/remote-functions` | 71 | 59 |
+
+### Tier 1 リライト（高表示・低 CTR 対策）
+- **`src/routes/svelte/runes/host/+page.md`**
+  - description を「Web Components / $host() / dispatchEvent / Shadow DOM」を含むキーワード豊富な版に刷新
+  - 冒頭の 1 文だけだった導入を、「いつ `$host()` が必要か」「代表的な用途は dispatchEvent によるカスタムイベント発火」を明示する 3 段落に拡張。最小の Counter コード例を前倒し配置
+- **`src/routes/svelte/basics/special-elements/+page.md`**
+  - description に `svelte:element` / `svelte:window` / `svelte:document` / `svelte:body` / `svelte:head` / `svelte:options` / `svelte:boundary` を全列挙し、個別要素名で検索するユーザーとのマッチを強化
+- **`src/routes/svelte/runes/derived/+page.md`**
+  - 導入直後に「`$derived` と `$derived.by` の使い分け早見表」セクションを新設（比較表＋最小コード例）。「derived」「derived by」で検索するユーザーがページ上部で両者の違いを即確認できるよう前倒し
+  - 元々 `## $derived.by - 複雑な計算ロジック` 冒頭にあった重複 tip（同内容の使い分け説明）を削除し、早見表セクションへのアンカーリンクで参照
+
+### 運用ルール追加
+- 新規 `+page.md` 追加時は **frontmatter `title` を 35 文字以内** に収めれば、サフィックス付与後の `<title>` が 70 文字以下を自動的に満たす
+- サフィックスに `TypeScript` / `Svelte 5` / `SvelteKit` が含まれるため、各ページ title ではこれらの繰り返しを避け、**ページ固有の概念・API 名・機能名** を主役にする
+
+### 検証
+- Python スクリプトで `src/routes/**/+page.md` を再帰スキャンし、全 142 ページで `<title>` フル長 ≤ 70 を確認
+- 新規コード例は `svelte-autofixer` MCP で検証（`DerivedExample.svelte` クリーン、`Counter.svelte` は `customElement: true` コンパイラオプションに関する meta 警告のみで、既存同ページの例と整合）
+
 ## [2026-04-21] - `svelte/architecture/` セクションのハブ同期
 
 ### 概要

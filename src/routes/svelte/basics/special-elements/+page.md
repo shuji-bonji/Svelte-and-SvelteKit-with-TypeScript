@@ -1,6 +1,6 @@
 ---
 title: 特別な要素
-description: Svelte5の特別な要素（svelte:element、svelte:window、svelte:boundaryなど）をTypeScriptで活用。動的要素作成、イベントバインディング、エラー処理の実装パターンを解説
+description: Svelte 5 の特別な要素（svelte:element / svelte:window / svelte:document / svelte:body / svelte:head / svelte:options / svelte:boundary）を TypeScript で活用。動的要素生成、window・document へのイベントバインディング、head へのメタタグ追加、エラーバウンダリの実装パターンを解説。
 ---
 
 <script>

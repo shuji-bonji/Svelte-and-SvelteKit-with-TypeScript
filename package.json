@@ -25,7 +25,7 @@
 		"svelte": "^5.55.5",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",
-		"typescript": "^5.7.0",
+		"typescript": "^6.0.3",
 		"vite": "^6.4.2",
 		"vite-plugin-pwa": "^1.2.0",
 		"workbox-window": "^7.4.0"

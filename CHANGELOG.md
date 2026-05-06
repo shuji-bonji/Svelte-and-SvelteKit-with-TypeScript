@@ -2,22 +2,41 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
-## [2026-05-06] - 依存関係メジャーアップデート（Vite 8 / vite-plugin-svelte 7）
+## [2026-05-06] - 依存関係メジャーアップデート（Vite 8 / vite-plugin-svelte 7 / TypeScript 6）
 
 ### 概要
-Dependabot から提示されていたメジャー更新 2 件と、マイナー／パッチ 2 件を merge し、ビルドツールチェインを 1 段階引き上げた。SveltePress 廃止後はフレームワーク固有のバージョン制約から解放されており、いずれの PR も大きな修正なく適用完了。残るは TypeScript 6.0（#179）のみで、こちらは周辺ツールの対応状況を確認したうえで別途判断する。
+Dependabot から提示されていたメジャー更新 3 件と、マイナー／パッチ 2 件を merge し、ビルドツールチェインを 1 段階引き上げた。SveltePress 廃止後はフレームワーク固有のバージョン制約から解放されており、いずれの PR も大きな修正なく適用完了。
 
 ### 依存パッケージ更新
 - **vite**: 6.4.2 → 8.0.10（#183、メジャー2段飛ばし）
 - **@sveltejs/vite-plugin-svelte**: 5.1.1 → 7.x（#180、メジャー2段飛ばし。Vite 8 と組み合わせ前提のためセットで検証）
+- **typescript**: 5.9.3 → 6.0.3（#179、メジャー）
 - **@sveltejs/kit**: 2.57.1 → 2.58.0（#182、マイナー）
 - **svelte**: 5.55.4 → 5.55.5（#181、パッチ）
 
-### CLAUDE.md 更新
-- 技術スタック表の Vite を「7.x以上」→ **「8.x以上」** に変更
+### TypeScript 6 の事前検証
+本体 TS の lib/strictness 変更が広く影響するため、merge 前に sandbox（`/tmp` に本リポジトリを複製、`typescript@6.0.3` 固定）で実走確認を実施。
 
-### 留保事項（未 merge）
-- **typescript 5.9.3 → 6.0.3**（#179）：周辺ツールの peerDependencies は概ね TS 6 を許容しているところまで確認済み（`svelte-check` 4.4.8 は `typescript >= 5.0.0`、`svelte2tsx` 0.7.55 は `^4.9.4 || ^5.0.0 || ^6.0.0` を明示、`@sveltejs/kit` 2.59 は `^5.3.3 || ^6.0.0`）。本リポジトリでの `svelte-check` 実走および記事内コード例のビルド検証はこれから
+- 周辺ツールの peerDependencies はいずれも TS 6 を許容
+  - `svelte-check` 4.4.8 → `typescript >= 5.0.0`
+  - `svelte2tsx` 0.7.55 → `^4.9.4 || ^5.0.0 || ^6.0.0`（**TS 6 を明示**）
+  - `@sveltejs/kit` 2.59 → `^5.3.3 || ^6.0.0`（**TS 6 を明示**）
+  - `mdsvex` 0.12.7 → TS の peerDependency なし（型処理は svelte2tsx 経由）
+- `npm install` → 594 packages、peer-dep 衝突なし
+- `npm run check`（`svelte-check`）→ **0 errors / 1 warning**（残った 1 件は `Mermaid.svelte` の既存 a11y 警告で TS 6 とは無関係）
+- `vite build` → 21.8s で完走、PWA precache 437 entries 生成、`dist/` 出力までクリーン
+
+### CLAUDE.md 更新
+- 技術スタック表の Vite を「7.x以上」→ **「8.x以上」**
+- 技術スタック表の TypeScript を「5.x以上」→ **「6.x以上」**
+
+### README.md 更新
+- 技術スタックバージョンの最新化（Svelte 5.55+ / SvelteKit 2.58+ / TypeScript 6.0+ / Vite 8.0+ / Mermaid 11.14+）
+- SvelteKit バッジを v2.55 → v2.58 に更新
+- 推奨環境/前提条件の Node.js を「18.19+」→「20.x LTS+」に統一（CLAUDE.md の最低バージョン記述と整合）
+- セットアップ／ビルド／プレビューの記述を実態に合わせて `pnpm` → `npm` に変更（`package-lock.json` 管理・CI の `npm ci` と一致）
+- `navigation-from-config` の説明を「vite.config.ts から」→「sidebar.ts から」に修正
+- Last Updated を 2026年5月6日に更新
 
 ## [2026-04-21] - SEO 改善：タイトル 70 文字超過 14 ページ修正＋ Tier 1 記事 3 本のリライト
 

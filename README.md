@@ -13,7 +13,7 @@
 
 [![Deploy to GitHub Pages](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript/actions/workflows/deploy.yml)
 [![mdsvex](https://img.shields.io/badge/mdsvex-v0.12-orange?logo=svelte&logoColor=white)](https://mdsvex.pngwn.io/)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.55-red?logo=svelte&labelColor=000)](https://svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-v2.58-red?logo=svelte&labelColor=000)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte5](https://img.shields.io/badge/-Svelte%205-%23ff3e00?logo=svelte&logoColor=ffffff)](https://svelte.dev/)
 [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -309,34 +309,34 @@ Svelte 5 の内部実装や高度なトピックを扱います。
 
 ### コア技術
 
-- **Svelte 5** (5.53+) - 最新の Runes システム対応
-- **SvelteKit** (2.55+) - フルスタックフレームワーク
-- **TypeScript** (5.9+) - 型安全な開発環境
-- **Vite** (7.3+) - 高速ビルドツール
+- **Svelte 5** (5.55+) - 最新の Runes システム対応
+- **SvelteKit** (2.58+) - フルスタックフレームワーク
+- **TypeScript** (6.0+) - 型安全な開発環境
+- **Vite** (8.0+) - 高速ビルドツール
 
 ### ドキュメント・可視化
 
 - **mdsvex** (0.12+) - Markdown + Svelte プロセッサ
 - **Shiki** - シンタックスハイライト
 - **svelte.dev Playground embed** - 実行可能なコード例（iframe埋め込み）
-- **Mermaid** (11.12+) - ダイアグラム描画
+- **Mermaid** (11.14+) - ダイアグラム描画
 
 ### カスタム機能
 
 - **AutoPageNavigation** - ページ間の自動ナビゲーション生成
-- **navigation-from-config** - vite.config.ts から自動的にナビゲーション構造を生成
+- **navigation-from-config** - `src/lib/config/sidebar.ts`（Single Source of Truth）から自動的にナビゲーション構造を生成
 
 ### 推奨環境
 
-- **Node.js** 18.19+ (推奨: 20.x LTS)
-- **pnpm** 9.15.0+ (パッケージマネージャー)
+- **Node.js** 20.x LTS 以上
+- **npm** 10.x 以上（`package-lock.json` を採用、CI も `npm ci` で運用）
 
 ## 🚀 ローカル開発
 
 ### 前提条件
 
-- Node.js 18.19 以上（推奨: 20.x LTS）
-- pnpm 9.15.0 以上（推奨パッケージマネージャー）
+- Node.js 20.x LTS 以上
+- npm 10.x 以上
 
 ### セットアップ
 
@@ -346,10 +346,10 @@ git clone https://github.com/shuji-bonji/Svelte-and-SvelteKit-with-TypeScript.gi
 cd Svelte-and-SvelteKit-with-TypeScript
 
 # 依存関係のインストール
-pnpm install
+npm install
 
 # 開発サーバーの起動
-pnpm dev
+npm run dev
 ```
 
 開発サーバーは `http://localhost:5173` で起動します。
@@ -384,10 +384,10 @@ pnpm dev
 
 ```bash
 # プロダクションビルド
-pnpm build
+npm run build
 
 # ビルド結果のプレビュー
-pnpm preview
+npm run preview
 ```
 
 プロダクションビルドは自動的に GitHub Pages にデプロイされます。
@@ -396,13 +396,16 @@ pnpm preview
 
 ```bash
 # 開発サーバー起動
-pnpm dev
+npm run dev
 
-# プロダクションビルド
-pnpm build
+# 型チェック（svelte-kit sync + svelte-check）
+npm run check
+
+# プロダクションビルド（vite build + pagefind による全文検索インデックス生成）
+npm run build
 
 # ビルド結果をローカルでプレビュー
-pnpm preview
+npm run preview
 ```
 
 ## 📝 コントリビューション
@@ -454,4 +457,4 @@ pnpm preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026 年 4 月 18 日 - ESLint + Prettier 入門記事追加、Svelte MCP × eslint-plugin-svelte × typescript-eslint 連携ガイド追加、`sitemap.xml` 生成を SvelteKit ネイティブ方式で復旧
+**Last Updated**: 2026 年 5 月 6 日 - 依存関係メジャーアップデート（Vite 8 / vite-plugin-svelte 7 / TypeScript 6）。技術スタックバージョン、推奨環境、セットアップ手順を最新化（npm への統一を含む）

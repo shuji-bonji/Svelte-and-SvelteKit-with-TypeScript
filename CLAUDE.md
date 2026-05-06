@@ -21,7 +21,7 @@
 |------|-----------|------|
 | Svelte | 5.x以上 | Runesシステム必須 |
 | SvelteKit | 2.x以上 | |
-| TypeScript | 5.x以上 | strictモード必須 |
+| TypeScript | 6.x以上 | strictモード必須 |
 | Vite | 8.x以上 | |
 | Node.js | 20.x LTS以上 | 推奨: 20.x LTS |
 

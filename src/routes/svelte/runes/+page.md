@@ -192,14 +192,17 @@ Runesは型推論が完全に動作し、IDEのサポートも充実していま
 
 | ルーン | 役割 | 使用頻度 |
 |--------|------|----------|
-| `$state` | リアクティブな状態を作成 | ⭐⭐⭐ |
-| `$derived` | 計算値を作成 | ⭐⭐⭐ |
-| `$effect` | 副作用を実行 | ⭐⭐⭐ |
-| `$props` | プロパティを定義 | ⭐⭐⭐ |
-| `$bindable` | 双方向バインディング | ⭐⭐ |
-| `$inspect` | デバッグ用監視 | ⭐⭐ |
-| `$state.raw` | 不変状態 | ⭐ |
-| `$derived.by` | 複雑な派生値 | ⭐ |
+| [`$state`](/svelte/runes/state/) | リアクティブな状態を作成 | ⭐⭐⭐ |
+| [`$derived`](/svelte/runes/derived/) | 計算値を作成 | ⭐⭐⭐ |
+| [`$effect`](/svelte/runes/effect/) | 副作用を実行 | ⭐⭐⭐ |
+| [`$props`](/svelte/runes/props/) | プロパティを定義 | ⭐⭐⭐ |
+| [`$bindable`](/svelte/runes/bindable/) | 双方向バインディング | ⭐⭐ |
+| [`$inspect`](/svelte/runes/inspect/) | デバッグ用監視 | ⭐⭐ |
+| [`$inspect.trace()`](/svelte/runes/inspect/) | リアクティブ依存関係のトレース（5.14+） | ⭐⭐ |
+| [`$effect.pending()`](/svelte/runes/effect/) | async expressions の保留中状態（5.36+） | ⭐⭐ |
+| [`$state.raw`](/svelte/runes/state/) | 不変状態 | ⭐ |
+| [`$state.eager`](/svelte/runes/state/) | eager update を要求する状態（5.x） | ⭐ |
+| [`$derived.by`](/svelte/runes/derived/) | 複雑な派生値 | ⭐ |
 
 ## 学習の進め方
 

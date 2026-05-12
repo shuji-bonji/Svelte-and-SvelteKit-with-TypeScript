@@ -1,6 +1,6 @@
 ---
 title: セットアップ
-description: Svelte MCPのセットアップ方法 - Claude Code、Claude Desktop、Cursor、VS Code、Zed、Codex、Gemini CLIでの設定手順
+description: Svelte MCPのセットアップ方法 - Claude Code、Claude Desktop、Cursor、VS Code、Zed、Codex、Gemini CLI、GitHub Copilot CLIでの設定手順
 ---
 
 <script>
@@ -143,6 +143,37 @@ opencode mcp add
 │ npx -y @sveltejs/mcp
 ```
 
+### GitHub Copilot CLI
+
+[GitHub Copilot CLI](https://docs.github.com/copilot/github-copilot-in-the-cli) は `gh` 拡張として動作する公式 CLI で、MCP サーバーを設定ファイルから読み込めます。
+
+まず Copilot CLI 拡張をインストールします。
+
+```bash
+gh extension install github/gh-copilot
+```
+
+次に、Copilot CLI の設定ファイル（macOS / Linux: `~/.config/github-copilot/mcp-config.json`、Windows: `%USERPROFILE%\.config\github-copilot\mcp-config.json`）に Svelte MCP の設定を追加します。
+
+```json
+{
+  "mcpServers": {
+    "svelte": {
+      "command": "npx",
+      "args": ["-y", "@sveltejs/mcp"]
+    }
+  }
+}
+```
+
+設定後、Copilot CLI セッションを起動し直すと Svelte MCP のツールが利用可能になります。
+
+<Admonition type="info" title="設定ファイルの場所">
+
+Copilot CLI の MCP 設定ファイル名・パスは公式仕様の変更で変わることがあります。最新の正確なパスは [GitHub Copilot CLI のドキュメント](https://docs.github.com/copilot/github-copilot-in-the-cli) を参照してください。
+
+</Admonition>
+
 ### その他のクライアント
 
 上記以外の MCP クライアントを使用している場合は、各ドキュメントの `stdio` サーバー設定を参照し、コマンドに `npx`、引数に `-y @sveltejs/mcp` を指定してください。
@@ -224,6 +255,23 @@ opencode mcp add
 │ ◇ Enter MCP server URL
 │ https://mcp.svelte.dev/mcp
 ```
+
+### GitHub Copilot CLI
+
+Remote 版を使う場合は、設定ファイル（macOS / Linux: `~/.config/github-copilot/mcp-config.json`）に URL ベースの設定を追加します。
+
+```json
+{
+  "mcpServers": {
+    "svelte": {
+      "type": "http",
+      "url": "https://mcp.svelte.dev/mcp"
+    }
+  }
+}
+```
+
+ローカルに Node.js / npx を用意したくない場合や、CI 環境から呼び出したい場合に向いています。
 
 ### GitHub Coding Agent
 

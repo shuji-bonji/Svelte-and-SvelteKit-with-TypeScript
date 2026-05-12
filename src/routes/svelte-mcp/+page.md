@@ -88,7 +88,7 @@ Svelte MCP の公式ドキュメントは <a href="https://svelte.dev/docs/mcp">
       <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li>Local 版 / Remote 版の違い</li>
         <li>Claude Code、Cursor、VS Code</li>
-        <li>Codex CLI、Gemini CLI</li>
+        <li>Codex CLI、Gemini CLI、Copilot CLI</li>
         <li>SvelteKit プロジェクトへの追加</li>
       </ul>
     </div>
@@ -243,6 +243,7 @@ Svelte MCP は以下の MCP クライアントに対応しています。
 - **Zed** - Svelte MCP Server 拡張機能
 - **Codex CLI** - OpenAI
 - **Gemini CLI** - Google
+- **GitHub Copilot CLI** - `gh copilot` 拡張から MCP サーバーを利用
 - **GitHub Coding Agent** - GitHub
 - **OpenCode** - オープンソースクライアント
 

@@ -2,6 +2,124 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-13] - 記事刷新 Sprint 3（低優先度 11 項目）
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 3（🟢 低優先度・項目 40–50）を完了。Sprint 1（即時修正）/ Sprint 2（中優先度）を経て、Sprint 3 では「ハブページのカード一覧の整合」「リファレンス・周辺ドキュメントへの新 API 反映」「軽微な誤記訂正」「出典明示」など、コンテンツの完成度を高める仕上げ作業を行った。
+
+下記の項目 43-46 / 48 については、独立したより詳細な CHANGELOG エントリが本エントリの下に続いている。
+
+### Sprint 3-A: ハブページ整合（項目 40-42）
+
+CLAUDE.md「ハブページのカード一覧（手動管理）」の運用ルールに沿って、Sprint 2 で追加された各ページへの導線をハブ側にも反映した。
+
+- **`src/routes/svelte/runes/+page.md` の Runes 表拡充**（項目 40）：既存 8 行に `$inspect.trace()`（5.14+、`/svelte/runes/inspect/`）・`$effect.pending()`（5.36+、`/svelte/runes/effect/`）・`$state.eager`（`/svelte/runes/state/`）の 3 行を追加。既存行もリンク化して整合させた。
+- **`src/routes/svelte/basics/+page.md` のカード追加**（項目 41）：`<svelte:boundary>` とエラー境界カードを新規追加（`/svelte/basics/special-elements/#svelte-boundary` への遷移）。Attachments カードは既存のため変更なし。
+- **`src/routes/introduction/+page.md` のカード追加**（項目 42）：既存 5 カードに「CLI tools」（`/introduction/cli/`）と「ESLint / Prettier」（`/introduction/eslint-prettier/`）の 2 カードを追加し計 7 枚に。学習の進め方を 5 ステップから 8 ステップへ更新。
+
+### Sprint 3-B: svelte-mcp 系の刷新（項目 43-46）
+
+詳細は本エントリ下の「[2026-05-13] - 記事刷新 Sprint 3 項目 43-46」を参照。
+
+主な内容：
+- `svelte-mcp/setup/+page.md` と `svelte-mcp/+page.md` に GitHub Copilot CLI（Local / Remote）のセットアップ手順を追加（項目 43）
+- `svelte-mcp/tools/+page.md` の `svelte-autofixer` 出力 JSON に `require_another_tool_call_after_fixing` フィールド追加、`get-documentation` / `playground-link` の整形崩れを修正（項目 44）
+- `svelte-mcp/usecases/+page.md` の `$state.frozen()` を `$state.raw()` に置換（項目 45）
+- `svelte-mcp/ecosystem/+page.md` に Svelte Plugin（Claude Code Marketplace）・Subagent（`svelte-file-editor`）・Skills（`svelte-code-writer`/`svelte-core-bestpractices`）を追加。本プロジェクトの `.claude/skills/svelte5-coding-standards/SKILL.md` を「公式 Skills」と「プロジェクト固有 Skill」の二段構えの実例として引用（項目 46）
+
+### Sprint 3-C: introduction/why-svelte の出典明示と FID→INP（項目 47）
+
+- **`src/routes/introduction/why-svelte/+page.md`** を全面リライト：
+  - `<script>` → `<script lang="ts">` に修正
+  - 出典不明な定量数値（FID 12ms、77%改善、バンドルサイズ表 KB 値、コード削減%、20-30%高速化、NYT / Apple / 1Password の具体数値など）を**Krausest ベンチマーク**・**bundlephobia**・**web.dev**・**Akamai 調査**・**Svelte 公式ブログ**・**BuiltWithSvelte** などへの**出典付き参照**または**定性的記述**にトーンダウン
+  - FID 表記を **INP**（Interaction to Next Paint）に置換（2024-03 移行）
+  - EC サイトの離脱率 7% に Akamai 調査の出典リンクを付与
+
+### Sprint 3-D: reactive-stores で Runes 優先を強調（項目 48）
+
+詳細は本エントリ下の「[2026-05-13] - 記事刷新 Sprint 3 項目 48」を参照。
+
+`svelte/store` API は非推奨ではないが、新規実装では Runes を優先する旨を冒頭 `:::caution` で強く明示。公式ドキュメントの "With runes, these use cases have greatly diminished." を引用。既存の動かないコード例（`createNotificationStore` の `confirm` 関数）も同時に修正。
+
+### Sprint 3-E: reference/sveltekit2 にテーブル追加（項目 49）
+
+- **`src/routes/reference/sveltekit2/+page.md`** に以下を追加：
+  - **`$app/types` セクション強化**（2.26+）：`RouteId`/`RouteParams<R>`/`LayoutParams<R>`/`Pathname`/`ResolvedPathname`/`Asset` の 6 行 API テーブル、各型のコード例、`/deep-dive/auto-generated-types/` への内部リンクを `:::info` で追加
+  - **ルート解決方式（`kit.router.resolution`）節**（2.17+）：`'client'`/`'server'` の比較表、`svelte.config.js` 例、`bundleStrategy` との関係を `:::tip` で言及
+  - **バンドル戦略（`kit.output.bundleStrategy`）節**（2.13+）：`'split'`/`'single'`/`'inline'` の特性表、設定例、`'inline'` 時の `assetsInlineLimit` 注意を `:::caution` で記載
+  - **CSRF 設定（`kit.csrf`）節**：`checkOrigin`（deprecated）と `trustedOrigins` の表、設定例、`['*']` の危険性警告を `:::warning` で追加
+
+### Sprint 3-F: Snippets の `<script module>` export / `createRawSnippet`（項目 50）
+
+- **`src/routes/svelte/advanced/snippets/+page.md`** の「TypeScriptとの統合」と「ベストプラクティス」の間に「Snippetのエクスポートとプログラム的生成」節を新設：
+  - **`<script module>` 経由のエクスポート**（5.5+）：共通 `tableRow`/`badge` を別コンポーネントから `import` する例、`module` スコープ制約の `:::warning`、共通ライブラリパターンの `:::tip`
+  - **`createRawSnippet`**：シグネチャ説明、ゲッター引数・`render`/`setup`・クリーンアップを含むデモ、XSS 対策・最終手段である旨の `:::caution`
+- frontmatter `description` と「重要なポイント」を 7 項目目まで同期。コード例 3 点は `svelte-autofixer` で issues 0 件を確認。
+
+### 検証
+
+- `mcp__svelte__svelte-autofixer` で Sprint 3 で書き換えた主要コード例（Snippets エクスポート、`createRawSnippet`、reactive-stores 修正例）を検証し警告 0 件
+- `mcp__svelte__get-documentation` で `svelte/$state`、`svelte/$effect`、`svelte/$inspect`、`svelte/snippet`、`svelte/script-module`、`svelte/stores`、`kit/configuration`、`kit/$app-types`、`ai/plugin`、`ai/subagent`、`ai/skills`、`ai/tools` を取得し最新仕様を確認
+- 追加リンク先（`/introduction/cli/`、`/introduction/eslint-prettier/`、`/svelte/runes/inspect/`、`/svelte/runes/effect/`、`/svelte/runes/state/`、`/svelte/basics/special-elements/`、`/deep-dive/auto-generated-types/`、`/sveltekit/application/state-management/`）の実体存在を確認
+
+### 影響範囲
+
+修正・追加対象ファイル数: 約 11 ファイル（routes 配下の `.md`）。ハブ表・カード追加、リファレンステーブル追加、出典付与、リライト等が中心。
+
+### preprocessor 改修（Sprint 2 のフォロー）
+
+Sprint 2 で発覚した `markdown-plugins/preprocess-admonition-import.js` の堅牢性問題（インラインコード内の `<script>` を Svelte の script タグと誤認するバグ）も併せて修正済み。`stripCodeFences` に `stripInlineCode` を追加し、`` `…` `` / `` ``…`` `` の中身を同じ長さの空白に置換することで本文中の `` `<script>` `` 表記が安全に書けるようになった。`state-management/+page.md` の該当行も `` `&lt;script&gt;` `` 表記に置換済み（preprocessor 改修と二重防御）。
+
+---
+
+## [2026-05-13] - 記事刷新 Sprint 3 項目 43-46: svelte-mcp 系 4 ファイル統合修正
+
+### 変更内容
+
+- **`src/routes/svelte-mcp/setup/+page.md`**（項目 43）
+  - GitHub Copilot CLI（`gh copilot` 拡張）向けの **Local 版**および **Remote 版**セットアップ手順を新規追加
+    - インストール手順（`gh extension install github/gh-copilot`）と設定ファイル（`~/.config/github-copilot/mcp-config.json`）の例を明示
+    - 公式仕様の変更可能性に関する注意を `:::info`（既存 `<Admonition type="info">` 構造を踏襲）で付記
+  - frontmatter `description` に「GitHub Copilot CLI」を追加
+- **`src/routes/svelte-mcp/+page.md`**（項目 43）
+  - 対応クライアントリストに **GitHub Copilot CLI** を追加
+  - セットアップカードのリスト項目に「Codex CLI、Gemini CLI、Copilot CLI」と Copilot CLI を併記
+- **`src/routes/svelte-mcp/tools/+page.md`**（項目 44）
+  - `svelte-autofixer` の出力 JSON 例に **`require_another_tool_call_after_fixing` フィールド**を追加（fix 適用後に再度ツール呼び出しが必要かを示すフラグ）。実際の MCP サーバー応答に合わせ、`issues` を Svelte 公式の `https://svelte.dev/e/...` リンク付き文字列形式に修正
+  - フラグの意味を表形式で解説するサブセクションを新設し、エージェント的ループの停止条件として位置付け
+  - `get-documentation` の使用例を `get - documentation(...)` という不正な整形から `get-documentation({ section: ... })` のオブジェクト引数形式に修正
+  - `playground-link` の入力例を `playground - link(...)` から正しい関数呼び出し形式 + テンプレートリテラルに修正、出力例も Playground 公式の gzip + base64url ハッシュ形式に揃え、URL ハッシュにコードが格納される旨を補足
+- **`src/routes/svelte-mcp/usecases/+page.md`**（項目 45）
+  - UC6 内の `$state.frozen()` を `$state.raw()` に置換（公式の現行 API 名）
+  - 説明文を「プロパティへの代入や push などのミューテーションは反映されず、配列・オブジェクト全体を再代入する必要があります」と整合させた
+- **`src/routes/svelte-mcp/ecosystem/+page.md`**（項目 46）
+  - 「公式 Claude Code 統合」セクションを新設し、以下を追加
+    - **Svelte Plugin（Claude Code Marketplace）** — `/plugin marketplace add sveltejs/ai-tools` → `/plugin install svelte` の手順
+    - **Subagent（`svelte-file-editor`）** — 独自コンテキストウィンドウを持ち `list-sections` / `get-documentation` / `svelte-autofixer` ループを完結する仕組み、明示的委譲の例
+    - **Skills（`.claude/skills/`）** — 公式 `svelte-code-writer` / `svelte-core-bestpractices` の概要表、`.claude/skills/` への手動配置オプション
+    - **プロジェクト固有 Skill の運用例** — 本リポジトリの `.claude/skills/svelte5-coding-standards/SKILL.md` を「公式 Skills」と「プロジェクト固有 Skill」の二段構えの実例として引用
+    - **OpenCode 版**（`@sveltejs/opencode`、`.opencode/skills/`）を補足
+  - frontmatter `description` を更新し、まとめセクションに Claude Code / OpenCode 統合の項目を追加、参考リンクに `sveltejs/ai-tools` を併記
+
+### 根拠
+
+- Svelte MCP の `mcp__svelte__get-documentation` で `ai/plugin` / `ai/subagent` / `ai/skills` / `ai/tools` セクションを確認
+- 実際に `mcp__svelte__svelte-autofixer` を呼び出し、レスポンスに `require_another_tool_call_after_fixing` フィールドが含まれることを検証
+- `$state.raw` が公式の現行 API（`$state.frozen` は存在しない）であることを `svelte/$state` ドキュメントで確認
+
+## [2026-05-13] - 記事刷新 Sprint 3 項目 48: `reactive-stores` で Runes 優先を明示
+
+### 変更内容
+
+- **`src/routes/svelte/advanced/reactive-stores/+page.md`**
+  - 導入文直後に `:::caution[新規実装では Runes を優先]` ブロックを追加
+    - `svelte/store` API（`writable` / `readable` / `derived` / `readonly`）は**非推奨ではないが**、新規実装では `.svelte.ts` の Runes を優先する旨を強く明示
+    - 公式ドキュメント [Svelte Docs - Stores](https://svelte.dev/docs/svelte/stores) の "With runes, these use cases have greatly diminished." を引用し、原文＋日本語訳を併記
+    - 新規コードでの推奨方針（ロジック抽出・共有状態・派生値）を 3 項目で提示し、内部リンクで `/svelte/runes/state/` と `/sveltekit/application/state-management/` に誘導
+    - 既存コードベース・サードパーティライブラリ互換、複雑な非同期データストリーム、RxJS 思想の持ち込みなど、引き続き学習・利用価値のある 3 ケースを併記
+  - **既存の動かないコード例修正**: `createNotificationStore()` 内 `confirm()` 関数は `return` 後に到達不能コードがあり、`id` / `notification` 変数も未定義というバグがあった。`add()` で先に ID を確保し、`notifications` 配列から `find()` で該当エントリを取り出して `actions` を後付けする実装に修正
+
 ## [2026-05-13] - 記事刷新 Sprint 2（中優先度 20 項目）
 
 ### 概要

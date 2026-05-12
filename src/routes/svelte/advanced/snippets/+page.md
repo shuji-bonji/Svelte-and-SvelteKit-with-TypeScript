@@ -1,6 +1,6 @@
 ---
 title: Snippets
-description: Svelte5のSnippets機能をTypeScriptで実装する完全ガイド - 再利用可能なマークアップの定義方法、パラメータ受け渡しのパターン、ネスト構造、スロット連携、型安全な実装パターンを実例を交えて体系的に詳しく解説します
+description: Svelte5のSnippets機能をTypeScriptで実装する完全ガイド - 再利用可能なマークアップの定義方法、パラメータ受け渡し、ネスト構造、スロット連携、script module経由のSnippetエクスポート、createRawSnippetによるプログラム的生成までを実例で解説します
 ---
 
 <script>
@@ -1016,6 +1016,186 @@ TypeScriptを使用した型安全なSnippetの実装例です。`Snippet`型を
 </style>
 ```
 
+## Snippetのエクスポートとプログラム的生成
+
+Svelte 5.5以降では、Snippetを別コンポーネントから`import`して再利用したり、JavaScriptからプログラム的にSnippetを生成したりできます。共通UIフラグメントをライブラリとして配布する場合や、サードパーティライブラリ・Web Componentsとの統合が必要な場面で有用です。
+
+### `<script module>` 経由のSnippetエクスポート（Svelte 5.5+）
+
+`.svelte`ファイルのトップレベルで定義されたSnippetは、`<script module>`ブロック内で`export`することで、別のコンポーネントから`import`して使えます。テーブル行・リストアイテム・バッジなど、複数コンポーネント間で共有したい純粋なUIフラグメントを「Snippetライブラリ」として配布する用途に向いています。
+
+以下の例では、共通の `tableRow` スニペットと `badge` スニペットを `SharedSnippets.svelte` で定義し、`<script module>` から `export` しています。
+
+```svelte
+<!-- SharedSnippets.svelte -->
+<script module lang="ts">
+  export { tableRow, badge };
+</script>
+
+<!-- 共通のテーブル行スニペット -->
+{#snippet tableRow(label: string, value: string | number)}
+  <tr>
+    <th>{label}</th>
+    <td>{value}</td>
+  </tr>
+{/snippet}
+
+<!-- 共通のバッジスニペット -->
+{#snippet badge(text: string, color: 'red' | 'blue' | 'green' = 'blue')}
+  <span class="badge badge-{color}">{text}</span>
+{/snippet}
+
+<style>
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.875rem;
+  }
+
+  .badge-red { background: #dc3545; }
+  .badge-blue { background: #0066cc; }
+  .badge-green { background: #28a745; }
+</style>
+```
+
+呼び出し側では、通常の関数と同じように`import`して`{@render}`で展開できます。
+
+```svelte
+<!-- App.svelte -->
+<script lang="ts">
+  // 別コンポーネントから共通スニペットをインポート
+  import { tableRow, badge } from './SharedSnippets.svelte';
+
+  type Product = {
+    id: number;
+    name: string;
+    stock: number;
+    status: 'available' | 'soldout' | 'preorder';
+  };
+
+  let product = $state<Product>({
+    id: 1,
+    name: 'ノートPC',
+    stock: 5,
+    status: 'available'
+  });
+</script>
+
+<table>
+  {@render tableRow('ID', product.id)}
+  {@render tableRow('商品名', product.name)}
+  {@render tableRow('在庫', product.stock)}
+</table>
+
+<div>
+  ステータス:
+  {#if product.status === 'available'}
+    {@render badge('在庫あり', 'green')}
+  {:else if product.status === 'soldout'}
+    {@render badge('売り切れ', 'red')}
+  {:else}
+    {@render badge('予約受付', 'blue')}
+  {/if}
+</div>
+```
+
+:::warning[module スコープの制約]
+`<script module>` から `export` できるのは、**非モジュール `<script>` の宣言（`$state` 変数や `$props` 等）を直接的にも間接的にも参照しないSnippet**だけです。`module` スコープはコンポーネントインスタンスより前に評価されるため、リアクティブな変数やpropsには依存できません。あくまで「静的に決まるマークアップ片」を共有する用途に限定して使ってください。
+
+動的な値を扱いたい場合は、必要なデータをSnippetのパラメータとして受け取る設計にします（上の `tableRow(label, value)` のように、値はすべて引数経由で渡す）。
+:::
+
+:::tip[共通スニペットライブラリのパターン]
+複数のコンポーネントで使う「行・バッジ・タグ・アバター・空状態（empty state）」などの小さなUI片を、`$lib/snippets/Shared.svelte` のような単一ファイルにまとめて`<script module>`から`export`すると、コンポーネント分割ほどコストをかけずに再利用できます。子コンポーネント化するか共通Snippetにするかの判断基準は、「独立したロジック・状態・スロット構造」を持つかどうか。持たない純粋なマークアップ片はSnippetが軽量です。
+:::
+
+### `createRawSnippet` でプログラム的にSnippetを生成
+
+`createRawSnippet`は、Svelteの`{#snippet}`構文を使わずに、**JavaScriptからプログラム的にSnippetを構築する**ためのAPIです。`svelte`パッケージからインポートします。
+
+主なユースケースは以下のとおりです。
+
+- **Web Components / カスタム要素**との統合（外部から渡された文字列テンプレートをSnippet化したい）
+- **サードパーティライブラリ**との連携（既存ライブラリが返すDOM断片をSnippetとして扱いたい）
+- **動的にレンダリング内容を組み立てる**ケース（マークアップを実行時に決定する必要がある）
+
+シグネチャは以下のとおりです。
+
+```ts
+function createRawSnippet<Params extends unknown[]>(
+  fn: (...params: Getters<Params>) => {
+    render: () => string;
+    setup?: (element: Element) => void | (() => void);
+  }
+): Snippet<Params>;
+```
+
+- `fn` の引数は **`() => T` 形式のゲッター関数**として渡されます（リアクティブな値を遅延評価するため）
+- `render` は初期レンダリング用のHTML文字列を返します（**1つのルート要素**を返す必要があります）
+- `setup` はマウント後の処理（イベント登録・サードパーティ初期化など）。戻り値の関数はアンマウント時のクリーンアップに使われます
+
+以下は、入力された名前に応じて挨拶を表示するSnippetをプログラム的に生成する例です。
+
+```svelte
+<script lang="ts">
+  import { createRawSnippet } from 'svelte';
+
+  // プログラム的に snippet を生成
+  // 引数は `() => T` 形式のゲッター関数として渡される
+  const greeting = createRawSnippet<[string]>((name) => {
+    return {
+      // render: 初期 HTML 文字列を返す
+      render: () => `<p class="greeting">Hello, ${name()}!</p>`,
+      // setup: DOM にマウントされた後の処理（任意）
+      // 戻り値の関数はクリーンアップに使用される
+      setup: (element) => {
+        const handleClick = () => {
+          console.log('clicked:', element.textContent);
+        };
+        element.addEventListener('click', handleClick);
+
+        return () => {
+          element.removeEventListener('click', handleClick);
+        };
+      }
+    };
+  });
+
+  let userName = $state('Svelte');
+</script>
+
+<input bind:value={userName} placeholder="名前を入力" />
+
+<!-- 通常の snippet と同じく @render で呼び出せる -->
+{@render greeting(userName)}
+
+<style>
+  :global(.greeting) {
+    padding: 0.5rem 1rem;
+    background: #fff5f5;
+    border-left: 4px solid #ff3e00;
+    cursor: pointer;
+  }
+</style>
+```
+
+ポイント:
+
+- `name` は `string` ではなく `() => string` として届くので、`render` の中では `name()` と呼び出します
+- `render` が返すHTML文字列は**ルート要素1つ**にまとめる必要があります（複数要素を並べたい場合は親要素でラップする）
+- `:global(.greeting)` は、`render` で生成された要素にコンポーネントのスコープ付きCSSが効かないためのワークアラウンドです
+
+:::caution[createRawSnippet は最後の手段]
+`createRawSnippet`は強力ですが、HTMLを文字列で扱う以上、**XSSリスクや型安全性の低下**を伴います。可能な限り通常の`{#snippet}`構文を使い、`createRawSnippet`は次のような場面に限定してください。
+
+- Web Componentsや外部ライブラリとの統合で、Svelteの構文が使えない場面
+- 実行時に決まる動的なテンプレート（CMSや管理画面からのテンプレート文字列など）
+
+ユーザー入力をそのまま`render`に埋め込む場合は、必ずサニタイズすること。
+:::
+
 ## ベストプラクティス
 
 Snippetを効果的に使うためのガイドラインを紹介します。適切な場面で使用することで、コードの保守性と可読性が向上します。
@@ -1228,6 +1408,8 @@ Snippetsを効果的に活用するための要点をまとめます。
 3. **型安全性** - TypeScriptとの完全な統合による型チェック
 4. **パフォーマンス** - コンパイル時の最適化により高速
 5. **可読性向上** - 重複コードの削減とロジックの整理
+6. **エクスポート可能（5.5+）** - `<script module>` 経由で別コンポーネントから再利用できる
+7. **プログラム的生成** - `createRawSnippet` でJSからSnippetを動的に構築できる
 
 ### 次のステップ
 

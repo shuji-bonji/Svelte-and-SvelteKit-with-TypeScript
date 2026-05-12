@@ -163,6 +163,40 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </div>
 ```
 
+:::tip[svelte/reactivity/window を活用する]
+Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティブな window ラッパーを提供します。`<svelte:window>` を使わず、`.current` プロパティで値を参照できます（SSR では `undefined`）。
+
+```svelte
+<script lang="ts">
+  import {
+    innerWidth,
+    innerHeight,
+    online,
+    scrollY,
+    devicePixelRatio
+  } from 'svelte/reactivity/window';
+
+  // .current で値を取得（リアクティブ）
+  let screenSize = $derived.by(() => {
+    const w = innerWidth.current ?? 0;
+    if (w < 640) return 'mobile';
+    if (w < 1024) return 'tablet';
+    return 'desktop';
+  });
+</script>
+
+<p>サイズ: {innerWidth.current} × {innerHeight.current}</p>
+<p>オンライン: {online.current ? '✅' : '❌'}</p>
+<p>スクロールY: {scrollY.current}</p>
+<p>DPR: {devicePixelRatio.current}</p>
+<p>レイアウト: {screenSize}</p>
+```
+
+利用可能な値：`innerWidth`、`innerHeight`、`outerWidth`、`outerHeight`、`scrollX`、`scrollY`、`online`、`devicePixelRatio`、`screenLeft`、`screenTop`。
+
+`<svelte:window>` は **トップレベルに 1 回しか書けない**制約があるため、複数コンポーネントから window 情報を参照したい場合は `svelte/reactivity/window` のほうが扱いやすくなります。
+:::
+
 ### レスポンシブデザインの実装例
 
 ```svelte
@@ -225,13 +259,15 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ```svelte live
 <script lang="ts">
-  let visibilityState = $state('visible');
-  let fullscreen = $state(false);
+  // visibilityState は DocumentVisibilityState 型（'visible' | 'hidden'）
+  let visibilityState = $state<DocumentVisibilityState>('visible');
+  // fullscreenElement は readonly な Element | null を bind する
+  let fullscreenElement = $state<Element | null>(null);
   let selectionText = $state('');
 
   function handleSelectionChange() {
     const selection = window.getSelection();
-    selectionText = selection?.toString() || '';
+    selectionText = selection?.toString() ?? '';
   }
 
   function handleVisibilityChange() {
@@ -240,7 +276,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </script>
 
 <svelte:document
-  bind:fullscreenElement={fullscreen}
+  bind:fullscreenElement
   onvisibilitychange={handleVisibilityChange}
   onselectionchange={handleSelectionChange}
 />
@@ -249,7 +285,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   <h4 style="margin-top: 0; color: #ff3e00;">Document情報</h4>
   <div style="display: grid; gap: 0.5rem;">
     <div>👁️ ページ表示状態: {visibilityState}</div>
-    <div>🖥️ フルスクリーン: {fullscreen ? 'ON' : 'OFF'}</div>
+    <div>🖥️ フルスクリーン: {fullscreenElement ? 'ON' : 'OFF'}</div>
     <div>✏️ 選択テキスト: {selectionText || '(なし)'}</div>
   </div>
 
@@ -258,6 +294,12 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   </p>
 </div>
 ```
+
+<Admonition type="info" title="bind:fullscreenElement は readonly">
+
+`fullscreenElement`、`activeElement`、`pointerLockElement`、`visibilityState` は `<svelte:document>` で bind 可能ですが、いずれも **readonly**（参照専用）です。値を変更するには `document.documentElement.requestFullscreen()` などのブラウザ API を呼び出します。
+
+</Admonition>
 
 ## `svelte:head` - head要素への要素追加
 
@@ -299,22 +341,21 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:options` - コンポーネントオプション
 
-`&lt;svelte:options&gt;`は、コンポーネントのコンパイラオプションを設定します。Web Components化、不変性の宣言、名前空間の指定などができます。
+`&lt;svelte:options&gt;`は、コンポーネントのコンパイラオプションを設定します。Web Components化、Runesモードの強制、名前空間の指定などができます。
+
+### Runesモードで有効なオプション
 
 ```svelte
-<!-- immutableオプション：プロパティが不変であることを宣言 -->
-<svelte:options immutable={true} />
+<!-- runesオプション：このコンポーネントをRunesモードに固定 -->
+<svelte:options runes={true} />
 
 <!-- customElementオプション：Web Componentsとして使用 -->
 <svelte:options customElement="my-component" />
 
-<!-- namespaceオプション：SVGコンポーネント用 -->
+<!-- namespaceオプション：SVG / MathML コンポーネント用 -->
 <svelte:options namespace="svg" />
 
-<!-- accessorsオプション：プロパティのgetterとsetterを生成 -->
-<svelte:options accessors={true} />
-
-<!-- cssオプション：CSSをinjectしない -->
+<!-- cssオプション：CSSをインライン注入（SSRでは<head>のstyle、CSRではJS経由） -->
 <svelte:options css="injected" />
 
 <script lang="ts">
@@ -322,6 +363,20 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   let { value = 'default' }: { value?: string } = $props();
 </script>
 ```
+
+:::caution[`accessors` / `immutable` は Runes モードで非対応]
+Svelte 4 で利用できた次のオプションは **Svelte 5 で非推奨**となり、Runes モードでは**機能しません**。
+
+- `accessors={true}` — プロパティの getter/setter を自動生成（レガシー専用）
+- `immutable={true}` — プロパティが不変であることをコンパイラに伝える（レガシー専用）
+
+Runes モードではこれらの代わりに以下を使います。
+
+- `accessors` → 外部から値を操作したい場合は `$bindable()` でバインド可能な props を公開する、または親で `$state` を作って渡す
+- `immutable` → `$state.raw()` / `$state.frozen()` で深いリアクティビティを無効化、または `$state` を新しいオブジェクトに置き換える
+
+既存のレガシーコードを Runes モードへ移行する際は、これらのオプションを削除してください。
+:::
 
 ### Web Componentsの例
 
@@ -353,7 +408,30 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ## `svelte:boundary` - エラーバウンダリ
 
-`&lt;svelte:boundary&gt;`は、子コンポーネントで発生したエラーをキャッチし、フォールバックUIを表示できます。アプリケーション全体のクラッシュを防ぎ、ユーザーに適切なエラーメッセージを表示できます。
+`&lt;svelte:boundary&gt;` は **Svelte 5.3.0 で追加**された組み込み要素で、子コンポーネントで発生したエラーをキャッチしてフォールバック UI を表示できます。アプリケーション全体のクラッシュを防ぎ、await expressions の初回解決中はローディング UI を表示できます。
+
+`<svelte:boundary>` が処理できる主な要素は次の 4 つです。
+
+| プロパティ        | 追加バージョン | 役割                                                   |
+| ----------------- | -------------- | ------------------------------------------------------ |
+| `pending`         | 5.3+           | await expressions の初回解決中に表示するローディング UI |
+| `failed`          | 5.3+           | 描画・エフェクト中にエラーが発生したときのフォールバック UI |
+| `onerror`         | 5.3+           | エラー発生時のコールバック（ログ送信などに使う）       |
+| `transformError`  | 5.51+          | SSR 時のエラーをサニタイズしてクライアントに渡す関数   |
+
+:::caution[React の `<Suspense>` とは別物]
+Svelte には `<Suspense>` という API は **存在しません**。非同期 UI の表示は `<svelte:boundary>` の `pending` snippet と [`await` expressions](/svelte/advanced/await-expressions/) を組み合わせて表現します。`import { Suspense } from 'svelte'` のようなコードを書いてはいけません（コンパイルエラーになります）。
+:::
+
+:::warning[キャッチされないエラー]
+`<svelte:boundary>` がキャッチするのは **レンダリングまたは `$effect` 内** で発生したエラーだけです。以下は **キャッチされません**。
+
+- イベントハンドラ内で発生したエラー
+- `setTimeout` / `Promise` の中で発生した非同期エラー
+- `onMount` 内の非同期処理で発生したエラー
+
+これらは個別に `try/catch` でハンドリングしてください。
+:::
 
 ```svelte live
 <script lang="ts">
@@ -468,9 +546,16 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `onerror` プロパティ
 
-`failed` snippetの代わりに、またはそれと併用して `onerror` コールバックを使用できます。
+`failed` snippetの代わりに、またはそれと併用して `onerror` コールバックを使用できます。エラーログサービス（Sentry など）への送信や、バウンダリ外部でのエラー状態管理に有用です。
 
 ```svelte
+<script lang="ts">
+  function reportToSentry(error: unknown) {
+    // 外部のエラーレポートサービスへ送信
+    console.error('[Sentry]', error);
+  }
+</script>
+
 <svelte:boundary onerror={(error, reset) => {
   // エラーログサービスに送信
   reportToSentry(error);
@@ -484,13 +569,48 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 </svelte:boundary>
 ```
 
+`onerror` の中で再度 throw した場合、エラーは**親のバウンダリ**へ伝播します。
+
+### `transformError` — SSR エラーのサニタイズ（5.51+）
+
+デフォルトでは、SSR 中にバウンダリ内でエラーが発生するとレンダリング全体が失敗します。Svelte 5.51 以降では、`render(...)` に `transformError` 関数を渡すことで、`failed` snippet を持つバウンダリの SSR エラーをサニタイズしてクライアントに渡せます。
+
+```ts
+// server.ts
+import { render } from 'svelte/server';
+import App from './App.svelte';
+
+const { head, body } = await render(App, {
+  transformError: (error: unknown) => {
+    // 元のエラー（スタックトレース付き）はサーバ側にだけログ
+    console.error(error);
+
+    // クライアントには無害化したオブジェクトだけを返す
+    return {
+      message: 'エラーが発生しました。しばらくしてから再度お試しください。'
+    };
+  }
+});
+```
+
+`transformError` が返した JSON シリアライズ可能な値が、ブラウザの `failed` snippet に渡される `error` として復元されます。
+
+:::warning[SSR エラーには機密情報が含まれることがある]
+`error.message` や `error.stack` には DB パスワード、API キー、内部パスなどが含まれることがあります。**そのままクライアントへ送らず**、`transformError` で必ずサニタイズしてください。
+:::
+
+:::info[SvelteKit を使っている場合]
+SvelteKit から直接 `render(...)` を呼び出すことはできません。SvelteKit は近い将来、[`handleError`](https://svelte.dev/docs/kit/hooks#Shared-hooks-handleError) フックを介して `transformError` をサポートする予定です。それまでは `handleError` でログを取り、`error.message` を加工した独自プロパティでテンプレートに渡すなどの代替手段を取ってください。
+:::
+
 ### プロパティ一覧
 
-| プロパティ | 型                                          | 説明                           |
-| ---------- | ------------------------------------------- | ------------------------------ |
-| `failed`   | `Snippet<[Error, () => void]>`              | エラー時のフォールバックUI     |
-| `pending`  | `Snippet`                                   | 非同期解決待ちのローディングUI |
-| `onerror`  | `(error: Error, reset: () => void) => void` | エラー発生時のコールバック     |
+| プロパティ        | 型                                          | バージョン | 説明                                                       |
+| ----------------- | ------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| `pending`         | `Snippet`                                   | 5.3+       | 非同期解決待ちのローディング UI（初回のみ）               |
+| `failed`          | `Snippet<[Error, () => void]>`              | 5.3+       | エラー時のフォールバック UI                               |
+| `onerror`         | `(error: Error, reset: () => void) => void` | 5.3+       | エラー発生時のコールバック                                |
+| `transformError`  | `(error: unknown) => JSONValue`             | 5.51+      | SSR 時にエラーを変換（`render()` / `mount()` / `hydrate()` のオプション経由） |
 
 <Admonition type="info" title="svelte:boundaryの利点">
 
@@ -623,30 +743,41 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ### `svelte:component` - 動的コンポーネント（レガシー）
 
-<Admonition type="warning" title="Svelte 5での変更">
+:::caution[Runes モードでは非推奨]
+`<svelte:component>` は **Svelte 5 の Runes モードでは非推奨**です。Runes モードでは、`Component` 変数を直接書くだけで、変数が変わると自動で再レンダリングされるため、この要素は不要になりました。新規コードでは使わず、`{#if}` / `{#each}` の中で **コンポーネント変数を直接** 参照してください。
+:::
 
-`&lt;svelte:component&gt;`はSvelte 5のRunesモードではレガシー機能です。Runesモードでは、コンポーネント変数が変更されると自動的に再レンダリングされるため、この要素は不要になりました。
-
-</Admonition>
-
-#### Svelte 5での推奨方法
+#### Svelte 5 での推奨方法（変数を直接使用）
 
 ```svelte
 <script lang="ts">
   import ComponentA from './ComponentA.svelte';
   import ComponentB from './ComponentB.svelte';
-  import ComponentC from './ComponentC.svelte';
-  import type { ComponentType } from 'svelte';
+  import type { Component } from 'svelte';
 
-  let currentComponent = $state<ComponentType>(ComponentA);
+  // Svelte 5 では `Component` 型を使う（`ComponentType` は legacy）
+  let CurrentComponent = $state<Component<{ message: string }>>(ComponentA);
   let componentProps = $state({ message: 'Hello!' });
+
+  function toggle() {
+    CurrentComponent = CurrentComponent === ComponentA ? ComponentB : ComponentA;
+  }
 </script>
 
-<!-- Svelte 5: 変数を直接使用 -->
-{#if currentComponent}
-  {@const Component = currentComponent}
-  <Component {...componentProps} />
+<button onclick={toggle}>切り替え</button>
+
+<!-- 変数を大文字始まりにすればそのままタグとして書ける -->
+<CurrentComponent {...componentProps} />
+
+<!-- 条件分岐の中でも同じ書き方ができる -->
+{#if CurrentComponent}
+  <CurrentComponent {...componentProps} />
 {/if}
+
+<!-- each ループでも同様（キーには `Item` 自体を渡せる） -->
+{#each [ComponentA, ComponentB] as Item (Item)}
+  <Item message="Hello!" />
+{/each}
 ```
 
 #### レガシーモードでの使用（互換性のため）

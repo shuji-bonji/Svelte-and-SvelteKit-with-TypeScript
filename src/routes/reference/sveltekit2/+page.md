@@ -380,17 +380,19 @@ export const getUser = query(async (id: string) => {
 
 #### query.batch() - N+1問題の解決（v2.35+）
 
-複数のクエリをバッチ処理して1つのリクエストにまとめます。
+複数のクエリをバッチ処理して1つのリクエストにまとめます。サーバー側のコールバックは **引数の配列** を受け取り、**`(input, index) => output` 関数** を返します。
 
 ```typescript
-// src/routes/page.remote.ts
+// src/routes/weather.remote.ts
+import * as v from 'valibot';
 import { query } from '$app/server';
+import * as db from '$lib/server/database';
 
-// バッチ対応のクエリ: 複数の呼び出しが1リクエストにまとまる
-export const getUser = query.batch(async (ids: string[]) => {
-  const users = await db.user.findMany({ where: { id: { in: ids } } });
-  // idの順序で結果を返す（Map形式）
-  return new Map(users.map((u) => [u.id, u]));
+export const getWeather = query.batch(v.string(), async (cityIds) => {
+  const rows = await db.sql`SELECT * FROM weather WHERE city_id = ANY(${cityIds})`;
+  const lookup = new Map(rows.map((w) => [w.city_id, w]));
+  // 個別の呼び出しに対する解決関数を返す
+  return (cityId) => lookup.get(cityId);
 });
 ```
 
@@ -400,6 +402,39 @@ export const getUser = query.batch(async (ids: string[]) => {
   {@const user = await getUser(id)}
   <UserCard {user} />
 {/each}
+```
+
+#### query.live() - リアルタイムストリーミング
+
+`async function*`（async generator）を渡し、`yield` した値が逐次クライアントに届きます。`refresh()` は無く、代わりに **`connected` プロパティ** と **`reconnect()` メソッド** が生えます。SSR では最初に yield された値だけ返ってイテレーターは閉じます。
+
+```typescript
+import { query } from '$app/server';
+
+export const getTime = query.live(async function* () {
+  while (true) {
+    yield new Date();
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+});
+```
+
+| 機能            | `query`         | `query.batch`        | `query.live`               |
+| --------------- | --------------- | -------------------- | -------------------------- |
+| 戻り値          | 単発の値        | 単発の値（集約）     | AsyncIterable              |
+| キャッシュ      | 引数キー        | 引数キー             | 接続を共有                 |
+| 再取得          | `.refresh()`    | `.refresh()`         | **無し**（`.reconnect()`） |
+| 直接実行        | `.run()`        | `.run()`             | `.run()`（`AsyncGenerator`）|
+
+#### .run() でキャッシュをバイパス
+
+リアクティブコンテキスト外（イベントハンドラ等）でキャッシュをスキップして 1 回だけ実行したい場合は `.run()` を使います。`query.live` では `Promise<AsyncGenerator<T>>` を返します。
+
+```typescript
+async function refresh() {
+  // キャッシュを使わず直接サーバーへリクエスト
+  const data = await getData().run();
+}
 ```
 
 ### form - フォーム処理
@@ -421,6 +456,63 @@ export const login = form(LoginSchema, async (data, { cookies }) => {
   const user = await authenticate(data);
   cookies.set('session', user.sessionId, { path: '/' });
   return { success: true, user };
+});
+```
+
+#### form のフィールド API（`fields.*`）
+
+スキーマから自動生成される `fields` ツリーは、HTML 入力要素・バリデーション・初期値設定をまとめて扱う API を提供します。
+
+| API                                   | 用途                                                                            |
+| ------------------------------------- | ------------------------------------------------------------------------------- |
+| `fields.x.as(type)`                   | input 属性（`name` / `type` / `aria-invalid` 等）をスプレッド可能な形で返す      |
+| `fields.x.as(type, value)`            | 第 2 引数で初期値・`radio` / `submit` / `hidden` の値を指定                      |
+| `fields.x.issues()`                   | このフィールドの Issue 配列                                                     |
+| `fields.x.value()` / `fields.x.set()` | 現在値の取得・更新                                                              |
+| `fields.allIssues()`                  | フォーム全体の Issue（フィールド非依存含む）                                    |
+| `form.validate({ includeUntouched })` | プログラム的にバリデーション実行                                                |
+| `form.preflight(schema)`              | クライアント側で先行バリデーション（失敗時はサーバーに送らない）                |
+| `form.for(id)`                        | 同じフォームを独立インスタンスとして複数生成（リスト編集）                      |
+| `form.enhance(callback)`              | 送信処理をカスタマイズ（`callback({ form, data, submit })`）                    |
+| `form.result`                         | ハンドラ戻り値が代入される ephemeral な値                                       |
+| `form.pending`                        | 送信中のリクエスト数                                                            |
+
+`field.as(type)` でサポートされる input type は `text` / `number` / `password` / `email` / `url` / `tel` / `search` / `date` / `datetime-local` / `time` / `color` / `range` / `file` / `checkbox` / `radio` / `submit` / `hidden` / `select` / `select multiple`。`_` プレフィックスのフィールド名（例: `_password`）はバリデーション失敗時に値が送り返されない（機密データ保護）。
+
+#### enhance の `submit()` は boolean を返す
+
+`await submit()` の戻り値で「バリデーション失敗」と「ネットワーク/サーバーエラー」を区別できます。
+
+```svelte
+<form
+  {...login.enhance(async ({ form, submit }) => {
+    try {
+      if (await submit()) {
+        form.reset(); // 自動 reset されないため明示
+        // 成功時の処理
+      } else {
+        // preflight / サーバースキーマで弾かれた（=バリデーション失敗）
+      }
+    } catch (error) {
+      // ネットワーク / 5xx / error() などの実行時エラー
+    }
+  })}
+>
+  <!-- ... -->
+</form>
+```
+
+#### invalid() でプログラマティックバリデーション
+
+`@sveltejs/kit` の `invalid()` は **special return**（`throw` 不要）。第 2 引数 `issue` から型安全な Issue ファクトリが取れる。
+
+```typescript
+import { invalid } from '@sveltejs/kit';
+
+export const register = form(schema, async (data, issue) => {
+  if (await db.exists(data.email)) {
+    invalid(issue.email('既に使用されています'));
+  }
 });
 ```
 
@@ -486,15 +578,76 @@ export const search = query(SearchSchema, async (params) => {
 
 ### $app/server エクスポート一覧
 
-| エクスポート        | 説明                                               |
-| ------------------- | -------------------------------------------------- |
-| `query`             | 読み取り専用データ取得（キャッシュ・重複排除付き） |
-| `query.batch`       | バッチクエリ（N+1問題解決）                        |
-| `form`              | FormDataベースのミューテーション                   |
-| `command`           | 命令型ミューテーション                             |
-| `prerender`         | ビルド時データ生成                                 |
-| `getRequestEvent()` | 現在のRequestEventへのアクセス（v2.20+）           |
-| `requested()`       | クエリのrefresh要求の検出                          |
+| エクスポート         | 説明                                                                                |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `query`              | 読み取り専用データ取得（キャッシュ・重複排除付き）                                  |
+| `query.batch`        | バッチクエリ（N+1問題解決、v2.35+）                                                 |
+| `query.live`         | AsyncIterable によるリアルタイムストリーミング。`connected` / `reconnect()` を持つ  |
+| `form`               | FormDataベースのミューテーション。`fields.*.as()` / `preflight` / `for` / `enhance` |
+| `command`            | 命令型ミューテーション                                                              |
+| `prerender`          | ビルド時データ生成（`inputs` で列挙、`dynamic: true` でランタイム動的取得も可）     |
+| `getRequestEvent()`  | 現在のRequestEventへのアクセス（v2.20+）                                            |
+| `requested()`        | クライアント要求の refresh / reconnect を `{ arg, query }` で受け取る                |
+| `requested().refreshAll()` / `.reconnectAll()` | 一括 refresh / reconnect の短縮形                                                   |
+| `read()`             | `import` したアセットを `Response` として読む（v2.4+）                              |
+
+### Remote Functions の主要メソッド・プロパティ
+
+#### query 系
+
+| API                                  | 対象          | 用途                                                            |
+| ------------------------------------ | ------------- | --------------------------------------------------------------- |
+| `query(...)` / `query(schema, ...)`  | query         | 戻り値は `Promise<T>`。`.refresh()` / `.set()` / `.run()` を持つ |
+| `.refresh()`                         | query / batch | サーバーから再取得                                              |
+| `.set(value)`                        | query         | クライアントキャッシュを直接更新                                |
+| `.withOverride(updater)`             | query         | 楽観的更新の差し替え。`submit().updates(...)` と組合せ          |
+| `.run()`                             | 全 query 系   | キャッシュバイパス。`query.live` は `Promise<AsyncGenerator>`   |
+| `query.loading` / `error` / `current`| query         | `await` の代替の状態プロパティ                                  |
+| `live.connected` / `live.reconnect()`| query.live    | 接続状態と再接続                                                |
+
+#### form / command 系
+
+| API                                  | 対象           | 用途                                                            |
+| ------------------------------------ | -------------- | --------------------------------------------------------------- |
+| `form.fields.*`                      | form           | フィールド API ツリー（前述）                                   |
+| `form.enhance(cb)`                   | form           | 送信カスタマイズ。`submit()` は `Promise<boolean>`              |
+| `form.preflight(schema)`             | form           | クライアント先行バリデーション                                  |
+| `form.for(id)`                       | form           | 独立フォームインスタンス（リスト編集）                          |
+| `form.result` / `form.pending`       | form           | ハンドラ戻り値（ephemeral）/ 送信中リクエスト数                 |
+| `submit().updates(...)`              | form / command | Single-flight: クライアントが更新対象を指定                     |
+| `requested(fn, limit)`               | server         | クライアント要求を受け取る。`{ arg, query }` イテラブル          |
+| `requested(fn, limit).refreshAll()`  | server         | 一括 refresh 短縮形                                             |
+| `invalid(...)`                       | form handler   | プログラマティックバリデーション（`@sveltejs/kit`、`throw` 不要）|
+| `'unchecked'`                        | 全 RFs         | スキーマ省略（型は手書き、慎重に使う）                          |
+
+### experimental フラグの opt-in
+
+Remote Functions は 2 つの experimental フラグを **両方** 有効にして本来の使い勝手になります。
+
+```typescript
+// svelte.config.js
+const config = {
+  kit: { experimental: { remoteFunctions: true } },
+  compilerOptions: { experimental: { async: true } }, // <svelte:boundary> と併用
+};
+```
+
+### transport hook（Universal hook）
+
+`src/hooks.ts` の `transport` で **カスタム型のシリアライズ**（Remote Functions / Load / Form Actions 共通）を定義できます。
+
+```typescript
+// src/hooks.ts
+import type { Transport } from '@sveltejs/kit';
+import { Vector } from '$lib/math';
+
+export const transport: Transport = {
+  Vector: {
+    encode: (value) => value instanceof Vector && [value.x, value.y],
+    decode: ([x, y]) => new Vector(x, y),
+  },
+};
+```
 
 ## Form Actions
 

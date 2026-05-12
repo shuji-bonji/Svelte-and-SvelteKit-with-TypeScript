@@ -249,13 +249,16 @@ export default defineConfig(({ mode }) => {
 
 必要な時にのみコードをロードすることで、初期バンドルサイズを削減します。
 
-```typescript
-// +page.svelte - 動的インポートの実装
+```svelte
+<!-- +page.svelte - 動的インポートの実装 -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { Component } from 'svelte';
 
-  let ChartComponent: any;
-  let isLoading = true;
+  // Svelte 5 Runes: $state で宣言したリアクティブな状態として保持する
+  // 動的に解決したコンポーネントを `Component` 型として受け取る
+  let ChartComponent = $state<Component | null>(null);
+  let isLoading = $state(true);
 
   onMount(async () => {
     // 重いライブラリは必要時にのみロード
@@ -263,20 +266,23 @@ export default defineConfig(({ mode }) => {
     ChartComponent = module.default;
     isLoading = false;
   });
-
-  // 条件付き動的インポート
-  async function loadAdminPanel() {
-    const { AdminPanel } = await import('$lib/components/AdminPanel.svelte');
-    return AdminPanel;
-  }
 </script>
 
 {#if isLoading}
   <div class="skeleton">チャートを読み込み中...</div>
 {:else if ChartComponent}
-  <svelte:component this={ChartComponent} />
+  <!--
+    Svelte 5 Runes モードでは `<svelte:component this={X} />` は非推奨。
+    変数（コンポーネント参照）を直接タグとして書くことで、よりシンプルかつ
+    型推論も効くようになる。
+  -->
+  <ChartComponent />
 {/if}
 ```
+
+:::tip[Runes モードでの動的コンポーネント]
+レガシーな `<svelte:component this={X} />` 構文は Svelte 5 Runes モードでは非推奨です。`{#if}` や `{#each}` のブロック内で、変数名をそのままタグとして使う書き方に置き換えてください（例：`<ChartComponent />`）。コンポーネント変数は `$state` で宣言することで、動的な差し替えにリアクティブに追従できます。
+:::
 
 ### ルートベースのコード分割
 
@@ -367,103 +373,170 @@ export function calculateSum(numbers: number[]): number {
 }
 ```
 
-## 画像とアセットの最適化
+## SvelteKit 側の出力設定
 
-### 画像の自動最適化
+Vite 設定だけでなく、`svelte.config.js` の `kit` 直下にも出力・ロード戦略を直接コントロールするオプションがあります。
 
-画像を自動的に最適化し、適切なフォーマットで配信します。
+### `kit.output.bundleStrategy`
+
+`bundleStrategy` は SvelteKit v2.13 で追加された、アプリ全体の JavaScript / CSS の **バンドル形態** を選ぶオプションです。
+
+```javascript
+// svelte.config.js
+import adapter from '@sveltejs/adapter-auto';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+  kit: {
+    adapter: adapter(),
+    output: {
+      // 'split' | 'single' | 'inline'
+      bundleStrategy: 'split',
+    },
+  },
+};
+
+export default config;
+```
+
+3 種類の戦略があり、用途に応じて選択します。
+
+| 値 | 挙動 | 想定ユースケース |
+|----|------|----------------|
+| `'split'`（デフォルト） | ルートごとに `.js` / `.css` を分割し、ナビゲーションに応じて遅延ロード | 一般的な Web アプリ。ほとんどの場合これでよい |
+| `'single'` | すべてのコードを 1 本の `.js` と 1 本の `.css` に統合 | 小規模 SPA、初回到達後の追加 HTTP リクエストを抑えたい場合 |
+| `'inline'` | JS / CSS をすべて HTML にインライン化 | サーバなしで配布できる単一 HTML（ローカルツール、デモ、オフライン同梱物） |
+
+`'inline'` を使う場合は、Vite 側の `build.assetsInlineLimit` も合わせて調整し、画像なども含めて完全に単一ファイル化することを検討してください。
 
 ```typescript
-// vite.config.ts - 画像最適化プラグイン
+// vite.config.ts - inline 戦略と組み合わせる例
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import imagemin from 'vite-plugin-imagemin';
+
+export default defineConfig({
+  plugins: [sveltekit()],
+  build: {
+    // すべてのインポート可能なアセットを base64 でインライン化
+    assetsInlineLimit: Infinity,
+  },
+});
+```
+
+:::tip[`'split'` を選びつつ細かく調整したい]
+`bundleStrategy: 'split'` のまま、Vite の `build.rollupOptions.output.experimentalMinChunkSize` や `output.manualChunks` を調整することで、過剰な分割を抑えてリクエスト数とサイズのバランスを取ることができます。
+:::
+
+### `kit.router.resolution`
+
+`router.resolution` は SvelteKit v2.17 で追加された、**ルート解決をクライアントとサーバのどちらで行うか**を選ぶオプションです。
+
+```javascript
+// svelte.config.js
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+  kit: {
+    router: {
+      // 'client' | 'server'
+      resolution: 'client',
+    },
+  },
+};
+```
+
+| 値 | 挙動 | 主なメリット |
+|----|------|--------------|
+| `'client'`（デフォルト） | ルートマニフェストをクライアントに配信し、ナビゲーション解決をすべてブラウザで実施 | ナビゲーションが即時。サーバ往復が不要 |
+| `'server'` | 未訪問パスへの遷移時はサーバに問い合わせてルートを解決 | 初回ペイロードからルートマニフェストを除外できる／ルート構成を非公開にできる／サーバ側ミドルウェアで A/B テストやリダイレクトを差し込める |
+
+`'server'` を選ぶ場合、未訪問パスへの初回遷移はわずかに遅くなりますが、リンクの `data-sveltekit-preload-data` によるプリロードである程度緩和できます。**ルート数が非常に多い大規模アプリ** や **ルート構成を秘匿したい管理画面** で特に効果が大きい設定です。
+
+:::info[プリレンダリングとの組み合わせ]
+`resolution: 'server'` でかつプリレンダリングを行う場合、ルート解決結果もページと一緒にプリレンダリングされるため、静的ホスティング環境でもメリットを享受できます。
+:::
+
+## 画像とアセットの最適化
+
+画像最適化は **`@sveltejs/enhanced-img`** を主軸に組み立てるのが現在の SvelteKit 推奨ルートです。Vite の前段プラグインとして動作し、ビルド時に AVIF / WebP などへの自動変換、複数解像度の `srcset` 生成、`width` / `height` の自動付与（CLS 防止）、EXIF 情報の除去までを担います。
+
+### `@sveltejs/enhanced-img` のセットアップ
+
+まずプラグインをインストールし、`vite.config.ts` に `sveltekit()` の **前** に追加します。
+
+```sh
+npm install -D @sveltejs/enhanced-img
+```
+
+```typescript
+// vite.config.ts - @sveltejs/enhanced-img を sveltekit() の前に登録
+import { sveltekit } from '@sveltejs/kit/vite';
+import { enhancedImages } from '@sveltejs/enhanced-img';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
+    // enhancedImages() は sveltekit() より前に置く必要がある
+    enhancedImages(),
     sveltekit(),
-    imagemin({
-      gifsicle: {
-        optimizationLevel: 7,
-        interlaced: false,
-      },
-      optipng: {
-        optimizationLevel: 7,
-      },
-      mozjpeg: {
-        quality: 80,
-      },
-      pngquant: {
-        quality: [0.8, 0.9],
-        speed: 4,
-      },
-      svgo: {
-        plugins: [
-          {
-            name: 'removeViewBox',
-          },
-          {
-            name: 'removeEmptyAttrs',
-            active: false,
-          },
-        ],
-      },
-    }),
   ],
 });
 ```
 
-### レスポンシブ画像の実装
+初回ビルドは画像変換のため少し時間がかかりますが、`./node_modules/.cache/imagetools` にキャッシュされるため 2 回目以降は高速になります。
 
-適切なサイズの画像を配信することで、パフォーマンスを向上させます。
+### `<enhanced:img>` での基本的な使い方
+
+ビルド時に存在する画像ファイルは `<enhanced:img>` で参照します。タグはビルド時に `<picture>` + `<source>` + `<img>` に展開され、ブラウザが対応する最適なフォーマット・サイズを選択します。
 
 ```svelte
-<!-- lib/components/OptimizedImage.svelte -->
+<!-- lib/components/Hero.svelte -->
 <script lang="ts">
-  let { src, alt, sizes = '100vw' }: {
-    src: string;
-    alt: string;
-    sizes?: string;
-  } = $props();
-
-  // 画像URLから各サイズを生成
-  function generateSrcSet(src: string): string {
-    const widths = [320, 640, 768, 1024, 1280, 1920];
-    return widths
-      .map(w => `${src}?w=${w} ${w}w`)
-      .join(', ');
-  }
-
-  // WebP対応の判定
-  let supportsWebP = false;
-  if (typeof window !== 'undefined') {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    supportsWebP = canvas.toDataURL?.('image/webp').indexOf('image/webp') === 5;
-  }
+  // ?enhanced クエリで明示的に Enhanced Images の処理対象にする
+  // （静的な相対パス指定で <enhanced:img src="./hero.png"> と書く場合は不要）
+  import heroImage from '$lib/assets/hero.png?enhanced';
 </script>
 
-<picture>
-  {#if supportsWebP}
-    <source
-      type="image/webp"
-      srcset={generateSrcSet(src.replace(/\.(jpg|png)$/, '.webp'))}
-      {sizes}
-    />
-  {/if}
-  <source
-    type="image/jpeg"
-    srcset={generateSrcSet(src)}
-    {sizes}
-  />
-  <img
-    {src}
-    {alt}
-    loading="lazy"
-    decoding="async"
-  />
-</picture>
+<!--
+  sizes を指定すると、デバイスサイズに応じた srcset が自動生成される。
+  LCP 候補となるヒーロー画像には fetchpriority="high" を付け、
+  逆に loading="lazy" は付けないようにする（重要画像の読み込みを早める）。
+-->
+<enhanced:img
+  src={heroImage}
+  alt="サービスの概要を示すヒーロー画像"
+  sizes="min(1280px, 100vw)"
+  fetchpriority="high"
+/>
 ```
+
+### コレクションを動的に出し分ける場合
+
+CMS のような完全動的な配信ではなく、ビルド時に確定する複数画像から選ぶようなケースでは、`import.meta.glob` と `?enhanced` クエリを組み合わせます。
+
+```svelte
+<script lang="ts">
+  // ビルド時に画像をまとめてインポート
+  const imageModules = import.meta.glob(
+    '$lib/assets/products/*.{avif,jpg,jpeg,png,webp}',
+    {
+      eager: true,
+      query: { enhanced: true },
+    },
+  );
+</script>
+
+{#each Object.entries(imageModules) as [path, mod] (path)}
+  <enhanced:img src={(mod as { default: string }).default} alt="" sizes="400px" />
+{/each}
+```
+
+:::info[CDN から動的にロードする画像は別途設計が必要]
+`@sveltejs/enhanced-img` はビルド時にローカルに存在する画像のみを最適化します。CMS / DB / バックエンドから配信される画像は、`@unpic/svelte` や Cloudinary / Contentful などの CDN/CMS 統合ライブラリを使ってください。`<enhanced:img>` と通常の `<img>` / CDN 連携を **混在** させるのが現実的なベストプラクティスです。
+:::
+
+:::caution[`vite-plugin-imagemin` は補足的な位置付け]
+旧来よく紹介されていた `vite-plugin-imagemin` は本記事執筆時点で長期間メンテナンスされておらず、Svelte / SvelteKit 公式ガイドでも推奨されていません。最適化は `@sveltejs/enhanced-img` を主軸に据え、`vite-plugin-imagemin` は「`@sveltejs/enhanced-img` の対象外（例：`static/` 直下に置く OGP 画像など）を一括で軽量化したい」といった補助用途に留めるのが安全です。
+:::
 
 ## バンドル分析
 
@@ -549,12 +622,66 @@ analyzeBundleSize();
 
 ## 圧縮戦略
 
-### Gzip/Brotli圧縮
+### アダプターの `precompress` オプション
 
-配信時のファイルサイズを削減します。
+`adapter-node` / `adapter-static` は、ビルド時にアセットとプリレンダリングされた HTML を **gzip と brotli で事前圧縮**するオプション `precompress` を備えています。これにより、リクエスト時にサーバ側で動的圧縮を行う必要がなくなり、CPU 負荷とレスポンス時間の双方を削減できます。
+
+```javascript
+// svelte.config.js - adapter-node の場合
+import adapter from '@sveltejs/adapter-node';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+  kit: {
+    adapter: adapter({
+      out: 'build',
+      // ビルド時に .gz と .br を生成する（adapter-node のデフォルトは true）
+      precompress: true,
+      envPrefix: '',
+    }),
+  },
+};
+
+export default config;
+```
+
+```javascript
+// svelte.config.js - adapter-static の場合
+import adapter from '@sveltejs/adapter-static';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+  kit: {
+    adapter: adapter({
+      pages: 'build',
+      assets: 'build',
+      fallback: undefined,
+      // adapter-static は precompress のデフォルトが false なので明示する
+      precompress: true,
+      strict: true,
+    }),
+  },
+};
+
+export default config;
+```
+
+:::info[adapter ごとのデフォルト値の違い]
+- `adapter-node`: `precompress` のデフォルトは **`true`**。明示的に `false` にしない限り `.gz` / `.br` が生成されます。
+- `adapter-static`: `precompress` のデフォルトは **`false`**。GitHub Pages や Cloudflare Pages のように、配信側が自前で圧縮してくれる環境では `false` のままで十分なケースもあります。
+- Cloudflare Pages や Vercel のような Edge プラットフォームでは、配信レイヤで自動的に gzip/brotli が掛かるため、アダプターの `precompress` を有効にしても二重圧縮にはならず、ビルド時間が伸びるだけになることがあります。
+:::
+
+:::caution[リバースプロキシ配下では圧縮レイヤを一本化する]
+`adapter-node` の前段に nginx / Cloudflare などのリバースプロキシを置いてそちらで圧縮する場合、Node 側（`@polka/compression` を含む）で圧縮ミドルウェアを多重に挟むのは避けてください。Node はシングルスレッドのため、圧縮は配信レイヤに任せた方が高いスループットを得られます。
+:::
+
+### Vite プラグインによる圧縮（補助手段）
+
+アダプターの `precompress` がそのままでは効かない構成（例：カスタムサーバや特殊な配信経路）でも、Vite プラグインで `.gz` / `.br` を生成できます。
 
 ```typescript
-// vite.config.ts - 圧縮設定
+// vite.config.ts - 圧縮設定（adapter の precompress を使えない場合の補助）
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import viteCompression from 'vite-plugin-compression';
@@ -603,22 +730,49 @@ async function measurePerformance(url: string) {
   });
 
   // Core Web Vitals取得
+  // 2024-03 に Core Web Vitals は FID（First Input Delay）から
+  // INP（Interaction to Next Paint）へ置き換えられた。
+  // INP は web-vitals v4 の onINP() を利用するのが最も確実だが、
+  // Playwright 上では event タイミング系の集計を自前で行う必要がある。
   const vitals = await page.evaluate(() => {
     return new Promise((resolve) => {
+      let inpValue = 0;
+      let clsValue = 0;
+      let lcpValue: number | undefined;
+
+      // LCP（Largest Contentful Paint）
       new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        resolve({
-          LCP: entries.find((e) => e.name === 'largest-contentful-paint')
-            ?.startTime,
-          FID: entries.find((e) => e.name === 'first-input')?.processingStart,
-          CLS: entries.reduce((acc, e) => {
-            if (e.name === 'layout-shift' && !e.hadRecentInput) {
-              return acc + e.value;
-            }
-            return acc;
-          }, 0),
-        });
-      }).observe({ entryTypes: ['paint', 'layout-shift', 'first-input'] });
+        lcpValue = entries[entries.length - 1]?.startTime;
+      }).observe({ type: 'largest-contentful-paint', buffered: true });
+
+      // INP（Interaction to Next Paint）の簡易計測
+      // 各イベントの duration の最悪値（98 パーセンタイル相当）を採用する
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as PerformanceEventTiming[]) {
+          if (entry.interactionId && entry.duration > inpValue) {
+            inpValue = entry.duration;
+          }
+        }
+      }).observe({ type: 'event', buffered: true, durationThreshold: 16 } as PerformanceObserverInit);
+
+      // CLS（Cumulative Layout Shift）
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as PerformanceEntry[]) {
+          const layoutShift = entry as PerformanceEntry & {
+            hadRecentInput: boolean;
+            value: number;
+          };
+          if (!layoutShift.hadRecentInput) {
+            clsValue += layoutShift.value;
+          }
+        }
+      }).observe({ type: 'layout-shift', buffered: true });
+
+      // 一定時間後にスナップショットを返す
+      setTimeout(() => {
+        resolve({ LCP: lcpValue, INP: inpValue, CLS: clsValue });
+      }, 5000);
     });
   });
 

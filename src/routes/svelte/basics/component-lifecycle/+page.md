@@ -3,6 +3,28 @@ title: コンポーネントライフサイクル
 description: Svelte5のコンポーネントライフサイクルをTypeScriptで理解 - onMount、onDestroy、tick関数の使い方、$effectとの違い、クリーンアップ処理、実行タイミングの詳細を実例を交えて実践的に詳しく解説します
 ---
 
+<script lang="ts">
+  import Admonition from '$lib/components/Admonition.svelte';
+  import LiveCode from '$lib/components/LiveCode.svelte';
+  import Mermaid from '$lib/components/Mermaid.svelte';
+
+  const diagramCode = `graph TD
+    A[コンポーネント作成] --> B[$state初期化]
+    B --> C[$effect.pre実行]
+    C --> D[DOM構築]
+    D --> E[$effect実行]
+    E --> F[レンダリング完了]
+    F --> G{状態変更?}
+    G -->|Yes| H[$effect.pre再実行]
+    H --> I[DOM更新]
+    I --> J[$effect再実行]
+    J --> G
+    G -->|No| K{破棄?}
+    K -->|Yes| L[$effectクリーンアップ]
+    L --> M[コンポーネント破棄]
+    K -->|No| G`;
+</script>
+
 コンポーネントライフサイクルとは、コンポーネントが作成されてから破棄されるまでの一連の段階を指します。Svelte 5 では、主に`$effect`ルーンを使用してライフサイクルを管理します。
 
 ## なぜ$effect でライフサイクルを管理できるのか
@@ -178,7 +200,7 @@ DOM アクセスが不要な初期化処理には`$effect.pre`を使用します
 
 ### $effect.root による独立したスコープ
 
-コンポーネントから独立したエフェクトスコープを作成できます。
+コンポーネントから独立したエフェクトスコープを作成できます。`$effect.root` は **destroy 関数**を返し、その destroy 関数を呼び出した時点で root 内の `$effect` がまとめて破棄されます。root 内部から返した関数は root 自身のクリーンアップとして扱われます。
 
 ```svelte live console
 <script lang="ts">
@@ -188,33 +210,36 @@ DOM アクセスが不要な初期化処理には`$effect.pre`を使用します
   let saveCount = $state(0);
 
   $effect(() => {
-    if (autoSave) {
-      // 独立したエフェクトスコープを作成
-      const cleanup = $effect.root(() => {
-        // contentの変更を検知して1秒後に自動保存
-        $effect(() => {
-          // contentを同期的に読み取ることで依存関係として追跡させる
-          const currentContent = content;
-          const timer = setTimeout(() => {
-            if (currentContent !== savedContent) {
-              savedContent = currentContent;
-              saveCount++;
-              console.log('自動保存しました');
-            }
-          }, 1000);
+    if (!autoSave) return;
 
-          return () => clearTimeout(timer);
-        });
+    // 独立したエフェクトスコープを作成。
+    // $effect.root の戻り値は「root を破棄するための destroy 関数」
+    const destroyRoot = $effect.root(() => {
+      // content の変更を検知して 1 秒後に自動保存
+      $effect(() => {
+        // content を同期的に読み取って依存関係として追跡させる
+        const currentContent = content;
+        const timer = setTimeout(() => {
+          if (currentContent !== savedContent) {
+            savedContent = currentContent;
+            saveCount++;
+            console.log('自動保存しました');
+          }
+        }, 1000);
 
-        // $effect.rootは明示的にクリーンアップ関数を返す必要がある
-        return () => {
-          console.log('自動保存エフェクトをクリーンアップ');
-        };
+        // 内側の $effect のクリーンアップ
+        // （依存値の再評価ごと、および root 破棄時に呼ばれる）
+        return () => clearTimeout(timer);
       });
 
-      // autoSaveがfalseになったらクリーンアップ
-      return cleanup;
-    }
+      // root 自身のクリーンアップ（destroyRoot() 実行時に一度だけ呼ばれる）
+      return () => {
+        console.log('自動保存スコープをクリーンアップ');
+      };
+    });
+
+    // autoSave が false に戻った時、またはコンポーネントが破棄された時に root を破棄
+    return destroyRoot;
   });
 </script>
 
@@ -258,9 +283,9 @@ DOM アクセスが不要な初期化処理には`$effect.pre`を使用します
       ctx.fillRect(10, 10, 100, 50);
     }
 
-    // 非同期処理も可能
-    return async () => {
-      // クリーンアップ処理
+    // onMount のクリーンアップ関数は「同期関数」でなければならない
+    // async () => {...} を返すと Promise が返ってしまい、クリーンアップとして無視される
+    return () => {
       console.log('クリーンアップ');
     };
   });
@@ -269,81 +294,139 @@ DOM アクセスが不要な初期化処理には`$effect.pre`を使用します
 <canvas bind:this={canvas} width="200" height="100"></canvas>
 ```
 
+:::warning[async クリーンアップは無視される]
+
+`onMount` のコールバックから返す関数は**同期関数**でなければなりません。次のような書き方は一見動きそうに見えますが、`async` 関数は常に `Promise` を返すため、Svelte はそれをクリーンアップ関数として扱わず、**何も実行されません**。
+
+```ts
+// NG: 非同期クリーンアップは無視される
+onMount(() => {
+  return async () => {
+    await disposeAsync();
+  };
+});
+```
+
+非同期のクリーンアップが必要な場合は、同期関数の中で `Promise` を起動する形にします（戻り値は待たれません）。
+
+```ts
+// OK: 同期関数の中で非同期処理を起動する
+onMount(() => {
+  return () => {
+    void disposeAsync();
+  };
+});
+```
+
+リアクティブな値に応じて起動／後始末する非同期処理であれば、`onMount` よりも `$effect` の方が適しています。`$effect` のクリーンアップ関数も同様に同期である必要がありますが、依存値の変化や破棄に追随して安全に呼び出されます。
+
+```ts
+$effect(() => {
+  const controller = new AbortController();
+
+  void (async () => {
+    try {
+      await runWith(controller.signal);
+    } catch (e) {
+      if ((e as Error)?.name !== 'AbortError') throw e;
+    }
+  })();
+
+  return () => controller.abort();
+});
+```
+
+:::
+
 ### onDestroy
 
 コンポーネントが破棄される直前に実行されます。
 
 ```svelte
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
-  let interval: number;
+  let interval: ReturnType<typeof setInterval> | undefined;
   let count = $state(0);
 
-  // インターバルの設定
-  interval = setInterval(() => {
-    count++;
-  }, 1000);
+  // setInterval を `<script>` 直下に書くと SSR 中にも実行されてしまう。
+  // ブラウザ側のみで起動するため onMount 内で設定する。
+  onMount(() => {
+    interval = setInterval(() => {
+      count++;
+    }, 1000);
 
-  // クリーンアップ
+    // onMount からクリーンアップを返すのが最も簡潔
+    return () => clearInterval(interval);
+  });
+
+  // 複数のリソースをまとめてクリーンアップしたい場合は onDestroy も併用可能
   onDestroy(() => {
-    clearInterval(interval);
-    console.log('インターバルをクリア');
+    console.log('コンポーネントが破棄されました');
   });
 </script>
 
 <p>経過時間: {count}秒</p>
 ```
 
-### beforeUpdate / afterUpdate
+:::tip[Svelte 5 では `$effect` でも書ける]
 
-これらの API は Svelte 5 では非推奨です。代わりに`$effect`を使用してください。
+リアクティブな値（例: インターバル時間）に応じてタイマーを張り直したい場合は、`onMount` ではなく `$effect` を使うとより宣言的に書けます。
 
 ```svelte
 <script lang="ts">
-  // ❌ 非推奨
-  import { beforeUpdate, afterUpdate } from 'svelte';
+  let count = $state(0);
+  let intervalMs = $state(1000);
 
-  // ✅ 推奨：$effectを使用
+  $effect(() => {
+    const id = setInterval(() => {
+      count++;
+    }, intervalMs);
+
+    // intervalMs が変わった時、およびコンポーネント破棄時に呼ばれる
+    return () => clearInterval(id);
+  });
+</script>
+```
+
+:::
+
+### beforeUpdate / afterUpdate
+
+`beforeUpdate` / `afterUpdate` は Svelte 5 では**非推奨**です。さらに **Runes を使用するコンポーネントでは利用できません**（インポートしてもエラーになります）。代わりに `$effect.pre` / `$effect` を使用してください。
+
+```svelte
+<script lang="ts">
+  // ✅ 推奨：$effect.pre と $effect を使用
   let value = $state(0);
 
   $effect.pre(() => {
-    // beforeUpdateの代替
+    // beforeUpdate の代替（DOM 更新前に実行）
+    // 依存値を参照すると、その値が変わったときだけ再実行される
+    value;
     console.log('更新前の処理');
   });
 
   $effect(() => {
-    // afterUpdateの代替
+    // afterUpdate の代替（DOM 更新後に実行）
+    value;
     console.log('更新後の処理');
   });
 </script>
 ```
 
+旧 API との対応関係は次のとおりです。
+
+| Svelte 4 / レガシー | Svelte 5（Runes） |
+| --- | --- |
+| `beforeUpdate(() => {...})` | `$effect.pre(() => {...})` |
+| `afterUpdate(() => {...})` | `$effect(() => {...})` |
+| `onDestroy(() => {...})` | `$effect` のクリーンアップ関数 |
+
 ## ライフサイクルの流れ
 
 Svelte 5 のコンポーネントライフサイクルは、以下の段階を経て進行します。各段階で何が起こるのか、詳しく見ていきましょう。
 
-<script>
-	import Admonition from '$lib/components/Admonition.svelte';
-	import LiveCode from '$lib/components/LiveCode.svelte';
-  import Mermaid from '$lib/components/Mermaid.svelte';
-  
-  const diagramCode = `graph TD
-    A[コンポーネント作成] --> B[$state初期化]
-    B --> C[$effect.pre実行]
-    C --> D[DOM構築]
-    D --> E[$effect実行]
-    E --> F[レンダリング完了]
-    F --> G{状態変更?}
-    G -->|Yes| H[$effect.pre再実行]
-    H --> I[DOM更新]
-    I --> J[$effect再実行]
-    J --> G
-    G -->|No| K{破棄?}
-    K -->|Yes| L[$effectクリーンアップ]
-    L --> M[コンポーネント破棄]
-    K -->|No| G`;
-</script>
 <Mermaid diagram={diagramCode} />
 
 ### 各段階の詳細

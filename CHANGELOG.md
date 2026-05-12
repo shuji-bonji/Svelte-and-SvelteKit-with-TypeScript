@@ -2,6 +2,226 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-13] - 記事刷新 Sprint 2（中優先度 20 項目）
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 2（🟠 中優先度・項目 20–39）を完了。Sprint 1 の「コピペで動かない」レベルの即時修正に続き、Sprint 2 では Svelte 5.x / SvelteKit 2.x で追加された主要 API の体系的取り込み、エコシステム陳腐化対応、リファレンス整備を行った。
+
+主要テーマは以下の通り。
+
+1. **Remote Functions / Hooks の最新仕様への追従** — `query.live`、field API、Universal hooks 等の SvelteKit 2.x 系で大幅に拡張された API 群
+2. **Svelte 5.x 新 API のリファレンス・解説整備** — `$inspect.trace`、`<svelte:boundary>`、Function bindings、`{@attach}` 主役化など
+3. **TypeScript / 型システムの最新化** — `PageProps`/`LayoutProps`、`$app/types`、TS 6 新オプション
+4. **SSR セーフネス強化** — モジュールトップで `$state` を export するアンチパターン警告、Runes 化
+5. **PWA / 最適化記事の本プロジェクト実装整合化** — `@vite-pwa/sveltekit` 採用パターンを正面解説、Core Web Vitals を FID から INP に統一
+6. **デプロイメント・実行環境の最新化** — Vercel Node 22.x、Cloudflare Workers Static Assets、`adapter-node` graceful shutdown、`writing-adapters` の `supports`/`emulate` API
+
+下記の項目 22 / 33+34 / 37 / 39 については、独立したより詳細な CHANGELOG エントリが本エントリの下に続いている。
+
+### Sprint 2-A: Remote Functions の徹底拡充（項目 20-21）
+
+- **`sveltekit/server/remote-functions/+page.md` を全面拡充**
+  - **設定（experimental フラグ）節**を新設：`kit.experimental.remoteFunctions` と `compilerOptions.experimental.async` 両方を opt-in する必要性を明示
+  - **`query.live` 独立節**：AsyncIterable・`connected` プロパティ・`reconnect()`・SSR 挙動・Single-flight reconnect を実装例付きで解説
+  - **`.run()` 戻り値表**（query / batch / live 3 種比較）を追加
+  - **フィールド API リファレンス**を新設：`.as(type[, value])`、`issues`、`value`、`set`、`allIssues`、`validate`、`preflight`、`for`、`enhance`、`result`、`pending`、複数 submit ボタン、`_` プレフィックスによる機密保護、`b:`/`n:` 自動命名
+  - **`invalid()` + `issue` プログラマティックバリデーション**：`throw` 不要であることを明示
+  - **`enhance` の `submit()` boolean 戻り値**：バリデーション失敗 vs ネットワークエラーを区別する正しいパターン
+  - **Single-flight 節**：`submit().updates(...)` ＋ `requested(fn, limit)` で `{ arg, query }` 反復、`refreshAll()`/`reconnectAll()` 短縮形、DoS 防止理由
+  - **`withOverride` 楽観的更新**、**`transport` Universal hook 連携**（カスタム型シリアライズ）、**`prerender` Remote Functions**（`inputs`/`dynamic`）、**`getRequestEvent()` 制約**、**`$app/server` の `read()`** を追加
+- **`reference/sveltekit2/+page.md` の Remote Functions テーブル拡充**
+  - `query.batch`/`query.live`/`.run()` の具体仕様と 3 種比較表
+  - form フィールド API 表、`submit()` boolean パターン、`invalid()`
+  - `$app/server` エクスポート一覧拡充（`query.live`/`requested().refreshAll()`/`read()`）
+  - Remote Functions 主要メソッド・プロパティ表（query 系 / form・command 系）
+  - experimental opt-in、`transport` Universal hook を反映
+
+### Sprint 2-B: Svelte 5.x 新 API の解説追加（項目 23-27）
+
+- **`svelte/runes/inspect/+page.md`**：`$inspect.trace()`（5.14+）を新節として追加（概要・`$effect`/`$derived.by` 例・ラベル付きトレース・`$inspect()` との比較表・呼び出し位置制約・noop 警告）。
+- **`svelte/basics/special-elements/+page.md`**（項目 24 と 29 を統合対応）：
+  - `<svelte:boundary>`（5.3+）独立節の強化（`pending`/`failed`/`onerror`/`transformError`（5.51+）プロパティ表、Suspense が存在しない旨の `:::caution`、SSR サニタイズ例）
+  - `<svelte:window>` 例直下に `svelte/reactivity/window`（`innerWidth.current` 等）を推奨する `:::tip`
+  - `<svelte:options accessors>` / `immutable` を Runes 非対応 legacy として `:::caution`、代替策（`$bindable`、`$state.raw`）を明示
+  - `<svelte:component>` を Runes モード非推奨と明記、`{#if}` / `{#each}` の動的参照例に置換
+  - `<svelte:document>` の `fullscreenElement` を `Element | null` 型に修正、`visibilityState` を `DocumentVisibilityState` 型に統一
+- **Function bindings（5.9+）の解説を 3 ファイルに追加**：
+  - `svelte/runes/bindable/+page.md`：API 紹介として getter/setter 2-tuple 構文、摂氏華氏変換、`$effect` 双方向 sync との対比、読み取り専用バインディング応用、`bind:this` 注意点、TypeScript 型推論
+  - `deep-dive/reactive-state-variables-vs-bindings/+page.md`：「変数」と「バインディング」の中間として位置づけ、比較表
+  - `deep-dive/derived-vs-effect-vs-derived-by/+page.md`：予算配分の `$effect` 2 連発アンチパターン → `$derived` + Function bindings への置き換え例、3 手法 + Function bindings の使い分け表
+- **`svelte/basics/actions/+page.md` に `{@attach}` 主役化**：
+  - 冒頭導入直後に `:::tip[新規実装は {@attach} を推奨]` を追加
+  - `fromAction(tooltip, () => label)` の移行コード例を `:::info` で追加
+  - 末尾「次のステップ」を `/svelte/basics/attachments/` 誘導に
+  - 旧構造 URL `svelte.dev/docs/use` → `svelte.dev/docs/svelte/use` 系に統一
+- **`reference/svelte5/+page.md` に Sprint 2 新 API を集約反映**：
+  - `$inspect.trace()`（5.14+）を `$inspect` 節に追加、API 比較表付き
+  - `<svelte:boundary>`（5.3+）を特殊要素節に追加、プロパティ表付き
+  - Function bindings（5.9+）をバインディング節に追加、`bind:value={getter, setter}` 構文と読み取り専用 `bind:clientWidth={null, redraw}` 形態の表
+  - `<svelte:options customElement>` オブジェクト構文（`tag`/`shadow`/`props`/`extend`）
+  - `fork()` / `settled()` / `tick()`（5.42+）を await expressions 節に追加
+  - await expressions の `compilerOptions.experimental.async: true` opt-in 手順
+  - `$state.eager` を `$state`/`$derived`/`$state.eager` 更新タイミング比較表に再構成
+
+### Sprint 2-C: コンポーネント・ライフサイクル（項目 28・30）
+
+- **`svelte/basics/component-lifecycle/+page.md`**（項目 28）：
+  - `onMount(() => async () => ...)` 構文の修正：クリーンアップは同期関数でなければならない旨を `:::warning` で明示、`$effect` ＋ `AbortController` 代替例を追加
+  - `$effect.root` 戻り値を `destroyRoot` に改名し、role を明示
+  - L326–346 のページ途中 `<script>` ブロックを冒頭の単一 `<script lang="ts">` に統合
+  - `onDestroy` 例の SSR 不安全な `setInterval` を `onMount` 内に移動、`$effect` 版代替を併記
+  - `beforeUpdate`/`afterUpdate` を Runes コンポーネントで利用不可と明記、対応表を追加
+- **`svelte/basics/transitions/+page.md` L979–L1030**（項目 30）：
+  - `|local` の説明逆転を修正。Svelte 5 のデフォルトは local（属するブロックの変化のみで再生）、`|global` で上位ブロックのマウント時にも再生される、と訂正
+  - `:::caution` で Svelte 4 のデフォルト挙動の違いを補足
+
+### Sprint 2-D: TypeScript / 型（項目 31-32）
+
+- **`deep-dive/auto-generated-types/+page.md`**（項目 31）：
+  - マッピング表に `+page.svelte` → `PageProps`（推奨）／`PageData`/`PageServerData`/`ActionData`（レガシー）、`+layout.svelte` → `LayoutProps`（推奨）の行を追加
+  - 「Props 型（SvelteKit 2.16.0 以降）」新節：`PageProps`/`LayoutProps` の使用例とレガシー個別型付けとの対比
+  - 「`$app/types` モジュール（SvelteKit 2.26 以降）」新節：`RouteId`、`RouteParams<R>`、`LayoutParams<R>`、`Pathname`、`ResolvedPathname`、`Asset` の解説と `goto` / `href` / `fetch` への活用例、`./$types` との使い分け表
+- **`introduction/typescript-setup/+page.md`**（項目 32）：
+  - `tsconfig.json` に `verbatimModuleSyntax: true` / `isolatedModules` / `erasableSyntaxOnly` を追加（各オプションの意味・推奨値・SvelteKit との関係）
+  - VS Code 設定 `"source.fixAll.eslint": "explicit"` に修正（1.85+ の文字列リテラル仕様を `:::tip` で解説）
+  - GitHub Actions を `actions/checkout@v4` / `actions/setup-node@v4` / `pnpm/action-setup@v4`（pnpm v9）に更新
+
+### Sprint 2-E: 状態管理の SSR セーフネス（項目 33-34）
+
+詳細は本エントリ下の「[2026-05-13] - 記事刷新 Sprint 2 項目 33 / 34」を参照。
+
+### Sprint 2-F: PWA / 最適化（項目 35-38）
+
+- **`sveltekit/optimization/pwa/+page.md` を本プロジェクト実装に整合させる形で全面刷新**（項目 35）：
+  - `@vite-pwa/sveltekit` 1.1+ 中心の構成に書き換え
+  - 本プロジェクトの `vite.config.js`、`src/lib/components/PwaUpdatePrompt.svelte`、`src/app.d.ts`、`src/app.html` の実装をケーススタディとして引用
+  - 追加した節：アーキテクチャ全体像（Mermaid 図）、`@vite-pwa/sveltekit` vs 素の `$service-worker` 比較表、`registerType: 'prompt'` vs `'autoUpdate'`、`virtual:pwa-register`/`workbox-window` 連携、`manifestTransforms` と `trailingSlash: 'always'` 整合、`globPatterns: ['prerendered/**/*.html']` 戦略、dev サーバでの SW 有効化と HMR 干渉、`clientsClaim`/`skipWaiting` UX 設計判断、`@vite-pwa/assets-generator` ワークフロー、トラブルシューティング
+- **`sveltekit/optimization/build-optimization/+page.md`**（項目 36）：
+  - `<svelte:component>` を変数直接参照（`<ChartComponent />`）に書き換え、Runes 注意の `:::tip`
+  - `let isLoading = true` → `let isLoading = $state(true)`、`ChartComponent` も `$state<Component | null>(null)` 化
+  - 画像セクションを `@sveltejs/enhanced-img` 主軸に全面書き換え（セットアップ・`<enhanced:img>`・`import.meta.glob` 例・CDN 補足）、`vite-plugin-imagemin` は補助扱いの `:::caution` に
+  - 新節「SvelteKit 側の出力設定」追加：`kit.output.bundleStrategy: 'split' | 'single' | 'inline'`（2.13+）、`kit.router.resolution: 'client' | 'server'`（2.17+）
+  - 圧縮節に `adapter-node` / `adapter-static` の `precompress` デフォルト差を追記
+- **`sveltekit/optimization/seo/+page.md`**（項目 37）：詳細は下記の独立エントリを参照
+- **Core Web Vitals FID → INP 一斉更新**（項目 38）：
+  - `optimization/+page.md`：カードの「FID改善 100ms」→「INP改善 200ms」、Core Web Vitals 目標値表を INP（Good<200ms / Needs 200-500ms / Poor>500ms）に差し替え、2024-03 移行の `:::info`
+  - `optimization/build-optimization/+page.md`：計測スクリプトの `FID` を `INP`（`PerformanceObserver` による interactionId ベースの計測）に置換
+  - `optimization/caching/+page.md`：監視コードの `FID` ロジックを `INP`（`interactionId` / `durationThreshold`）に差し替え、`web-vitals` v4 の `onINP, onLCP, onCLS, onTTFB, onFCP` インポート例を追加
+  - `optimization/performance/+page.md`：スタブの予定コンテンツ項目を `FID` → `INP` に更新、2024-03 切替の注記を併記
+
+### Sprint 2-G: デプロイ・実行環境（項目 39）
+
+詳細は本エントリ下の「[2026-05-13] - 記事刷新 Sprint 2 項目 39」を参照。
+
+### 検証
+
+- `mcp__svelte__svelte-autofixer` で Sprint 2 で書き換えた主要コード例（Remote Functions 数例、`<svelte:boundary>` 例、Function bindings 摂氏華氏・予算スライダー、`PageProps`/`LayoutProps`、PWA 更新通知、SEO JSON-LD、enhanced-img 動的コンポーネント等）を検証し、`state_referenced_locally` を含む警告 0 件を確認。
+- `mcp__svelte__get-documentation` で `kit/remote-functions`、`kit/hooks`、`kit/$app-server`、`kit/$app-types`、`kit/$app-paths`、`kit/page-options`、`kit/observability`、`kit/configuration`、`kit/adapter-vercel`、`kit/adapter-cloudflare`、`kit/adapter-node`、`kit/writing-adapters`、`kit/images`、`kit/service-worker`、`svelte/$inspect`、`svelte/$state`、`svelte/$effect`、`svelte/svelte-boundary`、`svelte/svelte-window`、`svelte/svelte-document`、`svelte/svelte-options`、`svelte/svelte-component`、`svelte/svelte-reactivity-window`、`svelte/svelte-attachments`、`svelte/bind`、`svelte/await-expressions`、`svelte/context` を取得し、最新仕様との整合を確認。
+
+### 影響範囲
+
+修正・追加対象ファイル数: 約 25 ファイル（routes 配下の `.md`）。新規追加した節・表・コード例の合計は 70 以上。Mermaid 図・本プロジェクト実装からの引用も多数。
+
+---
+
+## [2026-05-13] - 記事刷新 Sprint 2 項目 37: SEO 記事の `$derived` 化と `base` / `trailingSlash` 整合
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 2 項目 37 に基づき、`sveltekit/optimization/seo/+page.md` を Svelte 5 Runes と SvelteKit 2.x の paths 仕様に整合させた。`$props()` の `data` をローカル定数に直接展開していたコード例で `state_referenced_locally` 警告が 7 件出ていたため、JSON-LD オブジェクト・派生タイトル・派生 URL すべてを `$derived` 化。さらに、本プロジェクト自身が GitHub Pages のサブパス配下で動く `trailingSlash: 'always'` 構成であることを活かし、`$app/paths` の `base` を含む canonical / sitemap / OGP URL の組み立て方をケーススタディとして提示した。
+
+### 追加・修正したセクション
+
+- **SEOメタデータコンポーネント**: SEO コンポーネント例を `$app/state` + `$app/paths` ベースに刷新。`fullTitle` / `canonicalUrl` / `ogImageUrl` を `$derived` で構築し、`page.url.origin + base + imagePath` で OGP 画像の絶対 URL を組み立てる本サイト `SeoMeta.svelte` と同じパターンに統一。ケーススタディ用 `:::tip` を追加。
+- **構造化データ（JSON-LD）**: `const jsonLd = { ...data.post... }` を `const jsonLd = $derived({ ... })` に書き換え。`base` を含む `canonicalUrl` を共有し、`publisher.logo.url` も `${page.url.origin}${base}/logo.png` 形式に修正。`:::caution[state_referenced_locally 警告の回避]` を追加し NG / OK パターンを明示。
+- **canonical URL の管理**: 「`page.url.href` をそのまま使う基本パターン」と「`base` を明示的に組み立てるパターン」を分離。本サイト `SeoMeta.svelte` の実装抜粋を `:::info` でケーススタディ化し、`trailingSlash` の設定別比較表を `:::warning[trailingSlash と canonical の整合性]` で提示。ページネーション例も `$derived` + `base` 込みに更新。
+- **サイトマップの自動生成（静的サイトの場合）**: 本サイト `src/routes/sitemap.xml/+server.ts` の実装抜粋を `:::info` で追加。`+server.ts` では `$app/paths` の `base` が使えないため公開ドメインを定数で持つ理由と、`trailingSlash: 'always'` 環境では `<loc>` も末尾スラッシュ付きで出力すべきことを明記。
+- **よくある間違い**: 「JSON-LD オブジェクトを `$derived` で包み忘れる」「canonical URL に `base` を入れ忘れる / `trailingSlash` 設定と矛盾する」の 2 ケースを追加。
+
+### 仕様確認
+
+- Svelte MCP の `mcp__svelte__get-documentation` で `kit/$app-paths`、`kit/$app-state`、`kit/page-options` を取得し、`base`（deprecated 注記あり、`resolve()` 推奨）・`page` の reactive 性質・`trailingSlash: 'always'` 時の `about/index.html` 出力規則に従って記述。
+- 代表的なコード例 3 個（SEO コンポーネント、ブログ記事 + JSON-LD、ページネーション canonical）を `mcp__svelte__svelte-autofixer` で検証し、`state_referenced_locally` 警告が 0 件になることを確認済み。
+
+---
+
+## [2026-05-13] - 記事刷新 Sprint 2 項目 33 / 34: 状態管理の SSR セーフネス強化と Runes 化
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 2 項目 33・34 を統合対応。`sveltekit/application/state-management/+page.md` には「モジュールトップで `$state` を生成して export するパターンは SSR で複数リクエストの状態が混ざる」アンチパターン警告を `:::warning` で明示し、Context API ベースの安全なパターンに置き換え。`sveltekit/application/session/+page.md` の LocalStorage 用クライアントストアを `svelte/store` (`writable`/`derived`) から Svelte 5 Runes（クラス + `$state`）に書き換えた。
+
+### 追加・修正したセクション（項目 33: state-management）
+
+- **冒頭 SSR アンチパターン警告**: `export const cart = new CartStore()` のような書き方を `:::warning[SSR で複数リクエストの状態が混ざります]` で危険と明示。Node.js プロセスがリクエスト間で共有される点と情報漏洩リスクを説明し、Context API・コンポーネントローカル `$state`・load 関数・CSR 限定の4つの安全策を提示。
+- **CartStore 例の Context 化**: `CartStore` クラスを export しつつ、`setCartContext()` / `getCartContext()` ヘルパーを追加。`+layout.svelte` でリクエストごとに `new CartStore()` してリクエストスコープに閉じ込めるパターンに変更。
+- **EditorStore / AuthMachine / FilterStore**: モジュールトップ `new` の代わりに「Context API か layout 内で生成すること」のインラインコメントを追加。
+- **テストコード**: `cart` 直接 import を `let cart: CartStore; beforeEach(() => cart = new CartStore())` 形式に変更（本番でも同じ単位＝リクエストで作る、と整合）。
+- **まとめ**: 「SSR セーフネスを最優先」を重要ポイント先頭に追加。
+
+### 追加・修正したセクション（項目 34: session）
+
+- **LocalStorage 用 AuthStore を Runes 化**: `writable<AuthState>` / `set` / `update` ベースの実装を `class AuthStore { user = $state<User \| null>(null); ... }` に置き換え。`isAuthenticated` は `$derived` 相当の getter で表現。
+- **SSR セーフネス警告**: `:::warning[SSR でリクエスト間共有しないこと]` を追加。`browser` ガードで `localStorage` を扱い、Context API でリクエストスコープに閉じ込めることを明示。
+- **`setAuthContext` / `getAuthContext` ヘルパー追加**: ルートレイアウトで `setAuthContext()` し `onMount(() => auth.init())` でブラウザ側のみ復元するパターンに統一。
+- **`svelte/store` の位置付け注記**: `:::note` で「`svelte/store` API はまだ動作するが、新規実装では Runes 推奨」と明示。
+
+### 仕様確認
+
+- Svelte MCP の `mcp__svelte__get-documentation` で `kit/state-management`、`svelte/context`、`svelte/$state`、`svelte/svelte-js-files` を取得し、公式ドキュメントの「Avoid shared state on the server」「Using state and stores with context」「Passing state across modules」のガイドラインに沿って記述。
+- 代表的なコード例 4 個（CartStore 用 layout、CartStore 用ページ、AuthStore 用 layout、AuthStore 利用ページ）を `mcp__svelte__svelte-autofixer` で検証し、`state_referenced_locally` 警告を解消する形に修正済み。
+
+---
+
+## [2026-05-13] - 記事刷新 Sprint 2 項目 39: 実行環境とランタイムのアダプター API 更新
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 2 項目 39 に基づき、`sveltekit/deployment/execution-environments/+page.md` を SvelteKit 2.x 系列のアダプター仕様（adapter-vercel / adapter-cloudflare / adapter-node / writing-adapters）に整合させた。
+
+### 追加・修正したセクション
+
+- **adapter-vercel**: `runtime` 例を `'nodejs18.x'` から `'nodejs22.x'` に更新。`'edge' / 'nodejs20.x' / 'nodejs22.x'` のみがサポート対象であることを明記し、`runtime` オプションが将来削除予定で Vercel ダッシュボードの Node バージョン設定が自動採用される旨を `:::warning` で告知。プラットフォーム最適化例も `Config` 型を import するスタイルに更新。
+- **adapter-cloudflare**: `adapter-cloudflare-workers` が deprecated であり Workers Static Assets への移行が必要な経緯を `:::info` で記載。`wrangler.jsonc` の `assets.directory` / `assets.binding` / `assets.not_found_handling` と SPA fallback、`_routes.json` の 100 件制限について実例付きで追加。
+- **adapter-node 5.x**: グレースフルシャットダウンのシーケンス（`server.close` → `closeIdleConnections` → `closeAllConnections`）と、`sveltekit:shutdown` イベントで非同期クリーンアップを行う例（DB / ジョブ停止）、`SHUTDOWN_TIMEOUT` 環境変数、Docker/K8s での exec form の重要性を `:::tip` で追加。
+- **writing-adapters の新 API**: カスタムアダプター例を TypeScript の `Adapter` 型ベースに刷新。`supports.read`（`$app/server` の `read` の可否申告）、`supports.instrumentation`（`instrumentation.server.js` / OpenTelemetry サポート）、`emulate` API（ローカル開発時の `event.platform` エミュレーション）を実装例＋解説付きで追加。
+- **リンク切れ修正**: 末尾「次のステップ」の `/sveltekit/architecture/build-optimization/`（存在しないパス）を `/sveltekit/optimization/build-optimization/` に修正。
+
+### 仕様確認
+
+- Svelte MCP の `mcp__svelte__get-documentation` で `kit/adapter-vercel`、`kit/adapter-cloudflare`、`kit/adapter-node`、`kit/writing-adapters` を取得し、上記の `runtime` サポート値・`adapter-cloudflare-workers` 廃止・`sveltekit:shutdown` イベント・`supports` / `emulate` API の最新仕様に基づいて記述。
+
+---
+
+## [2026-05-13] - 記事刷新 Sprint 2 項目 22: Hooks の 3 系統化
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` Sprint 2 項目 22 に基づき、`sveltekit/server/hooks/+page.md` を SvelteKit 公式の最新仕様（Server / Client / Universal の 3 系統）に整合させた。これまで Server hooks のみに集中していた構成を、Client / Universal hooks まで網羅する形に拡張。
+
+### 追加・修正したセクション
+
+- **冒頭「3系統のhooksファイル」セクション新設**: `hooks.server.ts` / `hooks.client.ts` / `hooks.ts` の役割表を追加し、shared hooks（環境別 2 ファイル実装）と Universal hooks（両環境共通実装）の用語区別を明示。
+- **「Hooksの種類」表に配置ファイル列を追加**: `init`・`reroute`・`transport` を含む 7 種をどのファイルに置くかを明示。
+- **`handle` セクションに `event.tracing` 言及（SvelteKit 2.31+）**: `event.tracing.root` と `event.tracing.current` で OpenTelemetry スパンに属性を付与する例を追加。`kit.experimental.tracing.server` フラグと公式 Observability ドキュメントへのリンクも明記。
+- **`handleValidationError` の引数説明を強化**: `{ event, issues }` の引数型を表で明示（`event: RequestEvent` / `issues: StandardSchemaV1.Issue[]`）。戻り値は `App.Error` の形であること、`issues` の中身をクライアントに返さないことを補足。
+- **`Client hooks（src/hooks.client.ts）` セクション新設**: 
+  - `handleError`（クライアント側）: `HandleClientError` 型の例、`event` が `NavigationEvent` 型である点（`event.to.url.pathname` / `event.from.url.pathname`）を明示。
+  - `init`（クライアント側）: `ClientInit` 型の例。ハイドレーション遅延の注意を併記。
+  - 「クライアント `handleError` 自体は例外を投げないこと」の `:::caution` を追加。
+- **`Universal hooks（src/hooks.ts）` セクション新設**:
+  - `reroute` 同期版（基本）: 多言語ルーティング書き換えの例。
+  - `reroute` 非同期版（2.18+）: `fetch` 引数を使った短縮 URL 解決例。ナビゲーション遅延・冪等性の `:::caution` を併記。
+  - `transport`: カスタム型 `Vector` を `encode`/`decode` する例。`Decimal` / `Temporal` / ドメインモデル等の活用例を `:::tip` で提示。
+  - `init`（Universal）: `SharedInit` 型の例と、環境別初期化との使い分けを `:::info` で明示。
+- **まとめセクション更新**: 4 hooks 列挙を、Server / Client / Universal の 3 系統 × 全 9 hooks（重複含む）を整理した記述に置換。
+
+### 仕様確認
+
+- Svelte MCP の `mcp__svelte__get-documentation` で `kit/hooks`、`kit/configuration`、`kit/observability` を取得し、3 系統構成・`handleValidationError` 引数・`reroute` async 対応（2.18+）・`event.tracing` API（2.31+）の最新仕様に基づいて記述。
+- frontmatter の `description` も「Server/Client/Universalの3系統」を含む内容へ更新（35 文字以内ルールは title 側のみ適用、description は SEO 範囲内）。
+
 ## [2026-05-13] - 記事刷新 Sprint 1（即時修正 21 項目）
 
 ### 概要

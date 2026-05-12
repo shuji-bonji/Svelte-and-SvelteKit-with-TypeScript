@@ -338,76 +338,153 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 ```
 
-#### クライアント側での保存と使用
+#### クライアント側での保存と使用（Svelte 5 Runes）
 
-LocalStorageパターンでは、クライアント側でトークンを管理するストアを実装します。このストアは認証状態の管理、トークンの保存・取得、自動リフレッシュなどを担当します。
+LocalStorageパターンでは、クライアント側でトークンを管理するストアを実装します。**Svelte 5 では `$state` を使ったクラスベース（`.svelte.ts`）の実装を推奨**します。`svelte/store` の `writable` / `derived` API もまだ動作しますが、新規実装では Runes を選んでください。
+
+:::warning[SSR でリクエスト間共有しないこと]
+このストアはブラウザの `localStorage` を扱うため **CSR 専用** です。SSR フェーズでは `localStorage` が存在しないので、初期化は必ず `if (browser)` ガードか `onMount` 内で行います。また、モジュールトップで `new` してそれを export する書き方は SSR で複数リクエスト間の状態漏洩リスクがあるため、**Context API でリクエストスコープに閉じ込める**実装にしています。
+:::
 
 ```typescript
-// src/lib/stores/auth.ts
-import { writable, derived } from 'svelte/store';
+// src/lib/stores/auth.svelte.ts
+import { browser } from '$app/environment';
+import { getContext, setContext } from 'svelte';
 
-interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+export interface User {
+  id: string;
+  email: string;
+  role: string;
 }
 
-function createAuthStore() {
-  const { subscribe, set, update } = writable<AuthState>({
-    user: null,
-    accessToken: null,
-    refreshToken: null
-  });
-  
-  return {
-    subscribe,
-    
-    async login(email: string, password: string) {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        // LocalStorageに保存
-        localStorage.setItem('access_token', data.accessToken);
-        localStorage.setItem('refresh_token', data.refreshToken);
-        
-        set({
-          user: data.user,
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken
-        });
-        
-        return true;
-      }
-      return false;
-    },
-    
-    logout() {
+export class AuthStore {
+  user = $state<User | null>(null);
+  accessToken = $state<string | null>(null);
+  refreshToken = $state<string | null>(null);
+
+  // derived は $derived で表現
+  get isAuthenticated(): boolean {
+    return this.user !== null && this.accessToken !== null;
+  }
+
+  async login(email: string, password: string): Promise<boolean> {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) return false;
+
+    const data = await response.json();
+
+    // localStorage はブラウザでのみ利用可能
+    if (browser) {
+      localStorage.setItem('access_token', data.accessToken);
+      localStorage.setItem('refresh_token', data.refreshToken);
+    }
+
+    this.user = data.user;
+    this.accessToken = data.accessToken;
+    this.refreshToken = data.refreshToken;
+    return true;
+  }
+
+  logout(): void {
+    if (browser) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      set({ user: null, accessToken: null, refreshToken: null });
-    },
-    
-    // 初期化時にLocalStorageから復元
-    init() {
-      const accessToken = localStorage.getItem('access_token');
-      const refreshToken = localStorage.getItem('refresh_token');
-      
-      if (accessToken) {
-        // トークンの検証とユーザー情報の取得
-        this.validateToken(accessToken);
-      }
     }
-  };
+    this.user = null;
+    this.accessToken = null;
+    this.refreshToken = null;
+  }
+
+  // CSR でのマウント直後に呼び、LocalStorage から復元する
+  init(): void {
+    if (!browser) return;
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (accessToken && refreshToken) {
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+      // 別途、トークンの検証とユーザー情報の取得処理
+    }
+  }
 }
 
-export const auth = createAuthStore();
+// Context API ヘルパー
+const AUTH_KEY = Symbol('auth');
+
+export function setAuthContext(): AuthStore {
+  const auth = new AuthStore();
+  setContext(AUTH_KEY, auth);
+  return auth;
+}
+
+export function getAuthContext(): AuthStore {
+  const auth = getContext<AuthStore | undefined>(AUTH_KEY);
+  if (!auth) {
+    throw new Error(
+      'AuthStore context not found. 親レイアウトで setAuthContext() を呼んでください'
+    );
+  }
+  return auth;
+}
 ```
+
+**ルートレイアウトでの初期化**
+
+リクエストごとに新しい `AuthStore` を Context に注入し、`onMount` で LocalStorage から復元します。
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { setAuthContext } from '$lib/stores/auth.svelte';
+  import type { Snippet } from 'svelte';
+
+  let { children }: { children?: Snippet } = $props();
+
+  // リクエスト（SSR）またはマウント（CSR）ごとに新規インスタンス
+  const auth = setAuthContext();
+
+  onMount(() => {
+    // ブラウザ側でのみ LocalStorage から復元
+    auth.init();
+  });
+</script>
+
+{@render children?.()}
+```
+
+**子コンポーネントでの利用**
+
+```svelte
+<script lang="ts">
+  import { getAuthContext } from '$lib/stores/auth.svelte';
+
+  const auth = getAuthContext();
+
+  async function handleLogin(email: string, password: string) {
+    const ok = await auth.login(email, password);
+    if (!ok) alert('ログインに失敗しました');
+  }
+</script>
+
+{#if auth.isAuthenticated}
+  <p>こんにちは、{auth.user?.email}</p>
+  <button onclick={() => auth.logout()}>ログアウト</button>
+{:else}
+  <button onclick={() => handleLogin('user@example.com', 'password')}>
+    ログイン
+  </button>
+{/if}
+```
+
+:::note[`svelte/store` を使い続けたい場合]
+既存コードが `writable` / `derived` で書かれている場合、すぐに書き換える必要はありません。`svelte/store` API は Svelte 5 でも動作し、deprecated にもなっていません。ただし新規実装や大きな修正のタイミングでは Runes（`$state` / `$derived`）への置き換えを検討してください。`$state` のほうが型推論が素直で、`.subscribe()` / `$auto-subscribe` のような特殊な構文を覚える必要がありません。
+:::
 
 ### JWT検証ミドルウェア
 

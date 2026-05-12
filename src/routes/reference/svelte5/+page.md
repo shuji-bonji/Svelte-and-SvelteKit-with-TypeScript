@@ -402,9 +402,38 @@ $inspect(count).with((type, value) => {
 });
 ```
 
+#### $inspect.trace() - リアクティブ依存関係のトレース（5.14+）
+
+`$inspect.trace()` は、`$effect` や `$derived` の中で関数が再実行された際に、どのリアクティブ状態が原因で再実行されたかをコンソールに出力します。**関数本体の先頭で呼び出す必要があります**。
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let multiplier = $state(2);
+
+  $effect(() => {
+    // 関数の先頭で呼び出す
+    $inspect.trace('計算エフェクト');
+
+    const result = count * multiplier;
+    console.log('result:', result);
+  });
+</script>
+```
+
+引数のラベルは省略可。本番ビルドではnoop（何も実行されない）になります。
+
+| API | 用途 | 動作 |
+|-----|------|------|
+| `$inspect(value)` | 値の変化をログ出力 | 値が変更されるたびに `console.log` |
+| `$inspect(value).with(fn)` | カスタムロガー | `'init'` / `'update'` 種別を受け取る |
+| `$inspect.trace(label?)` | 依存関係のトレース | 再実行の原因となった状態をログ |
+
+詳しくは [$inspect - デバッグ]({base}/svelte/runes/inspect/) を参照。
+
 ### $host - カスタムエレメント
 
-```typescript
+```svelte
 <svelte:options customElement="my-counter" />
 
 <script lang="ts">
@@ -420,35 +449,76 @@ $inspect(count).with((type, value) => {
 </script>
 ```
 
-### $state.eager - 非同期中の即時UI更新
+#### `<svelte:options customElement>` のオブジェクト構文
 
-ナビゲーションなどの非同期操作中でも即座にUIを更新する機能です（Svelte 5.36+）。
+文字列リテラル形式（`customElement="my-element"`）は最小構成ですが、Shadow DOM・props属性・ライフサイクル拡張をカスタマイズしたい場合は**オブジェクト構文**を使います。
 
-```typescript
-import { page } from '$app/state';
+| プロパティ | 型 | 役割 |
+|----------|---|------|
+| `tag` | `string` | カスタムエレメントのタグ名 |
+| `shadow` | `"none" \| "open" \| ShadowRootInit` | Shadow DOMのモード（`"none"` で無効化） |
+| `props` | `Record<string, { attribute?, reflect?, type? }>` | 属性名・反映・型変換の個別設定 |
+| `extend` | `(ctor) => CustomElementClass` | クラス拡張（formAssociated 等） |
 
-// 通常の$derivedはナビゲーション完了後に更新
-let currentPath = $derived(page.url.pathname);
+```svelte
+<svelte:options
+  customElement={{
+    tag: 'my-counter',
+    shadow: 'open',
+    props: {
+      count: { reflect: true, type: 'Number', attribute: 'data-count' }
+    },
+    extend: (ctor) => {
+      return class extends ctor {
+        static formAssociated = true;
+      };
+    }
+  }}
+/>
 
-// $state.eagerはナビゲーション開始時に即座に更新
-let eagerPath = $state.eager(page.url.pathname);
+<script lang="ts">
+  let { count = 0 }: { count?: number } = $props();
+</script>
+
+<output>{count}</output>
 ```
 
-#### ユースケース
+:::caution[props を $props() で個別に列挙する必要あり]
+`let props = $props()` のように **まとめて受け取る形は不可**。Svelteがどのpropをカスタムエレメントの属性として公開すべきか判別できないためです。プロパティは個別に分割代入してください。
+:::
+
+詳しくは [Web Components / CSS戦略]({base}/deep-dive/webcomponents-svelte-css-strategies/) を参照。
+
+### $state.eager - 非同期中の即時UI更新（5.36+）
+
+`await expressions` を有効化した環境で、依存値の変更を**非同期更新の完了を待たず**即座にUIへ反映するためのリアクティブ状態です。通常の `$derived` は同期的なUI更新を保証するため、内部の `await` が解決するまで古い値を保持しますが、`$state.eager` は次フレームでただちに更新されます。
+
+| API | 更新タイミング | 用途 |
+|-----|---------------|------|
+| `$state(initial)` | 代入時に即時 | 通常のリアクティブ状態 |
+| `$derived(expr)` | 依存関係の解決後（同期化） | 一貫性が必要な計算値 |
+| `$state.eager(expr)` | 依存値変更時に即時 | ナビゲーション中のUI更新等 |
 
 ```svelte
 <script lang="ts">
   import { page } from '$app/state';
 
-  // ナビゲーション中もアクティブなメニュー項目を即座に更新
-  let activePath = $state.eager(page.url.pathname);
+  // 通常の$derivedはナビゲーション完了後に更新
+  let currentPath = $derived(page.url.pathname);
+
+  // $state.eagerはナビゲーション開始時に即座に更新
+  let eagerPath = $state.eager(page.url.pathname);
 </script>
 
 <nav>
-  <a href="/" class:active={activePath === '/'}>ホーム</a>
-  <a href="/about" class:active={activePath === '/about'}>About</a>
+  <a href="/" class:active={eagerPath === '/'}>ホーム</a>
+  <a href="/about" class:active={eagerPath === '/about'}>About</a>
 </nav>
 ```
+
+:::info[await expressions との関係]
+`$state.eager` は async対応の同期化挙動と組み合わせて意味を持つ機能です。詳しくは [await expressions]({base}/svelte/advanced/await-expressions/) を参照。
+:::
 
 ### hydratable - SSRデータの再利用
 
@@ -481,25 +551,48 @@ const timestamp = hydratable('page-timestamp', () => Date.now());
 
 </Admonition>
 
-### await expressions - 非同期構文（実験的）
+### await expressions - 非同期構文（実験的・5.36+）
 
-Svelte 5.36+でサポートされる実験的な非同期構文です。
+Svelte 5.36+でサポートされる実験的な非同期構文です。コンポーネントの `<script>` トップレベル、`$derived(...)`、マークアップ内で `await` を使えるようになります。
+
+#### opt-in 手順
+
+`svelte.config.js` に `compilerOptions.experimental.async: true` を設定する必要があります（Svelte 6 で実験フラグは削除予定）。
+
+```javascript
+// svelte.config.js
+export default {
+  compilerOptions: {
+    experimental: {
+      async: true
+    }
+  }
+};
+```
+
+#### 使用箇所
 
 ```svelte
 <script lang="ts">
-  // スクリプト内でのawait
+  // 1. <script> トップレベルでのawait
   const user = await fetchUser();
 </script>
 
-<!-- マークアップ内でのawait -->
+<!-- 2. マークアップ内でのawait -->
 <h1>{(await fetchTitle()).toUpperCase()}</h1>
 
-<!-- $derivedと組み合わせ -->
+<!-- 3. $derived と組み合わせ -->
 {@const data = await $derived(fetchData(id))}
 <div>{data.content}</div>
 ```
 
-#### svelte:boundaryとの連携
+#### 同期化（Synchronized updates）
+
+`await` 式が解決するまでUIは前の状態を保持し、一貫性のないUIが表示されないようSvelteが自動的に同期化します。
+
+#### `svelte:boundary` との連携
+
+初回ローディングは `pending` snippet、後続の非同期更新は `$effect.pending()` で検出します。
 
 ```svelte
 <svelte:boundary>
@@ -511,6 +604,52 @@ Svelte 5.36+でサポートされる実験的な非同期構文です。
 </svelte:boundary>
 ```
 
+#### fork() / settled() / tick() - 同期化制御（5.42+）
+
+非同期更新の同期化を制御するための低レベルAPIです。`svelte` モジュールから直接インポートします。
+
+| API | 役割 | 主な用途 |
+|-----|------|---------|
+| `tick()` | 保留中の状態更新を反映するまで待つ | 状態変更直後にUIへ反映させたい時 |
+| `settled()` | 現在の非同期更新がすべて完了するまで待つ | UI遷移完了の検出 |
+| `fork(fn)` | 投機的に状態を変更し、commit/discard 可能 | プリロード、ナビゲーション先読み |
+
+```typescript
+import { tick, settled, fork } from 'svelte';
+
+// tick() / settled() の組み合わせ
+async function updateUI() {
+  updating = true;
+  await tick(); // updating=true をUIに即時反映
+
+  color = 'blue';
+  answer = 42;
+
+  await settled(); // 全ての連鎖更新が完了するまで待つ
+  updating = false;
+}
+
+// fork() - 投機的な状態更新
+let pending: import('svelte').Fork | null = null;
+
+function preload() {
+  // ホバー時に「先回りで」状態を変更し、非同期処理を開始させる
+  pending ??= fork(() => {
+    open = true;
+  });
+}
+
+function cancel() {
+  pending?.discard();
+  pending = null;
+}
+
+function confirm() {
+  pending?.commit();
+  pending = null;
+}
+```
+
 #### ローディング状態の検出
 
 ```typescript
@@ -520,6 +659,8 @@ $effect(() => {
   }
 });
 ```
+
+詳しくは [await expressions]({base}/svelte/advanced/await-expressions/) を参照。
 
 ## コンポーネント構造
 
@@ -843,6 +984,43 @@ $effect(() => {
 />
 ```
 
+### Function bindings - getter/setter形式（5.9+）
+
+`bind:property={() => getter, (v) => setter(v)}` 構文で、バインディングに検証・変換ロジックを挟めます。
+
+| 構文 | 用途 |
+|------|------|
+| `bind:value={variable}` | 通常の双方向バインディング |
+| `bind:value={() => get, (v) => set(v)}` | getter/setter付きバインディング |
+| `bind:clientWidth={null, redraw}` | 読み取り専用バインディング（getterは `null`） |
+
+```svelte
+<script lang="ts">
+  let value = $state('');
+
+  // 入力値を常に小文字に変換してから格納
+  function setLowercase(v: string) {
+    value = v.toLowerCase();
+  }
+</script>
+
+<input bind:value={
+  () => value,
+  (v) => setLowercase(v)
+} />
+
+<!-- 読み取り専用バインディング：getter位置に null -->
+<div bind:clientWidth={null, (w) => redraw(w)}>
+  リサイズ検知
+</div>
+```
+
+:::tip[bind:this との併用]
+Function bindingsを使った `bind:this` では、コンポーネント・要素の破棄時に正しく `null` 化するため**必ずgetterを提供**してください。
+:::
+
+詳しくは [$bindable - 双方向バインディング]({base}/svelte/runes/bindable/) を参照。
+
 ## スタイリング
 
 ### Scopedスタイル
@@ -1078,6 +1256,69 @@ Svelte 5では `&lt;svelte:component&gt;` なしで直接 `<currentComponent />`
   <meta name="description" content="Page description" />
 </svelte:head>
 ```
+
+### svelte:boundary - エラー・非同期境界（5.3+）
+
+エラーと `await expressions` の保留状態を**境界として隔離**するための要素です。次のプロパティを 1 つ以上指定すると効果を持ちます。
+
+| プロパティ | 種別 | 役割 |
+|----------|------|------|
+| `pending` | snippet | `await` 式が初回解決するまで表示するUI |
+| `failed` | snippet | エラー発生時に表示するUI（`error`, `reset` 引数） |
+| `onerror` | 関数 | エラーレポート送信などの副作用 |
+| `transformError` | 関数（5.51+） | SSR時のエラーオブジェクト変換（XSS対策・型整形） |
+
+```svelte
+<script lang="ts">
+  function reportError(error: unknown, reset: () => void) {
+    // エラー報告サービスへ送信
+    sendToSentry(error);
+  }
+</script>
+
+<svelte:boundary onerror={reportError}>
+  <FlakyComponent />
+
+  {#snippet pending()}
+    <p>読み込み中...</p>
+  {/snippet}
+
+  {#snippet failed(error: Error, reset: () => void)}
+    <p>エラー: {error.message}</p>
+    <button onclick={reset}>再試行</button>
+  {/snippet}
+</svelte:boundary>
+```
+
+#### `transformError`（5.51+）
+
+SSR時にエラーオブジェクトを**JSON シリアライズ可能な形に変換**してから `failed` snippetに渡す関数です。`render()` / `mount()` / `hydrate()` のオプションとして指定します。
+
+```typescript
+// server.ts
+import { render } from 'svelte/server';
+import App from './App.svelte';
+
+const { head, body } = await render(App, {
+  transformError: (error) => {
+    // 元のエラーは内部でログ
+    console.error(error);
+
+    // ブラウザへはサニタイズ済みのオブジェクトを返す
+    return { message: 'エラーが発生しました' };
+  }
+});
+```
+
+:::warning[SSRエラーの情報漏洩に注意]
+`error.message` や `error.stack` には機密情報が含まれる可能性があるため、`transformError` でサニタイズしてから返却してください。
+:::
+
+:::info[エラー境界の制限]
+`<svelte:boundary>` はレンダリング処理中のエラーのみ捕捉します。**イベントハンドラ・setTimeout・非同期処理中のエラーは捕捉されません**。
+
+詳しくは [特殊要素]({base}/svelte/basics/special-elements/) を参照。
+:::
 
 ## TypeScript統合
 

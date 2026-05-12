@@ -1,6 +1,6 @@
 ---
 title: Hooks
-description: SvelteKitのHooksシステムを完全理解 - handle、handleFetch、handleErrorを使用したリクエスト処理のカスタマイズとTypeScriptでの実装方法を解説
+description: SvelteKitのHooksシステムを完全理解 - Server/Client/Universalの3系統、handle・handleFetch・handleError・reroute・transportをTypeScriptで実装する方法を解説
 ---
 
 <script>
@@ -120,18 +120,35 @@ SvelteKitのHooksは、アプリケーション全体のリクエスト処理を
 
 Hooksは、すべてのリクエストが通過するミドルウェアのような役割を果たします。Express.jsのミドルウェアやASP.NET Coreのミドルウェアパイプラインと同様の概念で、リクエスト・レスポンスサイクルの各段階で処理を挿入できます。
 
+### 3系統のhooksファイル
+
+SvelteKitのHooksは、実行環境ごとに **3つのファイル** に分かれています。いずれもオプションで、必要なものだけを置けば動作します。
+
+| ファイル | 実行環境 | 主な用途 |
+| ---- | ---- | ---- |
+| **`src/hooks.server.ts`** | サーバーのみ | リクエスト処理（`handle`）、外部 fetch の改変（`handleFetch`）、サーバー側エラー処理（`handleError`）、Remote Functions のバリデーション失敗処理（`handleValidationError`）、サーバー起動時の初期化（`init`） |
+| **`src/hooks.client.ts`** | クライアントのみ | クライアント側エラー処理（`handleError`）、ブラウザ起動時の初期化（`init`） |
+| **`src/hooks.ts`** | 両方（Universal） | URL リライト（`reroute`）、カスタム型の transport（`transport`）、両環境共通の初期化（`init`） |
+
+:::info[Universal hooks と shared hooks の違い]
+[公式ドキュメント](https://svelte.dev/docs/kit/hooks)では、`hooks.server.ts` と `hooks.client.ts` の **両方に書ける** `handleError` や `init` を **shared hooks**（環境ごとに別ファイルで実装）と呼び、`hooks.ts` で定義する **Universal hooks**（同じ実装を両環境で共有）と区別しています。本ページもこの用語に従います。
+:::
+
 ### Hooksの種類
 
 以下の図は、Hooksがリクエスト処理フローのどこで実行されるかを示しています。各Hookは特定のタイミングで呼び出され、アプリケーション全体に影響を与えます。
 
 <Mermaid chart={hooksFlowChart} />
 
-| Hook                      | 役割                                     | 実行タイミング           |
-| ------------------------- | ---------------------------------------- | ------------------------ |
-| **handle**                | リクエスト/レスポンスの処理              | すべてのリクエスト       |
-| **handleFetch**           | fetch関数のカスタマイズ                  | サーバーサイドfetch時    |
-| **handleError**           | エラー処理                               | 未処理エラー発生時       |
-| **handleValidationError** | Remote Functionsバリデーションエラー処理 | 引数バリデーション失敗時 |
+| Hook                      | 配置ファイル | 役割                                     | 実行タイミング           |
+| ------------------------- | --- | ---------------------------------------- | ------------------------ |
+| **handle**                | `hooks.server.ts` | リクエスト/レスポンスの処理              | すべてのリクエスト       |
+| **handleFetch**           | `hooks.server.ts` | `event.fetch` のカスタマイズ             | サーバーサイドfetch時    |
+| **handleError**           | `hooks.server.ts` / `hooks.client.ts` | 未処理エラーの処理     | エラー発生時             |
+| **handleValidationError** | `hooks.server.ts` | Remote Functionsバリデーションエラー処理 | 引数バリデーション失敗時 |
+| **init**                  | `hooks.server.ts` / `hooks.client.ts` / `hooks.ts` | 初回起動時の初期化処理 | サーバー作成時 / ブラウザ起動時 |
+| **reroute**               | `hooks.ts` | URL → ルートのリライト                    | ナビゲーションのたび     |
+| **transport**             | `hooks.ts` | カスタム型のシリアライズ／デシリアライズ | サーバー → クライアント転送時 |
 
 これらのHooksを適切に組み合わせることで、認証、ロギング、セキュリティヘッダー、国際化など、アプリケーション全体に影響する機能を効率的に実装できます。
 
@@ -160,6 +177,28 @@ export const handle: Handle = async ({ event, resolve }) => {
   return response;
 };
 ```
+
+:::info[`event.tracing` でスパンに属性を追加（SvelteKit 2.31+）]
+`kit.experimental.tracing.server` を有効にすると、`handle`・`load`・form actions・Remote Functions について **OpenTelemetry のスパン** が自動で発行されます。`handle` 内部からは以下の 2 つのスパンにアクセスでき、任意の属性を付与できます。
+
+- `event.tracing.root` — このリクエストのルート（最も外側）スパン
+- `event.tracing.current` — 現在の文脈にあるスパン（`handle` 内なら `handle` のスパン、`sequence` でラップされていれば対応する子スパン）
+
+```typescript
+// src/hooks.server.ts
+import type { Handle } from '@sveltejs/kit';
+
+export const handle: Handle = async ({ event, resolve }) => {
+  // ルートスパンにユーザーIDやリクエストIDを付けると分散トレースで横断検索しやすい
+  event.tracing.root.setAttribute('app.user_id', event.locals.user?.id ?? 'anonymous');
+  event.tracing.current.setAttribute('app.route', event.url.pathname);
+
+  return resolve(event);
+};
+```
+
+詳細は公式ドキュメント [Observability](https://svelte.dev/docs/kit/observability) を参照してください。
+:::
 
 ### 認証処理の実装
 
@@ -503,6 +542,17 @@ async function logToDatabase(errorLog: any) {
 
 バリデーション失敗の主な原因は、デプロイ間のバージョン不一致（ユーザーが古いクライアントコードを実行している場合）や、不正なリクエスト（攻撃的なリクエスト）です。
 
+### 引数の構造
+
+`handleValidationError` は、以下の 2 つのプロパティを持つオブジェクトを受け取ります（`handle` や `handleError` と異なり `resolve` や `error` は無い点に注意）。
+
+| 引数 | 型 | 内容 |
+| ---- | ---- | ---- |
+| `event` | `RequestEvent` | バリデーション失敗を起こした Remote Function 呼び出しのリクエストイベント。`event.url` や `event.getClientAddress()` などにアクセス可能 |
+| `issues` | [`StandardSchemaV1.Issue[]`](https://standardschema.dev/) | [Standard Schema](https://standardschema.dev/) 仕様の `Issue` 配列。`message`、`path` などを持つ |
+
+戻り値は **`App.Error` の形** に合わせる必要があります（`message: string` を必ず含むこと）。情報漏洩を避けるため、`issues` の内容をそのままクライアントに返すのは避けるのが安全です。
+
 ```typescript
 // src/hooks.server.ts
 import type { HandleValidationError } from '@sveltejs/kit';
@@ -515,10 +565,10 @@ export const handleValidationError: HandleValidationError = ({
   console.warn('バリデーションエラー:', {
     path: event.url.pathname,
     ip: event.getClientAddress(),
-    issues: issues.map((i) => i.message),
+    issues: issues.map((i) => ({ path: i.path, message: i.message })),
   });
 
-  // App.Error型のオブジェクトを返す
+  // App.Error型のオブジェクトを返す（情報漏洩を避けるため詳細は返さない）
   return {
     message: '不正なリクエストです',
   };
@@ -530,6 +580,193 @@ export const handleValidationError: HandleValidationError = ({
 `handleError` はアプリケーション内の**未処理エラー**（予期しないエラー）を処理します。一方、`handleValidationError` はRemote Functionsへの**バリデーション失敗**（400エラー）を処理します。両者は独立したフックで、それぞれ異なるエラーカテゴリを担当します。
 
 </Admonition>
+
+## Client hooks（`src/hooks.client.ts`）
+
+`src/hooks.client.ts` には **ブラウザ側で実行される hooks** を配置します。`handleError`（クライアント版）と `init` の 2 つが利用可能です。
+
+### handleError（クライアント側）
+
+クライアント側のナビゲーションや、ハイドレーション後のコンポーネントレンダリング中に発生した **未処理エラー** が、このフックに渡されます。シグネチャは `HandleClientError` 型で、サーバー版（`HandleServerError`）とほぼ同じですが **`event` の型が `NavigationEvent`** （`RequestEvent` ではない）になる点が異なります。
+
+```typescript
+// src/hooks.client.ts
+import type { HandleClientError } from '@sveltejs/kit';
+import { dev } from '$app/environment';
+
+export const handleError: HandleClientError = ({
+  error,
+  event,
+  status,
+  message,
+}) => {
+  // クライアント側で発生した未処理エラーを記録
+  const errorId = crypto.randomUUID();
+
+  console.error('Client Error:', {
+    errorId,
+    status,
+    message,
+    // クライアント側の event は NavigationEvent 型
+    // 遷移先 URL と遷移元 URL がプロパティとして取得できる
+    to: event.to?.url.pathname,
+    from: event.from?.url.pathname,
+    error,
+  });
+
+  // 本番ではエラートラッキングサービスへ送信
+  if (!dev) {
+    // 例: Sentry.captureException(error, { extra: { errorId, status } });
+  }
+
+  // page.error として表示される情報を返す
+  return {
+    message: dev ? message : '予期しないエラーが発生しました',
+    errorId,
+  };
+};
+```
+
+:::caution[クライアント `handleError` 自体は例外を投げないこと]
+公式ドキュメントは `handleError` 内で **絶対にエラーを投げないこと** を強く推奨しています。ロギングや外部送信に失敗しても、`try/catch` で握りつぶしてフォールバックを返すべきです。
+:::
+
+### init（クライアント側）
+
+`init` はブラウザでアプリが起動した最初の 1 回だけ実行されます。サーバー側 `init` と同じ用途ですが、ここでの非同期処理は **ハイドレーション開始を遅延させる** 点に注意が必要です。
+
+```typescript
+// src/hooks.client.ts
+import type { ClientInit } from '@sveltejs/kit';
+
+export const init: ClientInit = async () => {
+  // 例: クライアント分析ツールやエラートラッカーの初期化
+  // 重い処理を避け、可能ならハイドレーション後に遅延させる
+};
+```
+
+## Universal hooks（`src/hooks.ts`）
+
+`src/hooks.ts` に書かれた hooks は **サーバーとクライアントの両方で実行** されます。`reroute`・`transport`・`init` の 3 種類が利用可能です。
+
+:::warning[Universal hooks と shared hooks は別物]
+本ファイル（`hooks.ts`）に書いた `init` は **両環境で同じコード** が走ります。一方、`hooks.server.ts` と `hooks.client.ts` の両方に書ける `handleError` や `init` は **環境ごとに別実装** にでき、これを公式は shared hooks と呼んで区別しています。
+:::
+
+### reroute
+
+`reroute` は `handle` の **前** に走り、URL がどのルートに解決されるかを書き換えます。返した pathname を元に SvelteKit はルートとパラメータを決定しますが、ブラウザのアドレスバーや `event.url` は変わりません。
+
+#### 同期版（基本）
+
+`src/routes/[[lang]]/about/+page.svelte` のような多言語ルーティングを、URL の見た目を変えずに実現する例です。
+
+```typescript
+// src/hooks.ts
+import type { Reroute } from '@sveltejs/kit';
+
+// URL の見た目 → 実際のルート
+const translated: Record<string, string> = {
+  '/en/about': '/en/about',
+  '/de/ueber-uns': '/de/about',
+  '/fr/a-propos': '/fr/about',
+};
+
+export const reroute: Reroute = ({ url }) => {
+  if (url.pathname in translated) {
+    return translated[url.pathname];
+  }
+  // 返さない（undefined）と、SvelteKit はそのまま url.pathname を使う
+};
+```
+
+#### 非同期版（2.18+）
+
+SvelteKit 2.18 から `reroute` は **async** に対応し、引数の `fetch` を使って外部・内部 API への問い合わせができるようになりました。短縮 URL の解決や A/B テストの振り分けなどに利用できます。
+
+```typescript
+// src/hooks.ts
+import type { Reroute } from '@sveltejs/kit';
+
+export const reroute: Reroute = async ({ url, fetch }) => {
+  // 短縮 URL を実ルートに解決する例
+  if (url.pathname.startsWith('/s/')) {
+    const code = url.pathname.replace('/s/', '');
+    const api = new URL('/api/resolve-short-link', url);
+    api.searchParams.set('code', code);
+
+    // load 関数と同じ fetch を使う（クッキー継承などの恩恵あり）
+    const result = await fetch(api).then((r) => r.json());
+    return result.pathname as string | undefined;
+  }
+};
+```
+
+:::caution[asyncなreroute は慎重に]
+`reroute` はすべてのナビゲーションの **前** に走るため、ここで遅い `fetch` を発生させるとアプリ全体のナビゲーションが遅延します。可能な限り高速で安定したエンドポイントだけを使うこと。
+また `reroute` は **純粋・冪等** であるべきとされており、SvelteKit は同じ URL に対する結果をクライアント側でキャッシュします。副作用を入れないようにしてください。
+:::
+
+### transport
+
+`transport` は、**サーバー側の `load` や form action から返した「カスタムクラスのインスタンス」を、クライアントへそのまま復元させる** ためのシリアライズ機構です。
+
+各キーが `encode`（サーバー側で値を配列等にエンコード）と `decode`（クライアント側でインスタンスを復元）の組を持ちます。`encode` は対象のインスタンスでない場合 falsy を返すことで、他の transporter にフォールバックさせます。
+
+```typescript
+// src/lib/math.ts
+export class Vector {
+  constructor(
+    public x: number,
+    public y: number,
+  ) {}
+  add(other: Vector): Vector {
+    return new Vector(this.x + other.x, this.y + other.y);
+  }
+}
+```
+
+```typescript
+// src/hooks.ts
+import type { Transport } from '@sveltejs/kit';
+import { Vector } from '$lib/math';
+
+export const transport: Transport = {
+  Vector: {
+    // サーバー側: Vector インスタンスなら [x, y] にエンコード、それ以外は false
+    encode: (value) => value instanceof Vector && [value.x, value.y],
+    // クライアント側: [x, y] から Vector を復元
+    decode: ([x, y]) => new Vector(x as number, y as number),
+  },
+};
+```
+
+これにより、サーバー側 `load` で `return { position: new Vector(1, 2) }` のように返した値が、クライアント側でも **`Vector` インスタンスとして** ハイドレートされ、`position.add(...)` のようにメソッド呼び出しができます。
+
+:::tip[transport の活用例]
+- `Decimal`（decimal.js）や `BigNumber`（bignumber.js）といった任意精度数値
+- `Temporal.Instant` / `Temporal.PlainDate` などの時刻型
+- ドメインモデルのエンティティクラス（`User`、`Order` など）
+- 独自の `Result<T, E>` 型
+:::
+
+### init（Universal）
+
+サーバー起動時とブラウザ起動時の **両方** で 1 度ずつ実行される初期化処理です。両環境で共通のロギング設定や、ライブラリのグローバルオプション設定に向きます。
+
+```typescript
+// src/hooks.ts
+import type { SharedInit } from '@sveltejs/kit';
+
+export const init: SharedInit = async () => {
+  // 両環境で必要な共通初期化
+  // 例: dayjs プラグインの登録、Zod のグローバル設定など
+};
+```
+
+:::info[サーバー専用・クライアント専用の初期化はそれぞれの hooks ファイルへ]
+データベースコネクションのように **サーバーでしか動かないコード** は `hooks.server.ts` の `init` に、ブラウザ API を触る処理は `hooks.client.ts` の `init` に書きます。`hooks.ts` の `init` は両環境で動くため、`$app/environment` の `browser` フラグなどで分岐しない限りは「両方で動いて安全な処理」に限定するのが安全です。
+:::
 
 ## 実践的な例
 
@@ -864,7 +1101,7 @@ SvelteKitのHooksは、アプリケーション全体に影響する横断的関
 - **効率的**: パフォーマンスへの影響を最小限に
 - **保守的**: 責務の分離により、コードの可読性と保守性が向上
 
-`handle`、`handleFetch`、`handleError`、`handleValidationError`の4つのHooksを適切に組み合わせることで、認証、ログ、セキュリティ、国際化、エラー処理など、エンタープライズグレードのWebアプリケーションに必要な機能をすべて実装できます。
+サーバー (`hooks.server.ts`) では `handle`・`handleFetch`・`handleError`・`handleValidationError`・`init`、クライアント (`hooks.client.ts`) では `handleError`・`init`、Universal (`hooks.ts`) では `reroute`・`transport`・`init` を組み合わせることで、認証、ログ、セキュリティ、国際化、URL リライト、カスタム型の透過的なシリアライズ、エラー処理など、エンタープライズグレードのWebアプリケーションに必要な機能をすべて実装できます。
 
 Hooksは、Express.jsのミドルウェアやASP.NET Coreのミドルウェアパイプラインと同様の概念ですが、SvelteKitの型安全性と統合されており、より堅牢な開発体験を提供します。
 

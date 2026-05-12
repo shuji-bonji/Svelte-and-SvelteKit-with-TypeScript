@@ -976,43 +976,58 @@ FLIP（First, Last, Invert, Play）技術を使用して、要素の位置変更
 {/if}
 ```
 
-### local修飾子
+### global修飾子（local がデフォルト）
+
+Svelte 5 では、**トランジションはデフォルトで local**（属するブロック自身が生成・破棄されるときだけ再生される）です。`|global` 修飾子を付けると、**上位ブロックのマウント／アンマウント時にも再生**されます。
 
 ```svelte live
 <script lang="ts">
   import { slide } from 'svelte/transition';
 
-  let currentTab = $state('tab1');
+  let outerVisible = $state(true);
+  let innerVisible = $state(true);
 </script>
 
-<div class="tabs">
-  <button onclick={() => currentTab = 'tab1'}>タブ1</button>
-  <button onclick={() => currentTab = 'tab2'}>タブ2</button>
-  <button onclick={() => currentTab = 'tab3'}>タブ3</button>
+<div class="controls">
+  <button onclick={() => outerVisible = !outerVisible}>
+    外側ブロックの表示切り替え
+  </button>
+  <button onclick={() => innerVisible = !innerVisible}>
+    内側要素の表示切り替え
+  </button>
 </div>
 
-<!-- local修飾子で親の状態変更時にトランジションしない -->
-{#if currentTab === 'tab1'}
-  <div transition:slide|local>
-    <h2>タブ1のコンテンツ</h2>
-    <p>localを使うと、親の条件変更時にトランジションしません</p>
-  </div>
-{:else if currentTab === 'tab2'}
-  <div transition:slide|local>
-    <h2>タブ2のコンテンツ</h2>
-  </div>
-{:else if currentTab === 'tab3'}
-  <div transition:slide|local>
-    <h2>タブ3のコンテンツ</h2>
+{#if outerVisible}
+  <div class="outer">
+    <p>外側のブロック（outerVisible の if）</p>
+
+    {#if innerVisible}
+      <!-- デフォルトは local：内側ブロック自身（innerVisible）の変化でのみ再生 -->
+      <p transition:slide>
+        デフォルト（local）：innerVisible の切り替えでのみアニメーション
+      </p>
+
+      <!-- |global：外側ブロック（outerVisible）のマウント/アンマウント時にも再生 -->
+      <p transition:slide|global>
+        |global：outerVisible の切り替えでもアニメーション
+      </p>
+    {/if}
   </div>
 {/if}
 ```
 
-<Admonition type="tip" title="local修飾子の使い方">
+<Admonition type="tip" title="local がデフォルト・global で明示する">
 
-`|local`修飾子を使用すると、要素自体がDOMに追加・削除される時のみトランジションが発生し、親要素の条件変更時にはトランジションしません。
+- **デフォルト（local）**: 要素を含む `{#if}` / `{#each}` などのブロック**自身**が生成・破棄されるときのみトランジションが再生されます。親ブロックの変化では再生されません。
+- **`|global`**: より上位のブロックがマウント／アンマウントされる際にも再生されます。たとえば「ページ全体の初期表示時にも 1 件ずつフェードインしてほしい」といったケースで使います。
 
 </Admonition>
+
+:::caution[Svelte 4 からの変更点]
+
+Svelte 4 までは**デフォルトが global** で、`|local` を付けることで「親ブロックの変更では再生しない」を表現していました。Svelte 5 ではデフォルトが反転して **local** になり、必要なときだけ `|global` で明示的にオプトインする形に変わっています。Svelte 4 から移行する場合は、暗黙的に global を期待していた箇所を見直してください。
+
+:::
 
 ## イージング関数
 

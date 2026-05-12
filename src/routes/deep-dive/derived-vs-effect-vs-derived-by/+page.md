@@ -578,6 +578,121 @@ $effect(() => {
 </script>
 ```
 
+## `$effect` で sync するアンチパターンと、Function bindings という代替
+
+ここまで紹介した 3 つの手法は、**「リアクティブな値を計算 or 副作用として処理する」**ためのものでした。一方で、現場でしばしば見かけるのが「**`$effect` を使って、ある値の変更から別の値を派生・同期させる**」というパターンです。
+
+これは多くの場合アンチパターンになります。Svelte 5.9.0 で追加された **Function bindings**（`bind:value={() => getter, (v) => setter(v)}`）が、この問題を構文レベルで解決してくれます。
+
+:::info[Svelte 5.9.0 以降の機能]
+Function bindings は Svelte 5.9.0 で導入されました。詳細は [`bind:` ディレクティブ](/svelte/runes/bindable/#function-bindings関数バインディング) のページを参照してください。
+:::
+
+### アンチパターン：`$effect` で双方向 sync
+
+「使った額」と「残額」のように、合計が固定の 2 つの値を双方向に同期したいとします。素直に書くと次のような `$effect` 2 連発になりがちですが、これは典型的なアンチパターンです。
+
+```svelte
+<!-- ❌ アンチパターン：$effect で双方向 sync -->
+<script lang="ts">
+  const total = 100;
+  let spent = $state(0);
+  let left = $state(total);
+
+  $effect(() => {
+    left = total - spent;
+  });
+
+  $effect(() => {
+    spent = total - left;
+  });
+</script>
+
+<input type="range" bind:value={spent} max={total} />
+<input type="range" bind:value={left} max={total} />
+```
+
+このコードには以下の問題があります。
+
+1. **真実が 2 つになる**：`spent` と `left` の両方が `$state` なので、どちらが source of truth なのかが不明瞭
+2. **`$effect` 同士が書き換え合う**：相互に依存しているため、更新タイミングが追いづらく、初期値の整合性も自分で保証しなければならない
+3. **無限ループの危険**：依存追跡の構造によっては、互いの更新が止まらなくなる
+4. **計算ではなく「sync」なので、`$derived` の恩恵（メモ化・push-pull）も受けられない**
+
+### 代替案 1：片方を `$derived`、もう片方は Function bindings
+
+source of truth を **1 つ**（ここでは `spent`）に決め、もう片方を `$derived` にし、双方向に書き戻したい input には Function bindings の setter で**逆算ロジック**を渡します。
+
+```svelte
+<!-- ✅ Function bindings：spent が唯一の source of truth -->
+<script lang="ts">
+  const total = 100;
+  let spent = $state(0);
+  let left = $derived(total - spent);
+
+  // 子・要素側で `left` が変わったら spent を逆算する
+  function updateLeft(v: number): void {
+    spent = total - v;
+  }
+</script>
+
+<label>
+  使った額:
+  <input type="range" bind:value={spent} max={total} />
+  {spent} / {total}
+</label>
+
+<label>
+  残額:
+  <input
+    type="range"
+    bind:value={() => left, updateLeft}
+    max={total}
+  />
+  {left} / {total}
+</label>
+```
+
+- `spent` だけが `$state`、`left` は `$derived`（片方向の派生）
+- `left` への書き込みは Function bindings の setter（`updateLeft`）が受け取って `spent` を更新するので、循環参照は発生しない
+- 初期値の不整合や無限ループのリスクが構造的に消える
+
+### 3 手法 + Function bindings の使い分け
+
+| やりたいこと | 使うもの |
+| --- | --- |
+| 単一の式で他の値から計算したい | `$derived` |
+| 複数ステップや条件分岐がある派生計算 | `$derived.by` |
+| DOM 操作・API 呼び出し・ログ送信などの副作用 | `$effect` |
+| **要素・子の値を表示・書き戻すときに変換を挟みたい（双方向）** | **Function bindings** |
+| **ある状態から派生した値を、双方向にバインドしたい** | **`$derived` + Function bindings** |
+
+:::tip[判断のヒント]
+`$effect` の中で「別の `$state` 変数に代入する」コードを書こうとしたら、それは多くの場合**設計ミスのシグナル**です。
+
+- 計算結果を保持したいだけ → `$derived` か `$derived.by`
+- 子・要素の入出力で値を変換したい → **Function bindings**
+- 本当に外部世界への副作用 → `$effect`
+
+の順で再考すると、状態の真実が常に 1 つに保たれた、見通しのよいコードになります。
+:::
+
+### TypeScript での型推論
+
+Function bindings の setter 引数は、対象プロパティの型から推論されます（`$bindable` の型や DOM プロパティの型）。明示する場合は setter 側に注釈を付けます。
+
+```svelte
+<input
+  type="range"
+  bind:value={
+    () => left,
+    (v: number) => spent = total - v
+  }
+/>
+```
+
+詳細な例は [`$bindable` の Function bindings セクション](/svelte/runes/bindable/#function-bindings関数バインディング) と [「リアクティブな状態変数とバインディングの違い」](/deep-dive/reactive-state-variables-vs-bindings/) を参照してください。
+
 ## まとめ
 
 各手法の特性を理解し、適切に使い分けることが重要です。以下の表で、それぞれの特徴を比較します。

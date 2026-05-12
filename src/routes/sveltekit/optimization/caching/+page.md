@@ -670,16 +670,23 @@ export function monitorPerformance() {
     sendAnalytics('lcp', lastEntry.startTime);
   }).observe({ entryTypes: ['largest-contentful-paint'] });
 
-  // FID (First Input Delay): 最初の入力遅延
-  // ユーザーが最初にインタラクションしたときの応答性を測定
+  // INP (Interaction to Next Paint): インタラクションから次の描画までの遅延
+  // 2024-03 に Core Web Vitals は FID から INP に置き換わった。
+  // INP はページ滞在中の全インタラクションのうち最悪値（98 パーセンタイル相当）を採用し、
+  // ユーザーが体感する応答性をより正確に測定する。
+  // 閾値: Good <= 200ms / Needs Improvement 200-500ms / Poor > 500ms
+  let inpValue = 0;
   new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       const eventEntry = entry as PerformanceEventTiming;
-      const inputDelay = eventEntry.processingStart - eventEntry.startTime;
-      console.log('FID:', inputDelay);
-      sendAnalytics('fid', inputDelay);
+      // interactionId が付与されたイベントのみが INP の対象
+      if (eventEntry.interactionId && eventEntry.duration > inpValue) {
+        inpValue = eventEntry.duration;
+        console.log('INP:', inpValue);
+        sendAnalytics('inp', inpValue);
+      }
     }
-  }).observe({ entryTypes: ['first-input'] });
+  }).observe({ type: 'event', buffered: true, durationThreshold: 16 } as PerformanceObserverInit);
 
   // CLS (Cumulative Layout Shift): 累積レイアウトシフト
   // ページ読み込み中の要素の移動量を累積計測
@@ -706,6 +713,38 @@ function sendAnalytics(metric: string, value: number) {
     });
   }
 }
+```
+
+### `web-vitals` v4 を使うのが最も簡単
+
+実運用では Google 公式の [`web-vitals`](https://github.com/GoogleChrome/web-vitals) ライブラリ（v4 以降）を使うのが最も簡単で正確です。FID の代わりに `onINP` がエクスポートされており、各指標の計測ロジックを自前で書く必要がありません。
+
+```typescript
+// lib/web-vitals.ts
+// 2024-03 以降の Core Web Vitals は LCP / INP / CLS が中核。
+// web-vitals v4 では onFID が廃止され、代わりに onINP が export されている。
+import { onINP, onLCP, onCLS, onTTFB, onFCP } from 'web-vitals';
+import type { Metric } from 'web-vitals';
+
+function report(metric: Metric) {
+  // 例: GA4 / 自社 RUM / Sentry などに送信
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'web_vitals', {
+      metric_name: metric.name,
+      metric_value: metric.value,
+      metric_id: metric.id,
+      metric_delta: metric.delta,
+      metric_rating: metric.rating, // 'good' | 'needs-improvement' | 'poor'
+    });
+  }
+}
+
+// すべて取得する場合
+onLCP(report);
+onINP(report); // FID 後継。閾値 Good <= 200ms / Needs 200-500ms / Poor > 500ms
+onCLS(report);
+onFCP(report);
+onTTFB(report);
 ```
 
 ## ベストプラクティス

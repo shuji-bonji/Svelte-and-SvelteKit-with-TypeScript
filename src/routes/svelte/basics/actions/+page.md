@@ -46,6 +46,42 @@ description: Svelte5のuse:actionディレクティブをTypeScriptで実装 - D
 
 `use:action`は、DOM要素に対して直接的な操作を行うための強力な機能です。要素のライフサイクルにフックして、初期化、更新、クリーンアップの処理を実行できます。
 
+:::tip[新規実装は `{@attach}` を推奨]
+Svelte 5.29 で **Attachments（`{@attach}` / `svelte/attachments`）** が追加されました。新規にDOM操作ロジックを書く場合は、`use:action` ではなく [`{@attach}` Attachments](/svelte/basics/attachments/) を採用してください。
+
+- **リアクティブ**: `{@attach}` 内で読んだ `$state` の変更に追従して自動で再実行・クリーンアップされる（`use:action` は引数変更時の `update` メソッドを自前で書く必要がある）
+- **SSR セーフ**: クライアントマウント時にのみ実行され、サーバーレンダリングの副作用を持ち込みにくい
+- **コンポーネントへの伝搬**: スプレッド経由で子要素に届けられる（[`createAttachmentKey`](/svelte/basics/attachments/) など）
+
+本ページの `use:action` 解説は、既存コードベースの読解・保守、および両者の差分理解のための **学習要素として** 残しています。新規実装は `{@attach}` を選んでください。
+:::
+
+:::info[既存 `use:action` 資産は `fromAction` で移行できる]
+ライブラリが `Action` 形式のみを提供している場合や、社内資産として `use:tooltip` のようなアクションが既にある場合、`svelte/attachments` の **`fromAction`** ヘルパーで `{@attach}` 形式にラップして再利用できます。
+
+```svelte
+<script lang="ts">
+  import { fromAction } from 'svelte/attachments';
+  import type { Action } from 'svelte/action';
+
+  // 既存のアクション資産（変更不要）
+  const tooltip: Action<HTMLElement, string> = (node, text) => {
+    node.title = text ?? '';
+  };
+
+  let label = $state('ホバーで表示');
+</script>
+
+<!-- Before: use:action -->
+<button use:tooltip={label}>旧来の書き方</button>
+
+<!-- After: {@attach fromAction(...)} で同じアクションを attachment として再利用 -->
+<button {@attach fromAction(tooltip, () => label)}>新しい書き方</button>
+```
+
+`fromAction` の第2引数は **引数そのものではなく「引数を返す関数」** を渡す点に注意してください（リアクティビティを正しく追跡するため）。詳しくは [Attachments のページ](/svelte/basics/attachments/) を参照してください。
+:::
+
 <Admonition type="tip" title="React/Vue経験者向け">
 
 <ul>
@@ -684,8 +720,10 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 
 ### 公式ドキュメント
 
-- [Svelte公式: use directive](https://svelte.dev/docs/element-directives#use-action)
-- [Svelte公式: Actions](https://svelte.dev/docs/svelte-action)
+- [Svelte公式: use: ディレクティブ](https://svelte.dev/docs/svelte/use)
+- [Svelte公式: `{@attach ...}` Attachments](https://svelte.dev/docs/svelte/@attach)
+- [Svelte公式: `svelte/attachments`（`fromAction` ほか）](https://svelte.dev/docs/svelte/svelte-attachments)
+- [Svelte公式: `svelte/action`](https://svelte.dev/docs/svelte/svelte-action)
 
 ### よくある質問
 
@@ -700,4 +738,6 @@ function conditionalAction(node: HTMLElement, enabled: boolean) {
 
 ## 次のステップ
 
-アクションの基本を理解したら、[Runesシステム](/svelte/runes/)に進んで、Svelte 5の新しいリアクティビティシステムを学びましょう。特に`$effect`との違いを理解することが重要です。
+新規実装では `{@attach}` Attachments の利用を強く推奨します。次は [`{@attach}` Attachments](/svelte/basics/attachments/) に進み、`use:action` との違い・`fromAction` による移行方法・コンポーネントへの伝搬パターンを確認してください。
+
+そのうえで、より広いリアクティビティの土台として [Runesシステム](/svelte/runes/) を学ぶと、`$effect` と Attachments の関係（Attachments は内部で `$effect` を使う）を理解しやすくなります。

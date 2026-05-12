@@ -40,7 +40,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
       <p class="text-sm mb-3" style="color: var(--color-card-desc);">Core Web Vitalsを改善し、高速なUXを実現します。</p>
       <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
         <li><strong>LCP最適化</strong>: 2.5秒以内の表示</li>
-        <li><strong>FID改善</strong>: 100ms以内の応答</li>
+        <li><strong>INP改善</strong>: 200ms以内の応答</li>
         <li><strong>CLS削減</strong>: レイアウトシフト防止</li>
         <li><strong>ランタイム最適化</strong>: 実行時パフォーマンス</li>
         <li><strong>メモリ管理</strong>: リーク防止</li>
@@ -146,10 +146,14 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
 | 指標 | 良好 | 改善が必要 | 悪い |
 |------|------|----------|------|
 | **LCP** | &lt; 2.5s | 2.5s - 4s | &gt; 4s |
-| **FID** | &lt; 100ms | 100ms - 300ms | &gt; 300ms |
+| **INP** | &lt; 200ms | 200ms - 500ms | &gt; 500ms |
 | **CLS** | &lt; 0.1 | 0.1 - 0.25 | &gt; 0.25 |
 | **FCP** | &lt; 1.8s | 1.8s - 3s | &gt; 3s |
 | **TTI** | &lt; 3.8s | 3.8s - 7.3s | &gt; 7.3s |
+
+:::info[2024-03 に FID は INP へ置き換えられた]
+Google が定義する Core Web Vitals は、2024 年 3 月の更新で **FID（First Input Delay）** が **INP（Interaction to Next Paint）** に置き換わりました。INP は「ユーザー操作の最初の遅延」だけでなく、**ページ表示中のあらゆるインタラクションのうち最も遅いもの**を測るため、より実態に近い体感性能の指標になっています。`web-vitals` ライブラリは v4 系で `onINP` をエクスポートしているので、計測コードでは `onFID` から `onINP` への移行を行ってください。
+:::
 
 ### 最適化チェックリスト
 

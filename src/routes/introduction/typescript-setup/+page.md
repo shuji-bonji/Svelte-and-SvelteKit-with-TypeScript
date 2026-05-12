@@ -194,6 +194,11 @@ Svelte 5プロジェクトに最適化された`tsconfig.json`の推奨設定を
     "target": "ESNext",
     "module": "ESNext",
 
+    // TypeScript 6 系で重要なモジュール／構文関連オプション
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+
     // パスエイリアス
     "paths": {
       "$lib": ["./src/lib"],
@@ -219,6 +224,30 @@ Svelte 5プロジェクトに最適化された`tsconfig.json`の推奨設定を
 - **noUnusedParameters**: 未使用のパラメータを検出
 - **noImplicitReturns**: 暗黙的なreturnを禁止
 - **noUncheckedIndexedAccess**: インデックスアクセスの安全性を強化
+
+#### TypeScript 6 系の新しいモジュール／構文オプション
+
+TypeScript 6 系では、ESM 中心のバンドラ／ランタイム環境（Vite・SvelteKit・Node.js 22+ の直接 TS 実行など）を前提としたオプションが整備されています。SvelteKit プロジェクトでは以下を有効化することが推奨されます。
+
+- **verbatimModuleSyntax**: 型のみ import/export を明示する `import type` / `export type` の使用を強制し、コンパイル時に「型だけのインポート」と「ランタイムで残るインポート」を**書いたとおりに**ファイルから消去するか残すかを決定するオプションです。これにより、バンドラ・トランスパイラ（Vite / esbuild / swc など）が単一ファイル単位で正しく不要 import を除去でき、副作用付き import の意図しない削除も防げます。SvelteKit プロジェクトでは `true` を推奨します。
+  - 推奨値: `true`
+  - 効果: `import { type Foo, bar } from '...'` のような混在 import を書くと警告。型だけのものは `import type { Foo } from '...'` に分離する。
+- **isolatedModules**: 各ファイルを単一の独立したモジュールとしてトランスパイル可能な構文だけに制限するオプションです。Vite / esbuild / swc など、ファイル単位で TypeScript を JavaScript にトランスパイルするツールチェーンとの相性のために必要です。`const enum` のような「他ファイルの型情報がないと正しく出力できない」構文を禁止します。SvelteKit が内部で利用する Vite のトランスパイル前提と一致するため、`true` 必須相当です。
+  - 推奨値: `true`
+  - 効果: `const enum` や型を再 export する曖昧な構文がエラーになり、`export type { ... }` への書き換えが必要になります。
+- **erasableSyntaxOnly**: TypeScript 専用構文のうち、**コンパイル時に単純に消去できる構文だけ**を許可するオプションです（TS 5.8 で追加、TS 6 系で挙動が安定化）。`enum`・`namespace` を伴う値・`class` のパラメータプロパティ（`constructor(private foo: string)` 形式）・`import =` / `export =` などのランタイム挙動を変える TS 構文を禁止します。Node.js 22+ の `--experimental-strip-types`（および将来の標準実装）で TypeScript ファイルをそのまま実行する場合に必須です。SvelteKit 本体のソース／設定ファイルを Node から直接実行するパス（vite.config.ts、svelte.config.js から呼ばれるサーバスクリプト等）の互換性を担保できます。
+  - 推奨値: `true`（Node 22+ で TS 直接実行を視野に入れる場合）
+  - 効果: `enum`・`namespace`・パラメータプロパティが禁止され、代わりに `as const` オブジェクト・通常の class フィールド初期化を使うスタイルに統一されます。
+
+:::tip[SvelteKit と TS 6 系オプションのベストプラクティス]
+
+SvelteKit の `.svelte-kit/tsconfig.json` は既に `isolatedModules: true` 等を有効化していますが、**自分の `tsconfig.json` 側でも明示的に書く**ことを推奨します。理由は次の通りです。
+
+- `verbatimModuleSyntax: true` を有効にすると、`<script lang="ts">` 内での `import type` / `import` の使い分けが矯正され、Svelte コンパイラ・Vite による tree-shaking と整合します。
+- `erasableSyntaxOnly: true` を入れておくと、`hooks.server.ts` や `vite.config.ts` を将来 Node 22+ で直接実行する際の互換性が保たれます。
+- 既存プロジェクトに後から追加する場合、まず `verbatimModuleSyntax` から段階的に有効化すると影響範囲を把握しやすくなります。
+
+:::
 
 ### 段階的な厳密性の導入
 
@@ -360,10 +389,22 @@ VS CodeでSvelteとTypeScriptの開発体験を最適化するための設定を
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   }
 }
 ```
+
+:::tip[VS Code 1.85+ では文字列リテラル指定が正しい]
+
+VS Code 1.85 以降、`editor.codeActionsOnSave` 配下の各キーは真偽値ではなく **文字列リテラル（`"explicit"` / `"always"` / `"never"`）** を取る仕様に変わりました（旧来の `true` / `false` は非推奨で警告が出ます）。
+
+- `"explicit"`: 明示的な保存（`Ctrl/Cmd + S`）時にだけ Code Action を実行（推奨）
+- `"always"`: 自動保存を含むすべての保存で実行
+- `"never"`: 実行しない
+
+ESLint の自動修正は `"explicit"` を選ぶことで、自動保存中の意図しない書き換えを避けられます。
+
+:::
 
 ### 推奨拡張機能
 
@@ -447,13 +488,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -466,6 +507,12 @@ jobs:
 
       - run: pnpm test:unit
 ```
+
+:::tip[GitHub Actions のメジャーバージョンを最新に揃える]
+
+GitHub Actions の公式アクション（`actions/checkout`・`actions/setup-node` など）はメジャーバージョンごとに Node.js ランタイムが更新されます。`v3` 系は古い Node.js ランタイムに依存しており、2026 年現在は **`v4` 系（Node.js 20 ランタイム）** が推奨されます。`pnpm/action-setup` も `v4` 以降が現行メンテナンスバージョンです。
+
+:::
 
 ## トラブルシューティング
 

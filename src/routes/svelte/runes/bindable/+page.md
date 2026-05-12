@@ -191,6 +191,222 @@ let { value = $bindable('') }: Props = $props();
 
 ```
 
+## Function bindings（関数バインディング）
+
+`bind:value` には**通常の変数**だけでなく、`get` / `set` の 2 つの関数を 2-tuple として渡すこともできます。これは **Svelte 5.9.0 で追加された Function bindings** と呼ばれる構文で、バインディングに**バリデーション・変換・正規化**などのロジックを差し込みたい場合に使います。
+
+```svelte
+<input
+  bind:value={
+    () => value,
+    (v) => value = v.toLowerCase()
+  }
+/>
+```
+
+- **getter（`() => value`）**: 子・要素に表示する値を返す
+- **setter（`(v) => ...`）**: 子・要素から書き戻された値を受け取り、自分の状態に反映する
+
+:::info[Svelte 5.9.0 以降の機能]
+Function bindings は Svelte 5.9.0 で導入されました。それ未満のバージョンでは利用できません。
+:::
+
+### 使い所
+
+Function bindings は **「親子間で値を双方向にやり取りしつつ、間に変換や派生を挟みたい」** ケースで威力を発揮します。
+
+- **入力値の正規化**（小文字化、トリム、全角→半角変換など）
+- **単位変換が必要なバインディング**（摂氏 ⇄ 華氏、メートル ⇄ ピクセルなど）
+- **派生値（`$derived`）を子に渡しつつ、子からの変更を元の状態に逆算したいとき**
+- **読み取り専用バインディング**（dimensions など）に変換コールバックだけ渡したいとき
+
+### 基本例：入力値を小文字に正規化する
+
+子コンポーネントで受け取った値を、書き戻すときだけ小文字に変換して親に通知するパターンです。
+
+```svelte
+<!-- LowercaseInput.svelte -->
+<script lang="ts">
+  type Props = {
+    value: string;
+  };
+
+  // $bindable で双方向バインディング可能にしておく
+  let { value = $bindable('') }: Props = $props();
+</script>
+
+<!--
+  getter は現在の `value` をそのまま返し、
+  setter は書き戻す前に小文字化する
+-->
+<input
+  bind:value={
+    () => value,
+    (v: string) => value = v.toLowerCase()
+  }
+/>
+```
+
+```svelte
+<!-- 親コンポーネント -->
+<script lang="ts">
+  import LowercaseInput from './LowercaseInput.svelte';
+
+  let email = $state('');
+</script>
+
+<LowercaseInput bind:value={email} />
+<p>正規化された値: {email}</p>
+```
+
+### 派生値を双方向にバインドする：摂氏／華氏変換
+
+`$derived` で計算した値は通常 read-only ですが、Function bindings の setter で **「逆算ロジック」** を提供することで、子の入力から元の状態を更新できます。
+
+```svelte
+<script lang="ts">
+  // 摂氏を真実の値（source of truth）として保持する
+  let celsius = $state(20);
+
+  // 摂氏 ⇄ 華氏の変換関数（純粋関数なので derived として扱える）
+  function toFahrenheit(c: number): number {
+    return c * 9 / 5 + 32;
+  }
+  function fromFahrenheit(f: number): number {
+    return (f - 32) * 5 / 9;
+  }
+</script>
+
+<label>
+  摂氏:
+  <input type="number" bind:value={celsius} />
+</label>
+
+<label>
+  華氏:
+  <input
+    type="number"
+    bind:value={
+      () => toFahrenheit(celsius),
+      (v: number) => celsius = fromFahrenheit(v)
+    }
+  />
+</label>
+
+<p>摂氏 {celsius}°C = 華氏 {toFahrenheit(celsius)}°F</p>
+```
+
+どちらの input を操作しても、唯一の真実は `celsius` だけです。`$state` を 2 つ持って `$effect` で同期させる必要がありません。
+
+### `$effect` で sync するアンチパターンとの対比
+
+子と親の値を双方向に変換する場合、つい `$effect` で書きたくなりますが、**双方向の sync を `$effect` で書くと無限ループや更新タイミングの混乱を招きます**。Function bindings はこの問題を構文レベルで解決します。
+
+```svelte
+<!-- ❌ アンチパターン：$effect で双方向 sync -->
+<script lang="ts">
+  let celsius = $state(20);
+  let fahrenheit = $state(68);
+
+  // celsius が変わったら fahrenheit を更新
+  $effect(() => {
+    fahrenheit = celsius * 9 / 5 + 32;
+  });
+  // fahrenheit が変わったら celsius を更新 → 無限ループの危険
+  $effect(() => {
+    celsius = (fahrenheit - 32) * 5 / 9;
+  });
+</script>
+
+<input type="number" bind:value={celsius} />
+<input type="number" bind:value={fahrenheit} />
+```
+
+```svelte
+<!-- ✅ Function bindings：真実は celsius ひとつだけ -->
+<script lang="ts">
+  let celsius = $state(20);
+</script>
+
+<input type="number" bind:value={celsius} />
+<input
+  type="number"
+  bind:value={
+    () => celsius * 9 / 5 + 32,
+    (v: number) => celsius = (v - 32) * 5 / 9
+  }
+/>
+```
+
+:::tip[いつ Function bindings を選ぶか]
+`$effect` で「ある値が変わったら別の値を更新する」コードを書きそうになったら、まず Function bindings で書けないかを検討してください。状態の真実が 1 つに保たれ、リアクティビティ循環のリスクが減ります。
+:::
+
+### 読み取り専用バインディングへの応用
+
+`clientWidth` / `clientHeight` のような **読み取り専用バインディング** に Function bindings を組み合わせる場合、getter 側には `null` を渡し、setter にだけ「値が変化したときに呼びたいコールバック」を渡せます。
+
+```svelte
+<script lang="ts">
+  let width = $state(0);
+  let height = $state(0);
+
+  function redrawWidth(w: number): void {
+    width = w;
+    // ここで再描画やログ送信などの副作用を実行
+  }
+  function redrawHeight(h: number): void {
+    height = h;
+  }
+</script>
+
+<div
+  bind:clientWidth={null, redrawWidth}
+  bind:clientHeight={null, redrawHeight}
+>
+  サイズ: {width} × {height}
+</div>
+```
+
+:::caution[`bind:this` と Function bindings]
+`bind:this` でコンポーネント／要素への参照を取得する場合、**getter は省略せず指定**してください。コンポーネントや要素が破棄されるタイミングで、正しい値を `null` 化するために getter が必要です。
+:::
+
+### TypeScript での型推論
+
+Function bindings の getter / setter は、対象プロパティの型から推論されます。`$bindable` 側が `string` であれば setter の引数 `v` も `string` に、`number` であれば `number` になります。
+
+```typescript
+// 子コンポーネント
+type Props = {
+  value: string;
+};
+
+let { value = $bindable('') }: Props = $props();
+```
+
+```svelte
+<!-- 親側：v は string として推論される -->
+<Child
+  bind:value={
+    () => upperCaseValue,
+    (v) => upperCaseValue = v.toUpperCase()
+    //    ^? (parameter) v: string
+  }
+/>
+```
+
+明示的に型を書きたい場合は、setter 引数に型注釈を付けます。
+
+```svelte
+<input
+  bind:value={
+    () => count,
+    (v: number) => count = Math.max(0, v)
+  }
+/>
+```
+
 ## オブジェクトと配列のバインディング
 
 配列やオブジェクトなどの参照型データも`$bindable`で双方向バインディング可能で、深いリアクティビティが保持されます。

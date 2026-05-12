@@ -204,12 +204,12 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 
   // 認証が必要なページに未認証でアクセスした場合
   if (isProtectedPath && !isAuthenticated) {
-    throw redirect(302, `/login?redirect=${encodeURIComponent(url.pathname)}`);
+    redirect(302, `/login?redirect=${encodeURIComponent(url.pathname)}`);
   }
 
   // 認証済みでログインページにアクセスした場合
   if (url.pathname === '/login' && isAuthenticated) {
-    throw redirect(302, '/dashboard');
+    redirect(302, '/dashboard');
   }
 
   return {

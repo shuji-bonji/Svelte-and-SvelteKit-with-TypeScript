@@ -362,7 +362,7 @@ SvelteKitは以下の4つのプリフェッチ戦略を提供しています。
   Blog (タップ時にプリロード)
 </a>
 
-<a href="/products" data-sveltekit-preload-data="off">
+<a href="/products" data-sveltekit-preload-data="false">
   Products (プリロードしない)
 </a>
 

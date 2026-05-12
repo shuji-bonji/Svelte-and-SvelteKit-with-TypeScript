@@ -373,7 +373,7 @@ export const actions = {
 
       // リダイレクト（303 See Other）
       // この時点でaction処理は終了
-      throw redirect(303, '/dashboard');
+      redirect(303, '/dashboard');
       // ↓ これ以降のコードは実行されない
     }
 
@@ -571,7 +571,7 @@ export const actions = {
     }
 
     await deletePost(params.id);
-    throw redirect(303, '/posts');
+    redirect(303, '/posts');
   },
 
   publish: async ({ params }) => {
@@ -677,7 +677,7 @@ export const actions = {
 
     try {
       await createUser({ username, email, password });
-      throw redirect(303, '/welcome');
+      redirect(303, '/welcome');
     } catch (error) {
       return message(form, 'ユーザー登録に失敗しました');
     }

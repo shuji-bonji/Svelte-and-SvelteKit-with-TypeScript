@@ -109,7 +109,7 @@ description: SvelteKitでRESTful APIを構築するための設計ガイド。+s
         API-->>Client: 200 OK
     else 制限超過
         Store-->>RateLimit: {count: 10, resetAt: ...}
-        RateLimit-->>API: throw error(429)
+        RateLimit-->>API: error(429)
         API-->>Client: 429 Too Many Requests
     end`;
 </script>
@@ -233,7 +233,7 @@ export const GET: RequestHandler = async () => {
     const posts = await postService.findAll();
     return json(posts);
   } catch (e) {
-    throw error(500, 'データベースエラー');
+    error(500, 'データベースエラー');
   }
 };
 
@@ -243,7 +243,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const post = await postService.create(data);
     return json(post, { status: 201 });
   } catch (e) {
-    throw error(400, '不正なリクエスト');
+    error(400, '不正なリクエスト');
   }
 };
 ```
@@ -268,7 +268,7 @@ export const GET: RequestHandler = async ({ params }) => {
   });
 
   if (!post) {
-    throw error(404, 'Post not found');
+    error(404, 'Post not found');
   }
 
   return json(post);
@@ -387,7 +387,7 @@ import { error } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ params }) => {
   // バリデーション
   if (!params.id) {
-    throw error(400, 'ID is required');
+    error(400, 'ID is required');
   }
 
   try {
@@ -396,7 +396,7 @@ export const GET: RequestHandler = async ({ params }) => {
     });
 
     if (!post) {
-      throw error(404, {
+      error(404, {
         message: 'Post not found',
         code: 'POST_NOT_FOUND',
       });
@@ -406,7 +406,7 @@ export const GET: RequestHandler = async ({ params }) => {
   } catch (e) {
     // データベースエラー
     console.error('Database error:', e);
-    throw error(500, 'Internal server error');
+    error(500, 'Internal server error');
   }
 };
 ```
@@ -443,12 +443,12 @@ export async function requireAuth(event: RequestEvent) {
     ?.replace('Bearer ', '');
 
   if (!token) {
-    throw error(401, 'Unauthorized');
+    error(401, 'Unauthorized');
   }
 
   const user = await verifyToken(token);
   if (!user) {
-    throw error(401, 'Invalid token');
+    error(401, 'Invalid token');
   }
 
   return user;
@@ -564,7 +564,7 @@ export function rateLimit(maxAttempts = 10, windowMs = 60000) {
     }
 
     if (record.count >= maxAttempts) {
-      throw error(429, 'Too many requests');
+      error(429, 'Too many requests');
     }
 
     record.count++;
@@ -638,9 +638,9 @@ export const POST: RequestHandler = async ({ request }) => {
     // バリデーション済みのデータを使用
   } catch (e) {
     if (e instanceof z.ZodError) {
-      throw error(400, e.errors);
+      error(400, e.errors);
     }
-    throw error(500, 'Internal error');
+    error(500, 'Internal error');
   }
 };
 ```
@@ -681,7 +681,7 @@ export const GET: RequestHandler = async (event) => {
     return response;
   } catch (e) {
     logAPIRequest(event, 500, Date.now() - start);
-    throw error(500, 'Internal error');
+    error(500, 'Internal error');
   }
 };
 ```

@@ -66,28 +66,40 @@ import {
   createHttpLink,
   split,
 } from '@apollo/client/core';
-import { WebSocketLink } from '@apollo/client/link/ws';
+// Apollo Client 3.7+ で WebSocketLink は削除済み。
+// 現行は GraphQLWsLink + graphql-ws を使う
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient as createWsClient } from 'graphql-ws';
+import { setContext } from '@apollo/client/link/context';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 // HTTPリンク
 const httpLink = createHttpLink({
   uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
-  headers: {
-    authorization: localStorage.getItem('token') || '',
-  },
 });
 
-// WebSocketリンク（Subscription用）
-const wsLink = new WebSocketLink({
-  uri:
-    import.meta.env.VITE_GRAPHQL_WS_ENDPOINT || 'ws://localhost:4000/graphql',
-  options: {
-    reconnect: true,
-    connectionParams: {
-      authorization: localStorage.getItem('token') || '',
+// 認証ヘッダーは setContext で動的に注入（トークン更新にも追従）
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
     },
-  },
+  };
 });
+
+// WebSocket リンク（Subscription用）— graphql-ws ベース
+const wsLink = new GraphQLWsLink(
+  createWsClient({
+    url: import.meta.env.VITE_GRAPHQL_WS_ENDPOINT || 'ws://localhost:4000/graphql',
+    connectionParams: () => ({
+      authorization: localStorage.getItem('token') ?? '',
+    }),
+    // 自動再接続は graphql-ws のデフォルト挙動
+    retryAttempts: 5,
+  }),
+);
 
 // リンクの分割（Query/MutationとSubscription）
 const splitLink = split(
@@ -99,7 +111,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  httpLink,
+  authLink.concat(httpLink),
 );
 
 // Apolloクライアントの作成
@@ -113,6 +125,13 @@ export const apolloClient = new ApolloClient({
   },
 });
 ```
+
+:::info[Apollo Client 3.7+ での変更]
+本ガイドは Apollo Client 3.x 系（現行）を前提にしています。
+
+- `WebSocketLink`（`@apollo/client/link/ws`）は **3.7 で削除**されました。代替は `GraphQLWsLink`（`@apollo/client/link/subscriptions`）+ `graphql-ws` パッケージです。
+- 認証ヘッダーは `httpLink` の `headers` に直接渡すとトークン更新に追従しないので、`setContext` リンクで動的に注入する書き方が定番です。
+:::
 
 ### 3. GraphQLスキーマと型生成
 
@@ -286,35 +305,47 @@ npm install urql graphql
 
 ```typescript
 // src/lib/urql.ts
-import { createClient, defaultExchanges, subscriptionExchange } from 'urql';
+// urql v4+: defaultExchanges は削除済み。cacheExchange / fetchExchange を個別に指定する
+import {
+  createClient,
+  cacheExchange,
+  fetchExchange,
+  subscriptionExchange,
+} from 'urql';
 import { createClient as createWSClient } from 'graphql-ws';
 
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
-  connectionParams: {
-    authorization: localStorage.getItem('token') || '',
-  },
+  connectionParams: () => ({
+    authorization: localStorage.getItem('token') ?? '',
+  }),
+  retryAttempts: 5,
 });
 
 export const urqlClient = createClient({
   url: 'http://localhost:4000/graphql',
-  fetchOptions: {
+  fetchOptions: () => ({
     headers: {
-      authorization: localStorage.getItem('token') || '',
+      authorization: localStorage.getItem('token') ?? '',
     },
-  },
+  }),
   exchanges: [
-    ...defaultExchanges,
+    cacheExchange,
+    fetchExchange,
     subscriptionExchange({
       forwardSubscription: (operation) => ({
         subscribe: (sink) => ({
-          unsubscribe: wsClient.subscribe(operation, sink),
+          unsubscribe: wsClient.subscribe(operation as any, sink),
         }),
       }),
     }),
   ],
 });
 ```
+
+:::info[urql v4 での変更]
+urql v4 で **`defaultExchanges` は削除**されました。`cacheExchange` と `fetchExchange` を個別に import して `exchanges` 配列に並べてください。順序は **`cacheExchange` → `fetchExchange` → `subscriptionExchange`** が標準です。
+:::
 
 ### 3. Svelteコンポーネントでの使用
 

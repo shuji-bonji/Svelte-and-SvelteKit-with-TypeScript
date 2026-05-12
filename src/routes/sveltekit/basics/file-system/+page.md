@@ -275,7 +275,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     where: { id: params.id },
   });
 
-  if (!post) throw error(404, 'Not found');
+  if (!post) error(404, 'Not found');
 
   return {
     post,
@@ -300,7 +300,7 @@ export const actions: Actions = {
       data: { title, authorId: locals.user.id },
     });
 
-    throw redirect(303, '/posts');
+    redirect(303, '/posts');
   },
 };
 ```
@@ -398,12 +398,12 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
   // 認証が必要なページグループ
   if (url.pathname.startsWith('/admin')) {
     if (!token) {
-      throw redirect(303, `/login?redirect=${url.pathname}`);
+      redirect(303, `/login?redirect=${url.pathname}`);
     }
 
     const user = await validateToken(token);
     if (user.role !== 'admin') {
-      throw error(403, 'Admin access required');
+      error(403, 'Admin access required');
     }
 
     return { user };
@@ -438,7 +438,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   if (!locals.user) {
-    throw error(401, 'Authentication required');
+    error(401, 'Authentication required');
   }
 
   const data = await request.json();

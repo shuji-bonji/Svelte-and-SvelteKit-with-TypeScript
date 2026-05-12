@@ -45,11 +45,21 @@ description: Svelte/SvelteKitの公式CLIツール（sv）の完全ガイド。s
 npx sv <command> <args>
 
 # pnpm の場合
-pnpx sv <command> <args>
+pnpm dlx sv <command> <args>
 
 # yarn の場合
 yarn dlx sv <command> <args>
+
+# bun の場合
+bun x sv <command> <args>
+
+# deno の場合
+deno run -A npm:sv-cli <command> <args>
 ```
+
+:::caution[`pnpx` は廃止されました]
+旧 pnpm の `pnpx sv ...` エイリアスは pnpm v6.13 で削除されました。最新の pnpm では `pnpm dlx sv ...`（npx 相当）または `pnpm exec sv ...`（ローカルインストール済みのバイナリを実行）を使ってください。
+:::
 
 <Admonition type="tip" title="ローカルインストール不要">
 
@@ -78,14 +88,17 @@ npx sv create --template minimal --types ts my-app
 
 `sv create` には、プロジェクトの初期構成をカスタマイズするための多くのオプションがあります。
 
-| オプション           | 説明                                                     |
-| -------------------- | -------------------------------------------------------- |
-| `--template <name>`  | プロジェクトテンプレート（`minimal`、`demo`、`library`） |
-| `--types <option>`   | 型チェック方式（`ts`、`jsdoc`）                          |
-| `--no-types`         | 型チェックなし（非推奨）                                 |
-| `--add [add-ons...]` | アドオンを追加                                           |
-| `--install <pm>`     | パッケージマネージャを指定                               |
-| `--no-install`       | 依存関係をインストールしない                             |
+| オプション             | 説明                                                                |
+| ---------------------- | ------------------------------------------------------------------- |
+| `--template <name>`    | プロジェクトテンプレート（`minimal`、`demo`、`library`）            |
+| `--types <option>`     | 型チェック方式（`ts`、`jsdoc`）                                     |
+| `--no-types`           | 型チェックなし（非推奨）                                            |
+| `--add [add-ons...]`   | アドオンを追加（`sv add` と同じ書式）                               |
+| `--no-add-ons`         | アドオンの対話プロンプトをスキップ                                  |
+| `--from-playground <url>` | Svelte Playground の URL からプロジェクトを生成                  |
+| `--install <pm>`       | パッケージマネージャを指定（`npm` / `pnpm` / `yarn` / `bun` / `deno`） |
+| `--no-install`         | 依存関係をインストールしない                                        |
+| `--no-dir-check`       | 対象ディレクトリが空かのチェックをスキップ                          |
 
 ### テンプレートの種類
 
@@ -171,12 +184,13 @@ npx sv add eslint prettier vitest
 
 `sv add` の動作をカスタマイズするためのオプションです。
 
-| オプション       | 説明                         |
-| ---------------- | ---------------------------- |
-| `-C`, `--cwd`    | プロジェクトのルートパス     |
-| `--no-git-check` | Git のチェックをスキップ     |
-| `--install <pm>` | パッケージマネージャを指定   |
-| `--no-install`   | 依存関係をインストールしない |
+| オプション              | 説明                                                              |
+| ----------------------- | ----------------------------------------------------------------- |
+| `-C`, `--cwd`           | プロジェクトのルートパス                                          |
+| `--no-git-check`        | Git のチェックをスキップ（汚れたワークツリーでも実行）            |
+| `--no-download-check`   | コミュニティアドオンのダウンロード確認プロンプトをすべてスキップ  |
+| `--install <pm>`        | パッケージマネージャを指定（`npm` / `pnpm` / `yarn` / `bun` / `deno`） |
+| `--no-install`          | 依存関係をインストールしない                                      |
 
 ### 公式アドオン一覧
 
@@ -276,14 +290,19 @@ npx sv check --fail-on-warnings
 
 `sv check` の動作を制御するためのオプションです。
 
-| オプション           | 説明                           |
-| -------------------- | ------------------------------ |
-| `--workspace <path>` | ワークスペースパスを指定       |
-| `--output <format>`  | 出力形式（`human`、`machine`） |
-| `--watch`            | ファイル変更を監視             |
-| `--tsconfig <path>`  | tsconfig ファイルを指定        |
-| `--fail-on-warnings` | 警告をエラーとして扱う         |
-| `--ignore <paths>`   | 無視するパスを指定             |
+| オプション                | 説明                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| `--workspace <path>`      | ワークスペースパスを指定                                                        |
+| `--output <format>`       | 出力形式（`human` / `human-verbose` / `machine` / `machine-verbose`）           |
+| `--watch`                 | ファイル変更を監視                                                              |
+| `--preserveWatchOutput`   | watch モードで画面クリアを抑制                                                  |
+| `--tsconfig <path>`       | tsconfig ファイルを指定（指定すると files/include/exclude に従う）              |
+| `--no-tsconfig`           | tsconfig を使わず Svelte ファイルのみチェック（`.js`/`.ts` は type-check しない）|
+| `--fail-on-warnings`      | 警告をエラーとして扱う                                                          |
+| `--threshold <level>`     | 表示閾値（`warning` 既定 / `error` のみ）                                       |
+| `--ignore <paths>`        | 無視するパスを指定（**`--no-tsconfig` 併用時のみ診断対象に効く**。それ以外はウォッチ対象のみ） |
+| `--compiler-warnings <pairs>` | 警告コードごとに `ignore` / `error` を指定                                  |
+| `--diagnostic-sources <src>` | 診断ソースの限定（`js` / `svelte` / `css`、複数はカンマ区切り）              |
 
 ### CI/CD での使用
 
@@ -326,8 +345,10 @@ npx sv check --output machine
 ```
 1590680325583 START "/home/user/my-project"
 1590680326283 ERROR "src/App.svelte" 1:16 "Cannot find module 'missing'"
-1590680326807 COMPLETED 20 FILES 1 ERRORS 0 WARNINGS
+1590680326807 COMPLETED 20 FILES 1 ERRORS 0 WARNINGS 1 FILES_WITH_PROBLEMS
 ```
+
+`COMPLETED` 行のフィールド: `FILES`（チェック総数）、`ERRORS`、`WARNINGS`、`FILES_WITH_PROBLEMS`（問題のあったファイル数）。CI で集計するときの参考に。
 
 ## sv migrate
 
@@ -475,10 +496,16 @@ grep -r "@migration" src/
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest",
+    "prepare": "svelte-kit sync"
   }
 }
 ```
+
+:::tip[`"prepare": "svelte-kit sync"` を必ず入れる]
+`prepare` は npm のライフサイクルスクリプトで、`npm install` 完了時に自動実行されます。SvelteKit の自動生成型（`./$types`、`$app/*` の ambient 型など）を最新化するため、`"prepare": "svelte-kit sync"` を含めておくと CI やクリーンインストール後の型エラーを防げます。`sv create` の生成物にも標準で含まれています。
+:::
 
 ## トラブルシューティング
 
@@ -489,9 +516,17 @@ grep -r "@migration" src/
 大規模なプロジェクトでは、不要なディレクトリを除外することでチェック時間を短縮できます。
 
 ```bash
-# 不要なディレクトリを除外
-npx sv check --ignore "node_modules,dist,build,.svelte-kit"
+# Svelte ファイルだけチェック（tsconfig を使わない）+ 不要ディレクトリを除外
+npx sv check --no-tsconfig --ignore "dist,build,.svelte-kit"
 ```
+
+:::info[`--ignore` の挙動]
+`--ignore` は **`--no-tsconfig` と組み合わせたときだけ「診断対象」から除外**できます。`--tsconfig` 指定時（または既定）は「ウォッチ対象」にしか効きません。チェックされるファイル群は `tsconfig.json` の `files`/`include`/`exclude` で決まります。
+:::
+
+:::tip[`node_modules` は既定で除外]
+`node_modules` は SvelteKit / svelte-check が **既定でチェック対象から除外** するため、`--ignore` に明示する必要はありません。
+:::
 
 ### 特定のファイルのみチェックしたい場合
 

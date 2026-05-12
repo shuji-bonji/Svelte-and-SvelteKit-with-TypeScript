@@ -353,9 +353,9 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw error(404, '記事が見つかりません');
+      error(404, '記事が見つかりません');
     }
-    throw error(500, 'サーバーエラーが発生しました');
+    error(500, 'サーバーエラーが発生しました');
   }
 
   return {
@@ -534,15 +534,22 @@ src/
 ページの事前読み込みでパフォーマンスを向上させます。`data-sveltekit-preload-data`属性を使用して、プリフェッチのタイミングを制御できます。ユーザーのインタラクションに応じて最適な戦略を選択しましょう。
 
 ```svelte
-<!-- ホバー時に事前読み込み -->
+<!-- ホバー時に事前読み込み（デフォルト） -->
 <a href="/about" data-sveltekit-preload-data="hover">About</a>
 
-<!-- 表示されたら即座に読み込み -->
-<a href="/blog" data-sveltekit-preload-data="eager">Blog</a>
-
-<!-- タップ時に読み込み（モバイル向け） -->
+<!-- タップ/クリック時に読み込み（モバイル向け） -->
 <a href="/contact" data-sveltekit-preload-data="tap">Contact</a>
+
+<!-- プリフェッチを無効化 -->
+<a href="/large-page" data-sveltekit-preload-data="false">Large</a>
+
+<!-- コード（モジュール）だけ即座に先読み（データは hover/tap で） -->
+<a href="/blog" data-sveltekit-preload-code="eager">Blog</a>
 ```
+
+:::info[`preload-data` と `preload-code` の値は別系統]
+`data-sveltekit-preload-data` は `"hover"` / `"tap"` / `"false"` の 3 種類、`data-sveltekit-preload-code` は `"eager"` / `"viewport"` / `"hover"` / `"tap"` / `"false"` の 5 種類です。`"eager"` / `"viewport"` を `preload-data` に渡すことはできません。詳細は [link-options](/sveltekit/routing/link-options/) を参照。
+:::
 
 ## ページオプション（基本）
 

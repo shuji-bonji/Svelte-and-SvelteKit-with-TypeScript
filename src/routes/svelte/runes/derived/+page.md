@@ -570,7 +570,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   const response = await fetch(`/api/users/${params.id}`);
 
   if (!response.ok) {
-    throw error(404, 'ユーザーが見つかりません');
+    error(404, 'ユーザーが見つかりません');
   }
 
   const user = await response.json();

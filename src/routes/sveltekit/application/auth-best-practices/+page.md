@@ -177,7 +177,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
   if (!locals.user) {
     // 303 See Otherステータスで適切にリダイレクト
     // fromパラメータで元のURLを保存（ログイン後に戻るため）
-    throw redirect(303, `/login?from=${encodeURIComponent(url.pathname)}`);
+    redirect(303, `/login?from=${encodeURIComponent(url.pathname)}`);
   }
 
   return {
@@ -201,7 +201,7 @@ export const load: LayoutServerLoad = async ({ locals, parent }) => {
   // rolesは配列として管理し、複数ロールに対応
   if (!locals.user?.roles?.includes('admin')) {
     // 403 Forbiddenエラーを返す（認証済みだが権限不足）
-    throw error(403, 'Administrator access required');
+    error(403, 'Administrator access required');
   }
 
   return {
@@ -228,7 +228,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 export function requireAuth(event: RequestEvent) {
   if (!event.locals.user) {
     // ログインページにリダイレクトし、元のパスを保存
-    throw redirect(
+    redirect(
       303,
       `/login?from=${encodeURIComponent(event.url.pathname)}`,
     );
@@ -249,7 +249,7 @@ export function requireRole(event: RequestEvent, role: string) {
 
   if (!user.roles?.includes(role)) {
     // 403 Forbidden - 認証済みだが権限不足
-    throw error(403, `Role '${role}' required`);
+    error(403, `Role '${role}' required`);
   }
 
   return user;
@@ -268,7 +268,7 @@ export function requireOwnership(event: RequestEvent, resourceOwnerId: string) {
 
   // 所有者本人または管理者のみアクセス可能
   if (user.id !== resourceOwnerId && !user.roles?.includes('admin')) {
-    throw error(403, 'Access denied');
+    error(403, 'Access denied');
   }
 
   return user;
@@ -290,7 +290,7 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
   const post = await getPost(params.id);
 
   if (!post) {
-    throw error(404, 'Post not found');
+    error(404, 'Post not found');
   }
 
   // 所有者チェック - ヘルパー関数を使用
@@ -346,7 +346,7 @@ export function createGuard(guardFn: GuardFunction) {
     const canActivate = await guardFn(event);
     if (!canActivate) {
       // Angularと同様、false返却時はアクセス拒否
-      throw error(403, 'Access denied');
+      error(403, 'Access denied');
     }
   };
 }
@@ -431,7 +431,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
   // シンプルな認証チェック
   if (!locals.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // 認証後のデータ取得
@@ -512,12 +512,12 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
   // データ取得
   const post = await getPost(params.id);
   if (!post) {
-    throw error(404, 'Post not found');
+    error(404, 'Post not found');
   }
 
   // ポリシーベースの権限チェック
   if (!(await AuthPolicy.canViewPost(user, post))) {
-    throw error(403, 'Cannot view this post');
+    error(403, 'Cannot view this post');
   }
 
   // 編集権限も同時にチェックしてUIで活用
@@ -587,7 +587,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   ) {
     return { post };
   }
-  throw error(403);
+  error(403);
 };
 ```
 

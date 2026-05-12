@@ -101,18 +101,16 @@ SvelteKit 2.xとTypeScriptを使用した、JWTベースの認証システム実
 JWT認証システムの完全な実装例を準備中です。
 
 - **デモサイト**: 準備中
-- **ソースコード**: [https://github.com/shuji-bonji/svelte5-auth-jwt](https://github.com/shuji-bonji/svelte5-auth-jwt)（準備中）
+- **ソースコード**: 準備中（リポジトリ作成予定 `shuji-bonji/svelte5-auth-jwt`）
 
 <Admonition type="info" title="実装予定の機能">
 
-<ul>
-<li>JWTトークンによる認証</li>
-<li>アクセストークン + リフレッシュトークン</li>
-<li>役割ベースアクセス制御（RBAC）</li>
-<li>高度なルートグループ活用</li>
-<li>トークン自動更新機能</li>
-<li>セキュアなトークン保存戦略</li>
-</ul>
+- JWTトークンによる認証
+- アクセストークン + リフレッシュトークン
+- 役割ベースアクセス制御（RBAC）
+- 高度なルートグループ活用
+- トークン自動更新機能
+- セキュアなトークン保存戦略
 
 </Admonition>
 
@@ -381,7 +379,7 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
   // 未認証またはadmin以外はアクセス拒否
   if (!locals.user || locals.user.role !== 'admin') {
-    throw redirect(303, '/login?message=Admin access required');
+    redirect(303, '/login?message=Admin access required');
   }
 
   return {
@@ -398,7 +396,7 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals, url }) => {
   // 未認証ユーザーはログインページへ
   if (!locals.user) {
-    throw redirect(303, '/login?from=' + encodeURIComponent(url.pathname));
+    redirect(303, '/login?from=' + encodeURIComponent(url.pathname));
   }
 
   return {

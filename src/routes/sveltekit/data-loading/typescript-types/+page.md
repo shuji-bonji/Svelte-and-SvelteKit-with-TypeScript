@@ -562,7 +562,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   // hooks.server.tsで設定された値が取得できる
   if (!locals.user) {
     // 未認証の場合はログインページへリダイレクト
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // locals.userの型は{ id: string, name: string, role: 'admin' | 'user' }
@@ -603,7 +603,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 
   if (!user) {
     // ユーザーがログインしていない場合
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // params.idは[id]ルートから自動推論

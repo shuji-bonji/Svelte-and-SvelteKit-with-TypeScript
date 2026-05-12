@@ -184,7 +184,7 @@ export const load: LayoutServerLoad = async (event) => {
   // 認証チェックなど、サーバーサイドでの処理
   const session = event.cookies.get('session');
   if (!session) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
   
   return {
@@ -433,7 +433,7 @@ declare global {
     interface PageData {
       meta?: {
         title: string;                 // ページタイトル
-description: SvelteKitが生成する./$typesの中身を一覧し、PageDataやActionResultなど主要型の意味と拡張方法を整理。タイプセーフなloadやアクションを書くための参照として活用できる技術解説で、型エラーの防止に役立つ。各型の活用例付き。詳しい手順とチェックリスト付き。運用時の確認ポイントも掲載
+        description?: string;          // ページの説明（OGP / meta description）
         ogImage?: string;              // OGP画像URL
       };
       breadcrumbs?: Array<{            // パンくずリスト

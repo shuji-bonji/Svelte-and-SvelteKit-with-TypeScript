@@ -77,7 +77,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals }) => {
   if (!locals.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
   // locals.userが型安全に使える
   return {
@@ -146,7 +146,7 @@ interface Error {
 import { error } from '@sveltejs/kit';
 
 // カスタムエラーを投げる
-throw error(404, {
+error(404, {
   message: 'ページが見つかりません',
   code: 'NOT_FOUND',
   details: {

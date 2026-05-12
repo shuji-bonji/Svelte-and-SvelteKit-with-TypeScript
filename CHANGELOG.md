@@ -2,6 +2,98 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-13] - 記事刷新 Sprint 1（即時修正 21 項目）
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` に基づく Sprint 1 を完了。SvelteKit 2 違反、Svelte 5 Runes 違反、エコシステム陳腐化、混入バグ、CLI 表記古さなど「コピペで動かない／論理的に常に真偽になる」レベルの問題を一括是正した。
+
+### Sprint 1-A: 機械的な一括修正
+
+- **`throw redirect / throw error` を全廃**（23 ファイル・86 件）。SvelteKit 2 では `redirect()` / `error()` 関数自体が例外を投げるため `throw` キーワード不要。Mermaid 図内の擬似コード 2 件も整合のため修正。
+  - `reference/sveltekit2`、`routing/{basic,dynamic,advanced,error-pages}`、`data-loading/{basic,typescript-types,streaming}`、`basics/{file-system,global-types}`、`server/{api-routes,forms}`、`application/{auth-best-practices,session}`、`architecture/spa-mpa-hybrid`、`optimization/{caching,observability}`、`examples/{auth-cookie-session,auth-jwt,auth-route-groups,auth-system}`、`deep-dive/auto-generated-types`、`svelte/runes/derived`
+- **`prefetch` / `prefetchRoutes` → `preloadData` / `preloadCode` 置換**（`routing/advanced`、`data-loading/flow`）。SvelteKit 1 系の API は完全に廃止されており、コピペで `import` 解決失敗していた。
+- **`data-sveltekit-preload-data` 不正値修正**：`"eager"`（`routing/basic` L541）と `"off"`（`data-loading/flow` L218）を有効値（`"hover"` / `"tap"` / `"false"`）に修正し、`data-sveltekit-preload-code` 側の値（`"eager"` / `"viewport"`）との違いを Admonition で明示。
+- **記事破損バグ 2 件修正**：
+  - `optimization/caching/+page.md` L139–142：`manifest.json` 内に frontmatter `description` 文字列が混入していたのを除去
+  - `deep-dive/auto-generated-types/+page.md` L436：コードブロック内に frontmatter `description:` が混入していたのを除去
+- **`introduction/typescript-setup` L482 の `npm run svelte-kit sync`**（動作しないコマンド）を `npx svelte-kit sync` / `npm run prepare` に置換。
+- **`reference/sveltekit2` の `handleValidationError` 誤シグネチャ**を `{ event, issues }` に修正（旧コードは `event.issues.map(...)` で `issues` は未定義）。
+
+### Sprint 1-B: Runes 違反コードの修正
+
+- **`runes/state` のビルトインクラス例**：`$state(new Map/Set/Date/URL())` の二重ラップを撤廃し、`svelte/reactivity` の `SvelteMap` / `SvelteSet` / `SvelteDate` / `SvelteURL` を直接使う形に書き換え。
+- **`advanced/reactivity-window` の `$derived(() => ...)` 関数引数誤用**を 8 箇所すべて `$derived.by(() => ...)` に修正（実行時に関数オブジェクトが表示される実害あり）。
+- **`runes/effect` の偽 `import { Suspense } from 'svelte'` 削除**（Svelte に `Suspense` は存在せず、`<svelte:boundary>` 単体で完結）。
+- **`runes/comparison` L451 の Vue 比較誤記**（`@event → on:event` → `@event → onevent`）を修正。
+- **`runes/props` のジェネリック例コンパイル不能修正**：`$props<T>()` ジェネリック呼び出しを `let { ... }: Props = $props()` に統一、`<script lang="ts" generics="T">` 属性を追加。DataTable 例には `SvelteSet` も導入。
+- **`basics/motion` L673 の `$:` 残存修正**：Runes モードでは構文エラーになるため、`$effect` ＋ `subscribe()` / `get()` のパターンに書き換え、警告を明示。
+- **`basics/attachments` L137–155 の Admonition ネスト破綻修正**：`<Admonition>` と `:::` 終端の混在を解消。
+
+### Sprint 1-C: `$app/state` セマンティクス修正
+
+- **`basics/app-modules` の `updated` 使い方修正**：`if (updated)` は常に真になる論理バグを `if (updated.current)` に修正。`updated.check()` の手動再チェック例を追加。
+- **同 `navigating` 使い方修正**：`{#if navigating}` は常に真のため `{#if navigating.from}` に修正。`type` の値リストに `'form'` を追加。
+
+### Sprint 1-D: examples/auth-jwt 状態表記整合（取り消し）+ CLAUDE.md 修正
+
+- 本項目（記事側の「完成」表記）は **取り消し済み**。当初 CLAUDE.md の「✅ 完成済み」表記に従って `auth-jwt` を「完成」へ更新したが、リポジトリ `shuji-bonji/svelte5-auth-jwt` および Vercel デモが実在しないことを WebSearch で確認したため、`auth-jwt/+page.md`、`examples/+page.md`、`auth-system/+page.md` の関連表記を全て「準備中」に戻した。
+- **CLAUDE.md の修正**: 「完成済み」表から `svelte5-auth-jwt` を除外し、「準備中 / 開発中」セクションを新設してそちらに移動。`svelte5-auth-route-groups` も同セクションに整理。実態と乖離しないよう運用ルール（実物の存在を確認してから記事に反映する）を表直下に注記として追加。
+- **教訓**: 情報源として CLAUDE.md を盲信せず、実リポジトリ・実デモ URL を一次情報として確認すること。
+
+### Sprint 1-E: introduction/setup 全面更新
+
+- **CLI コマンド**：`npm create svelte@latest` を「廃止済み」と明記して削除、`npx sv create` のみを残し、`pnpm dlx` / `bun x` の代替コマンドを追加。
+- **対話プロンプト例**：旧 `Svelte CLI (v0.9.2)` 表記を最新の対話フローに置換。`lucia` を削除し `better-auth` を追加、`mcp` / `storybook` / `sveltekit-adapter` を追加。
+- **package.json 例**：Svelte 5.55+ / SvelteKit 2.58+ / TypeScript 6 / Vite 8 / vite-plugin-svelte 7 にバージョン更新。`"prepare": "svelte-kit sync"` を追加。
+- **Node.js バージョン**：22.x LTS を推奨に格上げ（20.x はメンテナンスフェーズ）。`engines.node >= 22.0.0` に。
+- **nvm URL**：v0.39.0 → v0.40.3 に更新。
+- **追加ツール選択ガイド**：`lucia` → `better-auth` 置換、`mdsvex` / `paraglide` / `mcp` を追記。
+
+### Sprint 1-F: introduction/hello-world 順序見直し
+
+- **例の順序を Svelte 5 ファースト**に変更。Svelte 4 レガシー例は参考扱いに移動し `:::caution` で「新規コードでは使用禁止」を明示。
+- **`let count = 0` が Runes モードで非リアクティブ**である旨を `:::caution` で明示（読者の誤解を防ぐ）。
+- **`<img {src} {alt} width={width} />` を `{width}` ショートハンドに統一**。
+- 「TypeScriptを使用する」セクションで「本ガイドでは TypeScript を前提とする」と明記。
+
+### Sprint 1-G: introduction/cli オプション表補完
+
+- **`pnpx sv` → `pnpm dlx sv` に修正**（pnpm v6.13 で削除済みのエイリアス）。`bun x` / `deno run` も追加。
+- **`sv create` の表**に `--from-playground`、`--no-add-ons`、`--no-dir-check` を追加。`--install <pm>` の値も列挙。
+- **`sv add` の表**に `--no-download-check` を追加（本文の Admonition との不整合を解消）。
+- **`sv check` の表**に `--preserveWatchOutput`、`--no-tsconfig`、`--threshold`、`--compiler-warnings`、`--diagnostic-sources` を追加。`--output` の値を 4 種すべて記載。
+- **マシンリーダブル出力例**に `FILES_WITH_PROBLEMS` フィールドを追加。
+- **`--ignore` の落とし穴**を `:::info` で明示（`--no-tsconfig` 併用時のみ「診断対象」に効く、`node_modules` は既定除外）。
+- **`package.json scripts` 例**に `"test": "vitest"`、`"prepare": "svelte-kit sync"` を追加し、`prepare` の意義を `:::tip` で説明。
+
+### Sprint 1-H: Tauri 2.x コード更新
+
+- **`architecture/desktop-mobile`** の Tauri 1.x API を全件 Tauri 2.x に書き換え：
+  - `@tauri-apps/api/tauri` → `@tauri-apps/api/core`（`invoke`）
+  - `@tauri-apps/api/dialog` → `@tauri-apps/plugin-dialog`
+  - `@tauri-apps/api/fs` → `@tauri-apps/plugin-fs`
+  - `@tauri-apps/api/updater` → `@tauri-apps/plugin-updater`（API も `checkUpdate`/`installUpdate` → `check()`/`downloadAndInstall()` に変更）
+- **Capacitor `@capacitor/storage` → `@capacitor/preferences` 置換**（Capacitor 4.x で改名済み）。`any` を排し型安全な実装に。
+- Tauri 2.x への移行ポイント全体を `:::info` で集約説明。
+
+### Sprint 1-I: Apollo / urql エコシステム更新
+
+- **`architecture/spa-patterns/graphql`** の Apollo Client 設定：
+  - 削除済みの `WebSocketLink`（`@apollo/client/link/ws`）を `GraphQLWsLink`（`@apollo/client/link/subscriptions`）＋ `graphql-ws` に置換
+  - 認証ヘッダーを `setContext` リンク経由の動的注入に変更（トークン更新追従）
+- **urql v4 設定**：削除済みの `defaultExchanges` を撤廃し、`cacheExchange` / `fetchExchange` / `subscriptionExchange` の個別 import に変更。`fetchOptions` も関数形式（動的トークン）に。
+- それぞれの破壊的変更を `:::info` で明示。
+
+### 検証
+
+- `mcp__svelte__svelte-autofixer`：主要書き換えコード 3 件（hello-world Counter、runes/props DataTable、reactivity-window DeviceType）で `issues: [], suggestions: []` クリーン。
+- `mcp__svelte__get-documentation` で `kit/load`、`kit/$app-state`、`kit/$app-navigation`、`kit/link-options`、`kit/remote-functions`、`svelte/$state`、`svelte/$derived`、`svelte/$effect`、`svelte/$props`、`svelte/svelte-reactivity`、`svelte/svelte-reactivity-window`、`cli/sv-create`、`cli/sv-add`、`cli/sv-check`、`cli/sv-migrate` を最新仕様として照合。
+
+### 影響範囲
+
+修正ファイル数: 約 35 ファイル（routes 配下の `.md`）。Mermaid 図のテキスト 2 箇所、`package.json` の引用例 2 箇所、`<Admonition>` 構造 1 箇所も含む。
+
 ## [2026-05-12] - `static/` と `src/lib/assets/` の使い分けセクション追加＋環境構築からの導線設置
 
 ### 概要

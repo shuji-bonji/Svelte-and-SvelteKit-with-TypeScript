@@ -448,7 +448,7 @@ items.push(newItem);
 2. **テンプレート構文**
    - `v-if` → `&#123;#if&#125;`
    - `v-for` → `&#123;#each&#125;`
-   - `@event` → `on:event`
+   - `@event` → `onevent`（例: `@click` → `onclick`。Svelte 5 では HTML 標準属性に揃った）
 
 ### Angular からの移行
 

@@ -134,7 +134,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
   const response = await fetch(`/api/posts/${postId}`);
 
   if (!response.ok) {
-    throw error(404, 'Post not found');
+    error(404, 'Post not found');
   }
 
   return {
@@ -563,7 +563,7 @@ export const load: PageLoad = async ({ params }) => {
 
   // 月の妥当性チェック
   if (month < 1 || month > 12) {
-    throw error(404, 'Invalid month');
+    error(404, 'Invalid month');
   }
 
   const posts = await getPostsByMonth(year, month);
@@ -659,7 +659,7 @@ export const load: PageLoad = async ({ params }) => {
   const loader = components[params.name as keyof typeof components];
 
   if (!loader) {
-    throw error(404, 'Component not found');
+    error(404, 'Component not found');
   }
 
   const component = await loader();

@@ -139,7 +139,7 @@ PWAマニフェストファイル（`static/manifest.json`）の設定:
 const manifest = {
   name: "My SvelteKit PWA",
   short_name: "MySKPWA",
-description: SvelteKitでPWA・CDN・エッジを組み合わせたキャッシュ戦略を設計。Service Workerによるオフライン対応、etagやmax-ageのチューニング、失効と再検証、エッジキャッシュ活用法をTypeScriptで解説し、運用チェックリストを提供。監視の指針付き。詳しい手順とチェックリスト付き
+  description: "An installable SvelteKit application with offline support",
   start_url: "/",
   display: "standalone",
   theme_color: "#000000",
@@ -612,7 +612,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   // ユーザー情報は必須
   // 認証チェックをレイアウトレベルで実施
   if (!locals.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // 基本UIデータ

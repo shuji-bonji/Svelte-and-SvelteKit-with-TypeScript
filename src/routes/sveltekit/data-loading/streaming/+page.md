@@ -451,7 +451,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   // 認証チェック
   if (!locals.user) {
-    throw redirect(302, '/login');
+    redirect(302, '/login');
   }
 
   // 重要なKPI指標（高速・数値データ）

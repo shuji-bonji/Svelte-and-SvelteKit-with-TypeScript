@@ -485,13 +485,11 @@ Svelte 以外のライブラリ（Chart.js、D3.js など）を Svelte のリア
 
 ## $effect.pending() - 保留中の非同期操作
 
-`$effect.pending()`は、`&lt;svelte:boundary&gt;`内で保留中の Promise の数を返します。
-非同期データの読み込み状態を追跡するのに役立ちます。
+`$effect.pending()`は、`&lt;svelte:boundary&gt;`内で保留中の Promise の**数（number）**を返します。
+非同期データの読み込み状態を追跡するのに役立ちます。**`Suspense` のような import は不要**で、`<svelte:boundary>` 単体で完結します。
 
 ```svelte
 <script lang="ts">
-  import { Suspense } from 'svelte';
-
   let pendingCount = $derived($effect.pending());
 </script>
 

@@ -215,7 +215,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
   if (!post) {
     // 404エラーを投げる
-    throw error(404, {
+    error(404, {
       message: '記事が見つかりません',
       code: 'POST_NOT_FOUND'
     });
@@ -223,7 +223,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
   // 下書き記事は非公開
   if (post.status === 'draft') {
-    throw error(404, {
+    error(404, {
       message: 'この記事は公開されていません'
     });
   }
@@ -242,12 +242,12 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
   // 未認証
   if (!locals.user) {
-    throw redirect(302, '/login?redirect=/admin');
+    redirect(302, '/login?redirect=/admin');
   }
 
   // 管理者権限がない
   if (locals.user.role !== 'admin') {
-    throw error(403, {
+    error(403, {
       message: '管理者権限が必要です'
     });
   }
@@ -273,7 +273,7 @@ export const GET: RequestHandler = async () => {
     console.error('API Error:', e);
 
     // 500エラーを投げる
-    throw error(500, {
+    error(500, {
       message: 'データの取得に失敗しました'
     });
   }

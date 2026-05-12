@@ -658,21 +658,36 @@ PointerEvents API と Spring を組み合わせたドラッグ可能な要素で
 `spring()` と `tweened()` 関数は非推奨です。代わりに `Spring` と `Tween` クラスを使用してください。
 
 </Admonition>
-以前のバージョンとの互換性のために、ストアベースの API も利用可能です。
+以前のバージョンとの互換性のために、ストアベースの API も利用可能です。**ただし Runes モード（Svelte 5 標準）の `.svelte` ファイルでは `$:` ラベル付き宣言や `$store` の自動購読構文は使えません**。Runes モードからレガシーストアを読みたい場合は `get()` または `$effect` を使ってください。
 
 ```svelte
 <script lang="ts">
   import { spring, tweened } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
+  import { get } from 'svelte/store';
 
   // レガシーAPI（非推奨）
   const oldSpring = spring(0, { stiffness: 0.3, damping: 0.8 });
   const oldTween = tweened(0, { duration: 400, easing: cubicOut });
 
-  // ストアとして使用
-  $: console.log($oldSpring, $oldTween);
+  // Runes モードでの読み出し例: $effect でストアを購読
+  $effect(() => {
+    // get() でスナップショット取得（リアクティブではない）
+    console.log(get(oldSpring), get(oldTween));
+    // 値の変更を追跡したい場合は oldSpring.subscribe(...) を使う
+    const unsub1 = oldSpring.subscribe((v) => console.log('spring:', v));
+    const unsub2 = oldTween.subscribe((v) => console.log('tween:', v));
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  });
 </script>
 ```
+
+:::caution[`$:` と `$store` 構文は Runes モードでは使えません]
+Runes モード（Svelte 5 標準）の `.svelte` ファイルでは、`$:` ラベル付き宣言と `$store` の自動購読構文（`$myStore` で値取得）は **コンパイルエラー**になります。レガシーストアを使う場合は `subscribe()` または `get()` を明示的に呼び出してください。新規実装では `Spring` / `Tween` クラスベースの API を推奨します。
+:::
 
 ## Spring vs Tween の使い分け
 

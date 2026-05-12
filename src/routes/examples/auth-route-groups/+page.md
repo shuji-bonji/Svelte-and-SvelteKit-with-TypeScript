@@ -193,7 +193,7 @@ export const load: LayoutServerLoad = async ({ locals, url, cookies }) => {
     // 未認証の場合、現在のURLを保存してログインページへリダイレクト
     // fromパラメータにより、ログイン後に元のページに戻れます
     const redirectTo = url.pathname + url.search;
-    throw redirect(303, `/login?from=${encodeURIComponent(redirectTo)}`);
+    redirect(303, `/login?from=${encodeURIComponent(redirectTo)}`);
   }
 
   // 認証済みユーザー情報を子コンポーネントに渡す
@@ -225,7 +225,7 @@ export const load: LayoutServerLoad = async ({ locals, parent }) => {
     // 403 Forbiddenエラーを投げることで、権限不足を明示
     // 401（Unauthorized）ではなく403を使うのは、
     // 認証済みだが権限が不足していることを示すため
-    throw error(403, {
+    error(403, {
       message: '管理者権限が必要です',
       code: 'ADMIN_REQUIRED',
     });
@@ -261,7 +261,7 @@ export const load: LayoutServerLoad = async ({ locals, parent, params }) => {
 
   // ユーザーが必要な役割を持っているか確認
   if (!locals.user?.roles?.includes(requiredRole)) {
-    throw error(403, {
+    error(403, {
       message: `${requiredRole}権限が必要です`,
       code: 'INSUFFICIENT_PERMISSION',
     });
@@ -442,7 +442,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
   const session = await validateSession(cookies.get('session'));
   if (!session) {
     // 未認証の場合はログインページへリダイレクト
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
   // 認証済みユーザー情報を返す
   return { user: session.user };
@@ -459,7 +459,7 @@ export const load: LayoutServerLoad = async ({ request }) => {
   const user = await verifyJWT(token);
   if (!user) {
     // 401 Unauthorizedエラーを返す（APIなのでリダイレクトしない）
-    throw error(401, 'Unauthorized');
+    error(401, 'Unauthorized');
   }
 
   return { user };

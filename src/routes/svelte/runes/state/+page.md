@@ -815,25 +815,36 @@ proxy.value = 10; // "書き込み: value = 10"
 
 ### ビルトインクラスのリアクティブ化
 
-Svelte 5 では、ネイティブのビルトインクラスも`$state()`でリアクティブになります。
+ネイティブの `Map` / `Set` / `Date` / `URL` を `$state()` でラップしても、**Proxy が `.set()` / `.add()` などの破壊的メソッド呼び出しを検知できない**ため、リアクティブにはなりません。Svelte 5 では `svelte/reactivity` モジュールから **専用のリアクティブ版クラス** が提供されており、こちらを直接使うのが正解です（`$state` でのラップは不要）。
 
 ```typescript
-// Map - キーバリューストアがリアクティブに
-let userPreferences = $state(new Map<string, string>());
-userPreferences.set('theme', 'dark'); // UIが自動更新
+import {
+  SvelteMap,
+  SvelteSet,
+  SvelteDate,
+  SvelteURL
+} from 'svelte/reactivity';
 
-// Set - 重複なしコレクションがリアクティブに
-let selectedTags = $state(new Set<string>());
+// SvelteMap - キーバリューストアがリアクティブに
+const userPreferences = new SvelteMap<string, string>();
+userPreferences.set('theme', 'dark'); // UI が自動更新
+
+// SvelteSet - 重複なしコレクションがリアクティブに
+const selectedTags = new SvelteSet<string>();
 selectedTags.add('svelte'); // 追加を検知
 
-// Date - 日時オブジェクトもリアクティブに
-let deadline = $state(new Date());
-deadline.setDate(deadline.getDate() + 7); // 1週間後に変更でUI更新
+// SvelteDate - 日時オブジェクトがリアクティブに
+const deadline = new SvelteDate();
+deadline.setDate(deadline.getDate() + 7); // 1週間後に変更で UI 更新
 
-// URL - URL操作がリアクティブに
-let apiUrl = $state(new URL('https://api.example.com'));
+// SvelteURL - URL 操作がリアクティブに
+const apiUrl = new SvelteURL('https://api.example.com');
 apiUrl.searchParams.set('page', '2'); // クエリパラメータ変更を検知
 ```
+
+:::caution[`$state(new Map())` は動作しません]
+ネイティブの `new Map()` / `new Set()` などを `$state()` でラップしても **内部メソッド呼び出しはリアクティブになりません**。これらは自前のトラッキング機構を持つ `SvelteMap` / `SvelteSet` / `SvelteDate` / `SvelteURL` / `SvelteURLSearchParams` / `MediaQuery`（すべて `svelte/reactivity` から export）を直接使ってください。`$state` でラップする必要もありません（むしろ二重ラップになります）。
+:::
 
 ## まとめ
 

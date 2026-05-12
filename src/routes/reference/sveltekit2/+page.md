@@ -130,7 +130,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
   const res = await fetch(`/api/posts/${params.slug}`);
 
   if (!res.ok) {
-    throw error(404, 'Post not found');
+    error(404, 'Post not found');
   }
 
   const post = await res.json();
@@ -206,18 +206,18 @@ replaceState('/tab/settings', { activeTab: 'settings' });
 <!-- hover時にプリロード（デフォルト） -->
 <a href="/about">About</a>
 
-<!-- 即座にプリロード -->
-<a href="/products" data-sveltekit-preload-data="eager">
+<!-- コードを即座にプリロード（data は hover/tap で、ここはコード側） -->
+<a href="/products" data-sveltekit-preload-code="eager">
   Products
 </a>
 
-<!-- タップ/クリック時にプリロード -->
+<!-- タップ/クリック時にデータをプリロード -->
 <a href="/heavy" data-sveltekit-preload-data="tap">
   Heavy Page
 </a>
 
-<!-- プリロード無効 -->
-<a href="/external" data-sveltekit-preload-data="off">
+<!-- データのプリロードを無効化 -->
+<a href="/external" data-sveltekit-preload-data="false">
   External
 </a>
 
@@ -288,14 +288,14 @@ export const load: PageServerLoad = async ({
 }) => {
   // 認証チェック
   if (!locals.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // データベースアクセス
   const data = await db.getData(params.id);
 
   if (!data) {
-    throw error(404, 'Not found');
+    error(404, 'Not found');
   }
 
   // 機密データを含む
@@ -685,7 +685,7 @@ import { json, error } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ url, locals }) => {
   // 認証チェック
   if (!locals.user) {
-    throw error(401, 'Unauthorized');
+    error(401, 'Unauthorized');
   }
 
   // クエリパラメータ
@@ -838,23 +838,24 @@ export const handleFetch: HandleFetch = async ({ request, fetch }) => {
 
 ### handleValidationError（hooks.server.ts）
 
-Remote Functionsの Standard Schema バリデーションエラーをカスタマイズするフックです。
+Remote Functionsの Standard Schema バリデーションエラーをカスタマイズするフックです。引数は `{ event, issues }` の形で、`issues` は Standard Schema の Issue 配列が**トップレベルで**渡されます（`event.issues` ではない点に注意）。
 
 ```typescript
 import type { HandleValidationError } from '@sveltejs/kit';
 
 export const handleValidationError: HandleValidationError = ({
   event,
-  reject,
+  issues,
 }) => {
   // バリデーションエラーをカスタム形式で返す
-  return reject(400, {
+  // (issues は event.issues ではなく、トップレベル引数として受け取る)
+  return {
     message: 'バリデーションエラー',
-    errors: event.issues.map((issue) => ({
+    errors: issues.map((issue) => ({
       path: issue.path,
       message: issue.message,
     })),
-  });
+  };
 };
 ```
 
@@ -1026,7 +1027,7 @@ import bcrypt from 'bcrypt';
 
 export const load: PageServerLoad = async ({ locals }) => {
   if (locals.user) {
-    throw redirect(303, '/dashboard');
+    redirect(303, '/dashboard');
   }
 };
 
@@ -1060,7 +1061,7 @@ export const actions: Actions = {
       maxAge: 60 * 60 * 24 * 30, // 30日
     });
 
-    throw redirect(303, '/dashboard');
+    redirect(303, '/dashboard');
   },
 };
 ```
@@ -1074,11 +1075,11 @@ import { redirect } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
   if (!locals.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   if (!locals.user.isAdmin) {
-    throw redirect(303, '/unauthorized');
+    redirect(303, '/unauthorized');
   }
 
   return {
@@ -1277,18 +1278,18 @@ export const trailingSlash = 'always'; // 'never' | 'always' | 'ignore'
 <!-- hover時にプリフェッチ（デフォルト） -->
 <a href="/about">About</a>
 
-<!-- 即座にプリフェッチ -->
-<a href="/products" data-sveltekit-preload-data="eager">
+<!-- コードを即座にプリフェッチ（"eager" は preload-code のみ有効値） -->
+<a href="/products" data-sveltekit-preload-code="eager">
   Products
 </a>
 
-<!-- タップ時にプリフェッチ -->
+<!-- タップ時にデータをプリフェッチ -->
 <a href="/heavy" data-sveltekit-preload-data="tap">
   Heavy Page
 </a>
 
-<!-- プリフェッチ無効 -->
-<a href="/external" data-sveltekit-preload-data="off">
+<!-- データプリフェッチ無効（"false" を指定） -->
+<a href="/external" data-sveltekit-preload-data="false">
   External
 </a>
 
@@ -1589,7 +1590,7 @@ export const load: PageServerLoad = async ({ params }) => {
     const data = await fetchData(params.id);
     return { data };
   } catch (err) {
-    throw error(500, {
+    error(500, {
       message: 'Failed to load data',
       code: 'LOAD_ERROR',
     });

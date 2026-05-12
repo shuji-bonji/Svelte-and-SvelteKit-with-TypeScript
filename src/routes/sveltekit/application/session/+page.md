@@ -618,13 +618,13 @@ export const load: LayoutServerLoad = async ({ locals, url, cookies }) => {
   if (!locals.user) {
     // リダイレクト前のURLを保存
     const redirectTo = url.pathname + url.search;
-    throw redirect(302, `/login?redirectTo=${encodeURIComponent(redirectTo)}`);
+    redirect(302, `/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   }
   
   // JWT認証の場合（トークンの有効性チェック）
   const accessToken = cookies.get('access_token');
   if (!accessToken || !isTokenValid(accessToken)) {
-    throw redirect(302, '/login');
+    redirect(302, '/login');
   }
   
   return {
@@ -644,11 +644,11 @@ import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
   if (!locals.user) {
-    throw redirect(302, '/login');
+    redirect(302, '/login');
   }
   
   if (locals.user.role !== 'admin') {
-    throw error(403, {
+    error(403, {
       message: 'アクセス権限がありません',
       code: 'FORBIDDEN'
     });

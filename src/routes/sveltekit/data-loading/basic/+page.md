@@ -475,7 +475,7 @@ import fs from 'fs/promises';
 export const load: PageServerLoad = async ({ cookies, locals, platform }) => {
   // ✅ 認証チェック
   const sessionId = cookies.get('session');
-  if (!sessionId) throw redirect(303, '/login');
+  if (!sessionId) redirect(303, '/login');
 
   // ✅ データベースアクセス
   const user = await db.user.findUnique({
@@ -720,7 +720,7 @@ export const load: PageLoad = async ({ params }) => {
   if (!response.ok) {
     // HTTPエラーを投げる
     // error関数はステータスコードとオプションデータを受け取る
-    throw error(response.status, {
+    error(response.status, {
       message: 'Post not found', // エラーページで表示されるメッセージ
     });
   }

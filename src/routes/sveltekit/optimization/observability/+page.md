@@ -398,7 +398,7 @@ export const POST: RequestHandler = async ({ request }) => {
     event.tracing.current.setAttribute('error.message', err.message);
     event.tracing.current.setAttribute('error.type', err.name);
 
-    throw error(500, 'Order creation failed');
+    error(500, 'Order creation failed');
   }
 };
 ```

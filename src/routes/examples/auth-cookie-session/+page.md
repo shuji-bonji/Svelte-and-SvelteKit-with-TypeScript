@@ -526,7 +526,7 @@ export const actions: Actions = {
 
       // 303 See Otherステータスでリダイレクト
       // throwを使用することで、SvelteKitが適切にリダイレクトを処理します
-      throw redirect(303, redirectTo);
+      redirect(303, redirectTo);
     } catch (error) {
       // redirectのエラーは正常な処理なので、再スローします
       // これにより、SvelteKitがリダイレクトを実行します
@@ -558,7 +558,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   // 未認証の場合はログインページへリダイレクト
   if (!locals.user) {
     // fromパラメータを付与して、ログイン後に戻れるようにする
-    throw redirect(303, '/login?from=/dashboard');
+    redirect(303, '/login?from=/dashboard');
   }
 
   // 認証済みユーザーの情報をクライアントに渡す

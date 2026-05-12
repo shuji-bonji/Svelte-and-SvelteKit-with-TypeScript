@@ -154,6 +154,10 @@ interface Page {
 
 現在のナビゲーション状態を表します。ナビゲーション中は値を持ち、完了後はnullになります。
 
+:::caution[`navigating` は常に存在するオブジェクト]
+`navigating` は `{ from, to, type, willUnload, delta?, complete }` の構造を持つオブジェクトで、**ナビゲーション中以外は `from` と `to` が `null`** になります。`{#if navigating}` は常に真になるため判定に使えません。**個別プロパティ（`navigating.from` / `navigating.to`）で判定**してください。
+:::
+
 #### $app/state での使用（推奨）
 
 ```svelte
@@ -161,10 +165,11 @@ interface Page {
   import { navigating } from '$app/state';
 </script>
 
-{#if navigating}
+<!-- navigating.from で判定（ナビゲーション中のみ truthy） -->
+{#if navigating.from}
   <div class="loading">
     <p>Loading...</p>
-    <p>From: {navigating.from?.url.pathname}</p>
+    <p>From: {navigating.from.url.pathname}</p>
     <p>To: {navigating.to?.url.pathname}</p>
     <p>Type: {navigating.type}</p>
   </div>
@@ -178,6 +183,7 @@ interface Page {
   import { navigating } from '$app/stores';
 </script>
 
+<!-- $app/stores 版では navigating がストアでアンラップされ Navigation | null になる -->
 {#if $navigating}
   <div class="loading">
     <p>Loading...</p>
@@ -202,7 +208,7 @@ interface Navigation {
     route: { id: string | null };
     url: URL;
   } | null;
-  type: 'popstate' | 'link' | 'goto' | 'enter' | 'leave';
+  type: 'popstate' | 'link' | 'goto' | 'enter' | 'leave' | 'form';
   willUnload: boolean;
   delta?: number;
   complete: Promise<void>;
@@ -211,7 +217,11 @@ interface Navigation {
 
 ### updated - アプリ更新状態
 
-アプリケーションの新しいバージョンが利用可能かを示します。
+アプリケーションの新しいバージョンが利用可能かを示します。`$app/state` 版の `updated` は **`{ current: boolean; check(): Promise<boolean> }` 型のオブジェクト**で、`current` プロパティで判定します。
+
+:::caution[`updated` の使い方]
+`if (updated)` は **常に真**になります（オブジェクトは truthy）。判定には **`updated.current`** を使ってください。再チェックを強制したい場合は `await updated.check()` を呼びます。
+:::
 
 #### $app/state での使用（推奨）
 
@@ -220,10 +230,18 @@ interface Navigation {
   import { updated } from '$app/state';
 
   $effect(() => {
-    if (updated) {
+    if (updated.current) {
       alert('新しいバージョンが利用可能です。リロードしてください。');
     }
   });
+
+  async function manualCheck() {
+    // サーバーに最新版を問い合わせる
+    const hasNewVersion = await updated.check();
+    if (hasNewVersion) {
+      location.reload();
+    }
+  }
 </script>
 ```
 
@@ -233,6 +251,7 @@ interface Navigation {
 <script lang="ts">
   import { updated } from '$app/stores';
 
+  // $app/stores の updated は boolean ストア
   $effect(() => {
     if ($updated) {
       alert('新しいバージョンが利用可能です。リロードしてください。');

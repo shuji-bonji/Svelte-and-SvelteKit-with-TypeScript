@@ -166,8 +166,14 @@ function injectImport(content, importStmt) {
 }
 
 /**
- * Markdown 本文から code fence（``` / ~~~）の中身を取り除いた文字列を返す。
- * フェンスの開閉タグとインナー行は同数の空行に置き換えるので、行数は変わらない。
+ * Markdown 本文から code fence（``` / ~~~）の中身と**インラインコード（`…`）の中身**を
+ * 取り除いた文字列を返す。フェンスの開閉タグとインナー行は同数の空行に、
+ * インラインコード `…` は同じ長さの空白に置換するので、行数および列数オフセットは変わらない。
+ *
+ * インラインコード除外を行わないと、本文中に `<script>` のような文字列を書いた場合に
+ * `findFirstScriptOutsideFences` が「Svelte の `<script>` タグ」と誤認し、本文の
+ * インラインコード `<script>` の直後に import 文を文字列として挿入してしまう実害がある。
+ *
  * @param {string} content
  * @returns {string}
  */
@@ -191,9 +197,24 @@ function stripCodeFences(content) {
 			out.push('');
 			continue;
 		}
-		out.push(line);
+		// インラインコード（`…` / ``…``）の中身を同じ長さの空白に置換。
+		// マッチ全体を空白に置き換えることでインデックスのずれも防ぐ。
+		out.push(stripInlineCode(line));
 	}
 	return out.join('\n');
+}
+
+/**
+ * 行内の Markdown インラインコード（`…` および ``…``）の中身を同じ長さの空白に置換する。
+ * バッククォートの位置は保持しつつ、コードフェンスより細かい粒度の「コード扱い」を実現する。
+ * @param {string} line
+ * @returns {string}
+ */
+function stripInlineCode(line) {
+	// `…` と ``…`` の両方に対応。先に長い方（``…``）を処理してから短い方を処理する。
+	let result = line.replace(/``([^`]+)``/g, (m) => ' '.repeat(m.length));
+	result = result.replace(/`([^`\n]+)`/g, (m) => ' '.repeat(m.length));
+	return result;
 }
 
 /**

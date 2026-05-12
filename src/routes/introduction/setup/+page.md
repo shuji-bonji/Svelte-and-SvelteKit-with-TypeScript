@@ -41,7 +41,6 @@ nvm install --lts
 nvm use --lts
 ```
 
-
 ## プロジェクトの作成
 
 ### 最新のCLIツールを使用
@@ -78,14 +77,14 @@ npm create svelte@latest my-app
 ◇  What would you like to add to your project? (use arrow keys / space bar)
 │  ◼ prettier        # コードフォーマッター（推奨）
 │  ◼ eslint          # リンター（推奨）
-│  ◼ vitest          # ユニットテスト
-│  ◼ playwright      # E2Eテスト
-│  ◼ tailwindcss     # CSSフレームワーク
-│  ◼ drizzle         # ORMツール
-│  ◼ lucia          # 認証ライブラリ
-│  ◼ mdsvex          # Markdown対応
-│  ◼ paraglide       # 国際化（i18n）
-│  ◼ storybook       # コンポーネント開発
+│  ▫︎ vitest          # ユニットテスト
+│  ▫︎ playwright      # E2Eテスト
+│  ▫︎ tailwindcss     # CSSフレームワーク
+│  ▫︎ drizzle         # ORMツール
+│  ▫︎ lucia          # 認証ライブラリ
+│  ▫︎ mdsvex          # Markdown対応
+│  ▫︎ paraglide       # 国際化（i18n）
+│  ▫︎ storybook       # コンポーネント開発
 │
 ◇  Which package manager do you want to install dependencies with?
 │  ● npm    # 標準的で安定
@@ -98,26 +97,27 @@ npm create svelte@latest my-app
 
 ### 主要なテンプレートの選択
 
-| テンプレート | 説明 | 推奨対象 |
-|------------|------|---------|
-| **SvelteKit minimal** | 基本構造のみ、学習に最適 | 初心者、新規プロジェクト |
-| **SvelteKit demo** | サンプルコード付き | 機能確認、参考実装 |
-| **Svelte library** | ライブラリ開発用 | コンポーネントライブラリ作成 |
+| テンプレート          | 説明                     | 推奨対象                     |
+| --------------------- | ------------------------ | ---------------------------- |
+| **SvelteKit minimal** | 基本構造のみ、学習に最適 | 初心者、新規プロジェクト     |
+| **SvelteKit demo**    | サンプルコード付き       | 機能確認、参考実装           |
+| **Svelte library**    | ライブラリ開発用         | コンポーネントライブラリ作成 |
 
 ### 追加ツールの選択ガイド
 
 #### 必須推奨（初心者向け）
+
 - **prettier** - コードを自動整形
 - **eslint** - コードの問題を検出
 - **TypeScript** - 型安全性の確保
 
 #### プロジェクトに応じて追加
+
 - **vitest** - 単体テストを書く場合
 - **playwright** - E2Eテストが必要な場合
 - **tailwindcss** - ユーティリティCSSを使いたい場合
 - **drizzle** - データベースを使う場合
 - **lucia** - 認証機能が必要な場合
-
 
 ### 依存関係のインストール
 
@@ -132,13 +132,13 @@ npm install
 
 ### パッケージマネージャの選択
 
-| マネージャ | 特徴 | 推奨度 |
-|-----------|------|--------|
-| **npm** | Node.js標準、互換性が高い、学習リソースが豊富 | ⭐⭐⭐⭐⭐ |
-| **pnpm** | 高速、効率的なディスク使用量、モノレポ対応 | ⭐⭐⭐⭐ |
-| **yarn** | npmの代替、ワークスペース機能 | ⭐⭐⭐ |
-| **bun** | 超高速、実験的、ランタイム込み | ⭐⭐ |
-| **deno** | セキュア、TypeScript標準対応 | ⭐⭐ |
+| マネージャ | 特徴                                          | 推奨度     |
+| ---------- | --------------------------------------------- | ---------- |
+| **npm**    | Node.js標準、互換性が高い、学習リソースが豊富 | ⭐⭐⭐⭐⭐ |
+| **pnpm**   | 高速、効率的なディスク使用量、モノレポ対応    | ⭐⭐⭐⭐   |
+| **yarn**   | npmの代替、ワークスペース機能                 | ⭐⭐⭐     |
+| **bun**    | 超高速、実験的、ランタイム込み                | ⭐⭐       |
+| **deno**   | セキュア、TypeScript標準対応                  | ⭐⭐       |
 
 :::tip
 初心者の方はnpmを使用することをお勧めします。トラブルシューティングの情報が最も多く、確実に動作します。
@@ -174,6 +174,12 @@ npm install
 
 SvelteKitプロジェクトの標準的なフォルダ構成を示します。
 
+:::tip[このセクションは「全体マップ」です]
+
+ここでは `sv create` 直後のフォルダ構成を眺めることを目的としています。各ディレクトリの**詳しい役割と実例**（`src/lib/` の `$lib` エイリアス、サーバー専用コード、`static/` と `src/lib/assets/` の使い分けなど）は、[プロジェクト構造と規約](/sveltekit/basics/project-structure/) で体系的に解説しています。今すぐすべて理解する必要はありません。**「あとから戻ってきて参照できる場所がある」と覚えておくだけで十分**です。
+
+:::
+
 ```
 my-app/
 ├── src/
@@ -199,15 +205,15 @@ my-app/
 
 ### 重要なファイルの説明
 
-| ファイル | 説明 |
-|---------|------|
-| `+page.svelte` | ページコンポーネント |
-| `+page.ts` | ユニバーサルload関数 |
+| ファイル          | 説明                            |
+| ----------------- | ------------------------------- |
+| `+page.svelte`    | ページコンポーネント            |
+| `+page.ts`        | ユニバーサルload関数            |
 | `+page.server.ts` | サーバーサイドload関数とActions |
-| `+layout.svelte` | レイアウトコンポーネント |
-| `+server.ts` | APIエンドポイント |
-| `+error.svelte` | エラーページ |
-| `app.d.ts` | TypeScript型定義 |
+| `+layout.svelte`  | レイアウトコンポーネント        |
+| `+server.ts`      | APIエンドポイント               |
+| `+error.svelte`   | エラーページ                    |
+| `app.d.ts`        | TypeScript型定義                |
 
 ## 開発サーバーの起動
 
@@ -291,7 +297,7 @@ npm install
   // Svelte 5のRunes
   let count = $state(0);
   let doubled = $derived(count * 2);
-  
+
   function increment() {
     count++;
   }
@@ -307,10 +313,11 @@ npm install
 ### よくある問題
 
 1. **Node.js バージョンエラー**
+
    ```bash
    # Node.js バージョン確認
    node --version
-   
+
    # nvm を使ってバージョン切り替え（20.x LTS推奨）
    nvm use 20
    # または22.x LTSを使用
@@ -318,20 +325,22 @@ npm install
    ```
 
 2. **依存関係の問題**
+
    ```bash
    # キャッシュクリア
    npm cache clean --force
-   
+
    # node_modules 削除して再インストール
    rm -rf node_modules package-lock.json
    npm install
    ```
 
 3. **TypeScript エラー**
+
    ```bash
    # TypeScript バージョン確認
    npx tsc --version
-   
+
    # .svelte-kit フォルダを再生成
    rm -rf .svelte-kit
    npm run dev
@@ -344,3 +353,5 @@ npm install
 - [Hello World](/introduction/hello-world/) - 最初のSvelteコンポーネントを作成
 - [なぜTypeScriptが必要か](/introduction/why-typescript/) - TypeScriptの重要性を理解
 - [TypeScript設定](/introduction/typescript-setup/) - TypeScriptの詳細な設定
+
+また、上記の「プロジェクト構造」をもう一歩踏み込んで理解したくなった時は、[プロジェクト構造と規約](/sveltekit/basics/project-structure/) を参照してください。`src/lib/`・`static/`・`src/routes/` などの各ディレクトリの役割、`$lib` エイリアス、特殊ファイルの命名規約、設定ファイルの中身までを体系的に解説しています。

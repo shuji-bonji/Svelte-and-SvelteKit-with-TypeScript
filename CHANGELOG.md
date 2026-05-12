@@ -2,6 +2,34 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-12] - `static/` と `src/lib/assets/` の使い分けセクション追加＋環境構築からの導線設置
+
+### 概要
+SvelteKit 学習者が `sv create` 直後に最初に疑問を持つ「`static/` と `src/lib/assets/` はどう違うのか」を `/sveltekit/basics/project-structure/` に正面から解説する新セクションを追加。あわせて、`/introduction/setup/` のプロジェクト構造セクションから本ページへの**導線リンク**を設置し、「あとから戻ってきて参照できる場所がある」と認識してもらえる構造に変更した。
+
+### 追加：`/sveltekit/basics/project-structure/` の新セクション
+`static/` セクション直後に「### `static/` と `src/lib/assets/` の使い分け」を追加。
+
+- **公式方針の明示**：Svelte 公式ドキュメント（[kit/project-structure](https://svelte.dev/docs/kit/project-structure)）の「`static/` のアセット数は最小化し、代わりに `import` を使う」推奨を明示
+- **比較表**：参照方法／ハッシュ付与／キャッシュ戦略／Vite 処理／インライン化／ビルド出力／型補完／公式推奨度 の 8 観点で対比
+- **コード例**：`import` 経由（推奨）と URL 直書き（例外用途）の Svelte 5 Runes 構文サンプル（`svelte-autofixer` で検証済み、issue 0 件）
+- **使い分けの判断基準**：`static/` に置くべきもの（`robots.txt` / `favicon.ico` / OGP 画像など URL 固定が必須なもの）と `$lib/assets/` に置くべきもの（コンポーネントから参照するロゴ・装飾画像・フォント）
+- **`$lib/assets/` のメリット 4 点**：キャッシュ破棄の自動化、未使用 tree-shaking、TypeScript 型補完、小さい画像の自動インライン化
+- **enhanced-img への導線**：`@sveltejs/enhanced-img` の `:::tip` 補足
+- **Angular 出身者向けの補足**：`src/assets/` 感覚で `static/` を使い続けることのキャッシュ上の不利を `:::caution` で明示
+
+### 追加：`/introduction/setup/` の導線リンク
+- 「プロジェクト構造」セクション冒頭に `:::tip[このセクションは「全体マップ」です]` を追加し、`/sveltekit/basics/project-structure/` への参照を明示
+- 「次のステップ」末尾に同ページへの誘導段落を追加
+
+### 設計判断
+- 既存ファイル（project-structure）は `<Admonition>` 直書きベースだが、新規追加分は CLAUDE.md の方針通り `:::` ディレクティブ記法を採用。`admonitionPreprocessor` がファイル内混在を許容するため動作問題なし
+- 既存ファイルの全面置換は別途実施
+
+### 検証
+- `mcp__svelte__svelte-autofixer`：追加サンプルコードに対し issue 0 件
+- `mcp__svelte__get-documentation` `kit/project-structure` / `kit/$lib` / `kit/images` で事実関係を確認
+
 ## [2026-05-06] - 依存関係メジャーアップデート（Vite 8 / vite-plugin-svelte 7 / TypeScript 6）
 
 ### 概要

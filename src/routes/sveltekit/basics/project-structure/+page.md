@@ -682,6 +682,91 @@ static/
 <link rel="manifest" href="/manifest.json" />
 ```
 
+### `static/` と `src/lib/assets/` の使い分け
+
+`sv create` 直後のプロジェクトには、アセットを置ける場所として `static/` と `src/lib/assets/` の 2 つがあります。どちらも「画像やフォントの置き場所」という点では共通ですが、**ビルド時の扱いがまったく異なる**ため、用途で明確に使い分けます。
+
+:::info[公式の方針]
+
+Svelte 公式ドキュメントは「**`static/` のアセット数は最小化し、代わりに `import` を使うこと**」を明確に推奨しています。`import` 経由なら Vite がコンテンツハッシュを付与してくれるため、ブラウザの長期キャッシュが安全に効きます。
+
+:::
+
+#### 比較表
+
+| 観点                       | `static/`                            | `src/lib/assets/`                                       |
+| -------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| 参照方法                   | URL 直書き（`/logo.png`）            | `import`（`import logo from '$lib/assets/logo.png'`）   |
+| ファイル名                 | そのまま配信                         | コンテンツハッシュが自動付与                            |
+| キャッシュ戦略             | 強キャッシュは難しい（URL が固定）   | `immutable` で長期キャッシュ可能                        |
+| Vite のアセット処理        | パススルー（ビルド時に最適化なし）   | 通る（インライン化・最適化対象）                        |
+| 小さなファイルのインライン | されない                             | `assetsInlineLimit`（既定 4 KB）以下なら base64 化      |
+| ビルド出力                 | `dist/` 直下に同名コピー             | `dist/_app/immutable/assets/` 配下にハッシュ付きで配置  |
+| 型補完                     | なし（文字列 URL）                   | あり（インポート結果が `string` 型として扱われる）      |
+| 公式推奨度                 | 必要最小限のみ                       | 原則こちらを使う                                        |
+
+#### コード例
+
+`src/lib/assets/` 経由（推奨）
+
+```svelte
+<script lang="ts">
+  // Vite 経由 — ビルド時にコンテンツハッシュ付きURLに変換される
+  import logoUrl from '$lib/assets/logo.png';
+</script>
+
+<img src={logoUrl} alt="プロジェクトロゴ" />
+```
+
+`static/` 経由（例外的なケースのみ）
+
+```svelte
+<!-- URL が固定でないと困る用途（favicon、OGP画像など）のみ -->
+<img src="/logo.png" alt="プロジェクトロゴ" />
+```
+
+#### `static/` を使うべきケース
+
+URL が固定で、ハッシュ付与されると困るアセットに限定します。
+
+- `robots.txt` / `sitemap.xml`（クローラーがルート直下の固定 URL を参照）
+- `favicon.ico` / `apple-touch-icon.png`（ブラウザが固定パスを要求）
+- `manifest.json` 内の `icons` 配列で参照する PWA アイコン
+- 外部サービスから固定 URL で参照される OGP 画像
+- ユーザーが直接 URL を共有する可能性のあるダウンロード用ファイル
+
+#### `src/lib/assets/` を使うべきケース
+
+それ以外の「**コードから参照する**」アセットすべて。
+
+- コンポーネント内で表示するロゴ・イラスト・アイコン
+- 装飾用の画像
+- CSS の `@font-face` から `url()` で参照するフォント
+- Markdown / mdsvex 記事内で表示する画像
+
+#### `$lib/assets/` を選ぶことで得られる具体的なメリット
+
+1. **キャッシュ破棄が自動** — ファイルを更新すると新しいハッシュが付くため、CDN・ブラウザの古いキャッシュを踏むリスクがゼロ
+2. **未使用アセットの除去（tree-shaking）** — どこからも `import` されていないファイルはビルド成果物に含まれない
+3. **TypeScript の型補完が効く** — 存在しないパスを書けばコンパイル時にエラーになる
+4. **小さな画像は自動でインライン化** — HTTP リクエスト数の削減
+
+:::tip[強い画像最適化が必要なら enhanced-img]
+
+ヒーロー画像のようにサイズが大きく重要な画像は、`<img>` ではなく `<enhanced:img>`（[`@sveltejs/enhanced-img`](https://svelte.dev/docs/kit/images)）を使うと、ビルド時に AVIF / WebP の自動生成、複数解像度の `srcset` 生成、EXIF 削除まで自動で処理されます。
+
+```bash
+npm i -D @sveltejs/enhanced-img
+```
+
+:::
+
+:::caution[Angular 出身者向けの補足]
+
+Angular の `src/assets/` フォルダ（`angular.json` の `assets` 設定で `dist` にコピーされる）に**最も近い挙動は `static/` の方**です。ただし SvelteKit では、その用途も含めて `$lib/assets/` 経由で `import` する方を推奨します。「assets フォルダにそのまま置けばよい」という感覚で `static/` を使い続けると、キャッシュ戦略上の不利を抱え込むことになります。
+
+:::
+
 ## ビルド出力
 
 コンパイルおよびビルド処理の結果が出力されるディレクトリです。通常はGit管理から除外し、デプロイ時に生成します。

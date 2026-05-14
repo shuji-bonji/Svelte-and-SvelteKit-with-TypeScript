@@ -208,8 +208,8 @@ export const storage = getStorage(app);
   <ul>
     {#each todos as todo (todo.id)}
       <li>
-        <span>&#123;todo.text&#125;</span>
-        <button onclick=&#123;() => deleteTodo(todo.id)&#125;>削除</button>
+        <span>{todo.text}</span>
+        <button onclick={() => deleteTodo(todo.id)}>削除</button>
       </li>
     {/each}
   </ul>

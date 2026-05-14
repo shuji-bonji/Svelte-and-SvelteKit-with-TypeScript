@@ -111,7 +111,7 @@ export const getPosts = query(async () => {
 <ul>
   {#each await getPosts() as post}
     <li>
-      <a href="/blog/&#123;post.slug&#125;">&#123;post.title&#125;</a>
+      <a href="/blog/{post.slug}">{post.title}</a>
     </li>
   {/each}
 </ul>
@@ -288,7 +288,7 @@ export const markAllRead = form(
 {:else}
   <ul>
     {#each query.current as post}
-      <li><a href="/blog/&#123;post.slug&#125;">&#123;post.title&#125;</a></li>
+      <li><a href="/blog/{post.slug}">{post.title}</a></li>
     {/each}
   </ul>
 {/if}

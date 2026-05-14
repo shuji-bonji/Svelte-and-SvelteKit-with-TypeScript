@@ -124,7 +124,7 @@ ReactやVueは変更を検出するために、以下のステップを毎回実
 function Component() {
   const [items, setItems] = useState([...]);
   // 毎回、全itemsを仮想DOMで再生成・比較
-  return items.map(item => <li>&#123;item&#125;</li>);
+  return items.map(item => <li>{item}</li>);
 }
 ```
 

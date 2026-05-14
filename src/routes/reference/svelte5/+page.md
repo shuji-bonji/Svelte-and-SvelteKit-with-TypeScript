@@ -767,7 +767,7 @@ $effect(() => {
 
 <!-- 空の場合の処理 -->
 {#each items as item}
-  <li>&#123;item&#125;</li>
+  <li>{item}</li>
 {:else}
   <p>アイテムがありません</p>
 {/each}
@@ -1207,14 +1207,14 @@ function tooltip(node: HTMLElement, text: string) {
 </script>
 
 <li>
-  &#123;node.name&#125;
-  &#123;#if node.children&#125;
+  {node.name}
+  {#if node.children}
     <ul>
-      &#123;#each node.children as child&#125;
-        <svelte:self node=&#123;child&#125; />
-      &#123;/each&#125;
+      {#each node.children as child}
+        <svelte:self node={child} />
+      {/each}
     </ul>
-  &#123;/if&#125;
+  {/if}
 </li>
 ```
 

@@ -2,6 +2,111 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-14] - フェンスコードブロック内の `&#123;` / `&#125;` を素の `{` `}` に修正
+
+### 概要
+
+17 個の `.md` ファイルでフェンスコードブロック内に **`&#123;` / `&#125;`（HTML エンティティ）が直書きされており、ブラウザに literal で `&#123;` が表示されてしまう** 不具合を一括修正。総計 164 件の置換。
+
+### 原因
+
+`svelte.config.js` の mdsvex highlighter は、shiki 出力後に `{` `}` を `&#123;` `&#125;` にエスケープすることで mdsvex/Svelte の式展開を防いでいる。つまり **ソース側には素の `{` `}` を書くのが正解** で、エスケープは highlighter が自動的に行う。
+
+しかし複数の記事で、執筆者が「フェンス内でも `{}` がエスケープされる」と誤解し、ソースに直接 `&#123;` `&#125;` を書いていた。この結果:
+
+1. shiki が `&#123;` をそのまま文字列として処理
+2. shiki 出力で `&` が `&amp;` に再エスケープされる
+3. highlighter の後処理は `{` を探すが既に存在しない
+4. 最終 HTML に `&amp;#123;` が残り、ブラウザに `&#123;` が literal で表示される
+
+一方、**インラインコード（バッククォート `` `…` ``）・テーブルセル内の `code`・raw HTML 内** の `&#123;` は shiki を通らずそのまま Svelte template として解釈されるため、**マニュアルエスケープが必要** な箇所であり、これは保持する必要がある。
+
+### 修正方針
+
+`outputs/fix_fenced_entities.py` で以下のルールで一括置換:
+
+- フェンスコードブロック ( ` ``` ` / ` ~~~ ` ) の**内側のみ** で `&#123;` → `{`、`&#125;` → `}`
+- インラインコード・地の文・raw HTML 内のエンティティは**保持**
+- フェンス開閉トラッキングはマーカー文字（`` ` ``/`~`）の一致と末尾言語ID の有無で正確に判定
+
+### 影響ファイル（17 件、置換件数）
+
+- `src/routes/svelte/basics/component-basics/+page.md` — 14 件
+- `src/routes/svelte/runes/bindable/+page.md` — 34 件（最多）
+- `src/routes/svelte/advanced/built-in-classes/+page.md` — 28 件
+- `src/routes/reference/svelte5/+page.md` — 14 件
+- `src/routes/svelte/basics/typescript-integration/+page.md` — 10 件
+- `src/routes/examples/blog-system/+page.md` — 10 件
+- `src/routes/svelte/advanced/component-patterns/+page.md` — 8 件
+- `src/routes/svelte/advanced/built-in-classes/+page.md` — 8 件
+- `src/routes/svelte/advanced/await-expressions/+page.md` — 8 件
+- その他 8 ファイル — 各 2〜8 件
+
+### 検証
+
+- 修正後、全 .md ファイルを横断スキャンしてフェンス内に `&#123;` / `&#125;` が **1 件も残っていない** ことを確認
+- 残存する `&#123;` は全てインラインコード・テーブルセル・raw HTML 内の **正当なエスケープ箇所** であることを spot check で確認
+  - 例: `\`&#123;#if&#125;\` ブロック...` のような prose 中の inline code
+  - 例: `<h3>&#123;@attach&#125; アタッチメント</h3>` のような card title
+
+### 背景
+
+2026-05-14 にユーザーから `/svelte/basics/component-basics/` の「ループ処理 - eachブロック」例で `<li>&#123;item.name&#125;: ¥&#123;item.price&#125;</li>` が literal 表示されていると指摘を受領。原因を調査したところ、複数記事に同じ誤解が広がっていることが判明。横断スキャンで影響ファイル 40 件を検出し、フェンス内のみ自動置換するスクリプトを書いて一括修正した。
+
+今後の執筆では **フェンスコードブロック内は素の `{` `}` を書く** ことを徹底する（既に `CLAUDE.md` の LiveCode セクションのコード例もこの方針に従っている）。
+
+---
+
+## [2026-05-14] - LiveCode のマルチファイル `live` ブロック対応
+
+### 概要
+
+`live` コードブロックを **`<!-- @file: ファイル名.svelte -->` マーカーで複数ファイルに分割** できるよう拡張。これまで Playground 埋め込みは `App.svelte` 一つに限定されていたが、コンポーネント間の `import` や `<script module>` 分離例など、**コンポーネント合成のパターン** を学習サイト上で実行可能な形で示せるようになった。Svelte Playground 自体が元々マルチファイル対応（`files: PlaygroundFile[]`）だったため、URL ビルダと LiveCode コンポーネントの拡張だけで実現できた。
+
+### 追加・変更ファイル
+
+- **更新**: `src/lib/utils/playground-url.ts`
+  - **新規追加**: `buildPlaygroundEmbedUrlMulti(files, options)` 関数。`{ name, contents }` の配列を受け取り Playground の `files: PlaygroundFile[]` payload を構築
+  - 既存の `buildPlaygroundEmbedUrl(source, options)` は `buildPlaygroundEmbedUrlMulti([{ name: 'App.svelte', contents: source }], options)` の薄いラッパーに refactor（後方互換 100%）
+  - 空配列に対する明示的なエラーを追加
+- **更新**: `src/lib/components/LiveCode.svelte`
+  - `splitMultiFile(source)` — `<!-- @file: Foo.svelte -->` マーカーを正規表現で検出してファイル配列に分割する関数を追加
+  - `ensureAppFirst(files)` — `App.svelte` を配列の先頭に並び替えるヘルパー（Playground のエントリポイント要件のため）
+  - `openPlayground()` — マーカー検出時は `buildPlaygroundEmbedUrlMulti` を呼び、検出されなければ従来の単一ファイル経路を維持
+  - JSDoc 内に `</script>` を書くと Svelte パーサが script タグ終了と誤認するため、JSDoc 形式を避け通常コメントに調整
+- **更新**: `src/routes/svelte/basics/component-basics/+page.md`
+  - 「Script ブロックの実行例」（UserCard 例）を **「インポートの実例」** に置換
+  - `live console` で **Hello.svelte + App.svelte の 2 ファイル import パターン** を実行可能な形で提示
+  - `:::info` で `<!-- @file: ... -->` マーカーの解説とサイト独自記法である旨を補足
+- **更新**: `CLAUDE.md`
+  - 「LiveCodeコンポーネント」セクションに **マルチファイル機能** の説明を追加
+  - マーカー形式（`<!-- @file: Foo.svelte -->`）、App.svelte エントリポイント必須、後方互換の挙動を明記
+  - 内部実装の `splitMultiFile` / `buildPlaygroundEmbedUrlMulti` への対応関係も記載
+
+### 検証
+
+- `mcp__svelte__svelte-autofixer` で以下のファイル/コード例を検証
+  - `LiveCode.svelte`: issues 0 件（既存の `isOnline` `$effect` 警告は今回の変更とは無関係な既存実装）
+  - `Hello.svelte` / `App.svelte`（記事内マルチファイル例の各ファイル）: いずれも issues 0 件
+
+### 後方互換性
+
+- マーカーが無い従来の `live` / `live console` ブロックは、`splitMultiFile()` が `null` を返すため、既存の `buildPlaygroundEmbedUrl(source)` 経路がそのまま使われる
+- 既存の全 `live` ブロック（component-basics の Counter 例、TODO 例ほか）は影響なし
+
+### 背景
+
+2026-05-14 にユーザーから「`/svelte/basics/component-basics/` のインポート説明で、`live console` で実際に `Hello.svelte` + `App.svelte` の import を動かす例が欲しい」という具体的な要望を受領。Svelte Playground 自体は元々マルチファイル対応なので、URL ビルダと LiveCode に手を入れるだけで実現可能と判断し実装。この機能は今後の記事でも:
+
+- Snippets ライブラリの `<script module>` 分離例
+- コンポーネント間の `import` と Props 受け渡し
+- 親子コンポーネント間のコールバック props
+- Slot/`{@render}` のコンポーネント合成
+
+など **複数ファイルの構成を体験させたい** ケースで広く再利用できる。
+
+---
+
 ## [2026-05-14] - 新規記事「AI コーディング支援のセットアップ」追加
 
 ### 概要

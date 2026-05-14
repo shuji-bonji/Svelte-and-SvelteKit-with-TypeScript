@@ -84,9 +84,9 @@ export class TodoItem {
 <ul>
   {#each todos as todo}
     <li>
-      <input type="checkbox" bind:checked=&#123;todo.done&#125; />
-      <span class:completed=&#123;todo.done&#125;>&#123;todo.text&#125;</span>
-      <small>(&#123;todo.age&#125;日前)</small>
+      <input type="checkbox" bind:checked={todo.done} />
+      <span class:completed={todo.done}>{todo.text}</span>
+      <small>({todo.age}日前)</small>
     </li>
   {/each}
 </ul>

@@ -852,7 +852,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
       {#each node.children as child}
         <li>
           <!-- 自分自身を直接使用 -->
-          <TreeNode node=&#123;child&#125; />
+          <TreeNode node={child} />
         </li>
       {/each}
     </ul>
@@ -895,7 +895,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
       {#each node.children as child}
         <li>
           <!-- 自分自身を再帰的にレンダリング -->
-          <svelte:self node=&#123;child&#125; />
+          <svelte:self node={child} />
         </li>
       {/each}
     </ul>

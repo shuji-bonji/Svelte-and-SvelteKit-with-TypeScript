@@ -549,7 +549,7 @@ let data = $derived.by(async () => {
   <p>{resultCount}件の結果（上位: {topResults.length}件）</p>
   <ul>
     {#each results as result}
-      <li>&#123;result.title&#125; (スコア: &#123;result.score&#125;)</li>
+      <li>{result.title} (スコア: {result.score})</li>
     {/each}
   </ul>
 {:else if searchInput}
@@ -613,7 +613,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   <h2>最近の投稿 ({recentPosts.length}件)</h2>
   <ul>
     {#each recentPosts as post}
-      <li>&#123;post.title&#125;</li>
+      <li>{post.title}</li>
     {/each}
   </ul>
 {:else}

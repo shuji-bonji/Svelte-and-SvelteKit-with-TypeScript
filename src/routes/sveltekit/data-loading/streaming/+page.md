@@ -265,7 +265,7 @@ Svelteの`&#123;#await&#125;`ブロックを使用して、ストリーミング
       <p>{slowData.content}</p>
       <ul>
         {#each slowData.items as item}
-          <li>&#123;item.name&#125;: &#123;item.value&#125;</li>
+          <li>{item.name}: {item.value}</li>
         {/each}
       </ul>
     </article>
@@ -704,7 +704,7 @@ export const load: PageServerLoad = async () => {
     <!-- データがある場合の表示 -->
     <ul>
       {#each loadedData.items as item}
-        <li>&#123;item.name&#125;</li>
+        <li>{item.name}</li>
       {/each}
     </ul>
   {:else}

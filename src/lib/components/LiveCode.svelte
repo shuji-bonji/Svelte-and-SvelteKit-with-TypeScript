@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { buildPlaygroundEmbedUrl } from '$lib/utils/playground-url';
+	import {
+		buildPlaygroundEmbedUrl,
+		buildPlaygroundEmbedUrlMulti
+	} from '$lib/utils/playground-url';
 
 	interface Props {
 		/** mdsvex の highlighter が base64+URIエンコードして渡してくる元コード */
@@ -64,6 +67,55 @@
 		}
 	}
 
+	// `<!-- @file: FileName.svelte -->` マーカーで区切られたマルチファイル形式の
+	// ソースをファイル配列に分割する。マーカーが無ければ null を返す。
+	// 先頭のマーカーより前にあるテキストは破棄される。
+	// 例 (具体的なマークアップは記事側の `live` ブロックを参照):
+	//   <!-- @file: Hello.svelte -->  ...Hello.svelte の中身...
+	//   <!-- @file: App.svelte -->    ...App.svelte の中身...
+	function splitMultiFile(
+		source: string
+	): Array<{ name: string; contents: string }> | null {
+		const markerRE = /<!--\s*@file:\s*([^\s]+\.svelte)\s*-->\s*\n?/g;
+		const markers: Array<{ name: string; index: number; length: number }> = [];
+		let match: RegExpExecArray | null;
+		while ((match = markerRE.exec(source)) !== null) {
+			markers.push({
+				name: match[1],
+				index: match.index,
+				length: match[0].length
+			});
+		}
+		if (markers.length === 0) return null;
+
+		const files: Array<{ name: string; contents: string }> = [];
+		for (let i = 0; i < markers.length; i++) {
+			const marker = markers[i];
+			const start = marker.index + marker.length;
+			const end = i + 1 < markers.length ? markers[i + 1].index : source.length;
+			files.push({
+				name: marker.name,
+				contents: source.slice(start, end).trim() + '\n'
+			});
+		}
+		return files;
+	}
+
+	/**
+	 * Playground エントリポイント（App.svelte）が files の先頭に来るよう並び替える。
+	 * App.svelte が無い場合は配列をそのまま返す。
+	 */
+	function ensureAppFirst(
+		files: Array<{ name: string; contents: string }>
+	): Array<{ name: string; contents: string }> {
+		const appIdx = files.findIndex((f) => f.name === 'App.svelte');
+		if (appIdx <= 0) return files;
+		const reordered = [...files];
+		const [app] = reordered.splice(appIdx, 1);
+		reordered.unshift(app);
+		return reordered;
+	}
+
 	/**
 	 * オフライン時、svelte.dev 側の SW（別オリジン）がこの URL をキャッシュ済みか軽く確認する。
 	 *
@@ -95,10 +147,16 @@
 
 		try {
 			const source = decodeCode(code);
-			const url = await buildPlaygroundEmbedUrl(source, {
-				version: svelteVersion,
-				outputOnly
-			});
+			const multi = splitMultiFile(source);
+			const url = multi
+				? await buildPlaygroundEmbedUrlMulti(ensureAppFirst(multi), {
+						version: svelteVersion,
+						outputOnly
+					})
+				: await buildPlaygroundEmbedUrl(source, {
+						version: svelteVersion,
+						outputOnly
+					});
 
 			// オフライン時のみ、svelte.dev 側 SW キャッシュの有無を事前 probe する。
 			// オンライン時は直接 iframe をマウントして svelte.dev に任せる。

@@ -64,17 +64,19 @@ export async function compressAndEncodeText(input: string): Promise<string> {
 }
 
 /**
- * Svelte 単一コンポーネントのコードから、
- * svelte.dev/playground の埋め込み用 iframe URL を生成する。
+ * 複数の Svelte ファイルから、svelte.dev/playground の埋め込み用 iframe URL を生成する。
+ *
+ * 配列の **最初に App.svelte を含める** こと（Playground のエントリポイント）。
+ * 他のファイルは任意のファイル名で OK。
  *
  * @example
- * const url = await buildPlaygroundEmbedUrl('<script>let count = $state(0)</script>', {
- *   version: '5.55.2'
- * });
- * // → 'https://svelte.dev/playground/hello-world/embed?version=5.55.2#<gzip-base64url>'
+ * const url = await buildPlaygroundEmbedUrlMulti([
+ *   { name: 'App.svelte', contents: '<script>import Hello from "./Hello.svelte"</script><Hello />' },
+ *   { name: 'Hello.svelte', contents: '<h1>Hello, World!</h1>' }
+ * ], { version: '5.55.2' });
  */
-export async function buildPlaygroundEmbedUrl(
-	source: string,
+export async function buildPlaygroundEmbedUrlMulti(
+	files: Array<{ name: string; contents: string }>,
 	options: PlaygroundUrlOptions = {}
 ): Promise<string> {
 	const {
@@ -84,16 +86,18 @@ export async function buildPlaygroundEmbedUrl(
 		tailwind = false
 	} = options;
 
+	if (files.length === 0) {
+		throw new Error('At least one file is required for the Playground embed.');
+	}
+
 	const payload: PlaygroundPayload = {
-		files: [
-			{
-				type: 'file',
-				name: 'App.svelte',
-				basename: 'App.svelte',
-				contents: source,
-				text: true
-			}
-		],
+		files: files.map((f) => ({
+			type: 'file',
+			name: f.name,
+			basename: f.name,
+			contents: f.contents,
+			text: true
+		})),
 		tailwind
 	};
 
@@ -107,4 +111,23 @@ export async function buildPlaygroundEmbedUrl(
 	const queryString = query ? `?${query}` : '';
 
 	return `https://svelte.dev/playground/${baseId}/embed${queryString}#${encoded}`;
+}
+
+/**
+ * Svelte 単一コンポーネントのコードから、
+ * svelte.dev/playground の埋め込み用 iframe URL を生成する。
+ *
+ * 複数ファイルを扱いたい場合は {@link buildPlaygroundEmbedUrlMulti} を使う。
+ *
+ * @example
+ * const url = await buildPlaygroundEmbedUrl('<script>let count = $state(0)</script>', {
+ *   version: '5.55.2'
+ * });
+ * // → 'https://svelte.dev/playground/hello-world/embed?version=5.55.2#<gzip-base64url>'
+ */
+export async function buildPlaygroundEmbedUrl(
+	source: string,
+	options: PlaygroundUrlOptions = {}
+): Promise<string> {
+	return buildPlaygroundEmbedUrlMulti([{ name: 'App.svelte', contents: source }], options);
 }

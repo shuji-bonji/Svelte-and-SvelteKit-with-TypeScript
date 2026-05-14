@@ -235,11 +235,11 @@ export function getAllTags(): string[] {
       {#each navUrls as item}
         <li>
           <a
-            href=&#123;item.resolvedUrl&#125;
-            class:active=&#123;isActive(item)&#125;
-            aria-current=&#123;isActive(item) ? 'page' : undefined&#125;
+            href={item.resolvedUrl}
+            class:active={isActive(item)}
+            aria-current={isActive(item) ? 'page' : undefined}
           >
-            &#123;item.label&#125;
+            {item.label}
           </a>
         </li>
       {/each}

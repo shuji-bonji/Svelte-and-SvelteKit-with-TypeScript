@@ -547,11 +547,11 @@ Svelteのスロットシステムでの型定義方法です。
 <ul>
   {#each items as item (item.id)}
     <li>
-      &#123;#if children&#125;
-        &#123;@render children(item)&#125;
-      &#123;:else&#125;
-        &#123;item.name&#125;
-      &#123;/if&#125;
+      {#if children}
+        {@render children(item)}
+      {:else}
+        {item.name}
+      {/if}
     </li>
   {/each}
 </ul>

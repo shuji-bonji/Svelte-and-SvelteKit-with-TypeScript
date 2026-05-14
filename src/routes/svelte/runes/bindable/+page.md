@@ -518,11 +518,11 @@ let { value = $bindable('') }: Props = $props();
       <li>
         <input
           type="checkbox"
-          checked=&#123;todo.done&#125;
-          onchange=&#123;() => toggleTodo(todo.id)&#125;
+          checked={todo.done}
+          onchange={() => toggleTodo(todo.id)}
         />
-        <span class:done=&#123;todo.done&#125;>&#123;todo.text&#125;</span>
-        <button onclick=&#123;() => removeTodo(todo.id)&#125;>削除</button>
+        <span class:done={todo.done}>{todo.text}</span>
+        <button onclick={() => removeTodo(todo.id)}>削除</button>
       </li>
     {/each}
   </ul>
@@ -678,12 +678,12 @@ let { value = $bindable('') }: Props = $props();
   <div class="status-panel">
     <h4>現在の状態</h4>
     <ul>
-      <li>ユーザー名: <strong>&#123;username || '(未入力)'&#125;</strong></li>
-      <li>メール: <strong>&#123;email || '(未入力)'&#125;</strong></li>
-      <li>パスワード: <strong>&#123;password ? '●'.repeat(password.length) : '(未入力)'&#125;</strong></li>
-      <li>利用規約: <strong>&#123;acceptTerms ? '✅ 同意' : '❌ 未同意'&#125;</strong></li>
-      <li>ニュースレター: <strong>&#123;receiveNewsletter ? '✅ 受信する' : '❌ 受信しない'&#125;</strong></li>
-      <li>通知: <strong>&#123;enableNotifications ? '✅ 有効' : '❌ 無効'&#125;</strong></li>
+      <li>ユーザー名: <strong>{username || '(未入力)'}</strong></li>
+      <li>メール: <strong>{email || '(未入力)'}</strong></li>
+      <li>パスワード: <strong>{password ? '●'.repeat(password.length) : '(未入力)'}</strong></li>
+      <li>利用規約: <strong>{acceptTerms ? '✅ 同意' : '❌ 未同意'}</strong></li>
+      <li>ニュースレター: <strong>{receiveNewsletter ? '✅ 受信する' : '❌ 受信しない'}</strong></li>
+      <li>通知: <strong>{enableNotifications ? '✅ 有効' : '❌ 無効'}</strong></li>
     </ul>
   </div>
 </div>
@@ -1065,9 +1065,9 @@ let { value = $bindable('') }: Props = $props();
     <div class="status">
       <h5>選択状態:</h5>
       <ul>
-        <li>オプション 1: &#123;option1 ? '✅ 選択' : '❌ 未選択'&#125;</li>
-        <li>オプション 2: &#123;option2 ? '✅ 選択' : '❌ 未選択'&#125;</li>
-        <li>オプション 3: &#123;option3 ? '✅ 選択' : '❌ 未選択'&#125;</li>
+        <li>オプション 1: {option1 ? '✅ 選択' : '❌ 未選択'}</li>
+        <li>オプション 2: {option2 ? '✅ 選択' : '❌ 未選択'}</li>
+        <li>オプション 3: {option3 ? '✅ 選択' : '❌ 未選択'}</li>
       </ul>
     </div>
 
@@ -1446,9 +1446,9 @@ let { value = $bindable('') }: Props = $props();
   <div class="status">
     <h5>選択状態:</h5>
     <ul>
-      <li>利用規約: &#123;acceptTerms ? '✅ 同意' : '❌ 未同意'&#125;</li>
-      <li>ニュースレター: &#123;receiveNewsletter ? '✅ 受信する' : '❌ 受信しない'&#125;</li>
-      <li>通知: &#123;enableNotifications ? '✅ 有効' : '❌ 無効'&#125;</li>
+      <li>利用規約: {acceptTerms ? '✅ 同意' : '❌ 未同意'}</li>
+      <li>ニュースレター: {receiveNewsletter ? '✅ 受信する' : '❌ 受信しない'}</li>
+      <li>通知: {enableNotifications ? '✅ 有効' : '❌ 無効'}</li>
     </ul>
   </div>
 </div>

@@ -134,7 +134,7 @@ SvelteKit では、標準の `<a>` 要素を使用してページ間をナビゲ
 <!-- ビューポートに入ったらプリロード -->
 <ul data-sveltekit-preload-code="viewport">
   {#each items as item}
-  <li><a href="/items/&#123;item.id&#125;">&#123;item.name&#125;</a></li>
+  <li><a href="/items/{item.id}">{item.name}</a></li>
   {/each}
 </ul>
 ```

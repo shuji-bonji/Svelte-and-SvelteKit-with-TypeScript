@@ -6,56 +6,97 @@
 	let offlineReady = $state(false);
 	let updateSW: ((reloadPage?: boolean) => Promise<void>) | undefined = $state();
 
-	onMount(async () => {
+	onMount(() => {
 		// SSR 時には実行しない（onMount はクライアントのみ）
 		// Svelte 5 でも onMount は SSR 中に呼ばれないため安全
 		if (typeof window === 'undefined') return;
 
-		try {
-			// virtual:pwa-register は vite-plugin-pwa が提供する仮想モジュール。
-			// 実行時には vite が解決するが、svelte-check では virtual module を
-			// 解決できないため明示的に型アサーションで迂回する。
-			type RegisterSW = (options?: {
-				immediate?: boolean;
-				onNeedRefresh?: () => void;
-				onOfflineReady?: () => void;
-				onRegisteredSW?: (
-					swScriptUrl: string,
-					registration: ServiceWorkerRegistration | undefined
-				) => void;
-				onRegisterError?: (error: unknown) => void;
-			}) => (reloadPage?: boolean) => Promise<void>;
-			// @ts-expect-error - virtual module resolved at build time by vite-plugin-pwa
-			const mod: { registerSW: RegisterSW } = await import('virtual:pwa-register');
+		// onMount のクリーンアップで参照するハンドラ／タイマー
+		let swRegistration: ServiceWorkerRegistration | undefined;
+		let updateInterval: ReturnType<typeof setInterval> | undefined;
 
-			updateSW = mod.registerSW({
-				immediate: true,
-				onNeedRefresh() {
-					needRefresh = true;
-				},
-				onOfflineReady() {
-					offlineReady = true;
-					// 5 秒で自動消去
-					setTimeout(() => {
-						offlineReady = false;
-					}, 5000);
-				},
-				onRegisteredSW(_url: string, registration: ServiceWorkerRegistration | undefined) {
-					// 1 時間ごとに更新チェック
-					if (registration) {
-						setInterval(
+		// Safari 対策: タブ復帰時 / BFCache 復帰時に強制 update
+		// Safari は setInterval をバックグラウンドで停止し、navigation での
+		// 自動 SW チェックも他ブラウザより消極的なため、明示的に蹴る必要がある。
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') {
+				void swRegistration?.update();
+			}
+		};
+		const handlePageShow = (event: PageTransitionEvent) => {
+			// persisted=true は BFCache から復帰したことを示す（Safari で頻発）
+			if (event.persisted) {
+				void swRegistration?.update();
+			}
+		};
+
+		// virtual:pwa-register は vite-plugin-pwa が提供する仮想モジュール。
+		// 実行時には vite が解決するが、svelte-check では virtual module を
+		// 解決できないため明示的に型アサーションで迂回する。
+		type RegisterSW = (options?: {
+			immediate?: boolean;
+			onNeedRefresh?: () => void;
+			onOfflineReady?: () => void;
+			onRegisteredSW?: (
+				swScriptUrl: string,
+				registration: ServiceWorkerRegistration | undefined
+			) => void;
+			onRegisterError?: (error: unknown) => void;
+		}) => (reloadPage?: boolean) => Promise<void>;
+
+		// 動的 import は Promise として扱い、onMount 自体は同期で
+		// クリーンアップ関数を返せるようにする
+		(async () => {
+			try {
+				// @ts-expect-error - virtual module resolved at build time by vite-plugin-pwa
+				const mod: { registerSW: RegisterSW } = await import('virtual:pwa-register');
+
+				updateSW = mod.registerSW({
+					immediate: true,
+					onNeedRefresh() {
+						needRefresh = true;
+					},
+					onOfflineReady() {
+						offlineReady = true;
+						// 5 秒で自動消去
+						setTimeout(() => {
+							offlineReady = false;
+						}, 5000);
+					},
+					onRegisteredSW(_url: string, registration: ServiceWorkerRegistration | undefined) {
+						if (!registration) return;
+						swRegistration = registration;
+
+						// Safari 対策: 起動時に既に waiting している SW があれば即通知
+						// （onNeedRefresh は再発火しないため、初回マウント時に明示チェックが必要）
+						if (registration.waiting) {
+							needRefresh = true;
+						}
+
+						// 1 時間ごとに更新チェック（バックグラウンドでは Safari が停止する点に注意）
+						updateInterval = setInterval(
 							() => {
 								void registration.update();
 							},
 							60 * 60 * 1000
 						);
 					}
-				}
-			});
-		} catch (err) {
-			// dev 環境や SW 未対応ブラウザでは静かに失敗
-			console.warn('[PWA] SW registration skipped:', err);
-		}
+				});
+
+				// Safari 対策: タブ復帰 / BFCache 復帰で update を強制
+				document.addEventListener('visibilitychange', handleVisibilityChange);
+				window.addEventListener('pageshow', handlePageShow);
+			} catch (err) {
+				// dev 環境や SW 未対応ブラウザでは静かに失敗
+				console.warn('[PWA] SW registration skipped:', err);
+			}
+		})();
+
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+			window.removeEventListener('pageshow', handlePageShow);
+			if (updateInterval !== undefined) clearInterval(updateInterval);
+		};
 	});
 
 	function handleReload() {

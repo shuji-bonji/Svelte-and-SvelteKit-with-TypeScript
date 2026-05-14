@@ -1095,7 +1095,7 @@ export class WebVitalsTracker {
         </tr>
       </thead>
       <tbody>
-        {#each data.analytics.strategyBreakdown as strategy}
+        {#each data.analytics.strategyBreakdown as strategy (strategy.id)}
           <tr>
             <td>{strategy.name}</td>
             <td>{strategy.views.toLocaleString()}</td>

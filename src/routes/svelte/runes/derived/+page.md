@@ -548,7 +548,7 @@ let data = $derived.by(async () => {
 {:else if hasResults}
   <p>{resultCount}件の結果（上位: {topResults.length}件）</p>
   <ul>
-    {#each results as result}
+    {#each results as result (result.id)}
       <li>{result.title} (スコア: {result.score})</li>
     {/each}
   </ul>
@@ -612,7 +612,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 {#if hasRecentActivity}
   <h2>最近の投稿 ({recentPosts.length}件)</h2>
   <ul>
-    {#each recentPosts as post}
+    {#each recentPosts as post (post.id)}
       <li>{post.title}</li>
     {/each}
   </ul>
@@ -760,7 +760,7 @@ let data = $derived(await fetchData()); // コンパイルエラー
     <div class="filter-group">
       <label for="category">カテゴリ:</label>
       <select id="category" bind:value={selectedCategory}>
-        {#each categories as category}
+        {#each categories as category (category.id)}
           <option value={category}>
             {category === 'all' ? '全て' : category}
           </option>
@@ -820,7 +820,7 @@ let data = $derived(await fetchData()); // コンパイルエラー
       {#if filteredProducts.length === 0}
         <p class="no-results">該当する商品がありません</p>
       {:else}
-        {#each filteredProducts as product}
+        {#each filteredProducts as product (product.id)}
           <div class="product-card">
             <h4>{product.name}</h4>
             <p class="category">{product.category}</p>

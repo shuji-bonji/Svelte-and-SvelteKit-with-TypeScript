@@ -461,7 +461,7 @@ function myAction(node: HTMLElement, parameter?: any) {
     <p class="hint">要素が表示領域に入るとアニメーションします</p>
   </div>
 
-  {#each items as item}
+  {#each items as item (item.id)}
     <div
       use:lazyLoad={{ threshold: 0.3 }}
       class="lazy-item"

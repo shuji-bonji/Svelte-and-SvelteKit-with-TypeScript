@@ -170,7 +170,7 @@ let items = $state<string[]>([]);
 <button onclick={addTodo}>追加</button>
 
 <ul>
-  {#each todos as todo, index}
+  {#each todos as todo, index (todo.id)}
     <li>
       <input
         value={todo}
@@ -461,7 +461,7 @@ await fetch('/api/save', {
 </script>
 
 <nav class="main-nav">
-  {#each navItems as item}
+  {#each navItems as item (item.id)}
     <a
       href={item.href}
       class:active={$state.eager(currentPath) === item.href}
@@ -611,7 +611,7 @@ await fetch('/api/save', {
   <fieldset class="form-group">
     <legend>興味のある分野:</legend>
     <div class="checkbox-group">
-      {#each availableInterests as interest}
+      {#each availableInterests as interest (interest)}
         <label>
           <input
             type="checkbox"

@@ -82,7 +82,7 @@ export class TodoItem {
 </script>
 
 <ul>
-  {#each todos as todo}
+  {#each todos as todo (todo.id)}
     <li>
       <input type="checkbox" bind:checked={todo.done} />
       <span class:completed={todo.done}>{todo.text}</span>

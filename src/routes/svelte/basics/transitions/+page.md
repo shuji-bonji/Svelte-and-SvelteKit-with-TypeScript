@@ -1076,7 +1076,7 @@ Svelteは様々なイージング関数を提供しています。
 </script>
 
 <select bind:value={selectedEasing}>
-  {#each Object.keys(easingMap) as easing}
+  {#each Object.keys(easingMap) as easing (easing)}
     <option value={easing}>{easing}</option>
   {/each}
 </select>

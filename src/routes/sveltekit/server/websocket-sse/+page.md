@@ -238,7 +238,7 @@ export const GET: RequestHandler = async ({ request }) => {
 
 <div class="events">
   <h2>リアルタイムイベント</h2>
-  {#each events as event}
+  {#each events as event (event.id)}
     <div class="event">
       <span>{event.type}</span>
       <span>{new Date(event.timestamp).toLocaleTimeString()}</span>
@@ -385,7 +385,7 @@ export default defineConfig({
   </div>
   
   <div class="messages">
-    {#each messages as message}
+    {#each messages as message (message.id)}
       <div class="message">
         <strong>{message.user}:</strong>
         <span>{message.text}</span>

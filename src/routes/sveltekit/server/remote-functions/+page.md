@@ -109,7 +109,7 @@ export const getPosts = query(async () => {
 <h1>ブログ記事一覧</h1>
 
 <ul>
-  {#each await getPosts() as post}
+  {#each await getPosts() as post (post.id)}
     <li>
       <a href="/blog/{post.slug}">{post.title}</a>
     </li>
@@ -193,7 +193,7 @@ export const getWeather = query.batch(v.string(), async (cities) => {
   let { cities } = $props();
 </script>
 
-{#each cities as city}
+{#each cities as city (city)}
   <!-- これらの呼び出しは自動的にバッチ化される -->
   <CityWeather weather={await getWeather(city.id)} />
 {/each}
@@ -287,7 +287,7 @@ export const markAllRead = form(
   <p>読み込み中...</p>
 {:else}
   <ul>
-    {#each query.current as post}
+    {#each query.current as post (post.id)}
       <li><a href="/blog/{post.slug}">{post.title}</a></li>
     {/each}
   </ul>
@@ -397,7 +397,7 @@ export const createPost = form(
 <form {...createPost}>
   <label>
     <h2>タイトル</h2>
-    {#each createPost.fields.title.issues() as issue}
+    {#each createPost.fields.title.issues() as issue (issue.id)}
       <p class="error">{issue.message}</p>
     {/each}
     <input {...createPost.fields.title.as('text')} />
@@ -405,7 +405,7 @@ export const createPost = form(
 
   <label>
     <h2>本文</h2>
-    {#each createPost.fields.content.issues() as issue}
+    {#each createPost.fields.content.issues() as issue (issue.id)}
       <p class="error">{issue.message}</p>
     {/each}
     <textarea {...createPost.fields.content.as('text')}></textarea>
@@ -480,7 +480,7 @@ export const createProfile = form(profileSchema, async (data) => {
 
 ```svelte
 <!-- 単一値の radio / checkbox は as(type, value) の第 2 引数が必須 -->
-{#each operatingSystems as os}
+{#each operatingSystems as os (os)}
   <label>
     <input {...survey.fields.operatingSystem.as('radio', os)} />
     {os}
@@ -489,7 +489,7 @@ export const createProfile = form(profileSchema, async (data) => {
 
 <!-- select も同じ field API で扱える -->
 <select {...survey.fields.languages.as('select multiple')}>
-  {#each languages as lang}
+  {#each languages as lang (lang)}
     <option>{lang}</option>
   {/each}
 </select>
@@ -599,7 +599,7 @@ export const register = form(
 <form {...createPost.preflight(schema)}>
   <label>
     <h2>タイトル</h2>
-    {#each createPost.fields.title.issues() as issue}
+    {#each createPost.fields.title.issues() as issue (issue.id)}
       <p class="error">{issue.message}</p>
     {/each}
     <input {...createPost.fields.title.as('text')} />
@@ -632,7 +632,7 @@ export const register = form(
 
 <h1>TODOリスト</h1>
 
-{#each await getTodos() as todo}
+{#each await getTodos() as todo (todo.id)}
   <!-- 各TODOに独立したフォームインスタンスを作成 -->
   {@const modify = modifyTodo.for(todo.id)}
   <form {...modify}>

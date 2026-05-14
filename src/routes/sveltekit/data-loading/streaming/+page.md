@@ -264,7 +264,7 @@ Svelteの`&#123;#await&#125;`ブロックを使用して、ストリーミング
     <article>
       <p>{slowData.content}</p>
       <ul>
-        {#each slowData.items as item}
+        {#each slowData.items as item (item.id)}
           <li>{item.name}: {item.value}</li>
         {/each}
       </ul>
@@ -287,7 +287,7 @@ Svelteの`&#123;#await&#125;`ブロックを使用して、ストリーミング
   {:then optionalData}
     <!-- オプショナルコンテンツを表示 -->
     <div class="related">
-      {#each optionalData.items as item}
+      {#each optionalData.items as item (item.id)}
         <a href={item.url}>{item.title}</a>
       {/each}
     </div>
@@ -394,7 +394,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   {#await data.streamed.reviews}
     <!-- ローディングスケルトン（レイアウトシフト防止） -->
     <div class="review-skeleton">
-      {#each Array(3) as _}
+      {#each Array(3) as _, i (i)}
         <div class="skeleton-review">
           <div class="skeleton-rating"></div>
           <div class="skeleton-text"></div>
@@ -403,7 +403,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
     </div>
   {:then reviewData}
     <!-- レビューデータ表示 -->
-    {#each reviewData.items as review}
+    {#each reviewData.items as review (review.id)}
       <article class="review">
         <div class="rating">★ {review.rating}/5</div>
         <h3>{review.title}</h3>
@@ -426,7 +426,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
   {:then relatedItems}
     <!-- 商品グリッド -->
     <div class="product-grid">
-      {#each relatedItems.items as item}
+      {#each relatedItems.items as item (item.id)}
         <a href="/products/{item.id}" class="product-card">
           <img src={item.image} alt={item.name} />
           <h3>{item.name}</h3>
@@ -703,7 +703,7 @@ export const load: PageServerLoad = async () => {
   {#if loadedData?.items?.length > 0}
     <!-- データがある場合の表示 -->
     <ul>
-      {#each loadedData.items as item}
+      {#each loadedData.items as item (item.id)}
         <li>{item.name}</li>
       {/each}
     </ul>
@@ -796,7 +796,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 {#await data.streamed.articles}
   <div class="articles-loading">
     <!-- Skeleton loading -->
-    {#each Array(3) as _}
+    {#each Array(3) as _, i (i)}
       <article class="article-skeleton">
         <div class="skeleton-title"></div>
         <div class="skeleton-content"></div>

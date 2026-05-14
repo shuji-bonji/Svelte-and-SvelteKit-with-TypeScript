@@ -233,7 +233,7 @@ JSON だけでなく、以下の型もサポートされています。
 </script>
 
 <h1>{await data.user.then(u => u.name)}</h1>
-{#each await data.posts as post}
+{#each await data.posts as post (post.id)}
   <p>{post.title}</p>
 {/each}
 ```

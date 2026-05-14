@@ -2,6 +2,69 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-14] - 全 `{#each}` ブロックに key を付加（94 件 / 36 ファイル）
+
+### 概要
+
+学習サイト全体のフェンスコードブロック内で **key 無しの `{#each}` を全廃**。94 件 / 36 ファイルに `(item.id)` 等の一意な key を追加し、Svelte 5 のベストプラクティスに統一した。
+
+### 背景
+
+ユーザーから `/svelte/basics/component-basics/` の eachブロック例で「`{#each items as item}` のように key 無しの形式が並んでいるのは、教材として誤解を招く」との指摘を受領。実機調査で **93+ 件 / 35 ファイル** に同種の問題が広がっていることが判明。Svelte 5 では key 付き each が推奨デフォルトであり、入力フォーカスやトランジションの維持にも key が必要なため、全件を一括修正することにした。
+
+### 修正フェーズ
+
+**Phase 1（高信頼度の自動修正、46 件）**
+
+`outputs/fix_each_keys.py` で以下を自動判定:
+- 同コードフェンス内の `<script>` から `interface` / `type` 定義を抽出
+- 型に `id` / `uuid` / `key` / `slug` フィールドがあれば `(item.id)` を付加
+- `string[]` / `number[]` の primitive 配列なら `(item)` を付加
+- 慣習名（`item`, `todo`, `post`, `user`, `task` 等）にもヒューリスティクスを適用
+
+**Phase 2（拡張ヒューリスティクス、47 件）**
+
+`outputs/fix_each_keys_phase2.py` で以下を処理:
+- 複雑式（`await getPosts()`, `Object.keys(map)`, 配列リテラル等）でも item 名から推測
+- `Array(N) as _` パターンを `Array(N) as _, i (i)` に書き換え
+- `ITEMS_WITH_ID`（30 種）と `PRIMITIVE_ITEMS`（19 種）の拡張辞書で網羅
+
+**Phase 3（手動修正、11 件）**
+
+スクリプトでは捕捉しきれない以下のケースを手動で対応:
+- 分割代入: `as [name, score]` / `as { name, component }` → 一意な分割名（`name` 等）を key に
+- フェンス言語が `typescript` / `html` に誤記されていた箇所（5 件）にも key を付加
+- `links as link` → `(link.href)`、`processedData as data` → `(data.label)` 等、文脈に応じた一意フィールドを選択
+
+### 影響ファイル（36 件、抜粋）
+
+主要な修正対象:
+- `src/routes/svelte/advanced/snippets/+page.md` — 6 件
+- `src/routes/sveltekit/server/remote-functions/+page.md` — 9 件
+- `src/routes/svelte/advanced/built-in-classes/+page.md` — 7 件
+- `src/routes/sveltekit/data-loading/streaming/+page.md` — 7 件
+- `src/routes/svelte/runes/state/+page.md` — 3 件
+- `src/routes/svelte/runes/derived/+page.md` — 4 件
+- 他、`src/routes` 配下の主要記事のほぼ全域
+
+### 追加した教育コンテンツ
+
+`src/routes/svelte/basics/component-basics/` の「ループ処理 - eachブロック」セクションを再構成:
+- key 付き `{#each items as item (item.id)}` を **基本形** として最初に提示
+- `key付きeach（パフォーマンス最適化）` のような **「キーは最適化用」と読者が誤認しうる表現を撤廃**
+- `:::caution[key の選び方]` で「インデックスを key にすべきでない理由」「一意 ID が無い場合のみ key 省略可」を明記
+
+### 検証
+
+- ブレース対応の正確な検出スクリプト（ネスト `{...}` を考慮）で全 `.md` を再走査し、フェンス内の key 無し `{#each}` が **0 件** であることを確認
+- 既に key 付きで書かれていた既存箇所（reference/svelte5 等）には影響なし
+
+### 教材としての品質改善の意義
+
+Svelte 5 では `each` の key 省略は **「動くが推奨されない」** 状態。学習サイトが key 無し例を多用していると、読者は「これが推奨形」と誤学習する。今回の修正で **「key 付きが基本、省略するのは限定ケース」** という Svelte 5 の正しい姿勢が全記事で統一された。
+
+---
+
 ## [2026-05-14] - フェンスコードブロック内の `&#123;` / `&#125;` を素の `{` `}` に修正
 
 ### 概要

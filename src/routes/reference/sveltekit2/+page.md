@@ -398,7 +398,7 @@ export const getWeather = query.batch(v.string(), async (cityIds) => {
 
 ```svelte
 <!-- 各コンポーネントから個別に呼び出してもバッチ処理される -->
-{#each userIds as id}
+{#each userIds as id (id)}
   {@const user = await getUser(id)}
   <UserCard {user} />
 {/each}

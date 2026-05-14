@@ -495,7 +495,7 @@ src/
 </script>
 
 <nav>
-  {#each navItems as item}
+  {#each navItems as item (item.id)}
     <a
       href={item.href}
       class:active={isActive(item)}
@@ -640,7 +640,7 @@ export const load: PageLoad = async ({ fetch }) => {
 <h1>Blog Posts</h1>
 
 <div class="posts">
-  {#each data.posts as post}
+  {#each data.posts as post (post.id)}
     <article>
       <h2>
         <a href="/blog/{post.slug}">{post.title}</a>

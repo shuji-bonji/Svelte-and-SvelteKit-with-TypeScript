@@ -295,7 +295,7 @@ Svelte 5では、コンポーネント自体にジェネリクスを適用でき
 <table>
   <thead>
     <tr>
-      {#each columns as column}
+      {#each columns as column (column.id)}
         <th>{column.label}</th>
       {/each}
     </tr>
@@ -306,7 +306,7 @@ Svelte 5では、コンポーネント自体にジェネリクスを適用でき
         {#if rowSlot}
           {@render rowSlot(item)}
         {:else}
-          {#each columns as column}
+          {#each columns as column (column.id)}
             <td>
               {column.render 
                 ? column.render(item[column.key])
@@ -791,7 +791,7 @@ function handleStatus(status: Status) {
             checked={paginatedData.every(item => selected.has(item.id))}
           />
         </th>
-        {#each columns as column}
+        {#each columns as column (column.id)}
           <th
             class:sortable={sortable && column.sortable !== false}
             style:width={column.width}
@@ -823,7 +823,7 @@ function handleStatus(status: Status) {
           {#if rowSlot}
             {@render rowSlot(item, index)}
           {:else}
-            {#each columns as column}
+            {#each columns as column (column.id)}
               <td>
                 {column.render
                   ? column.render(item[column.key], item)

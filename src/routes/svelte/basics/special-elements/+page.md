@@ -68,7 +68,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
     要素タグを選択:
   </label>
   <select id="tag-select" bind:value={tag} style="padding: 0.5rem; margin-bottom: 1rem;">
-    {#each tags as t}
+    {#each tags as t (t)}
       <option value={t}>{t}</option>
     {/each}
   </select>
@@ -802,7 +802,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 </script>
 
 <select bind:value={selectedComponent}>
-  {#each components as { name, component }}
+  {#each components as { name, component } (name)}
     <option value={component}>{name}</option>
   {/each}
 </select>
@@ -849,7 +849,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
   {#if expanded && node.children}
     <ul>
-      {#each node.children as child}
+      {#each node.children as child (child.id)}
         <li>
           <!-- 自分自身を直接使用 -->
           <TreeNode node={child} />
@@ -892,7 +892,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
   {#if expanded && node.children}
     <ul class="children">
-      {#each node.children as child}
+      {#each node.children as child (child.id)}
         <li>
           <!-- 自分自身を再帰的にレンダリング -->
           <svelte:self node={child} />

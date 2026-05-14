@@ -1676,7 +1676,7 @@ export const notifications = createNotificationStore();
 
         {#if notification.actions}
           <div class="notification-actions">
-            {#each notification.actions as action}
+            {#each notification.actions as action (action.id)}
               <button onclick={action.action}>
                 {action.label}
               </button>

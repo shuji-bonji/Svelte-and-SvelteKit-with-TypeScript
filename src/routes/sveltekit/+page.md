@@ -696,7 +696,7 @@ export const load: PageServerLoad = async () => {
   let { data } = $props();
 </script>
 
-{#each data.posts as post}
+{#each data.posts as post (post.id)}
   <article>
     <h2>{post.title}</h2>
     <p>{post.excerpt}</p>

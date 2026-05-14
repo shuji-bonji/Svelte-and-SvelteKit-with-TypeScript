@@ -1225,7 +1225,7 @@ export const actions = {
 </form>
 
 <ul>
-  {#each todos as todo}
+  {#each todos as todo (todo.id)}
     <li class:pending={todo.pending}>
       {todo.text}
     </li>
@@ -1340,7 +1340,7 @@ export function createFormStore<T extends Record<string, any>>(
 
 <div class="wizard">
   <div class="progress">
-    {#each Array(totalSteps) as _, i}
+    {#each Array(totalSteps) as _, i (i)}
       <div
         class="step"
         class:active={i + 1 <= currentStep}

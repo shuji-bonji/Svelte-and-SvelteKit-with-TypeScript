@@ -336,7 +336,7 @@ export function createSearchIndex(articles: Article[]) {
     >
       すべて
     </button>
-    {#each [...tags.entries()] as [tag, count]}
+    {#each [...tags.entries()] as [tag, count] (tag)}
       <button
         onclick={() => onTagSelect?.(tag)}
         class="tag tag-{getTagSize(count)}"
@@ -426,7 +426,7 @@ export function createSearchIndex(articles: Article[]) {
       {/if}
 
       <div class="articles-grid">
-        {#each displayArticles as article}
+        {#each displayArticles as article (article.id)}
           <ArticleCard {article} />
         {/each}
       </div>

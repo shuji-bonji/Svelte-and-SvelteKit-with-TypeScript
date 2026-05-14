@@ -258,7 +258,7 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
   ]);
 </script>
 
-{#each items as item}
+{#each items as item (item.id)}
   <!-- ブロック内でローカル定数を定義 -->
   {@const total = item.price * item.quantity}
   {@const tax = total * 0.1}
@@ -586,7 +586,7 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
   ]}
 
   <div class="tabs">
-    {#each tabs as tab}
+    {#each tabs as tab (tab.id)}
       <button
         class:active={activeTab === tab.id}
         onclick={() => activeTab = tab.id}
@@ -597,7 +597,7 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
   </div>
 
   <div class="tab-content">
-    {#each tabs as tab}
+    {#each tabs as tab (tab.id)}
       {#if activeTab === tab.id}
         {@render tab.snippet()}
       {/if}
@@ -715,13 +715,13 @@ import DOMPurify from 'dompurify';
 
 ```svelte
 <!-- ❌ 悪い例：同じ計算を繰り返す -->
-{#each items as item}
+{#each items as item (item.id)}
   <div>小計: {item.price * item.quantity}円</div>
   <div>税込: {item.price * item.quantity * 1.1}円</div>
 {/each}
 
 <!-- ✅ 良い例：計算結果を保存 -->
-{#each items as item}
+{#each items as item (item.id)}
   {@const subtotal = item.price * item.quantity}
   {@const tax = subtotal * 0.1}
   <div>小計: {subtotal}円</div>

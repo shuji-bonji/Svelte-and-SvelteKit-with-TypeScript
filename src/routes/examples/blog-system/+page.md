@@ -232,7 +232,7 @@ export function getAllTags(): string[] {
   <div class="nav-container">
     <a href={homeUrl} class="logo">My Blog</a>
     <ul class="nav-menu">
-      {#each navUrls as item}
+      {#each navUrls as item (item.id)}
         <li>
           <a
             href={item.resolvedUrl}
@@ -326,7 +326,7 @@ export function getAllTags(): string[] {
       <span class="read-time">{article.readTime}分で読める</span>
     </div>
     <div class="tags">
-      {#each article.tags as tag}
+      {#each article.tags as tag (tag)}
         <span class="tag">{tag}</span>
       {/each}
     </div>
@@ -473,7 +473,7 @@ export function getAllTags(): string[] {
   <section class="recent-posts">
     <h2>最新の記事</h2>
     <div class="article-grid">
-      {#each recentArticles as article}
+      {#each recentArticles as article (article.id)}
         <ArticleCard {article} />
       {/each}
     </div>
@@ -533,7 +533,7 @@ export function getAllTags(): string[] {
   <h1>ブログ記事</h1>
 
   <div class="articles">
-    {#each data.articles as article}
+    {#each data.articles as article (article.id)}
       <ArticleCard {article} />
     {/each}
   </div>
@@ -625,7 +625,7 @@ SvelteKitで静的サイト生成（SSG）を行う場合、`url.searchParams`�
       <span>{data.article.readTime}分で読める</span>
     </div>
     <div class="tags">
-      {#each data.article.tags as tag}
+      {#each data.article.tags as tag (tag)}
         <a href="{resolve('/blog')}?tag={tag}" class="tag">{tag}</a>
       {/each}
     </div>

@@ -766,7 +766,7 @@ $effect(() => {
 {/each}
 
 <!-- 空の場合の処理 -->
-{#each items as item}
+{#each items as item (item.id)}
   <li>{item}</li>
 {:else}
   <p>アイテムがありません</p>
@@ -957,7 +957,7 @@ $effect(() => {
 </select>
 
 <!-- グループバインディング -->
-{#each items as item}
+{#each items as item (item.id)}
   <label>
     <input type="checkbox" bind:group={selectedItems} value={item} />
     {item.name}
@@ -1210,7 +1210,7 @@ function tooltip(node: HTMLElement, text: string) {
   {node.name}
   {#if node.children}
     <ul>
-      {#each node.children as child}
+      {#each node.children as child (child.id)}
         <svelte:self node={child} />
       {/each}
     </ul>
@@ -1365,7 +1365,7 @@ Svelte 5では `Component` 型を使用します。`SvelteComponent` / `Componen
   let { items, selected, onSelect }: Props = $props();
 </script>
 
-{#each items as item}
+{#each items as item (item.id)}
   <button onclick={() => onSelect?.(item)}>
     {JSON.stringify(item)}
   </button>

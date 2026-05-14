@@ -563,7 +563,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
 
   <!-- 投稿一覧 -->
   <div class="posts">
-    {#each posts as post}
+    {#each posts as post (post.id)}
       <article>
         <h3>{post.title}</h3>
         <p>{post.content}</p>

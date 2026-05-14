@@ -617,7 +617,7 @@ export const isAuthenticated = derived(user, ($user) => !!$user);
 </script>
 
 <nav>
-  {#each links as link}
+  {#each links as link (link.href)}
     <a
       href={link.href}
       class:active={$page.url.pathname === link.href}
@@ -657,7 +657,7 @@ export const isAuthenticated = derived(user, ($user) => !!$user);
 </script>
 
 <nav>
-  {#each links as link}
+  {#each links as link (link.href)}
     <!-- 方法1: $derivedを使用 -->
     <a
       href={link.href}
@@ -871,7 +871,7 @@ export const getUser = query.batch(async (ids: string[]) => {
 
 ```svelte
 <!-- 各コンポーネントから個別に呼び出してもバッチ処理される -->
-{#each userIds as id}
+{#each userIds as id (id)}
   {@const user = await getUser(id)}
   <UserCard {user} />
 {/each}

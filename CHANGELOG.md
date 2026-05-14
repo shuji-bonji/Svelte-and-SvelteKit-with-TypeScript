@@ -2,6 +2,37 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-14] - 新規記事「AI コーディング支援のセットアップ」追加
+
+### 概要
+
+Svelte 5 移行期に AI コーディング支援（GitHub Copilot / Cursor / Claude Code）がレガシー構文（`on:click`、`$:`、`export let`、`<slot />` 等）を提案する問題への多層防御アプローチを解説する新規記事を `/introduction/ai-coding-setup/` に追加。フリーランス・業務エンジニア読者層への訴求を狙う。
+
+### 追加・変更ファイル
+
+- **新規**: `src/routes/introduction/ai-coding-setup/+page.md`
+  - 第一防衛線: `.github/instructions/*.instructions.md`（`applyTo` 付き）のプロジェクトレベル設定と、`Chat: Configure Instructions...` のユーザーレベル設定の二段構え
+  - 第二防衛線: `svelte.config.js` の `onwarn` でコンパイラ deprecated 警告（`event_directive_deprecated` 等 5 種）をエラー昇格
+  - 第三防衛線: ESLint の `no-restricted-syntax` で `SvelteDirective[kind="EventHandler"]` を禁止
+  - 最終手段: `github.copilot.enable.svelte: false` で Svelte ファイルだけ Copilot を切る選択肢
+  - Cursor / Claude Code / Continue.dev との比較表
+  - Mermaid 図 3 つ（原因図、多層防御図、二段構え図）
+  - フリーランス向けに「個人プロジェクトはユーザーレベル、業務はプロジェクトレベル」の使い分けを明示
+- **更新**: `src/lib/config/sidebar.ts` — introduction セクションに新規ページを追加
+- **更新**: `src/routes/introduction/+page.md` — カード追加（計 8 枚に）、学習の進め方を 8→9 ステップへ
+- **更新**: `src/routes/introduction/eslint-prettier/+page.md` — 「次のステップ」に新記事へのリンクを追加（相互リンク化）
+
+### 検証
+
+- `mcp__svelte__svelte-autofixer` で記事内の主要コード例を検証予定
+- リンク先実体の存在確認: `/introduction/eslint-prettier/`、`/svelte-mcp/`、`/svelte-mcp/setup/`、`/svelte-mcp/eslint-integration/`
+
+### 背景
+
+2026-05-14 のユーザーフィードバック「`.github/copilot-instructions.md` だと挙動に一貫性なさそう。`.github/instructions/svelte5.instructions.md` を `applyTo` 付きで作る方が確実」を起点に、フリーランス読者の AI 補完運用パターンを記事化したもの。VS Code 27.x 系で正式化された `Chat: Configure Instructions...` 機能の解説も含む。
+
+---
+
 ## [2026-05-13] - 記事刷新 Sprint 3（低優先度 11 項目）
 
 ### 概要

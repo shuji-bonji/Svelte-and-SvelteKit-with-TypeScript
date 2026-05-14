@@ -59,6 +59,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: 'ESLint + Prettier 設定',
           to: '/introduction/eslint-prettier/',
         },
+        {
+          title: 'AI コーディング支援のセットアップ',
+          to: '/introduction/ai-coding-setup/',
+        },
       ],
     },
     {

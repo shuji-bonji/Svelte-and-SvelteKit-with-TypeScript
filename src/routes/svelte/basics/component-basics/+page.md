@@ -1244,12 +1244,90 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
 
 ### デモ
 
-以下は、親コンポーネントと子コンポーネントを組み合わせたTODOアプリの完全な例です。実際のプロジェクトでは別ファイルに分けますが、ここではデモのため1つのファイルにまとめています。
+以下は、親コンポーネントと子コンポーネントを組み合わせた TODO アプリの完全な動作例です。`<!-- @file: -->` マーカーで **`TodoItem.svelte` と `App.svelte` の 2 ファイル構成** にしているので、「インタラクティブに試す」を押すと Playground 上でも 2 つのタブが表示され、上で説明したのと同じ **実際の `import` 関係** を含めた動作を確認できます。
 
-```svelte live ln title=TodoApp.svelte
+```svelte live ln
+<!-- @file: TodoItem.svelte -->
 <script lang="ts">
-  // 実際のプロジェクトでは以下のようにインポートします
-  // import TodoItem from '$lib/components/TodoItem.svelte';
+  interface Todo {
+    id: number;
+    text: string;
+    completed: boolean;
+    createdAt: Date;
+  }
+
+  interface Props {
+    todo: Todo;
+    onToggle: (id: number) => void;
+    onDelete: (id: number) => void;
+  }
+
+  let { todo, onToggle, onDelete }: Props = $props();
+
+  let formattedDate = $derived(
+    todo.createdAt.toLocaleDateString('ja-JP')
+  );
+
+  function handleToggle(): void {
+    onToggle(todo.id);
+  }
+
+  function handleDelete(): void {
+    if (confirm('削除してもよろしいですか？')) {
+      onDelete(todo.id);
+    }
+  }
+</script>
+
+<div class="todo-item" class:completed={todo.completed}>
+  <input
+    type="checkbox"
+    checked={todo.completed}
+    onchange={handleToggle}
+  />
+  <span class="text">{todo.text}</span>
+  <span class="date">{formattedDate}</span>
+  <button class="delete" onclick={handleDelete} aria-label="削除">×</button>
+</div>
+
+<style>
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    color: #222;
+  }
+  .todo-item.completed .text {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+  .text { flex: 1; }
+  .date {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  .delete {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .delete:hover {
+    background: #cc0000;
+  }
+</style>
+
+<!-- @file: App.svelte -->
+<script lang="ts">
+  import TodoItem from './TodoItem.svelte';
 
   interface Todo {
     id: number;
@@ -1259,56 +1337,37 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
   }
 
   let todos = $state<Todo[]>([
-    {
-      id: 1,
-      text: 'Svelte 5を学習する',
-      completed: false,
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: 2,
-      text: 'Runesシステムを理解する',
-      completed: true,
-      createdAt: new Date('2024-01-16')
-    },
-    {
-      id: 3,
-      text: 'TODOアプリを作成する',
-      completed: false,
-      createdAt: new Date('2024-01-17')
-    }
+    { id: 1, text: 'Svelte 5を学習する', completed: false, createdAt: new Date('2024-01-15') },
+    { id: 2, text: 'Runesシステムを理解する', completed: true, createdAt: new Date('2024-01-16') },
+    { id: 3, text: 'TODOアプリを作成する', completed: false, createdAt: new Date('2024-01-17') }
   ]);
 
   let newTodoText = $state('');
 
   function addTodo() {
     if (newTodoText.trim()) {
-      const newTodo: Todo = {
+      todos.push({
         id: Date.now(),
         text: newTodoText,
         completed: false,
         createdAt: new Date()
-      };
-      todos = [...todos, newTodo];
+      });
       newTodoText = '';
     }
   }
 
   function toggleTodo(id: number) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+    const target = todos.find((t) => t.id === id);
+    if (target) target.completed = !target.completed;
   }
 
   function deleteTodo(id: number) {
-    todos = todos.filter(todo => todo.id !== id);
+    const idx = todos.findIndex((t) => t.id === id);
+    if (idx !== -1) todos.splice(idx, 1);
   }
 
-  let completedCount = $derived(todos.filter(t => t.completed).length);
+  let completedCount = $derived(todos.filter((t) => t.completed).length);
   let totalCount = $derived(todos.length);
-
-  // インラインコンポーネントとして定義（通常は別ファイル）
-  // TodoItem.svelteの内容をここに含める
 </script>
 
 <div class="todo-app">
@@ -1326,32 +1385,7 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
 
   <div class="todo-list">
     {#each todos as todo (todo.id)}
-      <!-- TodoItemコンポーネントの内容をインラインで展開 -->
-      {#if todo}
-      <div class="todo-item" class:completed={todo.completed}>
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          onchange={() => toggleTodo(todo.id)}
-        />
-
-        <span class="text">{todo.text}</span>
-
-        <span class="date">{todo.createdAt.toLocaleDateString('ja-JP')}</span>
-
-        <button
-          class="delete"
-          onclick={() => {
-            if (confirm('削除してもよろしいですか？')) {
-              deleteTodo(todo.id);
-            }
-          }}
-          aria-label="削除"
-        >
-          ×
-        </button>
-      </div>
-      {/if}
+      <TodoItem {todo} onToggle={toggleTodo} onDelete={deleteTodo} />
     {/each}
   </div>
 
@@ -1366,28 +1400,28 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
   .todo-app {
     max-width: 600px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1rem;
+    color: #222;
   }
-
-  h1 {
+  h2 {
     color: #ff3e00;
     text-align: center;
+    margin: 0 0 1rem;
   }
-
   .add-todo {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
-
   .add-todo input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #ddd;
+    border: 1px solid #888;
+    background: #fff;
+    color: #222;
     border-radius: 4px;
     font-size: 1rem;
   }
-
   .add-todo button {
     padding: 0.5rem 1rem;
     background: #ff3e00;
@@ -1397,64 +1431,34 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
     cursor: pointer;
     font-size: 1rem;
   }
-
   .add-todo button:hover {
     background: #ff5a00;
   }
-
   .todo-list {
-    border: 1px solid #eee;
+    border: 1px solid #ccc;
     border-radius: 4px;
     overflow: hidden;
+    background: #fff;
   }
-
   .summary {
     text-align: center;
     margin-top: 1rem;
     color: #666;
     font-size: 0.9rem;
   }
-
-  /* TodoItemコンポーネントのスタイル */
-  .todo-item {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    border-bottom: 1px solid #eee;
-    gap: 0.5rem;
-  }
-
-  .todo-item.completed .text {
-    text-decoration: line-through;
-    opacity: 0.6;
-  }
-
-  .todo-item .text {
-    flex: 1;
-  }
-
-  .todo-item .date {
-    font-size: 0.8rem;
-    color: #666;
-  }
-
-  .todo-item .delete {
-    background: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-
-  .todo-item .delete:hover {
-    background: #cc0000;
-  }
 </style>
 ```
+
+:::tip[このデモが示しているもの]
+
+「インタラクティブに試す」を押すと、Playground 上で **`TodoItem.svelte` と `App.svelte` の 2 タブ** が見えます。これは上で説明した:
+
+- `TodoItem.svelte` が `$props()` で `todo` と `onToggle` / `onDelete` のコールバック props を受け取る
+- `App.svelte` が `import TodoItem from './TodoItem.svelte'` でインポートし、`{#each}` で展開しながら **各 TodoItem に props を渡す**
+
+という **教科書通りの構造** がそのまま動いているということです。実プロジェクトに移植する際もファイル分割の作法はこのままで OK です。
+
+:::
 
 ## まとめ
 

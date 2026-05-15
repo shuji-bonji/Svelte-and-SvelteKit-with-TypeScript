@@ -111,7 +111,7 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
               to: '/svelte/basics/easing/',
             },
             {
-              title: 'svelte/events',
+              title: 'イベントハンドリング',
               to: '/svelte/basics/events-module/',
             },
             {

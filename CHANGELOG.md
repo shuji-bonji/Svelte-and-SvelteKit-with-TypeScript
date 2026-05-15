@@ -2,6 +2,88 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-16] - template-syntax に bind:innerHTML 見出し改題と deep-dive 関連リンク 2 件を追加
+
+### 概要
+
+`/svelte/basics/template-syntax/` に対するレビュー指摘 8 件のうち、6 件は既達成（コンポーネント合成例・制御フロー詳細リンク・$inspect リンク・@const Admonition 化・LiveCode タイトル具体化・@html 表記の意図的な使い分け）と判定。残り 2 件のみ採用して反映。
+
+### 採用 1: `bind:innerHTML` 見出しのダブル表記化
+
+L692 の見出しを **API 名のみ** から **API 名 + 達成感のあるサブタイトル** に変更:
+
+```diff
+- ### `bind:innerHTML`
++ ### `bind:innerHTML` — リッチテキストエディタの実装
+```
+
+導入文にも「これだけで **WYSIWYG エディタの土台** が組み上がります」を追記し、読者に「この節で何が作れるか」を明確化。API リファレンス性を保ちつつ教育的な達成感も両立。
+
+### 採用 2: まとめの「関連リンク」に deep-dive 2 件を追加
+
+L1063 周辺の `<Admonition type="info" title="関連リンク">` に以下 2 件のリンクを追加:
+
+- **`/deep-dive/dynamic-content-api-comparison/`** — `bind:innerHTML` / `{@html}` / Snippets / children の 4 つの動的コンテンツ API を横並びで比較する deep-dive ページ。この記事の自然な発展系
+- **`/deep-dive/html-templates-and-snippets/`** — HTML テンプレートと Snippets の内部実装を理解する deep-dive ページ
+
+### 見送った指摘（既達成・意図通り）
+
+| # | 指摘 | 見送り理由 |
+|---|------|------------|
+| 1 | @render セクションに children パターン実例追加 | L129-174 で Card.svelte（子）+ 親使用例の **両方** が既に存在 |
+| 2-a | `{#if}/{#each}` 詳細への明示リンク | L16 で `component-basics/` への明示リンクが既に存在 |
+| 2-b | @debug に `$inspect` リンク | L627-647 で使い分け Admonition + L663 で明示リンク既存 |
+| 3-a | `{@html value}` と `{@html}` の表記統一 | 見出しは API 名（`@html`）、本文は使用形（`{@html value}`）の **意図的な使い分け** |
+| 4-a | @const の使用制限を Admonition に昇格 | L416-420 で `Admonition type="info"` 化済み |
+| 4-b | LiveCode デモタイトルを具体化 | XSS デモは L294「XSS リスクを体感する（インタラクティブデモ）」と既に具体的 |
+
+### 検証
+
+- `npm run lint:articles`: errors=4 / warnings=36（ベースライン維持、新規 issue なし）
+
+---
+
+## [2026-05-16] - component-basics に Props 最小例と TODO 橋渡し文を追加、dynamic-content-api-comparison の LiveCode import 漏れを修正
+
+### 概要
+
+レビュー指摘 2 点を `/svelte/basics/component-basics/` に反映。加えて、ビルド時に発覚した `/deep-dive/dynamic-content-api-comparison/` の SSR 500 エラー（`ReferenceError: LiveCode is not defined`）を修正。
+
+### バグ修正: LiveCode import 漏れ
+
+- **`src/routes/deep-dive/dynamic-content-api-comparison/+page.md`** の `<script>` に `import LiveCode from '$lib/components/LiveCode.svelte';` を追加。`live` メタ付きコードブロック 4 件が含まれるが、`Mermaid` と同じく `LiveCode` も `svelte.config.js` の highlighter で `<LiveCode>` タグに変換されるだけで **import は自動注入されない** ため、明示的に書く必要があった。
+- 念のため、`src/routes/` 配下の全 `.md` ファイルを走査し、`live` ブロックを含むのに `import LiveCode` が無いファイルが無いことを確認。
+
+### `/svelte/basics/component-basics/+page.md` 拡充
+
+**指摘 1 — Props 最小例の追加**:
+
+- 「インポートの実例」セクションの直後に新節 **「親から子へデータを渡す（最小の Props）」** を追加
+- `Card.svelte`（子）と `App.svelte`（親）の 2 ファイル構成の `live` ブロックで、`title` と `body` を受け取る最小デモを実装
+- 既存の L193 Admonition「Props でデータを受け渡す」を「本ページの後段で最小例を扱う」と予告する内容に書き換え、`$bindable`・Snippets 経由の応用は `/svelte/runes/props/` に誘導
+- `svelte-autofixer` で issues 0 件確認
+
+**指摘 2-b — TODO 例の橋渡し文を追加**:
+
+- L1060「## 実践例：TODOアプリケーション」見出しの直後に振り返り文を追加
+- 「ここまでで Script / Markup / Style の 3 ブロック構造、`$state`、`$props`、`{#if}` / `{#each}` / `{#await}`、`onclick`、`bind:` を一通り触りました。実はこれだけで TODO アプリを最後まで組み立てられます」と達成感を促す導入
+- 「ここまでの内容を確認するつもりで読み進めてみてください」と学習者への能動的呼びかけを追加
+
+### レビュー指摘のうち見送った項目
+
+- **指摘 2-a**「見出しを `## 実践例：TODOアプリケーション` に」→ 既達成（L1060 で既にその通りの見出し）
+- **指摘 3-a**「`template-syntax/` への明示リンク」→ 既達成（L238-240 と L1056 で既に明示）
+- **指摘 3-b**「イベント修飾子変更表の後に Routing/Navigation リンク」→ 文脈ミスマッチ（修飾子の対応表と SvelteKit ルーティングは関連性が薄い）
+- **指摘 4-a**「`onclick` のインライン関数と関数参照を統一」→ L685/690/699 は「インライン関数」「伝播停止」「一度だけ実行」と明示ラベル付きの **教育的多様性提示** のため統一すると意図が失われる
+- **指摘 4-b**「`{#await}` の `URL を変更するとエラー再現` を warning に昇格」→ 既達成かつ意味的に不適合（L503 で既に `:::tip[ネットワークエラーを試したい場合]` として Admonition 化。内容は「試す方法のガイド」なので `warning` ではなく `tip` が正しい）
+
+### 検証
+
+- `svelte-autofixer`（Card.svelte 最小例）: issues 0 件
+- `npm run lint:articles`: errors=4（ベースライン維持）/ warnings=36 / blocks 679 → 680（Card 例 1 件追加）
+
+---
+
 ## [2026-05-16] - REVIEW-REPORT 削除、トップレベル・ハブの「準備中」表記整合、README/CLAUDE.md の同期
 
 ### 概要

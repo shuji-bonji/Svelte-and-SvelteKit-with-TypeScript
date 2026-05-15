@@ -749,7 +749,7 @@ ESLint の [`svelte/no-at-html-tags`](https://sveltejs.github.io/eslint-plugin-s
 
 本デモでは「**編集領域＝ `contenteditable` 自体が WYSIWYG 表示**」「**プレビュー領域＝バインドで取得した HTML ソースを `{editorContent}` でエスケープ表示**」という分業にすることで、`@html` を一切使わずに **編集とソース確認を両立** しています。
 
-実プロジェクトで生成 HTML を「再レンダリングして見せたい」場合は、必ず [DOMPurify](https://github.com/cure53/DOMPurify) などのサニタイザを通してから `{@html}` を使う、もしくは [Markdown レンダラ](#markdownレンダラー実用例) のように **信頼できる変換器の出力のみ** を扱うようにしてください。
+実プロジェクトで生成 HTML を「再レンダリングして見せたい」場合は、必ず [DOMPurify](https://github.com/cure53/DOMPurify) などのサニタイザを通してから `{@html}` を使う、もしくは [Markdown レンダラ](#安全なmarkdownレンダリング) のように **信頼できる変換器の出力のみ** を扱うようにしてください。
 
 :::
 

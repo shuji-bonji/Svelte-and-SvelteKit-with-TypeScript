@@ -93,12 +93,16 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 権限に応じて表示要素を切り替える例です。`button` / `a` / `span` の 3 通りに分岐するため、a11y を確保するには `span` 分岐に対して `role` / `tabindex` / `onkeydown` を **明示的に補う必要があります**。
 
-```svelte bad
-<!-- 説明用：実装時は role/tabindex/onkeydown の追加が必須（下のベストプラクティス参照） -->
+```svelte live
 <script lang="ts">
   type UserRole = 'admin' | 'user' | 'guest';
 
-  let userRole: UserRole = $state('user');
+  // ⚠️ TypeScript narrowing 対策:
+  //   `let x: UserRole = $state('user')` と書くと、$state の戻り値型が
+  //   リテラル型 'user' に narrowing されてしまい、後で userRole === 'guest' などの
+  //   比較で「型に重なりがない」エラーになる。$state<UserRole>('user') と
+  //   ジェネリックで型を明示するのが正解。
+  let userRole = $state<UserRole>('user');
   let action = $state('');
 
   // 権限に応じて要素を変える
@@ -111,7 +115,7 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   }
 
   function handleAction() {
-    action = `${userRole}がアクションを実行しました`;
+    action = `${userRole} がアクションを実行しました（${new Date().toLocaleTimeString()}）`;
   }
 
   function handleKeyAction(event: KeyboardEvent) {
@@ -122,20 +126,53 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   }
 </script>
 
-<svelte:element
-  this={getElementTag(userRole)}
-  href={userRole === 'user' ? '#action' : undefined}
-  role={userRole === 'guest' ? 'button' : undefined}
-  tabindex={userRole === 'guest' ? 0 : undefined}
-  onclick={userRole !== 'user' ? handleAction : undefined}
-  onkeydown={userRole === 'guest' ? handleKeyAction : undefined}
-  class="action-element"
->
-  {userRole === 'admin' ? '削除' : userRole === 'user' ? '詳細を見る' : '閲覧のみ'}
-</svelte:element>
+<div style="padding: 1rem; border: 1px solid #ddd; border-radius: 8px;">
+  <label for="role-select" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+    ユーザー権限を切り替え:
+  </label>
+  <select id="role-select" bind:value={userRole} style="padding: 0.5rem; margin-bottom: 1rem;">
+    <option value="admin">admin（button として表示）</option>
+    <option value="user">user（a として表示）</option>
+    <option value="guest">guest（span として表示）</option>
+  </select>
+
+  <div style="margin-bottom: 1rem;">
+    <svelte:element
+      this={getElementTag(userRole)}
+      href={userRole === 'user' ? '#action' : undefined}
+      role={userRole === 'guest' ? 'button' : undefined}
+      tabindex={userRole === 'guest' ? 0 : undefined}
+      onclick={userRole !== 'user' ? handleAction : undefined}
+      onkeydown={userRole === 'guest' ? handleKeyAction : undefined}
+      style="padding: 0.5rem 1rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: inline-block; color: #333; cursor: pointer;"
+    >
+      {userRole === 'admin' ? '削除' : userRole === 'user' ? '詳細を見る' : '閲覧のみ'}
+    </svelte:element>
+  </div>
+
+  {#if action}
+    <div style="padding: 0.5rem; background: #e8f5e9; border-radius: 4px; color: #333;">
+      {action}
+    </div>
+  {/if}
+
+  <div style="margin-top: 1rem; color: #666; font-size: 0.875rem;">
+    <strong>現在の HTML タグ:</strong> <code>&lt;{getElementTag(userRole)}&gt;</code>
+  </div>
+</div>
 ```
 
+3 つの分岐の挙動：
+
+- `admin` → `<button>` として描画。**ネイティブにインタラクティブ** なので、ブラウザが Enter/Space を自動でクリックに変換する
+- `user` → `<a href="#action">` として描画。**href があるリンク** はネイティブにフォーカス可能でキーボード対応済み
+- `guest` → `<span>` として描画。**そのままでは非インタラクティブ** なので、`role="button"` / `tabindex={0}` / `onkeydown` を明示的に補ってクリッカブル化
+
 ポイントは、**`<button>` や `<a>` 自体は元々インタラクティブだが、`<svelte:element>` で動的に切り替える以上、コンパイラは静的にタグを解決できない**ため、すべての分岐で a11y 違反にならないよう `role` / `tabindex` / `onkeydown` を**条件付きで補う**必要がある、という点です。
+
+:::caution[Svelte 5 の `$state` 型注釈の罠]
+`let x: T = $state(...)` という書き方は型が **narrowing** されてしまうため、ユニオン型を扱う場合は **`let x = $state<T>(...)`** とジェネリック側で型を渡してください。詳しくは [Runes - $state](/svelte/runes/state/) を参照。
+:::
 
 ## `svelte:window` - ウィンドウイベントのバインディング
 

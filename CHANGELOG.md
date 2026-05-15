@@ -2,6 +2,243 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-16] - 式展開セクションは component-basics に戻し、template-syntax は 4 カテゴリ表のみ保持（過剰移植の是正）
+
+### 概要
+
+直前の修正で **4 カテゴリ整理表に加え、式展開（live ブロック含むインタラクティブセクション）まで template-syntax に移してしまった** ところ、ユーザー指示の「以下の部分はテンプレート構文ページに移す」が指していたのは 4 カテゴリ表のみで、**式展開セクションは component-basics に残すべきだった** ことが判明。是正対応。
+
+### 修正内容
+
+#### `template-syntax/+page.md` から `## 式展開` セクション削除
+
+直前に追加した `## 式展開`（L26-L106、81 行）を削除。`## テンプレート構文の全体像`（4 カテゴリ表）の直後は `## レンダリングタグ` に直接繋がる構成に戻した。
+
+#### `component-basics/+page.md` の `## Markup部分の詳細` に式展開セクションを復元
+
+`:::tip[テンプレート構文の体系は専用ページで網羅]` Admonition の直後に、新規見出し `### 式展開でできること` を追加。配下に:
+
+- 式展開の説明文（任意の JS 式が書ける、特別な構文は不要）
+- live ブロック（三項演算子・論理 AND・メソッド呼び出し・プロパティアクセスの 6 パターンをインタラクティブ体験）
+- ポイント解説 3 件（JS 式そのまま / リアクティブ更新の条件 / 三項演算子はルーンの相棒ではない）
+- `:::tip[ブロック構文 `&#123;#if&#125;` と三項演算子の使い分け]`（`{#if}` は template-syntax 側へリンク）
+
+を配置。Markup 部分の構造は次のとおり:
+
+```
+## Markup部分の詳細
+（Markup の役割概要 + 小さなコード例）
+:::tip[テンプレート構文の体系は専用ページで網羅]（template-syntax へ誘導）
+### 式展開でできること
+（live ブロック + ポイント + 使い分け Tip）
+```
+
+「Markup ブロックの位置づけ → 体系の入り口は template-syntax → 本ページでは基礎の式展開だけインタラクティブに体験」という流れ。
+
+#### `template-syntax/+page.md` の 4 カテゴリ表「式展開」行を component-basics への外部リンクに変更
+
+```diff
+- | **① 式展開** | `{ expr }` | [式展開](#式展開) |
++ | **① 式展開** | `{ expr }` | [コンポーネントの基本 - 式展開でできること](/svelte/basics/component-basics/#式展開でできること) |
+```
+
+「本ページでは ②③④ を扱い、① はコンポーネントの基本ページに委ねる」という整理を表本文にも反映。
+
+### 設計判断
+
+| 項目 | 配置 | 理由 |
+|------|------|------|
+| 4 カテゴリ整理表（テンプレート構文の体系） | `template-syntax/`（正典） | テンプレート構文ページの入り口。全カテゴリの所在を示す目次役 |
+| 式展開セクション（live ブロック含む） | `component-basics/` | Markup ブロックで使う最も基本的な構文。学習者が「コンポーネントの基本」を読みながらインタラクティブ体験できる場所として最適 |
+| 両者の相互リンク | 表からは component-basics へ、component-basics の使い分け Tip からは制御フローへ | 重複なく相互参照 |
+
+### 検証
+
+- `npm run lint:articles`: errors=4 / warnings=36（ベースライン維持）
+- 行数の最終形:
+  - `component-basics/+page.md`: 827 → **910 行**（+83 行、式展開セクション復元）
+  - `template-syntax/+page.md`: 1432 → **1351 行**（-81 行、式展開セクション削除）
+
+---
+
+## [2026-05-16] - component-basics の Markup セクションを簡素化し、4 カテゴリ整理と式展開セクションを template-syntax に移植
+
+### 概要
+
+ユーザー指摘「`## Markup部分の詳細` は **コンポーネント構成の 1 ブロック解説** の場所なので、いきなり 4 カテゴリ整理（テンプレート構文の全体像）が入るのは越権・不自然」を受けて、構造を再整理。
+
+### 構造再編
+
+| ファイル | 変動 |
+|---------|------|
+| `component-basics/+page.md` | 904 → **827 行**（-77 行 / -8.5%） |
+| `template-syntax/+page.md` | 1345 → **1432 行**（+87 行） |
+
+#### `component-basics/+page.md` の `## Markup部分の詳細` を簡潔な紹介に縮小
+
+旧: `### テンプレート構文の基本` + 4 カテゴリ表 + `#### 式展開 - JS 式そのままが書ける`（live ブロック）+ `:::tip[{#if} と三項演算子の使い分け]` + 詳細誘導 Admonition（合計 99 行）
+
+新: 「Markup 部分には HTML 構造を記述する。Svelte の Markup は HTML を拡張したテンプレート構文で、`{}` で式・ブロック構文・アノテーションを使う」という **約 20 行の簡潔な紹介** + 小さなコード例 + `:::tip` で template-syntax への誘導
+
+これにより `## Markup部分の詳細` が他の `## Script部分の詳細` / `## Style部分の詳細` と粒度が揃い、「コンポーネントの 3 ブロック解説」の流れが自然になった。
+
+#### `template-syntax/+page.md` の冒頭に 4 カテゴリ表と式展開セクションを移植
+
+冒頭に以下の構造を追加（既存の Admonition は削除）:
+
+1. **`## テンプレート構文の全体像`**: 5 行 × 3 列の整理表（① 式展開 / ② ブロック構文 / ③ アノテーション / ④ 特殊バインディング + その他ディレクティブ）。各カテゴリから本ページの該当セクションへアンカーリンクで遷移
+2. **`## 式展開`**: component-basics から移植した live ブロック（三項演算子・論理 AND・メソッド呼び出し・プロパティアクセスの 6 例）+ ポイント解説 3 件 + `:::tip[#if と三項演算子の使い分け]`
+
+最終的な template-syntax の構成:
+
+- `## テンプレート構文の全体像`（L14）
+- `## 式展開`（L26）
+- `## レンダリングタグ`（L107、`@render` / `@html`）
+- `## 制御フロー`（L465、`#if` / `#each` / `#await` / `@const` / `#key`）
+- `## デバッグタグ`（L948、`@debug`）
+- `## 特殊なバインディング`（L1048、`bind:innerHTML` / `bind:textContent`）
+- 既存の高度な使用例・実践的な実装パターン・ベストプラクティス・まとめ
+
+これで template-syntax が「Svelte テンプレート構文の正典」として完成し、全体像 → 各カテゴリの解説 → 実践、という自然な学習動線になった。
+
+### 内部リンクのアンカー
+
+`## テンプレート構文の全体像` の表内リンクは rehype-slug が生成する slug を利用:
+
+- `#式展開`
+- `#制御フロー`
+- `#レンダリングタグ`
+- `#デバッグタグ`
+- `#特殊なバインディング`
+
+日本語見出しでも rehype-slug は正しい slug を生成する（previously verified with `github-slugger`）。
+
+### 検証
+
+- `npm run lint:articles`: errors=4 / warnings=36（ベースライン維持）、blocks 678 → 679（template-syntax に live 例 1 件追加）
+
+---
+
+## [2026-05-16] - ビルドエラー (raw HTML 内 `{@attach}`) と既存 a11y 警告を修正
+
+### 概要
+
+`npm run build` 実行時に発生した SSR ビルドエラーと、ついでに浮上した既存の a11y 警告を解消。
+
+### バグ修正 1: component-basics の raw HTML 内 `{@attach}` 直書きによるビルドエラー
+
+**エラー**:
+
+```
+src/routes/svelte/basics/component-basics/+page.md:944:129
+Expected 'html', 'render', 'attach', 'const', or 'debug'
+```
+
+**原因**: 直前の修正で関連トピック Admonition の `<li>` 内（raw HTML）に `{@attach}` を直書きしていた。raw HTML 内は mdsvex の shiki highlighter を通らないため、`{ ... }` が Svelte テンプレート式として解釈され、`{@attach}` を「テキスト挿入アノテーション」として解釈しようとして失敗していた（`{@attach}` は本来 `<element {@attach myFn}>` のように要素属性として使う構文）。
+
+**修正**: `{@attach}` → `<code>&#123;@attach&#125;</code>` にエスケープ。コード装飾のため `<code>` で囲んだ。
+
+**教訓 / memory**: `feedback_mdsvex_curly_brace_escape.md` の運用ルール「raw HTML 内では `&#123;`/`&#125;` のエスケープが必須」を再確認できた。Markdown バッククォート内のインラインコード（例: 表セルの `` `{@attach}` ``）は shiki を通るのでエスケープ不要だが、`<li>` / `<p>` / `<td>` などの raw HTML 内に直書きする場合は必須。今後同じミスを防ぐため、関連トピック等の Admonition で API 名を引く際は **すべて `<code>&#123;...&#125;</code>` でラップする** 規律を徹底する。
+
+### バグ修正 2: deployment/+page.md の `<a href="#">` による a11y 警告
+
+**警告**:
+
+```
+src/routes/sveltekit/deployment/+page.md:110:5 '#' is not a valid href attribute
+```
+
+**原因**: CI/CD パイプライン（準備中）カードが `<a href="#" class="pointer-events-none opacity-50">` で「無効化されたリンク」として表現されていた。SvelteKit 2.x の `svelte-check` / `vite-plugin-svelte` は `href="#"` を a11y_invalid_attribute として警告する（実際には別ページに遷移しないため）。
+
+**修正**: `<a href="#">` を `<div aria-disabled="true">` に置換。`pointer-events-none` で実質的な無効化は維持しつつ、リンクではないことを HTML 構造的にも明示。同時に、リンクではなくなったため `→` の矢印スパン（リンク遷移を示唆する装飾）と `cursor-pointer` クラスも除去して整合性を取った。
+
+念のため `<a href="#" ...pointer-events-none...>` の同種パターンを全 routes で grep し、deployment/+page.md L106 のみ該当することを確認。
+
+### 検証
+
+- 既存の `dynamic-content-api-comparison/+page.md:102` の `let source = $state('... <code>{@html}</code> ...')` は **JavaScript 文字列リテラル内** なのでビルドエラーにならない（false positive、対応不要）
+- `npm run lint:articles`: errors=4 / warnings=36（ベースライン維持）
+
+### 残課題（別件）
+
+- `src/lib/components/Mermaid.svelte:344` の `a11y_click_events_have_key_events` 警告（背景クリック領域のキーボードイベント追加）は元から存在する既知の警告で、本修正の対象外として残置
+
+---
+
+## [2026-05-16] - `{#if}` / `{#each}` / `{#await}` を template-syntax に完全移行、テンプレート構文の整理を実施
+
+### 概要
+
+ユーザーから「`{#if}` などの制御フローは `template-syntax/` に移したほうが構造的に綺麗では？」「テンプレート構文の整理は『2 系統』ではなく、もっと多カテゴリでは？」という指摘を受け、`component-basics/` と `template-syntax/` の役割分担を全面的に再整理した。
+
+### 背景
+
+直前の修正で `component-basics/` の `### テンプレート構文の基本` に「式展開 vs ブロック構文」の 2 系統整理を入れていたが、これにはアノテーションや特殊バインディング・ディレクティブが含まれず粗すぎる、と判明。同時に「基本制御フロー (`{#if}` 等) だけが `component-basics/` に残り、`{#key}` / `{#snippet}` は `template-syntax/` という分散状態」も歪と判断。
+
+### 構造再編（選択肢 B-1: 完全移行）
+
+#### `component-basics/+page.md` から削除
+
+- `### 条件分岐 - ifブロック`（旧 L292-L328）
+- `### ループ処理 - eachブロック`（旧 L329-L436）
+- `### 非同期処理 - awaitブロック`（旧 L437-L513）
+- `## 実践例：TODOアプリケーション` セクション全体（455 行）— 別途 examples/todo-app/ への誘導に置き換え
+
+#### `component-basics/+page.md` で再整理した「テンプレート構文の基本」
+
+「2 系統」を **4 カテゴリの表** に拡張し、本ページは式展開のみを扱う旨を明示:
+
+| カテゴリ | 例 | このページでの扱い |
+|----------|-----|--------------------|
+| **式展開** | `{ expr }` | **本ページで解説** |
+| **ブロック構文** | `{#if}` / `{#each}` / `{#await}` / `{#key}` / `{#snippet}` | template-syntax で詳説 |
+| **アノテーション** | `{@html}` / `{@render}` / `{@const}` / `{@debug}` / `{@attach}` | 同上 |
+| **特殊バインディング・ディレクティブ** | `bind:` / `onevent` / `use:action` / `transition:` | 各専用ページ |
+
+#### `template-syntax/+page.md` への移植
+
+- `## 制御フロータグ` を `## 制御フロー` に改名（`@`/`#` を含む 5 種のセクションを統括するため）
+- 先頭に `### #if - 条件分岐` / `### #each - ループ処理` / `### #await - 非同期処理` を移植（見出しは template-syntax の既存慣習「API 名 - 機能説明」に揃えて変更）
+- title を `テンプレート構文 - 特殊タグとアノテーション` → `テンプレート構文 - 制御フローとアノテーション` に変更（実態反映）
+- description も 4 カテゴリすべてを網羅する内容に書き換え
+- 冒頭 Admonition の方向を逆転: 「`{#if}` は component-basics で」→「テンプレート式の基本は component-basics で、本ページはブロック構文以降を網羅」
+
+#### TODO 例の処理
+
+ユーザー判断により **完全廃止** とした（当初は examples/todo-app/ に「学習用最小実装」セクションとして統合を試みたが、すでに `svelte5-todo-example` リポジトリが独立して存在するため重複と判断）。`component-basics/` 末尾には `<Admonition type="info" title="関連トピック">` に「本格的な実装例として TODO アプリ実装例を参照」のリンクを追加するに留めた。
+
+#### basics ハブのカード説明同期
+
+- `component-basics` カード説明: 「テンプレート構文: 条件分岐、ループ、非同期処理」→「テンプレート式: 三項演算子・論理 AND・関数呼び出し」
+- `template-syntax` カード説明: アノテーション中心の項目列から、`#if`/`#each`/`#await` を冒頭に置き、`#key`/`#snippet`/アノテーション/特殊バインディングを網羅した列に書き換え
+
+### 影響範囲
+
+| ファイル | 行数変動 |
+|---------|---------|
+| `src/routes/svelte/basics/component-basics/+page.md` | 1467 → **904 行**（-563 行 / -38%） |
+| `src/routes/svelte/basics/template-syntax/+page.md` | 1072 → **1345 行**（+273 行） |
+| `src/routes/svelte/basics/+page.md`（basics ハブ） | カード説明 2 件更新 |
+| `src/routes/examples/todo-app/+page.md` | 一時的に 824 行に増えたが、ユーザー判断で 368 行に戻した |
+
+### 学習動線への影響
+
+- 「コンポーネントの基本」を学んだ後でも、`{#if}` 等の基本制御フローは未習のまま `template-syntax/` で学ぶ流れになった
+- これは sidebar 順序（component-basics → template-syntax → ...）に沿った自然な動線
+- TODO 例の削減により component-basics が約 38% 軽量化、入門ページとしての読了負担が下がった
+
+### 検証
+
+- `npm run lint:articles`: errors=4 / warnings=36（ベースライン維持）、blocks 680 → 678（TODO 例 2 ブロック減）
+- 旧 title「テンプレート構文 - 特殊タグとアノテーション」を全プロジェクトで grep し、残存リンクなしを確認
+
+### 補足: 没案
+
+- 当初検討した「2 系統」表現は粗すぎ、ユーザー指摘を受けて 4 カテゴリ表に変更
+- 「examples/todo-app/ に学習用最小実装を統合」案も一度実施したが、リポジトリ独立解説で十分というユーザー判断で取り消し
+
+---
+
 ## [2026-05-16] - component-basics に「式展開 vs ブロック構文」の 2 系統整理を追加
 
 ### 概要

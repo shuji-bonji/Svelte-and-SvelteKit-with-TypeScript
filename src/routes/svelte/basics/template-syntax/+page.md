@@ -1,6 +1,6 @@
 ---
-title: テンプレート構文 - 特殊タグとアノテーション
-description: Svelte5の特殊なテンプレート構文を解説。@render/@html/@const/@debugアノテーション、{#key}ブロック、{#snippet}定義の実装パターンをTypeScriptで解説
+title: テンプレート構文 - 制御フローとアノテーション
+description: Svelte5のテンプレート構文を網羅的に解説。{#if}/{#each}/{#await}/{#key}/{#snippet}のブロック構文、@render/@html/@const/@debugアノテーション、bind:innerHTMLなど特殊バインディングをTypeScriptで解説
 ---
 
 <script>
@@ -9,13 +9,19 @@ description: Svelte5の特殊なテンプレート構文を解説。@render/@htm
 	import LiveCode from '$lib/components/LiveCode.svelte';
 </script>
 
-Svelteのテンプレートは、HTMLをベースに独自の構文を追加したものです。このページでは、Svelteが提供する**特殊なタグとアノテーション**について詳しく解説します。
+Svelte のテンプレートは、HTML をベースに独自の構文を追加したものです。本ページでは Svelte のテンプレート構文を **網羅的に** 扱います。
 
-<Admonition type="info" title="基本的なテンプレート構文について">
+## テンプレート構文の全体像
 
-`&#123;#if&#125;`、`&#123;#each&#125;`、`&#123;#await&#125;`などの基本的な制御フロー構文については、<a href="{base}/svelte/basics/component-basics/">コンポーネントの基本</a>ページで解説しています。このページでは、より高度な特殊タグとアノテーションを扱います。
+Svelte のテンプレート構文は、次の 4 つのカテゴリに分類できます。本ページは②③④を網羅的に扱い、① 式展開はコンポーネントの基本ページ、その他のディレクティブは各専用ページに委ねます。
 
-</Admonition>
+| カテゴリ | 例 | 扱うページ |
+|----------|-----|------------|
+| **① 式展開** | `&#123; expr &#125;` | [コンポーネントの基本 - 式展開でできること](/svelte/basics/component-basics/#式展開でできること) |
+| **② ブロック構文** | `&#123;#if&#125;` / `&#123;#each&#125;` / `&#123;#await&#125;` / `&#123;#key&#125;` / `&#123;#snippet&#125;` | [制御フロー](#制御フロー)（本ページ） |
+| **③ アノテーション** | `&#123;@html&#125;` / `&#123;@render&#125;` / `&#123;@const&#125;` / `&#123;@debug&#125;` | [レンダリングタグ](#レンダリングタグ) / [制御フロー](#制御フロー) / [デバッグタグ](#デバッグタグ)（本ページ） |
+| **④ 特殊バインディング** | `bind:innerHTML` / `bind:textContent` | [特殊なバインディング](#特殊なバインディング)（本ページ） |
+| **その他のディレクティブ** | `bind:value` / `onclick` / `use:action` / `transition:` | [bind](/svelte/runes/bindable/) / [events-module](/svelte/basics/events-module/) / [actions](/svelte/basics/actions/) / [transitions](/svelte/basics/transitions/) |
 
 ## レンダリングタグ
 
@@ -375,7 +381,278 @@ Svelte 5では、コンポーネントの合成方法が`<slot />`から`childre
 
 </Admonition>
 
-## 制御フロータグ
+## 制御フロー
+
+### #if - 条件分岐
+
+`&#123;#if&#125;`ブロックは、条件に基づいてテンプレートの一部を表示・非表示にするための基本的なテンプレート構文です。下の例では **ログイン状態のチェックボックス** と **スコアのスライダー** を操作すると、3 種類の if 分岐がそれぞれリアルタイムで切り替わる様子を観察できます。
+
+```svelte live
+<script lang="ts">
+  let isLoggedIn = $state(false);
+  let score = $state(85);
+</script>
+
+<div class="controls">
+  <label>
+    <input type="checkbox" bind:checked={isLoggedIn} />
+    ログイン状態
+  </label>
+  <label>
+    スコア: {score}
+    <input type="range" min="0" max="100" bind:value={score} />
+  </label>
+</div>
+
+<!-- if 文（条件が真のときだけ表示） -->
+<section>
+  <h4>if 文</h4>
+  {#if isLoggedIn}
+    <p>✓ ログイン済み</p>
+  {/if}
+</section>
+
+<!-- if-else 文 -->
+<section>
+  <h4>if-else 文</h4>
+  {#if score >= 80}
+    <p>優秀！</p>
+  {:else}
+    <p>もう少し頑張りましょう</p>
+  {/if}
+</section>
+
+<!-- if-else if-else 文 -->
+<section>
+  <h4>if-else if-else 文</h4>
+  {#if score >= 90}
+    <p>素晴らしい！</p>
+  {:else if score >= 70}
+    <p>良い成績です</p>
+  {:else if score >= 60}
+    <p>合格です</p>
+  {:else}
+    <p>再試験が必要です</p>
+  {/if}
+</section>
+
+<style>
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    color: #222;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  .controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #222;
+  }
+  section {
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.75rem;
+    border-left: 3px solid #ff3e00;
+  }
+  section h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.8rem;
+  }
+  section p {
+    margin: 0;
+  }
+</style>
+```
+
+### #each - ループ処理
+
+`&#123;#each&#125;`ブロックは、配列やイテラブルオブジェクトをループ処理するためのテンプレート構文です。**項目が一意な ID を持つ場合は、必ず `(item.id)` のように key を指定** してください。これにより Svelte は項目の追加・削除・並び替えを正確に追跡でき、DOM 更新が効率化されるだけでなく、入力フォーカスやトランジションも正しく維持されます。
+
+下の例では「追加」「末尾削除」「全消去」ボタンで配列を操作すると、3 種類の `{#each}` パターン（基本・インデックス付き・空フォールバック）がすべて連動して更新される様子が観察できます。
+
+```svelte live
+<script lang="ts">
+  interface Item {
+    id: number;
+    name: string;
+    price: number;
+  }
+
+  let items = $state<Item[]>([
+    { id: 1, name: 'Apple', price: 100 },
+    { id: 2, name: 'Banana', price: 80 },
+    { id: 3, name: 'Orange', price: 120 }
+  ]);
+
+  let nextId = 4;
+  const samples = ['Grape', 'Mango', 'Pear', 'Kiwi', 'Peach'];
+
+  function addItem() {
+    const name = samples[Math.floor(Math.random() * samples.length)];
+    const price = Math.floor(Math.random() * 200) + 50;
+    items.push({ id: nextId++, name, price });
+  }
+
+  function removeLast() {
+    items.pop();
+  }
+
+  function clear() {
+    items.length = 0;
+  }
+</script>
+
+<div class="controls">
+  <button onclick={addItem}>追加</button>
+  <button onclick={removeLast} disabled={items.length === 0}>末尾削除</button>
+  <button onclick={clear} disabled={items.length === 0}>全消去</button>
+</div>
+
+<!-- 基本的な each（key 付きが推奨デフォルト） -->
+<h4>基本的な each</h4>
+<ul>
+  {#each items as item (item.id)}
+    <li>{item.name}: ¥{item.price}</li>
+  {/each}
+</ul>
+
+<!-- インデックス付き each -->
+<h4>インデックス付き each</h4>
+<ul>
+  {#each items as item, index (item.id)}
+    <li>{index + 1}. {item.name}</li>
+  {/each}
+</ul>
+
+<!-- 空配列のフォールバック（{:else}） -->
+<h4>空配列のフォールバック</h4>
+<ul>
+  {#each items as item (item.id)}
+    <li>{item.name}</li>
+  {:else}
+    <li><em>アイテムがありません（「全消去」を試してください）</em></li>
+  {/each}
+</ul>
+
+<style>
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .controls button {
+    padding: 0.4rem 0.8rem;
+    background: #ff3e00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .controls button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  h4 {
+    margin: 0.75rem 0 0.25rem;
+    color: #666;
+    font-size: 0.85rem;
+  }
+  ul {
+    margin: 0 0 0.5rem;
+    padding-left: 1.25rem;
+  }
+</style>
+```
+
+:::caution[key の選び方]
+
+key には **配列内で一意かつ安定した値** を渡してください（DB の ID、UUID 等）。配列のインデックス（`index`）を key にするのは**避ける**べきです。要素の追加・削除・並び替えで意味が崩れ、Svelte が「同じ key だから同じ要素」と誤認してしまいます。
+
+項目に一意 ID が存在しない場合のみ、key を省略した `{#each items as item}` 形式を使います。
+
+:::
+
+### #await - 非同期処理
+
+`&#123;#await&#125;`ブロックは、非同期処理の結果を待機し、**ローディング → 成功 → エラー** の各状態を宣言的に切り替えるテンプレート構文です。Promise の状態に応じて自動的に表示が切り替わります。
+
+下の例では、無料の REST API モック [JSONPlaceholder](https://jsonplaceholder.typicode.com) からユーザー一覧を取得しています。「インタラクティブに試す」を押すと、Playground 上で **実際の通信が走り、ローディング表示 → 取得完了 → 一覧表示** という遷移を観察できます。
+
+```svelte live
+<script lang="ts">
+  // JSONPlaceholder のユーザー型（学習用に必要なフィールドだけ）
+  type User = {
+    id: number;
+    name: string;
+    email: string;
+    company: { name: string };
+  };
+
+  async function fetchUsers(): Promise<User[]> {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  // コンポーネント初期化時に fetch を開始（Promise を保持）
+  let usersPromise = fetchUsers();
+</script>
+
+<!-- Promise の状態に応じて表示を切り替え -->
+{#await usersPromise}
+  <p>読み込み中...</p>
+{:then users}
+  <h3>ユーザー一覧（{users.length} 件）</h3>
+  <ul>
+    {#each users as user (user.id)}
+      <li>
+        <strong>{user.name}</strong>
+        <small>— {user.email}</small>
+        <br />
+        <em>{user.company.name}</em>
+      </li>
+    {/each}
+  </ul>
+{:catch error}
+  <p style="color: tomato;">エラー: {error.message}</p>
+{/await}
+
+<!-- {:then} だけの短縮形（成功時のみ処理したい場合）-->
+{#await usersPromise then users}
+  <p>取得完了: {users.length} 名のユーザー</p>
+{/await}
+
+<style>
+  ul { line-height: 1.6; }
+  small { color: #666; }
+  em { color: #888; font-size: 0.85em; }
+</style>
+```
+
+ポイントを整理すると、
+
+- `&#123;#await promise&#125;` から `&#123;:then&#125;` までの内容が **ローディング中** に表示される
+- `&#123;:then 変数名&#125;` で **解決値** を受け取り、成功時の UI を書く
+- `&#123;:catch エラー&#125;` で **失敗時** の表示にフォールバック
+- `&#123;#await promise then 変数&#125;` のような短縮形もあり、ローディング・エラーを省略して **成功時のみ** 扱える
+
+:::tip[ネットワークエラーを試したい場合]
+
+`fetch` の URL を `'https://jsonplaceholder.typicode.com/users-not-found'` のような **存在しないパス** に書き換えると、`{:catch error}` ブロックの動作を確認できます。`response.ok` チェックを入れているので、404 が `Error` として投げられて catch 側に流れます。
+
+:::
+
+:::caution[Promise の作り直しに注意]
+
+`let usersPromise = fetchUsers()` は **コンポーネントの初期化時に 1 回だけ** 評価されます。ユーザー操作で再フェッチしたい場合は、リフェッチ時に **新しい Promise を代入し直す** 必要があります（例: ボタンの onclick で `usersPromise = fetchUsers()`）。`{#await}` は Promise の参照が変わったことを検知して、再びローディング状態から始めます。
+
+:::
 
 ### @const - ローカル定数の定義
 

@@ -732,15 +732,26 @@ function handleStatus(status: Status) {
   // ハンドラー（コールバック props で親に通知）
   function handleSort(column: keyof T) {
     if (!sortable) return;
-    
+
     if (sortColumn === column) {
       sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       sortColumn = column;
       sortDirection = 'asc';
     }
-    
+
+    currentPage = 0; // ソート時にページをリセット
     onSort?.(column, sortDirection);
+  }
+
+  // 検索文字列の変化に応じてページをリセット（handler 経由でも良いが、
+  // ここでは bind:value から直接更新されるため $derived で副次的にリセット）
+  // 注: searchQuery を依存にするだけで currentPage を再代入する $effect は
+  //     prefer-writable-derived ルールに引っかかるため、ここでは setter 付きの
+  //     wrapper を使うか、検索 input の oninput ハンドラーで明示的に行う。
+  function handleSearchInput(event: Event & { currentTarget: HTMLInputElement }) {
+    searchQuery = event.currentTarget.value;
+    currentPage = 0;
   }
   
   function handleSelectAll(event: Event & {
@@ -764,18 +775,14 @@ function handleStatus(status: Status) {
     selected = selected;
     onSelectionChange?.(selectedItems);
   }
-  
-  // エフェクト
-  $effect(() => {
-    currentPage = 0; // 検索やソート時にページをリセット
-  });
 </script>
 
 <div class="table-container">
   {#if searchable}
     <input
       type="search"
-      bind:value={searchQuery}
+      value={searchQuery}
+      oninput={handleSearchInput}
       placeholder="検索..."
       class="search-input"
     />

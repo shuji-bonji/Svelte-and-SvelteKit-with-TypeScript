@@ -406,7 +406,7 @@ let { title, icon, actions, children }: Props = $props();
 
       <div class="form-actions">
         <Button onClick={handleSubmit}>送信</Button>
-        <Button variant="secondary" onClick={() => {...}}>リセット</Button>
+        <Button variant="secondary" onClick={() => { /* リセット処理 */ }}>リセット</Button>
       </div>
     </form>
   </section>

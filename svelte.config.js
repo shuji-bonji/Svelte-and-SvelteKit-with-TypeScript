@@ -142,6 +142,15 @@ const mdsvexOptions = {
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.md'],
+	// 記事内のコード例で使う Svelte コンパイラ警告のうち、学習教材として
+	// 残すべきもの（experimental_async など）を ESLint レポートから除外する。
+	// Svelte コンパイラ本体・eslint-plugin-svelte の `valid-compile` 双方が
+	// この warningFilter を参照する。
+	warningFilter: (warning) => {
+		// experimental.async は学習サイトで意図的に使用しているため抑制
+		if (warning.code === 'experimental_async') return false;
+		return true;
+	},
 	preprocess: [
 		// mdsvex より前に走らせる:
 		//   `:::tip[…] … :::` の container directive を `<Admonition>` に書き換え、
@@ -156,6 +165,13 @@ const config = {
 			if (filename?.endsWith('.md')) return false;
 			if (filename?.split(/[/\\]/).includes('node_modules')) return undefined;
 			return true;
+		},
+		// 記事内のコード例で `await` を含む例示が多数あるため、
+		// experimental.async を有効化して experimental_async 警告を抑制する。
+		// （Svelte 5.x の async コンポーネント機能。本来は production-ready 前の
+		//  experimental flag だが、本サイトは学習教材で記事内コード例の検証用なので有効化）
+		experimental: {
+			async: true
 		}
 	},
 	kit: {

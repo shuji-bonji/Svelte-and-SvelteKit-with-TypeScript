@@ -597,7 +597,7 @@ export const isAuthenticated = derived(user, ($user) => !!$user);
 </script>
 
 {#if progress > 0}
-  <div class="progress-bar" style="width: {progress}%" />
+  <div class="progress-bar" style="width: {progress}%"></div>
 {/if}
 ```
 
@@ -721,14 +721,18 @@ console.log(page.params.id);
 
 ##### 1. アクセス方法の違い
 
+`$app/stores`: ストアの `$` プレフィックスが必要
+
 ```svelte
-<!-- $app/stores: ストアの$プレフィックスが必要 -->
 <script lang="ts">
   import { page } from '$app/stores';
 </script>
 <p>現在: {$page.url.pathname}</p>
+```
 
-<!-- $app/state: 直接アクセス -->
+`$app/state`: 直接アクセス
+
+```svelte
 <script lang="ts">
   import { page } from '$app/state';
 </script>

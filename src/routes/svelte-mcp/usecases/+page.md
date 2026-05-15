@@ -225,7 +225,7 @@ Svelte 5 の正しい構文でコンポーネントが生成される。
 
 ### After（Svelte 5）
 
-```svelte
+```svelte bad
 <script lang="ts">
   interface Props {
     initialCount?: number;
@@ -233,6 +233,8 @@ Svelte 5 の正しい構文でコンポーネントが生成される。
 
   let { initialCount = 0 }: Props = $props();
 
+  // initialCount は親から渡された初期値スナップショット（以後 props 変更には追従しない）
+  // ESLint は state_referenced_locally を警告するが、意図的なパターンとして許容
   let count = $state(initialCount);
   let doubled = $derived(count * 2);
 

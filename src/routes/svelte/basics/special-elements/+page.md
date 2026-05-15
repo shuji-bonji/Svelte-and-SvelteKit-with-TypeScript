@@ -250,7 +250,7 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
 <div
   class="custom-cursor"
   style="left: {mouseX}px; top: {mouseY}px;"
-/>
+></div>
 ```
 
 ## `svelte:document` - document要素へのイベントバインディング
@@ -327,7 +327,7 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
   <meta name="twitter:title" content={pageTitle} />
   <meta name="twitter:description" content={description} />
 
-  <!-- 構造化データ -->
+  <!-- 構造化データ：</script> は <\/script> とエスケープして Svelte パーサが script 終端と誤認しないようにする -->
   {@html `<script type="application/ld+json">
     ${JSON.stringify({
       "@context": "https://schema.org",
@@ -335,7 +335,7 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
       "headline": pageTitle,
       "description": description
     })}
-  </script>`}
+  <\/script>`}
 </svelte:head>
 ```
 
@@ -345,23 +345,34 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
 
 ### Runesモードで有効なオプション
 
+`<svelte:options>` は **1 つのコンポーネントにつき 1 個まで** しか書けません。複数のオプションを指定したい場合は、属性をまとめて 1 つの要素に並べます。
+
+`runes` オプション — このコンポーネントを Runes モードに固定
+
 ```svelte
-<!-- runesオプション：このコンポーネントをRunesモードに固定 -->
 <svelte:options runes={true} />
 
-<!-- customElementオプション：Web Componentsとして使用 -->
-<svelte:options customElement="my-component" />
-
-<!-- namespaceオプション：SVG / MathML コンポーネント用 -->
-<svelte:options namespace="svg" />
-
-<!-- cssオプション：CSSをインライン注入（SSRでは<head>のstyle、CSRではJS経由） -->
-<svelte:options css="injected" />
-
 <script lang="ts">
-  // コンポーネントのロジック
   let { value = 'default' }: { value?: string } = $props();
 </script>
+```
+
+`customElement` オプション — Web Components として使用
+
+```svelte
+<svelte:options customElement="my-component" />
+```
+
+`namespace` オプション — SVG / MathML コンポーネント用
+
+```svelte
+<svelte:options namespace="svg" />
+```
+
+`css` オプション — CSS をインライン注入（SSR では `<head>` の style、CSR では JS 経由）
+
+```svelte
+<svelte:options css="injected" />
 ```
 
 :::caution[`accessors` / `immutable` は Runes モードで非対応]
@@ -628,7 +639,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
 ### 1. 適切な要素の選択
 
-```svelte
+```svelte bad
 <!-- ❌ 悪い例：不要な動的要素 -->
 <svelte:element this="div">
   常にdivなのに動的にしている
@@ -642,12 +653,16 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
 ### 2. イベントリスナーの管理
 
-```svelte
-<!-- ❌ 悪い例：パフォーマンスの問題 -->
-<svelte:window onresize={() => updateLayout()} />
+❌ 悪い例：パフォーマンスの問題
 
-<!-- ✅ 良い例：デバウンスで最適化 -->
-<script>
+```svelte
+<svelte:window onresize={() => updateLayout()} />
+```
+
+✅ 良い例：デバウンスで最適化
+
+```svelte
+<script lang="ts">
   import { debounce } from 'lodash-es';
 
   const handleResize = debounce(() => {
@@ -706,9 +721,9 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 `&lt;svelte:fragment&gt;`はSvelte 5でレガシー機能となりました。Svelte 5のSnippetsは自動的に余計なラッパー要素を作らないため、この要素は不要になりました。
 
 </Admonition>
-`&lt;svelte:fragment&gt;`は、DOM要素を追加せずに複数の要素をグループ化できる要素でした。以下は従来の使用例です。
+`&lt;svelte:fragment&gt;`は、DOM要素を追加せずに複数の要素をグループ化できる要素でした。以下は従来の使用例です（Svelte 5 では deprecated。代わりに Snippets を使う）。
 
-```svelte
+```svelte bad
 <script lang="ts">
   let items = $state([
     { id: 1, name: 'Item 1', description: 'Description 1' },
@@ -784,7 +799,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
 `&lt;svelte:component&gt;`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
 
-```svelte
+```svelte bad
 <script lang="ts">
   import ComponentA from './ComponentA.svelte';
   import ComponentB from './ComponentB.svelte';
@@ -864,7 +879,7 @@ SvelteKit から直接 `render(...)` を呼び出すことはできません。S
 
 `&lt;svelte:self&gt;`は、レガシーモードや既存コードとの互換性のために引き続き利用可能です。
 
-```svelte
+```svelte bad
 <!-- TreeNode.svelte -->
 <script lang="ts">
   type TreeNode = {

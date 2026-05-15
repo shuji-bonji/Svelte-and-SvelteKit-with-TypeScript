@@ -249,12 +249,18 @@ src/lib/
 
 利用者は、メインエントリーからすべてのコンポーネントをインポートするか、必要なコンポーネントのみを個別にインポートするかを選択できます。
 
+メインエントリーからインポート（複数コンポーネントをまとめて）
+
 ```svelte
 <script lang="ts">
-  // メインエントリーからインポート
   import { Button, Card, Modal } from 'my-component-library';
+</script>
+```
 
-  // 個別にインポート
+または、個別にインポート（バンドルサイズを最小化）
+
+```svelte
+<script lang="ts">
   import Button from 'my-component-library/Button.svelte';
 </script>
 ```

@@ -504,8 +504,9 @@ $effect(() => {
 ### 計算の最適化
 
 適切な手法を選ぶことで、パフォーマンスと可読性の両方を向上させることができます。
+※ 以下のブロックは比較用に同名変数 `searchResults` を 3 通り並べた**学習用断片**です（そのままでは動きません。実装時はいずれか 1 つを使ってください）。
 
-```svelte
+```svelte bad
 <script lang="ts">
   interface Item {
     id: number;
@@ -592,7 +593,7 @@ Function bindings は Svelte 5.9.0 で導入されました。詳細は [`bind:`
 
 「使った額」と「残額」のように、合計が固定の 2 つの値を双方向に同期したいとします。素直に書くと次のような `$effect` 2 連発になりがちですが、これは典型的なアンチパターンです。
 
-```svelte
+```svelte bad
 <!-- ❌ アンチパターン：$effect で双方向 sync -->
 <script lang="ts">
   const total = 100;

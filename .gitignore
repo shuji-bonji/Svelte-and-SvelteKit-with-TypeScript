@@ -26,5 +26,9 @@ vite.config.ts.timestamp-*
 # Sveltepress live Code
 .sveltepress/live-code
 
+# ESLint check workspace for extracted ```svelte blocks
+.tmp-eslint-check/
+eslint-svelte-blocks-report.md
+
 # FUSE temp files (e.g. from in-place edits over mounted FS)
 .fuse_hidden*

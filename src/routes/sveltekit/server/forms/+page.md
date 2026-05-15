@@ -267,7 +267,7 @@ export const actions = {
     placeholder="メッセージ"
     value={form?.message ?? ''}
     required
-  />
+  ></textarea>
 
   <button type="submit">送信</button>
 </form>
@@ -793,8 +793,10 @@ export const actions = {
 
 #### 方法1: Fetch API + Streams API（モダンな方法）
 
-```svelte
-<!-- src/routes/upload/+page.svelte -->
+```svelte bad
+<!-- src/routes/upload/+page.svelte
+     学習用断片：fileInput は bind:this で代入される前提だが ESLint は
+     no-unassigned-vars を発する。実際は bind:this 経由で代入される -->
 <script lang="ts">
   import type { ActionData } from './$types';
 
@@ -913,7 +915,7 @@ export const actions = {
   }
 </script>
 
-<form onsubmit={(e) => { e.preventDefault(); handleUpload(); }}
+<form onsubmit={(e) => { e.preventDefault(); handleUpload(); }}>
   <input
     type="file"
     bind:this={fileInput}
@@ -926,7 +928,7 @@ export const actions = {
       <div
         class="progress-fill"
         style="width: {progress}%"
-      />
+      ></div>
     </div>
     <p>{progress}% アップロード中...</p>
   {/if}
@@ -1174,11 +1176,13 @@ export const actions = {
 
 オプティミスティックUIは、サーバーレスポンスを待たずに、成功を前提としてUIを即座に更新する手法です。これにより、アプリケーションがより高速に感じられます。エラーが発生した場合は、変更をロールバックします。
 
-```svelte
+```svelte bad
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { PageProps } from './$types';
 
+  // data.todos のスナップショットを内部 state にコピー（オプティミスティック更新用途）
+  // ESLint は state_referenced_locally を警告するが、意図的なパターンとして許容
   let { data }: PageProps = $props();
 
   let todos = $state([...data.todos]);

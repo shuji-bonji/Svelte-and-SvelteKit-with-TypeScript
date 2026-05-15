@@ -36,15 +36,68 @@
 - `$app/state` 推奨（`$app/stores` はレガシー）
 - `PageProps` / `LayoutProps` 推奨（`PageData` / `LayoutData` の直接使用はレガシー）
 
-## Svelte MCP の利用（必須）
+## 品質チェック（必須）
 
-**このプロジェクトのコード修正・記事更新時は、必ず [Svelte MCP](https://svelte.dev/docs/mcp) を利用すること。**
+このプロジェクトのコード修正・記事追加・記事更新時は、以下 2 つを必ず利用してコードを検証すること。
 
-- **`svelte-autofixer`**: Svelteコンポーネントやコード例を書いた/修正した際に必ず実行し、レガシーパターンがないか検証する
+### 1. Svelte MCP — 個別コードと最新仕様の確認
+
+[Svelte MCP](https://svelte.dev/docs/mcp) を利用する。
+
+- **`svelte-autofixer`**: Svelteコンポーネントやコード例を書いた/修正した際に必ず実行し、レガシーパターンがないか検証する。**新しい / 修正したコードは送信前に必ず通す**。
 - **`get-documentation`**: Svelte 5 / SvelteKit の最新仕様を確認する際に使用する
 - **`list-sections`**: 関連するドキュメントセクションを特定する際に使用する
 
-記事内のコード例（Markdownのコードブロック）も、主要なものは `svelte-autofixer` に通して検証すること。
+### 2. eslint-plugin-svelte — 記事内 ```svelte ブロックの一括チェック
+
+`svelte-autofixer` は単一コード単位の検査なので、**既存記事の網羅的スキャン**には別途 ESLint を回す。
+
+```bash
+npm run lint:articles
+```
+
+このスクリプトは、
+
+1. `src/routes/**/*.md` 内のすべての ` ```svelte` コードブロックを `.tmp-eslint-check/` に展開（`scripts/extract-svelte-blocks.mjs`）
+2. `eslint-plugin-svelte` で検査（`eslint.config.js`）
+3. ファイル別／ルール別／元 .md 行番号付きで Markdown レポートを `eslint-svelte-blocks-report.md` に出力
+
+**新しい記事を追加した時、既存記事のコードを修正した時は必ず実行**して、新しい問題が混入していないか確認すること。レポート末尾の「ブロック単位」セクションには元 .md ファイル内の正確な行番号が出るので、Edit で直接修正できる。
+
+#### `bad` meta — 意図的アンチパターン例の除外
+
+「❌ 悪い例」「旧 API のリファレンス」など **意図的に lint エラーになるコード** を載せたい場合は、コードフェンスに `bad` メタを付けて ESLint 検査から除外する。
+
+````markdown
+```svelte bad
+<!-- ❌ アンチパターン：$effect で双方向 sync -->
+<script lang="ts">
+  let celsius = $state(20);
+  let fahrenheit = $state(68);
+  $effect(() => { fahrenheit = celsius * 9 / 5 + 32; });
+  $effect(() => { celsius = (fahrenheit - 32) * 5 / 9; });
+</script>
+```
+````
+
+抽出スクリプトが `bad` メタを検出すると、抽出対象ファイルを空 `.svelte` で上書きし、ESLint レポートに上がらないようにする。記事側の表示には影響しない（mdsvex の highlighter は `bad` を無視する）。
+
+主な使いどころ：
+
+- 比較目的の「❌ NG / ✅ OK」両方を 1 ブロックに詰めた学習用断片
+- `<svelte:component>` / `<svelte:self>` などの **deprecated API のリファレンス**
+- `<script>` を伴わない **コード断片**（`bind:value={text}` の説明だけ抜粋した例など）
+- `live` ブロックではない学習目的の悪い例
+
+逆に、`live` メタ付きブロック（実行可能サンプル）には絶対に `bad` を付けないこと。`live` は実際に Playground で動くべきコードなので、エラーは必ず修正する。
+
+#### 抑制中のルール
+
+`eslint.config.js` で意図的に `'off'` にしているルールがある。理由は設定ファイル内のコメントを参照：
+
+- `svelte/no-navigation-without-resolve` — 説明用 `<a href="/about">` が大半で false positive 多数のため抑制（SvelteKit 2.x の `resolve()` 推奨は記事内の解説で明示）
+
+新規ルールの導入や緩和を検討する際は、`eslint.config.js` を更新して `CHANGELOG.md` に記録すること。
 
 ## カリキュラム構成
 

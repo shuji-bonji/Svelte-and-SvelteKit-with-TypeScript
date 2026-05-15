@@ -1304,14 +1304,18 @@ import type {
 
 Svelte 5では `PageData` の代わりに `PageProps` を使用することが推奨されます。`PageProps` は `data` と `form` をまとめた型です。
 
+❌ 旧パターン（動作はする）
+
 ```svelte
-<!-- ❌ 旧パターン（動作はする） -->
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
   let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
+```
 
-<!-- ✅ 新パターン（推奨） -->
+✅ 新パターン（推奨）
+
+```svelte
 <script lang="ts">
   import type { PageProps } from './$types';
   let { data, form }: PageProps = $props();

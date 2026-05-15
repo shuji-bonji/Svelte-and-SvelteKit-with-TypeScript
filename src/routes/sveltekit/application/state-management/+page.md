@@ -479,10 +479,12 @@ export function useCreatePostMutation() {
 
 TanStack Queryの`useQuery`と`useMutation`を組み合わせることで、データの取得と更新を効率的に管理できます。以下の例では、ブログ投稿の一覧表示と新規作成を実装しています。
 
-```svelte
+```svelte bad
 <script lang="ts">
   import { usePostsQuery, useCreatePostMutation } from '$lib/queries/posts';
-  
+
+  // page は $state、usePostsQuery には初期値が渡される（state_referenced_locally）。
+  // TanStack Query の hook 設計上、page を内部で reactive に追跡する仕組みのため許容。
   let page = $state(1);
   const postsQuery = usePostsQuery(page);
   const createMutation = useCreatePostMutation();

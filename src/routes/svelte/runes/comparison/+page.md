@@ -239,8 +239,9 @@ const state = reactive({ count: 0 });
 state.count++; // 直接アクセス
 ```
 
-```svelte
-<!-- Svelte - 常に直接アクセス -->
+```svelte bad
+<!-- Svelte - 常に直接アクセス（学習用断片：script 直下で state を console.log するため
+     state_referenced_locally 警告が出るが、解説目的なので許容） -->
 <script lang="ts">
   let count = $state(0);
   console.log(count); // 直接アクセス

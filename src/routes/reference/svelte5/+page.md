@@ -378,8 +378,8 @@ interface Props {
 let { value = $bindable(''), checked = $bindable(false) }: Props = $props();
 ```
 
-```svelte
-<!-- 親コンポーネント -->
+```svelte bad
+<!-- 親コンポーネント（リファレンス用の断片。text/isChecked は別途 $state で宣言される前提） -->
 <ChildComponent bind:value={text} bind:checked={isChecked} />
 ```
 
@@ -572,7 +572,9 @@ export default {
 
 #### 使用箇所
 
-```svelte
+```svelte bad
+<!-- リファレンス断片：3. の {@const} は本来 {#snippet}/{#if}/{#each} 等の直下にしか
+     置けないため compile エラー。「await + $derived 組み合わせ」の説明用イメージ -->
 <script lang="ts">
   // 1. <script> トップレベルでのawait
   const user = await fetchUser();
@@ -666,8 +668,10 @@ $effect(() => {
 
 ### 基本構造
 
-```svelte
-<!-- MyComponent.svelte -->
+```svelte bad
+<!-- MyComponent.svelte（リファレンス断片：props を内部 state にコピーする一般的パターン。
+     `let internalCount = $state(count)` は state_referenced_locally 警告を発するが、
+     初期値スナップショット用途として意図的） -->
 <script lang="ts">
   // TypeScriptコード
   import type { Snippet } from 'svelte';
@@ -866,6 +870,17 @@ Svelte 5.29+で導入されたリアクティブなDOM操作パターン（`&#12
 ### 基本的なイベント
 
 ```svelte
+<script lang="ts">
+  function handleClick(event: MouseEvent) {
+    console.log('Clicked!', event.target);
+  }
+
+  function handleSubmit(event: SubmitEvent) {
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    console.log('Form data:', Object.fromEntries(formData));
+  }
+</script>
+
 <!-- インラインハンドラー -->
 <button onclick={() => console.log('Clicked!')}>
   Click me
@@ -947,7 +962,7 @@ $effect(() => {
 
 ### 入力要素
 
-```svelte
+```svelte bad
 <input bind:value={text} />
 <input type="number" bind:value={number} />
 <input type="checkbox" bind:checked />
@@ -967,7 +982,7 @@ $effect(() => {
 
 ### 要素プロパティ
 
-```svelte
+```svelte bad
 <!-- 要素への参照 -->
 <input bind:this={inputElement} />
 
@@ -1195,7 +1210,9 @@ function tooltip(node: HTMLElement, text: string) {
 
 ### svelte:self - 再帰コンポーネント
 
-```svelte
+> Svelte 5 では `<svelte:self>` は **deprecated** です。代わりに、自分自身を `import` して `<Tree node={child} />` のように再帰呼び出しするのが推奨。下記コードは旧構文のリファレンスとして残しています。
+
+```svelte bad
 <!-- Tree.svelte -->
 <script lang="ts">
   interface TreeNode {
@@ -1220,14 +1237,16 @@ function tooltip(node: HTMLElement, text: string) {
 
 ### svelte:component - 動的コンポーネント
 
-```svelte
+> Svelte 5 では `<svelte:component>` は **deprecated**。変数名が大文字始まりなら `<CurrentComponent {...componentProps} />` のように直接書けます。下記は旧構文のリファレンスとして残しています。
+
+```svelte bad
 <script lang="ts">
   import type { Component } from 'svelte';
 
   let currentComponent: Component = $state(ComponentA);
 </script>
 
-<!-- Svelte 5では直接コンポーネントを動的に使用可能 -->
+<!-- 旧構文：Svelte 5 では <svelte:component> なしで直接書ける -->
 <svelte:component this={currentComponent} {...componentProps} />
 ```
 
@@ -1247,7 +1266,7 @@ Svelte 5では `&lt;svelte:component&gt;` なしで直接 `<currentComponent />`
 
 ### svelte:window, svelte:body, svelte:document, svelte:head
 
-```svelte
+```svelte bad
 <svelte:window bind:scrollY onkeydown={handleKeydown} />
 <svelte:body onmouseenter={() => console.log('Mouse entered')} />
 <svelte:document onvisibilitychange={() => console.log('Visibility changed')} />

@@ -1275,7 +1275,7 @@ Svelteは様々なイージング関数を提供しています。
     class="modal-backdrop"
     transition:fade={{ duration: 200 }}
     onclick={closeModal}
-  />
+  ></div>
 
   <!-- モーダル本体 -->
   <div

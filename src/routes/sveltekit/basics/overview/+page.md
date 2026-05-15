@@ -555,7 +555,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
       bind:value={newPost.content}
       placeholder="内容"
       required
-    />
+    ></textarea>
     <button type="submit" disabled={loading}>
       {loading ? '送信中...' : '投稿する'}
     </button>

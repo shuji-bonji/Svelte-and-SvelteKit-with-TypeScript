@@ -278,7 +278,7 @@ Load 関数はこれらの問題を解決します。
 
 #### コード例
 
-```svelte
+```ts
 // +page.ts
 export const load = async ({ fetch }) => {
   // ページ表示前にデータ取得

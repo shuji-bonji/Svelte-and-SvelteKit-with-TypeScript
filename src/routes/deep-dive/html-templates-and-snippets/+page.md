@@ -36,6 +36,8 @@ Svelteの `#snippet` は 再利用可能なコード断片（HTML構造＋動作
 ##### 使用例
 
 ```svelte
+<script lang="ts"></script>
+
 {#snippet userCard(name: string)}
   <div class="card">
     <p>{name}さん、こんにちは！</p>
@@ -44,6 +46,8 @@ Svelteの `#snippet` は 再利用可能なコード断片（HTML構造＋動作
 
 {@render userCard('太郎')}
 ```
+
+> `{#snippet name(arg: T)}` で TypeScript 型注釈を使うには、コンポーネントが TypeScript モードである必要があります（`<script lang="ts">` の有無で判定されます）。
 
 ### 特徴
 - Svelte専用の記法

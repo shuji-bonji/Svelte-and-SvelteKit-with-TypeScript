@@ -34,16 +34,16 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔐</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        認証・認可 <span class="text-xs">(準備中)</span>
+        認証・認可の全体像とライブラリ選定
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3" style="color: var(--color-card-desc);">セキュアな認証システムの実装方法を学びます。</p>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">Better Auth / Auth.js / Lucia / 自前実装の比較と認証方式の判断フロー。</p>
       <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
-        <li><strong>Lucia Auth</strong>: SvelteKit用認証ライブラリ</li>
-        <li><strong>OAuth 2.0</strong>: Google/GitHub認証</li>
-        <li><strong>セッション管理</strong>: セキュアな実装</li>
-        <li><strong>ロールベース制御</strong>: RBAC実装</li>
-        <li><strong>多要素認証</strong>: 2FA/MFA対応</li>
+        <li><strong>Better Auth</strong>: 推奨される新規実装の第一候補</li>
+        <li><strong>Auth.js</strong>: 80+ プロバイダ対応</li>
+        <li><strong>Session/JWT/OAuth/Passkey</strong>: 方式の選び方</li>
+        <li><strong>RBAC</strong>: ロールベースアクセス制御</li>
+        <li><strong>CSRF/Cookie</strong>: セキュリティ考慮事項</li>
       </ul>
     </div>
   </a>
@@ -88,16 +88,16 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🗄️</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        データベース統合 <span class="text-xs">(準備中)</span>
+        データベース統合 — Drizzle / Prisma 戦略
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3" style="color: var(--color-card-desc);">データベースとの効率的な連携方法を習得します。</p>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">Drizzle / Prisma 比較、DB 選択軸、Remote Functions 連携を解説。</p>
       <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
-        <li><strong>Prisma</strong>: 型安全なORM</li>
-        <li><strong>Drizzle ORM</strong>: 軽量で高速</li>
-        <li><strong>PostgreSQL</strong>: 本番向けDB</li>
-        <li><strong>トランザクション</strong>: データ整合性</li>
-        <li><strong>マイグレーション</strong>: スキーマ管理</li>
+        <li><strong>Drizzle</strong>: schema.ts が source of truth</li>
+        <li><strong>Prisma</strong>: 宣言的スキーマ DSL</li>
+        <li><strong>コネクションプーリング</strong>: サーバーレス対策</li>
+        <li><strong>トランザクション</strong>: 整合性確保</li>
+        <li><strong>N+1 対策</strong>: with / inArray パターン</li>
       </ul>
     </div>
   </a>
@@ -106,7 +106,7 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚙️</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        環境変数管理 <span class="text-xs">(準備中)</span>
+        環境変数管理
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3" style="color: var(--color-card-desc);">セキュアな設定管理とシークレット保護を実装します。</p>
@@ -124,7 +124,7 @@ description: SvelteKitのアプリケーション構築をTypeScriptで実践 - 
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🚨</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        エラーハンドリング <span class="text-xs">(準備中)</span>
+        エラーハンドリング
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3" style="color: var(--color-card-desc);">堅牢なエラー処理とユーザー体験の向上を実現します。</p>

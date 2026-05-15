@@ -380,8 +380,8 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">認証・認可（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Lucia Auth、JWT、OAuth</td>
+            <td class="py-2"><a href="{base}/sveltekit/application/authentication/" class="text-purple-600 dark:text-purple-400 hover:underline">認証・認可の全体像</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Better Auth / Auth.js / Lucia 比較、Session/JWT/OAuth/Passkey</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/session/" class="text-purple-600 dark:text-purple-400 hover:underline">セッション管理と認証戦略</a></td>
@@ -396,16 +396,16 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">トークンベース認証、RBAC、ルートグループ活用</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">データベース統合（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Prisma、Drizzle ORM</td>
+            <td class="py-2"><a href="{base}/sveltekit/application/database/" class="text-purple-600 dark:text-purple-400 hover:underline">データベース統合</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Drizzle / Prisma 戦略、Remote 連携、N+1 対策</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">環境変数管理（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">PUBLIC_変数、秘密情報</td>
+            <td class="py-2"><a href="{base}/sveltekit/application/environment/" class="text-purple-600 dark:text-purple-400 hover:underline">環境変数管理</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">$env モジュール 4 種、PUBLIC_ プレフィックス、秘密情報</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">エラーハンドリング（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">エラーページ、ログ戦略</td>
+            <td class="py-2"><a href="{base}/sveltekit/application/error-handling/" class="text-purple-600 dark:text-purple-400 hover:underline">エラーハンドリング</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">error() / +error.svelte / handleError / App.Error</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/application/testing/" class="text-purple-600 dark:text-purple-400 hover:underline">テスト戦略</a></td>
@@ -445,8 +445,8 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
         </thead>
         <tbody class="divide-y divide-gray-1 dark:divide-gray-8">
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">パフォーマンス最適化（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">コード分割、遅延読み込み</td>
+            <td class="py-2"><a href="{base}/sveltekit/optimization/performance/" class="text-slate-600 dark:text-slate-300 hover:underline">パフォーマンス最適化と計測</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Core Web Vitals (LCP/INP/CLS)、web-vitals v4、Pagefind</td>
           </tr>
           <tr>
             <td class="py-2"><a href="{base}/sveltekit/optimization/build-optimization/" class="text-slate-600 dark:text-slate-300 hover:underline">ビルド最適化</a></td>
@@ -465,8 +465,8 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">ログ／メトリクス／トレース</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">SEO最適化（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">メタタグ、構造化データ</td>
+            <td class="py-2"><a href="{base}/sveltekit/optimization/seo/" class="text-slate-600 dark:text-slate-300 hover:underline">SEO 最適化</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">svelte:head / OGP / JSON-LD / sitemap / canonical</td>
           </tr>
         </tbody>
       </table>
@@ -506,12 +506,12 @@ SvelteKitは、Svelteをベースにした**モダンなフルスタックWebア
             <td class="py-2 text-gray-6 dark:text-gray-4">ライブラリとしてnpm公開</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">セキュリティ（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">CSRF、XSS、CSP</td>
+            <td class="py-2"><a href="{base}/sveltekit/deployment/security/" class="text-sky-700 dark:text-sky-400 hover:underline">セキュリティ対策</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">kit.csp / kit.csrf.trustedOrigins / handle hook 多重防御</td>
           </tr>
           <tr>
-            <td class="py-2"><span class="text-gray-5 dark:text-gray-5">モニタリング（準備中）</span></td>
-            <td class="py-2 text-gray-6 dark:text-gray-4">Analytics、エラー追跡</td>
+            <td class="py-2"><a href="{base}/sveltekit/deployment/monitoring/" class="text-sky-700 dark:text-sky-400 hover:underline">モニタリングと運用観測</a></td>
+            <td class="py-2 text-gray-6 dark:text-gray-4">Sentry / OpenTelemetry / Pino / ヘルスチェック</td>
           </tr>
         </tbody>
       </table>

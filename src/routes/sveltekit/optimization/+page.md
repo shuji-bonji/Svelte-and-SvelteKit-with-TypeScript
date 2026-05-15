@@ -34,16 +34,16 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">⚡</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        パフォーマンス最適化 <span class="text-xs">(準備中)</span>
+        パフォーマンス最適化と計測
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
-      <p class="text-sm mb-3" style="color: var(--color-card-desc);">Core Web Vitalsを改善し、高速なUXを実現します。</p>
+      <p class="text-sm mb-3" style="color: var(--color-card-desc);">Core Web Vitals 改善ループと Pagefind 検索統合を解説します。</p>
       <ul class="text-sm space-y-1 flex-grow list-disc pl-5" style="color: var(--color-card-list);">
-        <li><strong>LCP最適化</strong>: 2.5秒以内の表示</li>
-        <li><strong>INP改善</strong>: 200ms以内の応答</li>
-        <li><strong>CLS削減</strong>: レイアウトシフト防止</li>
-        <li><strong>ランタイム最適化</strong>: 実行時パフォーマンス</li>
-        <li><strong>メモリ管理</strong>: リーク防止</li>
+        <li><strong>LCP 最適化</strong>: enhanced-img / フォント戦略</li>
+        <li><strong>INP 改善</strong>: 動的 import / hydration 削減</li>
+        <li><strong>CLS 削減</strong>: aspect-ratio / size-adjust</li>
+        <li><strong>web-vitals v4</strong>: RUM 計測ループ</li>
+        <li><strong>Pagefind 統合</strong>: 静的全文検索</li>
       </ul>
     </div>
   </a>
@@ -70,7 +70,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">💾</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        キャッシュ戦略 <span class="text-xs">(準備中)</span>
+        キャッシュ戦略
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3" style="color: var(--color-card-desc);">効果的なキャッシュ戦略で高速化とコスト削減を実現します。</p>
@@ -124,7 +124,7 @@ SvelteKitアプリケーションの**パフォーマンスを最大限に引き
     <div class="section-card p-4 cursor-pointer flex flex-col w-full">
       <div class="text-3xl mb-2">🔍</div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--color-card-title);">
-        SEO最適化 <span class="text-xs">(準備中)</span>
+        SEO 最適化
         <span class="inline-block ml-1 text-xs opacity-60">→</span>
       </h3>
       <p class="text-sm mb-3" style="color: var(--color-card-desc);">検索エンジン最適化で可視性を向上させます。</p>
@@ -220,8 +220,8 @@ export default defineConfig({
 2. **キャッシュ戦略** - HTTP/CDN/Service Worker
 3. **Service Workers / PWA** - オフラインとインストール対応
 4. **Observability** - 本番環境の計測と可視化
-5. **パフォーマンス最適化（準備中）** - Core Web Vitals の改善
-6. **SEO最適化（準備中）** - 検索エンジン対策
+5. **パフォーマンス最適化** - Core Web Vitals の改善ループ
+6. **SEO 最適化** - svelte:head / OGP / JSON-LD / sitemap / canonical
 
 ### 学習目標
 

@@ -623,6 +623,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: '動的コンテンツ取り扱い API の比較',
           to: '/deep-dive/dynamic-content-api-comparison/',
         },
+        {
+          title: 'Svelte 5 シグナルグラフの内部構造',
+          to: '/deep-dive/svelte-signal-graph/',
+        },
       ],
     },
   ],

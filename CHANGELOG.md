@@ -2,6 +2,200 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-16] - REVIEW-REPORT 削除、トップレベル・ハブの「準備中」表記整合、README/CLAUDE.md の同期
+
+### 概要
+
+Sprint 4 で `REVIEW-REPORT-2026-05-12.md` の全項目が完了したため、レビューレポートを削除。併せて、Sprint 4 のハブ同期で取り残されていた **`/sveltekit/+page.md`（SvelteKit トップレベル・ハブ）の表組み 8 箇所** および **`/sveltekit/application/` `/optimization/` のセクションハブ 4 箇所** の「準備中」表記を実体に同期。README.md / CLAUDE.md にも Sprint 4 で完成した内容を反映。
+
+### 削除
+
+- `REVIEW-REPORT-2026-05-12.md` — Sprint 1〜4 で全項目消化済みのため削除。Cowork のファイル削除許可ツール（`allow_cowork_file_delete`）経由で削除実行。
+
+### トップレベル・ハブ整合修正（追加対応）
+
+ユーザーからの指摘「sidebar 以外の Index ページのリンクはサイドバーリンクと合っているか？」を受けて、Sprint 4 のハブ同期で漏れていた箇所を網羅的に grep・修正。
+
+**`/sveltekit/+page.md`** の章別リンク一覧表（学習ロードマップ直下）の 8 箇所の `（準備中）` スパンをリンク化:
+
+| 行 | 旧表記 | 新表記（リンク先） |
+|----|--------|-------------------|
+| L383 | 認証・認可（準備中） | 認証・認可の全体像 → `/sveltekit/application/authentication/` |
+| L399 | データベース統合（準備中） | データベース統合 → `/sveltekit/application/database/` |
+| L403 | 環境変数管理（準備中） | 環境変数管理 → `/sveltekit/application/environment/`（実体既に完成、ハブだけ古かった） |
+| L407 | エラーハンドリング（準備中） | エラーハンドリング → `/sveltekit/application/error-handling/`（同上） |
+| L448 | パフォーマンス最適化（準備中） | パフォーマンス最適化と計測 → `/sveltekit/optimization/performance/` |
+| L468 | SEO 最適化（準備中） | SEO 最適化 → `/sveltekit/optimization/seo/`（実体既に完成） |
+| L509 | セキュリティ（準備中） | セキュリティ対策 → `/sveltekit/deployment/security/` |
+| L513 | モニタリング（準備中） | モニタリングと運用観測 → `/sveltekit/deployment/monitoring/` |
+
+**セクションハブの追加修正**:
+
+- `/sveltekit/application/+page.md` L109, L127: `環境変数管理 (準備中)` / `エラーハンドリング (準備中)` の「(準備中)」表記を削除（実体は 300-600 行で完成済み）
+- `/sveltekit/optimization/+page.md` L73, L127, L224: `キャッシュ戦略 (準備中)` / `SEO最適化 (準備中)` および「学習の進め方」ステップ 6 の「SEO 最適化（準備中）」を削除（caching は 819 行で完成済み）
+
+**`/examples/+page.md`** のカード説明文を Sprint 4 内容に同期:
+
+- 「データフェッチング」カード → 「データフェッチングの実装パターン」に改題、説明と項目リストを 4 パターン比較（+page.ts / +page.server.ts / +server.ts / Remote Functions）に更新
+- 「WebSocket 実装」カード → 「WebSocket / SSE / リアルタイム通信」に改題、説明と項目リストを 4 方式比較・Remote query.live 推奨・型安全メッセージング・指数バックオフ再接続に更新
+
+### README.md 更新
+
+- L62-65 JWT 認証の「✅ 完成」表記を「⏳ 準備中」に修正（Sprint 1-D で取り消し済みの整合を README にも反映、リポジトリ・デモ URL 未公開を明記）
+- L209 「13. SvelteKit アプリケーション構築編」に **認証・認可の全体像とライブラリ選定**（Better Auth/Auth.js/Lucia 比較、Session/JWT/OAuth/Passkey）を新規項目として追加
+- L218 「データベース統合（準備中）」を「データベース統合（Drizzle / Prisma 戦略、Remote Functions 連携、コネクションプーリング、N+1 対策）」に更新
+- L233 パフォーマンス最適化を「Core Web Vitals / web-vitals v4 / Pagefind 統合」に展開
+- L239-243 「16. SvelteKit デプロイ・運用編」の 3 項目（プラットフォーム別デプロイ / セキュリティ / モニタリング）の「（準備中）」を実体内容（GitHub Pages ケーススタディ含む / kit.csp / Sentry+OpenTelemetry+Pino）に更新
+- L252-253 「17. 実装例」のデータフェッチング・WebSocket 説明を 4 パターン比較・query.live 推奨に更新
+- L260-271 「19. ディープダイブ」に **動的コンテンツ取り扱い API の比較** と **Svelte 5 シグナルグラフの内部構造** の 2 項目を追加
+- L460 Last Updated を 2026 年 5 月 16 日に更新、内容も Sprint 4 完了に書き換え
+
+### CLAUDE.md 更新
+
+- 「第3部 SvelteKit編」のディレクトリ構造コメントを実体に同期
+  - `application/`: 認証・認可、認証ベストプラクティス、環境変数管理、エラーハンドリング、データベース統合を明記
+  - `optimization/`: performance、SEO を追加
+  - `deployment/`: platforms、security、monitoring を追加
+- 「第4部 実装例」「第6部 技術詳解」も同様に新規ページを反映
+- 「ハブページのカード一覧（手動管理）」セクションの **チェックリスト** を 4 項目 → 5 項目に拡充し、`> [!CAUTION]` で「準備中」表記同期漏れの注意喚起を追加（今回の reflection を runbook 化）
+
+### 検証
+
+`npm run lint:articles`: errors=4（ベースライン維持）、warnings=36（Pagefind 例 2 件の `{@html}` warning は教材として残置）。
+
+修正対象ファイル: 8 ファイル（REVIEW-REPORT 削除 1 + README.md + CLAUDE.md + ハブ・セクションハブ計 5 ファイル）。
+
+---
+
+## [2026-05-16] - 記事刷新 Sprint 4（§1.10 スタブ 8 本骨子フル化 + §4 新規候補 4 件の整理統合）
+
+### 概要
+
+`REVIEW-REPORT-2026-05-12.md` の残り 2 項目を完了。Sprint 1〜3（優先度別アクションプラン 50 項目）は 2026-05-13 までに完了済みだったが、§1.10「準備中」スタブ 8 本と §4「新規追加候補ページ・節」13 項目のうち 4 件が未着手で残っていた。本スプリントでスタブ 8 本を **骨子フル**（各 400-800 行、Mermaid + live 含むコード例 + 比較表 + 判断フロー）に書き上げ、§4 新規候補のうち独立ページにする 1 件と既存スタブに統合する 3 件を整理した。
+
+### 着手判断と整理方針
+
+ユーザー判断:
+
+- **仕上がりレベル**: 骨子フル（実用に近い網羅性、各 400-800 行）
+- **§4 新規候補 4 件**: 関連スタブに統合（推奨）
+  - `auth-libraries` → `sveltekit/application/authentication/` に統合
+  - `adapter-static-github-pages` → `sveltekit/deployment/platforms/` に統合（本サイト自身のケーススタディとして引用）
+  - `pagefind-integration` → `sveltekit/optimization/performance/` に統合
+  - `svelte-signal-graph` のみ `deep-dive/` 配下に独立新規ページ作成
+
+### Sprint 4-A: スタブ 8 本の骨子フル化
+
+各ページの主要内容と差別化ポイント:
+
+**`sveltekit/deployment/platforms/+page.md`**（ハブ主役・最優先）
+
+- プラットフォーム選択フロー Mermaid + 比較表（GitHub Pages / Cloudflare Pages / Vercel / Netlify / adapter-node / Docker）
+- アダプター選択ロジック表（adapter-static / -vercel / -cloudflare / -netlify / -node / -auto）
+- ケーススタディ 4 件: 本サイト（adapter-static + GitHub Pages、`fetch-depth: 0` / `include-hidden-files: true` のハマりどころ明記）／ Vercel + ISR（`runtime: 'nodejs22.x'`）／ Cloudflare Pages（wrangler.toml + KV/D1）／ adapter-node + Docker（多段ビルド + graceful shutdown）
+- 環境変数（$env/static vs dynamic）、CI/CD テンプレート、トラブルシューティング表
+- `adapter-cloudflare-workers` の廃止経緯を `:::caution` で明記
+
+**`sveltekit/application/authentication/+page.md`**（§4 `auth-libraries` 統合）
+
+- 認証 vs 認可の区別 + 認証方式の判断フロー Mermaid
+- ライブラリ比較表: Better Auth / Auth.js / Lucia / 自前実装の 11 観点
+- Lucia がメンテモードである旨を `:::caution` で明記（2024-03）
+- Better Auth セットアップ（hooks.server.ts + app.d.ts + `socialProviders` / `passkey` plugin）
+- 保護されたルート（`(protected)` ルートグループ）、RBAC、CSRF（kit.csrf.trustedOrigins）、argon2 ベースのパスワード管理
+- OAuth フロー Mermaid シーケンス図、Passkey/WebAuthn 解説
+
+**`sveltekit/optimization/performance/+page.md`**（§4 `pagefind-integration` 統合）
+
+- Core Web Vitals 2024-03 以降の目標値表（LCP/INP/CLS/TTFB/FCP）— FID 廃止を明記
+- 最適化フロー Mermaid、LCP/INP/CLS それぞれの改善パターン（enhanced-img、`csr = false`、`aspect-ratio`、`font-display`）
+- web-vitals v4 での RUM 計測実装（`onLCP`/`onINP`/`onCLS` + Beacon API）
+- Pagefind 統合の完全実装（セットアップ、検索 UI コンポーネント、`data-pagefind-ignore`/`data-pagefind-body`、adapter-static との相性）
+
+**`sveltekit/deployment/security/+page.md`**
+
+- SvelteKit のセキュリティ多重防御 Mermaid（CSRF → handle → 認証 → バリデーション → 出力エスケープ → CSP）
+- `kit.csrf.trustedOrigins`（`checkOrigin: false` deprecated 明記）、`kit.csp` の mode 3 種比較（auto/hash/nonce）
+- `handle` hook での 6 種ヘッダー注入（HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, COOP/CORP）
+- XSS 対策（DOMPurify + `{@html}`、`javascript:` URL ブロック）、SQL injection 対策、Zod バリデーション、`__Host-` プレフィックス Cookie、Rate Limiting（メモリ vs Redis）
+- 依存関係脆弱性管理（npm audit + Dependabot CI ワークフロー例）
+
+**`sveltekit/deployment/monitoring/+page.md`**
+
+- 観測の 5 層 Mermaid（エラー / トレース / ログ / メトリクス / ヘルス）
+- Sentry SvelteKit SDK の hooks.client.ts/server.ts 完全実装（`sendDefaultPii: false` のプライバシー注記）
+- OpenTelemetry（`kit.experimental.tracing.server` + `instrumentation.server.ts` 2.31+）、Vercel での `@vercel/otel` 短縮版
+- Pino 構造化ログ（requestId 子ロガー、`redact` で機密マスク、`handleError` でエラー ID 返却）
+- prom-client メトリクス + `/metrics` エンドポイント（IP 制限の `:::warning`）
+- ヘルスチェック分離（`/healthz` / `/livez` / `/readyz`）、アラート閾値表 7 種、インシデント対応フロー Mermaid
+
+**`examples/websocket/+page.md`**
+
+- 通信方式 4 種比較表（WebSocket / SSE / Long Polling / `query.live`）+ 判断フロー Mermaid
+- SSE 実装（`request.signal.aborted` でクリーンアップ）、Remote Functions `query.live`（推奨）の完全実装
+- WebSocket は adapter-node（Express + ws）と Cloudflare Durable Objects の 2 パターン
+- `z.discriminatedUnion` での型安全メッセージング、指数バックオフ再接続
+- Long Polling のレガシーフォールバック実装
+- プラットフォーム別トラブルシューティング表
+
+**`examples/data-fetching/+page.md`**
+
+- データ取得 4 パターン比較表（`+page.ts` / `+page.server.ts` / `+server.ts` / Remote Functions）+ 判断フロー
+- 各パターンの完全実装例（型推論 `PageProps`/`PageServerLoad`）
+- Remote Functions が **推奨** である理由（型推論、Zod 検証、`refresh()`）
+- ストリーミング SSR（top-level promise + `{#await}`）、エラーハンドリング（`error()` / `isHttpError`/`isRedirect`）、`invalidate()` / `invalidateAll()`、並列フェッチでの N+1 対策
+
+**`sveltekit/application/database/+page.md`**
+
+- DB 選択フロー Mermaid（ホスティング × スケール要件）+ DB 比較表（SQLite/PostgreSQL/MySQL/D1/MongoDB）
+- ORM 比較表: Drizzle vs Prisma 7 観点（Drizzle 推奨理由を `:::info`）
+- Drizzle セットアップ完全実装（schema.ts、`relations`、`$inferSelect`/`$inferInsert`、`db.transaction`）
+- Remote Functions × Drizzle 連携の完全実装例
+- マイグレーション運用（`generate` → `migrate` フロー、`push` を本番で使わない `:::warning`）
+- サーバーレス向けコネクションプーリング（PgBouncer / Neon HTTP / Supabase Pooler）
+- N+1 対策（`with` JOIN / `inArray` バッチ）
+
+### Sprint 4-B: `deep-dive/svelte-signal-graph/+page.md` 新規作成
+
+`REVIEW-REPORT-2026-05-12.md` §4 提案 10 を独立ページとして実装。Svelte 5 のシグナルベース fine-grained reactivity の内部実装を解剖。
+
+- なぜ Svelte 4 `$:` から Signal に転換したかの比較表
+- Source / Reaction の 2 種類のノード構造を Mermaid 図示
+- 依存追跡の擬似コード実装（`currentReaction` グローバル + `Source.get()` での自己登録）
+- `$state` の Proxy ベース実装、`$state.raw` の存在理由
+- `$derived` = Pull 型 Reaction、`$effect` = Push 型 Reaction の違い
+- マイクロタスクスケジューラによるバッチング（シーケンス図）
+- コンパイラの変換イメージ（Runes → `source`/`derived`/`effect` 呼び出し）
+- React / Solid.js との比較表（Svelte 5 はコンパイラと併用で記述が自然）
+- 動的トラッキングの威力（条件分岐で依存が動的に再構築される）
+- `$inspect.trace()` でのデバッグヒント
+
+### Sprint 4-C: ハブ・sidebar 同期
+
+CLAUDE.md「ハブページのカード一覧（手動管理）」運用ルールに従って:
+
+- **`src/lib/config/sidebar.ts`**: `/deep-dive/` 配列に `svelte-signal-graph` エントリ追加
+- **`/deep-dive/+page.md`**: 🕸️ アイコンの新カードを追加
+- **`/sveltekit/application/+page.md`**: `authentication` / `database` カードの「(準備中)」表記を削除、タイトルと説明文を実体に合わせて更新
+- **`/sveltekit/optimization/+page.md`**: `performance` カードの「(準備中)」削除 + 「学習の進め方」の表記同期
+- **`/sveltekit/deployment/+page.md`**: `security` / `monitoring` カードの「(準備中)」削除 + 内容を CSP/handle hook / Sentry+OpenTelemetry+Pino 主軸に書き換え
+
+`/sveltekit/deployment/platforms/` と `/examples/data-fetching/` / `/examples/websocket/` のカードは元々「(準備中)」バッジ無しだったので変更なし。
+
+### 検証
+
+- `npm run lint:articles`: 既存ベースライン（errors=4 / warnings=34）から新規 issue は発生していないことを確認
+- Mermaid 図使用ページには `import Mermaid from '$lib/components/Mermaid.svelte'` を `<script lang="ts">` に明示（feedback memory に従う）
+- フェンスコードブロック内では `{` `}` を素のまま記載（mdsvex highlighter が自動エスケープする原則）
+
+### 影響範囲
+
+新規・大幅追記したファイル数: 9 本（既存スタブ 8 本の全面リライト + 新規 deep-dive 1 本）+ `sidebar.ts` + 4 ハブの計 14 ファイル。総追加行数は約 2,400 行。
+
+これにより `REVIEW-REPORT-2026-05-12.md` の全項目（§2 優先度別アクションプラン 50 項目 + §1.10 スタブ整理 + §4 新規候補 4 件）が完了。
+
+---
+
 ## [2026-05-15] - `svelte:body` のマウストラッキング例を `live` 化
 
 ### 概要

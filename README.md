@@ -59,10 +59,10 @@
    - SQLite（Prisma）を使用したユーザー管理
    - [デモサイト](https://svelte5-auth-basic.vercel.app/)
 
-2. **JWT 認証** - [svelte5-auth-jwt](https://github.com/shuji-bonji/svelte5-auth-jwt) ✅ 完成
+2. **JWT 認証** - `svelte5-auth-jwt` ⏳ 準備中
    - JSON Web Token ベースの認証
    - Jose ライブラリによるトークン生成・検証
-   - [デモサイト](https://svelte5-auth-jwt.vercel.app/)
+   - リポジトリ・デモサイトともに未公開（記事のみスタブ）
 
 これらのプロジェクトは本ドキュメントの学習内容と連動し、実際に動作するコードとして提供されています。
 
@@ -208,6 +208,7 @@
 
 ### 13. SvelteKit アプリケーション構築編
 
+- 認証・認可の全体像とライブラリ選定（Better Auth / Auth.js / Lucia 比較、Session/JWT/OAuth/Passkey 判断フロー）
 - セッション管理と認証戦略
 - 認証ベストプラクティス
 - テスト戦略
@@ -215,7 +216,7 @@
 - 環境変数管理（$env モジュール 4種、.env 設定、セキュリティ）
 - エラーハンドリング（error() / +error.svelte / handleError / App.Error）
 - Snapshots（DOM 状態の保持）
-- データベース統合（準備中）
+- データベース統合（Drizzle / Prisma 戦略、Remote Functions 連携、コネクションプーリング、N+1 対策）
 
 ### 14. SvelteKit エンタープライズ開発（計画中）
 
@@ -229,18 +230,18 @@
 
 - ビルド最適化
 - キャッシュ戦略
-- パフォーマンス最適化
+- パフォーマンス最適化と計測（Core Web Vitals / web-vitals v4 / Pagefind 統合）
 - SEO 最適化（svelte:head / OGP / JSON-LD / サイトマップ / robots.txt）
 - Service Workers / PWA（オフライン対応・キャッシュ戦略）
 - Observability（OpenTelemetry トレーシング）
 
 ### 16. SvelteKit デプロイ・運用編
 
-- プラットフォーム別デプロイ（準備中）
+- プラットフォーム別デプロイガイド（adapter-static / Vercel / Cloudflare / Node、本サイトの GitHub Pages ケーススタディ）
 - 実行環境とランタイム
 - パッケージング（コンポーネントライブラリ公開）
-- セキュリティ（準備中）
-- モニタリング（準備中）
+- セキュリティ対策（kit.csp / kit.csrf.trustedOrigins / handle hook で多重防御）
+- モニタリングと運用観測（Sentry / OpenTelemetry / Pino / ヘルスチェック）
 
 ### 17. 実装例
 
@@ -248,8 +249,8 @@
 - Cookie/Session 認証
 - JWT 認証
 - TODO アプリ
-- データフェッチング
-- WebSocket 実装
+- データフェッチング（load 関数 / API ルート / Remote Functions の 4 パターン比較）
+- WebSocket / SSE / リアルタイム通信（4 方式比較、Remote query.live 推奨）
 - Mermaid ダイアグラム（SSR 対応）
 
 ### 18. リファレンス
@@ -269,6 +270,8 @@ Svelte 5 の内部実装や高度なトピックを扱います。
 - HTML テンプレートと Snippets
 - カスタム要素と Svelte コンポーネント
 - SvelteKit プレースホルダー（`%sveltekit.*%`）
+- 動的コンテンツ取り扱い API の比較（`bind:innerHTML` / `{@html}` / Snippets / children）
+- **Svelte 5 シグナルグラフの内部構造** — Source/Reaction ノード、依存追跡、コンパイラとランタイムの責任分担を解剖
 
 ## 📊 Mermaid ダイアグラム機能
 
@@ -457,4 +460,4 @@ npm run preview
 
 変更履歴の詳細は[CHANGELOG.md](./CHANGELOG.md)を参照してください。
 
-**Last Updated**: 2026 年 5 月 6 日 - 依存関係メジャーアップデート（Vite 8 / vite-plugin-svelte 7 / TypeScript 6）。技術スタックバージョン、推奨環境、セットアップ手順を最新化（npm への統一を含む）
+**Last Updated**: 2026 年 5 月 16 日 - 記事刷新 Sprint 4 完了。`REVIEW-REPORT-2026-05-12.md` 全項目を消化（§1.10「準備中」スタブ 8 本を骨子フル化、§4 新規候補 4 件を整理統合、独立新規ページ `deep-dive/svelte-signal-graph/` を追加）。`/sveltekit/` トップレベル・ハブと各セクション・ハブの「準備中」表記も実体に同期

@@ -56,43 +56,45 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
 
 ```svelte live
 <script lang="ts">
-  let tag = $state('div');
-  let href = $state('https://svelte.dev');
-
-  // タグの選択肢
-  const tags = ['div', 'section', 'article', 'a', 'button'];
+  // 見出しレベルを動的に切り替える例
+  // （a11y 違反を避けるため、インタラクティブでない要素のみを対象にしている）
+  let level = $state<'h1' | 'h2' | 'h3' | 'h4' | 'p'>('h2');
+  const levels = ['h1', 'h2', 'h3', 'h4', 'p'] as const;
 </script>
 
 <div style="padding: 1rem; border: 1px solid #ddd; border-radius: 8px;">
   <label for="tag-select" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
     要素タグを選択:
   </label>
-  <select id="tag-select" bind:value={tag} style="padding: 0.5rem; margin-bottom: 1rem;">
-    {#each tags as t (t)}
+  <select id="tag-select" bind:value={level} style="padding: 0.5rem; margin-bottom: 1rem;">
+    {#each levels as t (t)}
       <option value={t}>{t}</option>
     {/each}
   </select>
 
   <!-- 動的にタグが変わる -->
   <svelte:element
-    this={tag}
-    href={tag === 'a' ? href : undefined}
-    onclick={tag === 'button' ? () => alert('クリック！') : undefined}
-    style="padding: 0.5rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: inline-block; color: #333;"
+    this={level}
+    style="padding: 0.5rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; color: #333; margin: 0;"
   >
-    私は{tag}要素です
+    私は {level} 要素です
   </svelte:element>
 
   <div style="margin-top: 1rem; color: #333; padding: 0.5rem; background: #e8f5e9; border-radius: 4px;">
     <strong>現在のHTML:</strong>
-    <code style="color: #333;">&lt;{tag}&gt;私は{tag}要素です&lt;/{tag}&gt;</code>
+    <code style="color: #333;">&lt;{level}&gt;私は {level} 要素です&lt;/{level}&gt;</code>
   </div>
 </div>
 ```
 
+> インタラクティブな要素（`<button>` や `<a>`）を `<svelte:element>` で動的に切り替える場合、Svelte コンパイラは静的にタグを判別できないため「`role` を付けろ」という a11y 警告を出します。`<button>` 単独であれば本来 `role` 不要ですが、`<svelte:element>` で動的にする以上は **`role` / `tabindex` / `onkeydown` を明示的に補う必要があります**。詳しくは下の「実践的な使用例」を参照。
+
 ### 実践的な使用例
 
-```svelte
+権限に応じて表示要素を切り替える例です。`button` / `a` / `span` の 3 通りに分岐するため、a11y を確保するには `span` 分岐に対して `role` / `tabindex` / `onkeydown` を **明示的に補う必要があります**。
+
+```svelte bad
+<!-- 説明用：実装時は role/tabindex/onkeydown の追加が必須（下のベストプラクティス参照） -->
 <script lang="ts">
   type UserRole = 'admin' | 'user' | 'guest';
 
@@ -111,17 +113,29 @@ Svelte 5では、`svelte:component`、`svelte:fragment`、`svelte:self`はレガ
   function handleAction() {
     action = `${userRole}がアクションを実行しました`;
   }
+
+  function handleKeyAction(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleAction();
+    }
+  }
 </script>
 
 <svelte:element
   this={getElementTag(userRole)}
   href={userRole === 'user' ? '#action' : undefined}
-  onclick={userRole === 'admin' ? handleAction : undefined}
+  role={userRole === 'guest' ? 'button' : undefined}
+  tabindex={userRole === 'guest' ? 0 : undefined}
+  onclick={userRole !== 'user' ? handleAction : undefined}
+  onkeydown={userRole === 'guest' ? handleKeyAction : undefined}
   class="action-element"
 >
   {userRole === 'admin' ? '削除' : userRole === 'user' ? '詳細を見る' : '閲覧のみ'}
 </svelte:element>
 ```
+
+ポイントは、**`<button>` や `<a>` 自体は元々インタラクティブだが、`<svelte:element>` で動的に切り替える以上、コンパイラは静的にタグを解決できない**ため、すべての分岐で a11y 違反にならないよう `role` / `tabindex` / `onkeydown` を**条件付きで補う**必要がある、という点です。
 
 ## `svelte:window` - ウィンドウイベントのバインディング
 

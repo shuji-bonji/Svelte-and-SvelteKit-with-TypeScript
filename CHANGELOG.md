@@ -2,6 +2,42 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-15] - 新規 deep-dive 記事「動的コンテンツ取り扱い API の比較」を追加
+
+### 概要
+
+`bind:innerHTML`、`{@html}`、`{#snippet}` / `{@render}`、`children` snippet の 4 つの動的コンテンツ API を横並びで比較する deep-dive 記事を新規追加。学習者が「動的なコンテンツを扱う = どれを使うべきか？」と迷う場面で参照できる、判断フロー付きの整理ページ。
+
+### 背景
+
+会話の中で「`bind:innerHTML` と `{#snippet}` / `{@render}` の違いは？」という質問が出た際、「DOM API ラッパー（XSS 注意）」と「Svelte 言語機能（型安全・コンパイル時解析）」の **レイヤーが違う** という整理が学習価値が高いと判断。既存記事（`/svelte/basics/template-syntax/` や `/svelte/advanced/snippets/`）は各 API を個別に扱っているが、4 つを横断する比較記事がなかった。
+
+### 追加内容
+
+`src/routes/deep-dive/dynamic-content-api-comparison/+page.md`（新規ページ）
+
+- **ひとことで** — 4 API の本質を 1 行ずつで対比
+- **比較表** — 9 観点（目的 / 入出力方向 / 内容の型 / 引数 / 評価タイミング / XSS リスク / 必須属性 / 子コンポーネント連携 / Svelte 4 相当）で並列比較
+- **内部の動きを図で** — 4 API のフローを Mermaid で可視化
+- **各 API の使用例（live ブロック）** — `bind:innerHTML` のリッチテキストエディタ、`{@html}` の XSS デモ、`{#snippet}` のユーザーカード、`children` snippet のマルチファイル構成
+- **使い分けの判断フロー** — Mermaid フローチャートで「この場面ならどれ？」が即決できる
+- **よくある混同** — 「動的な HTML を扱う」3 API の整理、Svelte 4 → 5 マッピング表
+- **次のステップ** — 関連 4 記事へのリンク
+
+### sidebar / ハブページ更新
+
+- `src/lib/config/sidebar.ts` の `/deep-dive/` 配列に新ページエントリを追加
+- `src/routes/deep-dive/+page.md` のカード一覧に新ページのカード（🔀 アイコン）を追加
+
+### ESLint 検証
+
+新規ページのブロック検証結果: **errors 0 / warnings 1**（warning 1 件は `{@html}` の解説目的によるもので意図通り）
+
+- 4 件の `live` ブロックは Svelte MCP の `svelte-autofixer` でクリーン確認
+- 1 件の `<script>` を伴わないリファレンス断片（名前付き snippet props 例）には `bad` メタを付与
+
+---
+
 ## [2026-05-15] - eslint-plugin-svelte 導入と既存記事内 ```svelte ブロックの一括修正
 
 ### 概要

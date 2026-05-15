@@ -619,6 +619,10 @@ export const sidebarConfig: { [key: string]: SidebarItem[] } = {
           title: 'SvelteKitプレースホルダー',
           to: '/deep-dive/sveltekit-placeholders/',
         },
+        {
+          title: '動的コンテンツ取り扱い API の比較',
+          to: '/deep-dive/dynamic-content-api-comparison/',
+        },
       ],
     },
   ],

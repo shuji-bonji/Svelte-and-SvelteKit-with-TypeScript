@@ -2,6 +2,31 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-15] - `svelte:body` のマウストラッキング例を `live` 化
+
+### 概要
+
+`/svelte/basics/special-elements/` の `svelte:body` セクションのコード例を `live` ブロック化し、Playground 上で実際にカスタムカーソルがマウスに追従する様子を体験できるようにした。
+
+### 変更内容
+
+- `src/routes/svelte/basics/special-elements/+page.md` の `svelte:body` コードブロックに `live` メタを付与
+- Playground iframe 内で意味のあるデモになるよう、`.cursor-tracker` / `.custom-cursor` のスタイルを `<style>` として補完
+  - `:global(body)` で `cursor: none` を効かせ、カスタムカーソル（オレンジの円）のみが見える状態に
+  - 左上に固定の position tracker、マウス追従する円形カスタムカーソルを描画
+- 学習者向けに「プレビュー領域内でマウスを動かしてみてください」のヒント文を追加
+
+### 動機
+
+`svelte:document` 例はすでに `live` 化されていたが、隣接する `svelte:body` 例は `live` ではなく静的なコード例のままだった。マウス追従は **動かしてこそ理解できる** インタラクションなので、Playground での実体験ができる状態に揃えた。
+
+### 検証
+
+- `svelte-autofixer`: issues 0 件
+- `npm run lint:articles`: 新規 issue なし（special-elements の既存 warning は `<svelte:head>` の `{@html}` 解説のみで意図通り）
+
+---
+
 ## [2026-05-15] - 新規 deep-dive 記事「動的コンテンツ取り扱い API の比較」を追加
 
 ### 概要

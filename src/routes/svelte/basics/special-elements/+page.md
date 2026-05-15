@@ -280,7 +280,7 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
 
 `&lt;svelte:body&gt;`は、body要素のイベントにバインドできます。マウストラッキングやドラッグ&ドロップなど、ページ全体での操作を扱う際に使用します。
 
-```svelte
+```svelte live
 <script lang="ts">
   let mouseX = $state(0);
   let mouseY = $state(0);
@@ -302,6 +302,49 @@ Svelte 5.11+ では `svelte/reactivity/window` モジュールがリアクティ
   class="custom-cursor"
   style="left: {mouseX}px; top: {mouseY}px;"
 ></div>
+
+<p class="hint">プレビュー領域内でマウスを動かしてみてください。</p>
+
+<style>
+  :global(body) {
+    margin: 0;
+    min-height: 100vh;
+    cursor: none;
+    font-family: system-ui, sans-serif;
+  }
+
+  .cursor-tracker {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.5rem 0.75rem;
+    background: #ff3e00;
+    color: white;
+    border-radius: 6px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .custom-cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ff3e00;
+    border-radius: 50%;
+    background: rgba(255, 62, 0, 0.2);
+    pointer-events: none;
+    z-index: 20;
+    transition: transform 0.05s ease-out;
+  }
+
+  .hint {
+    padding: 1rem;
+    color: #666;
+  }
+</style>
 ```
 
 ## `svelte:document` - document要素へのイベントバインディング

@@ -5,6 +5,7 @@ description: "bind:innerHTML、{@html}、{#snippet}/{@render}、children snippet
 
 <script lang="ts">
   import Admonition from '$lib/components/Admonition.svelte';
+  import Mermaid from '$lib/components/Mermaid.svelte';
 </script>
 
 Svelte 5 で「動的なコンテンツを扱う」と一口に言っても、その API は複数あります。`bind:innerHTML`、`{@html}`、`{#snippet}` / `{@render}`、そして `children` snippet（旧 `<slot>`）。これらは似た場面で使われるため初学者ほど混同しがちですが、**目的・粒度・型安全性・XSS リスクのすべてが根本的に違う別物** です。

@@ -1124,28 +1124,21 @@ ESLint の [`svelte/no-at-html-tags`](https://sveltejs.github.io/eslint-plugin-s
 
 Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネントの実装例です。
 
-```svelte
+```svelte live
 <script lang="ts">
-  import type { Snippet } from 'svelte';
-  type TabContent = {
-    id: string;
-    title: string;
-    snippet: Snippet;
-  };
-
   let activeTab = $state('tab1');
 </script>
 
 {#snippet tab1Content()}
-  <div>タブ1のコンテンツ</div>
+  <p>タブ1のコンテンツです。Snippets を使って各タブの中身を定義しています。</p>
 {/snippet}
 
 {#snippet tab2Content()}
-  <div>タブ2のコンテンツ</div>
+  <p>タブ2のコンテンツです。<code>@render</code> で動的に切り替えます。</p>
 {/snippet}
 
 {#snippet tab3Content()}
-  <div>タブ3のコンテンツ</div>
+  <p>タブ3のコンテンツです。<code>@const</code> で配列を構築しています。</p>
 {/snippet}
 
 {#if true}
@@ -1174,29 +1167,74 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
     {/each}
   </div>
 {/if}
+
+<style>
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .tabs button {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-size: 14px;
+    color: #64748b;
+    transition: all 0.2s;
+  }
+  .tabs button:hover {
+    color: #334155;
+    background: #f8fafc;
+  }
+  .tabs button.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    font-weight: 600;
+  }
+  .tab-content {
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+</style>
 ```
 
 ### 安全なMarkdownレンダリング
 
-`@html`を使用してMarkdownコンテンツを安全にレンダリングする実装例です。DOMPurifyによるサニタイズで、XSS攻撃を防ぎます。
+`@html`を使用してMarkdownコンテンツを安全にレンダリングする実装例です。実運用では `marked` + `DOMPurify` を使いますが、ここでは `@html` の動作を体験できるよう簡易変換で実装しています。
 
-```svelte
+```svelte live
 <script lang="ts">
-  import { marked } from 'marked';
-  import DOMPurify from 'dompurify';
+  let markdown = $state(`# Hello World
 
-  let markdown = $state('# Hello World\n\nThis is **markdown**');
+This is **bold** and *italic* text.
+
+## リスト
+- 項目A
+- 項目B
+- 項目C`);
+
   let renderAsHtml = $state(true);
 
-  // Markdownを安全なHTMLに変換
-  // 複数行の処理が必要な場合は $derived.by() を使用
-  let safeHtml = $derived.by(() => {
-    const rawHtml = marked(markdown);
-    return DOMPurify.sanitize(rawHtml);
+  // 簡易 Markdown → HTML 変換（実運用では marked + DOMPurify を推奨）
+  let html = $derived.by(() => {
+    return markdown
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
+      .replace(/\n\n/g, '<br/>');
   });
 </script>
 
-<textarea bind:value={markdown}></textarea>
+<textarea bind:value={markdown} rows="8"></textarea>
 
 <label>
   <input type="checkbox" bind:checked={renderAsHtml} />
@@ -1205,18 +1243,51 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
 
 <div class="output">
   {#if renderAsHtml}
-    {@html safeHtml}
+    {@html html}
   {:else}
     <pre>{markdown}</pre>
   {/if}
 </div>
+
+<style>
+  textarea {
+    width: 100%;
+    font-family: monospace;
+    font-size: 13px;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    resize: vertical;
+  }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0;
+    font-size: 14px;
+  }
+  .output {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    min-height: 80px;
+    background: #fafafa;
+  }
+  .output :global(h1) { font-size: 1.5em; font-weight: bold; margin: 0.3em 0; }
+  .output :global(h2) { font-size: 1.2em; font-weight: bold; margin: 0.3em 0; }
+  .output :global(ul) { padding-left: 1.5em; margin: 0.3em 0; }
+</style>
 ```
+
+:::tip[本格的な Markdown レンダリング]
+実運用では `marked`（Markdown → HTML 変換）と `DOMPurify`（XSS 対策のサニタイズ）を組み合わせます。`@html` はサニタイズなしで HTML を挿入するため、ユーザー入力を扱う場合は必ずサニタイズが必要です。
+:::
 
 ### フォームバリデーション with デバッグ機能
 
-`@debug`と`@const`を組み合わせた、実用的なフォームバリデーションの実装例です。
+`@debug`と`@const`を組み合わせた、実用的なフォームバリデーションの実装例です。`@debug` はブラウザのコンソールに変数の値を出力します（下部の Console パネルで確認できます）。
 
-```svelte
+```svelte live console
 <script lang="ts">
   type FormData = {
     username: string;
@@ -1230,12 +1301,12 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
     rememberMe: false
   });
 
-  let showDebug = $state(false);
+  let showDebug = $state(true);
 </script>
 
-<label>
+<label class="debug-toggle">
   <input type="checkbox" bind:checked={showDebug} />
-  デバッグモード
+  デバッグモード（Console に出力）
 </label>
 
 {#if showDebug}
@@ -1243,29 +1314,74 @@ Snippetsと条件分岐を組み合わせた、実用的なタブコンポーネ
 {/if}
 
 <form>
-  {#key formData.username}
+  {#if true}
     {@const isValidUsername = formData.username.length >= 3}
-    <input
-      bind:value={formData.username}
-      class:valid={isValidUsername}
-      placeholder="ユーザー名"
-    />
-    {#if !isValidUsername && formData.username}
-      <span class="error">3文字以上入力してください</span>
-    {/if}
-  {/key}
+    {@const isValidPassword = formData.password.length >= 8}
 
-  <input
-    type="password"
-    bind:value={formData.password}
-    placeholder="パスワード"
-  />
+    <div class="field">
+      <input
+        bind:value={formData.username}
+        class:valid={isValidUsername}
+        class:invalid={!isValidUsername && formData.username.length > 0}
+        placeholder="ユーザー名（3文字以上）"
+      />
+      {#if !isValidUsername && formData.username}
+        <span class="error">3文字以上入力してください</span>
+      {/if}
+    </div>
 
-  <label>
+    <div class="field">
+      <input
+        type="password"
+        bind:value={formData.password}
+        class:valid={isValidPassword}
+        class:invalid={!isValidPassword && formData.password.length > 0}
+        placeholder="パスワード（8文字以上）"
+      />
+      {#if !isValidPassword && formData.password}
+        <span class="error">8文字以上入力してください</span>
+      {/if}
+    </div>
+  {/if}
+
+  <label class="remember">
     <input type="checkbox" bind:checked={formData.rememberMe} />
     ログイン状態を保持
   </label>
 </form>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  input[type="password"], input:not([type]) {
+    padding: 8px 12px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  input.valid { border-color: #22c55e; }
+  input.invalid { border-color: #ef4444; }
+  .error {
+    color: #ef4444;
+    font-size: 12px;
+  }
+  .debug-toggle, .remember {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+</style>
 ```
 
 ## ベストプラクティス

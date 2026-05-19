@@ -2,6 +2,56 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-05-19] - 緊急復旧用 `/reset/` ページを追加（PWA Service Worker 事故対策）
+
+### 概要
+
+`shuji-bonji.github.io` 配下に複数の PWA プロジェクト（Svelte-and-SvelteKit-with-TypeScript、e-shiwake、websocket-practical-guide）を運用していることで、過去に誤って広いスコープで登録された Service Worker や、何らかの理由でフリーズした SW が **本番ユーザー側で立ち往生する** リスクが顕在化。本番では DevTools 操作を案内できないため、URL を開くだけで SW と Cache Storage をクリアできる緊急復旧ページを実装。
+
+### 追加内容
+
+#### `src/routes/reset/+page.svelte` を新規作成
+
+- `onMount` で `navigator.serviceWorker.getRegistrations()` を呼び、現在のオリジン配下で取得できる全 SW を `unregister()`
+- 続いて `caches.keys()` で取得した全 Cache Storage を `caches.delete()`
+- 各ステップの進行を `✅ / ⚠️ / ⏳` で可視化（エラー時も握り潰さず表示）
+- 完了後 5 秒カウントダウンで `location.replace(`${base}/`)` によりトップへ遷移（「今すぐ移動」ボタンも併設）
+- `<details>` で「このページについて」を展開可能にし、localStorage / sessionStorage / IndexedDB には触らない旨を明示
+- `<meta name="robots" content="noindex, nofollow">` で検索エンジン除外
+
+### 設計判断
+
+| 項目 | 方針 | 理由 |
+|------|------|------|
+| 削除対象 | SW + Cache Storage のみ | localStorage / sessionStorage / IndexedDB を消すとユーザーのテーマ設定や進捗が失われるため、SW 復旧目的に絞る |
+| sidebar.ts への登録 | しない | 通常ナビには載せない（緊急時のみ URL 直打ち or 案内）。`sitemap.xml` は `sidebar.ts` から生成されるため自動的に除外される |
+| レイアウト | 標準 `+layout.svelte` をそのまま利用 | 専用 `+layout.svelte` で簡素化する案もあったが、ブランディング一貫性を優先。AutoPageNavigation は `sidebar.ts` 未登録ページでは何も描画しないため副作用なし |
+| カウントダウンの秒数 | 5 秒 | ユーザーが結果を視認できる程度の時間。即時遷移したい場合はボタンで上書き可能 |
+| `location.replace` を採用 | `location.href` ではなく `replace` | リセット履歴を残さず、ブラウザバックで `/reset/` に戻らないようにする |
+
+### 想定運用
+
+- 本番 URL: `https://shuji-bonji.github.io/Svelte-and-SvelteKit-with-TypeScript/reset/`
+- 不具合発生時にユーザーへ「上記 URL を開いてください」と案内
+- `shuji-bonji.github.io` 配下の **他プロジェクト** にも同パターンの `/reset/` を入れることで、自プロジェクトの SW が完全に死んだ場合にも他プロジェクトの `/reset/` から復旧可能（クロス退避）
+
+### 残課題
+
+- `e-shiwake` および `websocket-practical-guide` への同パターン展開（別セッションまたは Cowork に該当フォルダを追加してから対応）
+- 必要に応じて、`/reset/` への目立たないリンクをフッターやエラーページから貼る運用（今回は最小構成のため未対応）
+
+### 検証
+
+- `svelte-autofixer` 実行: issues=0 / suggestions=0（Svelte 5 Runes 規約 OK）
+- `npm run lint:articles`: 既存ベースライン維持（本変更は `.md` ファイルを追加していないため影響なし）
+
+### 関連メモ
+
+- 現状の `vite.config.js` PWA 設定は既に堅牢（`NetworkFirst` + 3 秒タイムアウト / `cleanupOutdatedCaches: true` / `scope: ${base}/` / `PwaUpdatePrompt.svelte` の Safari BFCache 対策）。`/reset/` はあくまで「最後の砦」としての位置づけ
+- `localhost:5173` で複数 PWA プロジェクトを順に起動すると同一オリジンで SW が混線する開発時の罠は別問題。各プロジェクトで `vite.config.js > server.port` を固定するのが恒久対策
+
+---
+
 ## [2026-05-16] - 式展開セクションは component-basics に戻し、template-syntax は 4 カテゴリ表のみ保持（過剰移植の是正）
 
 ### 概要

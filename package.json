@@ -25,7 +25,7 @@
     "@types/node": "^22.0.0",
     "@vite-pwa/sveltekit": "^1.1.0",
     "eslint": "^10.4.0",
-    "eslint-plugin-svelte": "^3.17.1",
+    "eslint-plugin-svelte": "^3.19.0",
     "globals": "^17.6.0",
     "mdsvex": "^0.12.7",
     "pagefind": "^1.5.2",

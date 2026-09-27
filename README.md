@@ -331,15 +331,15 @@ Svelte 5 の内部実装や高度なトピックを扱います。
 
 ### 推奨環境
 
-- **Node.js** 20.x LTS 以上
-- **npm** 10.x 以上（`package-lock.json` を採用、CI も `npm ci` で運用）
+- **Node.js** 24.x LTS 以上
+- **npm** 11.x 以上（`package-lock.json` を採用、CI も `npm ci` で運用）
 
 ## 🚀 ローカル開発
 
 ### 前提条件
 
-- Node.js 20.x LTS 以上
-- npm 10.x 以上
+- Node.js 24.x LTS 以上
+- npm 11.x 以上
 
 ### セットアップ
 

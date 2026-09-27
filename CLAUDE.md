@@ -23,7 +23,7 @@
 | SvelteKit | 2.x以上 | |
 | TypeScript | 6.x以上 | strictモード必須 |
 | Vite | 8.x以上 | |
-| Node.js | 20.x LTS以上 | 推奨: 20.x LTS |
+| Node.js | 24.x LTS以上 | 推奨: 24.x LTS（npm 11.x、CI も同一） |
 
 ## コーディング規約
 

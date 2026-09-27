@@ -2,6 +2,32 @@
 
 このプロジェクトの主要な変更履歴を記録します。
 
+## [2026-09-27] - CI の Node.js を 24 に更新し、`npm ci` の lock 不整合を解消
+
+### 概要
+
+`package-lock.json` 更新後、GitHub Actions の `npm ci` が `Invalid: lock file's yaml@1.10.3 does not satisfy yaml@2.9.1` で失敗。ローカル（Node 24 / npm 11）と CI（Node 20 / npm 10）で npm のメジャーバージョンが異なり、npm 11 が生成した lock を npm 10 が不整合と判定していた。
+
+### 原因
+
+- `vite@8.x` は `yaml@^2.4.2` を **optional peer** として宣言している
+- lock ではルート `node_modules/yaml` に `postcss-load-config`（`eslint-plugin-svelte` 経由）由来の `yaml@1.10.3` が配置されていた
+- npm 11 はこの状態を許容するが、npm 10 は optional peer の範囲外として `npm ci` を拒否する
+
+### 変更内容
+
+| ファイル | 変更 |
+|---------|------|
+| `package-lock.json` | `yaml@1.10.3` を `node_modules/postcss-load-config/node_modules/yaml` にネストし、ルートの不正 entry を削除 |
+| `.github/workflows/deploy.yml` | `actions/setup-node@v4` → `@v7`（Dependabot #205 相当）、`node-version: '20'` → `'24'` |
+| `package.json` | `engines: { node: ">=24", npm: ">=11" }` を追加し、ローカルと CI の npm メジャーバージョンを揃える |
+| `CLAUDE.md` / `README.md` | 推奨環境を Node.js 24.x LTS / npm 11.x に更新 |
+
+### 備考
+
+- Node.js 20 は 2026-04 に EOL 済み
+- 学習記事内（`/introduction/setup/` 等）の読者向け Node.js 推奨バージョン記述は本変更の対象外
+
 ## [2026-05-19] - 緊急復旧用 `/reset/` ページを追加（PWA Service Worker 事故対策）
 
 ### 概要
